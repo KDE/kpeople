@@ -1,0 +1,58 @@
+include_directories (${CMAKE_CURRENT_BINARY_DIR}
+                     ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+set (kpeople_SRCS
+     basic-person-cache-item-facet.cpp
+     person-cache-item.cpp
+     person-cache.cpp
+)
+
+set (kpeople_INST_HDRS
+     basic-person-cache-item-facet.h
+     person-cache-item.h
+     person-cache.h
+)
+
+set (kpeople_PRETTY_HDRS
+    
+)
+
+kde4_add_library (kpeople
+                  SHARED
+                  ${kpeople_SRCS}
+)
+ 
+target_link_libraries (kpeople
+                       ${QT_QTCORE_LIBRARIES}
+                       ${KDE4_KIO_LIBS}
+                       ${NEPOMUK_LIBRARIES}
+                       ${NEPOMUK_QUERY_LIBRARIES}
+)
+
+set_target_properties (kpeople PROPERTIES
+                       VERSION ${GENERIC_LIB_VERSION}
+                       SOVERSION ${GENERIC_LIB_SOVERSION}
+)
+
+if (MSVC)
+    set_target_properties (kpeople PROPERTIES
+                           OUTPUT_NAME libkpeople
+    )
+endif (MSVC)
+
+# Install:
+install (TARGETS kpeople
+         ${INSTALL_TARGETS_DEFAULT_ARGS}
+)
+
+install (FILES ${kpeople_INST_HDRS}
+         DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
+         COMPONENT Devel
+)
+
+install (FILES ${kpeople_PRETTY_HDRS}
+         DESTINATION ${INCLUDE_INSTALL_DIR}/KDE/KPeople
+         COMPONENT Devel
+)
+

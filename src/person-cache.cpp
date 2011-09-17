@@ -21,8 +21,13 @@
 
 #include "person-cache.h"
 
+#include "person-cache-item-set.h"
+#include "person-cache-item-set_p.h"
+
 #include <KDebug>
 #include <KGlobal>
+
+#include <QtCore/QHash>
 
 
 /******************************** PersonCache::Private ********************************************/
@@ -40,6 +45,10 @@ public:
 
     virtual ~PersonCachePrivate()
     { }
+
+    QHash<QString, PersonCacheItemSetPrivate*> queryResultSets;
+    QMultiHash<PersonCacheItemSetPrivate*, PersonCacheItemSet*> itemSets;
+
 };
 
 
@@ -90,6 +99,52 @@ PersonCache::~PersonCache()
     kDebug();
 
     delete d_ptr;
+}
+
+PersonCacheItemSet *PersonCache::query()
+{
+    kDebug();
+
+    // TODO: Open the Nepomuk Context
+    // TODO: Facet magic
+    // TODO: All kinds of other shit
+
+    // FIXME: Assume that the query is new
+
+    // Create the PersonCacheItemSetPrivate instance.
+    PersonCacheItemSetPrivate *pcisp = new PersonCacheItemSetPrivate(this);
+
+    // Save it to the hash of query to PCISPs
+    // FIXME: Use the actual query as the key
+    d_ptr->queryResultSets.insert(QString(), pcisp);
+
+    // Create a PersonCacheItemSet to return.
+    PersonCacheItemSet *pcis = new PersonCacheItemSet(pcisp);
+
+    // Save the PCIS to the hash so that we can tell it when it should signal changes.
+    d_ptr->itemSets.insert(pcisp, pcis);
+
+    // FIXME: Connect up signals/slots so that when the nepomuk context signals something has
+    //        happened we relay it to all the PCIS's.
+
+    // Return the PCIS
+    return pcis;
+}
+
+void PersonCache::removeItemSet(PersonCacheItemSet *itemSet)
+{
+    kDebug();
+
+    // Remove the calling PCIS from the hash so we don't try to access it again.
+    d_ptr->itemSets.remove(itemSet->d_ptr, itemSet);
+
+    // Check if the ItemSetPrivate should be deleted.
+    if (itemSet->d_ptr->refCount == 0) {
+        // Delete it.
+        // FIXME remove from d_ptr->queryResultSets.
+
+        // FIXME: close the Nepomuk context
+    }
 }
 
 

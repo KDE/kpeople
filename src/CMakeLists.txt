@@ -4,14 +4,17 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 set (kpeople_SRCS
      basic-person-cache-item-facet.cpp
-     person-cache-item.cpp
      person-cache.cpp
+     person-cache-item.cpp
+     person-cache-item-set.cpp
 )
 
 set (kpeople_INST_HDRS
      basic-person-cache-item-facet.h
-     person-cache-item.h
      person-cache.h
+     person-cache-item.h
+     person-cache-item-set.h
+     person-cache-item-set_p.h
 )
 
 set (kpeople_PRETTY_HDRS

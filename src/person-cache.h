@@ -24,6 +24,7 @@
 
 #include <QtCore/QObject>
 
+class PersonCacheItemSet;
 class PersonCachePrivate;
 
 class PersonCache : public QObject {
@@ -36,10 +37,24 @@ public:
     virtual ~PersonCache();
     static PersonCache *instance();
 
+    /**
+     * Get the cache to monitor the given query.
+     * @param facetType which facet type to use for the items in the cache.
+     * @param query the actual query.
+     * @return the PersonCacheItemSet for that query. This should be deleted immediately you have
+     * finished with it to avoid stuff being kept unnecessarily long in the cache.
+     */
+    PersonCacheItemSet *query();
+
 private:
     PersonCache();
 
+    void removeItemSet(PersonCacheItemSet *itemSet);
+
     PersonCachePrivate * const d_ptr;
+
+    friend class PersonCacheItemSet;
+    friend class PersonCacheItemSetPrivate;
 };
 
 

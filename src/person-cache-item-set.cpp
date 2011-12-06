@@ -28,11 +28,12 @@
 
 /******************************** PersonCacheItemSet::Private *************************************/
 
-PersonCacheItemSetPrivate::PersonCacheItemSetPrivate(PersonCache *pc)
+PersonCacheItemSetPrivate::PersonCacheItemSetPrivate(QHash<QUrl, PersonCacheItem*> set, PersonCache *pc)
   : personCache(pc),
     refCount(0)
 {
     kDebug();
+    m_data = set;
 }
 
 PersonCacheItemSetPrivate::~PersonCacheItemSetPrivate()
@@ -48,6 +49,10 @@ void PersonCacheItemSetPrivate::ref()
 void PersonCacheItemSetPrivate::unref()
 {
     refCount.deref();
+}
+
+QHash<QUrl, PersonCacheItem*> PersonCacheItemSetPrivate::data() {
+    return m_data;
 }
 
 
@@ -79,6 +84,10 @@ bool PersonCacheItemSet::operator!=(const PersonCacheItemSet &other) const
     return (this->d_ptr != (&other)->d_ptr);
 }
 
+QHash<QUrl, PersonCacheItem*> PersonCacheItemSet::data() const
+{
+    return d_ptr->data();
+}
 
 #include "person-cache-item-set.moc"
 

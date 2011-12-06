@@ -29,6 +29,17 @@
 
 #include <QtCore/QHash>
 
+#include <Soprano/Query/QueryLanguage>
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Model>
+#include <Nepomuk/ResourceManager>
+#include "basic-person-cache-item-facet.h"
+#include "person-cache-item.h"
+#include "im-person-cache-item-facet.h"
+#include <qmenu.h>
+#include <KUrl>
+
+
 
 /******************************** PersonCache::Private ********************************************/
 
@@ -67,6 +78,7 @@ public:
     }
 
     PersonCache *q;
+    QHash<QUrl, PersonCacheItem*> persons;
 };
 
 K_GLOBAL_STATIC(PersonCacheHelper, s_globalPersonCache)
@@ -101,7 +113,7 @@ PersonCache::~PersonCache()
     delete d_ptr;
 }
 
-PersonCacheItemSet *PersonCache::query()
+PersonCacheItemSet *PersonCache::query(PersonCacheItem::FacetTypes facetType, const QString &query)
 {
     kDebug();
 
@@ -111,12 +123,34 @@ PersonCacheItemSet *PersonCache::query()
 
     // FIXME: Assume that the query is new
 
+    Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query,
+                                                                                                      Soprano::Query::QueryLanguageSparql);
+
+    IMPersonCacheItemFacet *person;
+    QHash<QUrl, PersonCacheItem*> set;
+    while(it.next()) {
+        QUrl currentUri = it[QLatin1String("uri")].uri();
+
+        if (set.keys().contains(currentUri)) {
+            person = dynamic_cast<IMPersonCacheItemFacet*>(set.value(currentUri));
+        } else {
+            person = new IMPersonCacheItemFacet();
+            set.insert(currentUri, person);
+            person->addFacet(facetType);
+        }
+
+        person->addData(QLatin1String("prefLabel"), it[QLatin1String("label")].literal().toString());
+        person->addHashData(QLatin1String("hasEmailAddress"), it[QLatin1String("email")].uri());
+    }
+
+    s_globalPersonCache->persons.unite(set);
+
     // Create the PersonCacheItemSetPrivate instance.
-    PersonCacheItemSetPrivate *pcisp = new PersonCacheItemSetPrivate(this);
+    PersonCacheItemSetPrivate *pcisp = new PersonCacheItemSetPrivate(set, this);
 
     // Save it to the hash of query to PCISPs
     // FIXME: Use the actual query as the key
-    d_ptr->queryResultSets.insert(QString(), pcisp);
+    d_ptr->queryResultSets.insert(query, pcisp);
 
     // Create a PersonCacheItemSet to return.
     PersonCacheItemSet *pcis = new PersonCacheItemSet(pcisp);

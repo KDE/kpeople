@@ -23,11 +23,15 @@
 #define LIBKPEOPLE_PERSON_CACHE_H
 
 #include <QtCore/QObject>
+#include "person-cache-item.h"
 
+#include "kpeople_export.h"
+
+class PersonCacheItem;
 class PersonCacheItemSet;
 class PersonCachePrivate;
 
-class PersonCache : public QObject {
+class KPEOPLE_EXPORT PersonCache : public QObject {
 
     Q_OBJECT
     Q_DECLARE_PRIVATE(PersonCache);
@@ -44,7 +48,7 @@ public:
      * @return the PersonCacheItemSet for that query. This should be deleted immediately you have
      * finished with it to avoid stuff being kept unnecessarily long in the cache.
      */
-    PersonCacheItemSet *query();
+    PersonCacheItemSet *query(PersonCacheItem::FacetTypes facetType, const QString &query);
 
 private:
     PersonCache();
@@ -57,6 +61,4 @@ private:
     friend class PersonCacheItemSetPrivate;
 };
 
-
 #endif  // Header guard
-

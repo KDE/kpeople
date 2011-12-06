@@ -2,14 +2,19 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set (kpeople_SRCS
-     basic-person-cache-item-facet.cpp
+set (kpeople_SRCS im-persons-manager.cpp
+     im-person-cache-item-facet.cpp
+     im-persons-model.cpp
+#      basic-person-cache-item-facet.cpp
      person-cache.cpp
      person-cache-item.cpp
      person-cache-item-set.cpp
 )
 
 set (kpeople_INST_HDRS
+     kpeople_export.h
+     im-persons-manager.h
+     im-persons-model.h
      basic-person-cache-item-facet.h
      person-cache.h
      person-cache-item.h
@@ -18,14 +23,14 @@ set (kpeople_INST_HDRS
 )
 
 set (kpeople_PRETTY_HDRS
-    
+
 )
 
 kde4_add_library (kpeople
                   SHARED
                   ${kpeople_SRCS}
 )
- 
+
 target_link_libraries (kpeople
                        ${QT_QTCORE_LIBRARIES}
                        ${KDE4_KIO_LIBS}

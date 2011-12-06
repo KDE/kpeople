@@ -23,7 +23,10 @@
 #define LIBKPEOPLE_PERSON_CACHE_ITEM_SET_H
 
 #include <QtCore/QObject>
+#include <QHash>
+#include <QUrl>
 
+class PersonCacheItem;
 class PersonCacheItemSetPrivate;
 
 class PersonCacheItemSet : public QObject {
@@ -37,6 +40,8 @@ public:
 
     bool operator==(const PersonCacheItemSet &other) const;
     bool operator!=(const PersonCacheItemSet &other) const;
+
+    QHash<QUrl, PersonCacheItem*> data() const;
 
 private:
     explicit PersonCacheItemSet(PersonCacheItemSetPrivate *d);

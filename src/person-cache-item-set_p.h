@@ -24,7 +24,11 @@
 
 #include <QtCore/QAtomicInt>
 #include <QtCore/QtGlobal>
+#include <QHash>
+#include <QUrl>
 
+class PersonCacheItem;
+class BasicPersonCacheItemFacet;
 class PersonCache;
 class PersonCacheItemSet;
 
@@ -38,14 +42,17 @@ public:
     void ref();
     void unref();
 
+    QHash<QUrl, PersonCacheItem*> data();
+
     PersonCache *personCache;
 
 private:
-    explicit PersonCacheItemSetPrivate(PersonCache *personCache);
+    explicit PersonCacheItemSetPrivate(QHash<QUrl, PersonCacheItem*> personSet, PersonCache *personCache);
 
     friend class PersonCache;
 
     QAtomicInt refCount;
+    QHash<QUrl, PersonCacheItem*> m_data;
 };
 
 

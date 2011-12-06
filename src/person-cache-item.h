@@ -23,6 +23,8 @@
 #define LIBKPEOPLE_PERSON_CACHE_ITEM_H
 
 #include <QtCore/QtGlobal>
+#include <QString>
+#include <QUrl>
 
 class PersonCacheItemPrivate;
 
@@ -32,13 +34,26 @@ class PersonCacheItem {
     Q_DISABLE_COPY(PersonCacheItem);
 
 public:
+    enum FacetType {
+        BasicFacet = 0x0,
+        IMFacet = 0x1,
+        PIMFacet = 0x2
+    };
+
+    Q_DECLARE_FLAGS(FacetTypes, FacetType);
+
     PersonCacheItem();
     virtual ~PersonCacheItem();
 
-private:
-    PersonCacheItemPrivate * const d_ptr;
+    void addData(const QString &key, const QString &value);
+    void addHashData(const QString &key, const QUrl &uri);
+    void addFacet(FacetTypes facet);
+
+protected:
+    PersonCacheItemPrivate * d_ptr;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(PersonCacheItem::FacetTypes)
 
 #endif  // Header guard
 

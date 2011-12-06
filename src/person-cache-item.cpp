@@ -22,27 +22,9 @@
 #include "person-cache-item.h"
 
 #include <KDebug>
+#include <QUrl>
 
-
-/****************************** PersonCacheItem::Private ******************************************/
-
-class PersonCacheItemPrivate {
-
-protected:
-    Q_DECLARE_PUBLIC(PersonCacheItem);
-    PersonCacheItem * const q_ptr;
-
-public:
-    explicit PersonCacheItemPrivate(PersonCacheItem *q)
-    : q_ptr(q)
-    { }
-
-    virtual ~PersonCacheItemPrivate()
-    { }
-};
-
-
-/****************************** PersonCacheItem ***************************************************/
+#include "person-cache-item_p.h"
 
 PersonCacheItem::PersonCacheItem()
   : d_ptr(new PersonCacheItemPrivate(this))
@@ -55,5 +37,29 @@ PersonCacheItem::~PersonCacheItem()
     kDebug();
 
     delete d_ptr;
+}
+
+void PersonCacheItem::addData(const QString& key, const QString& value)
+{
+    d_ptr->data.insert(key, value);
+}
+
+void PersonCacheItem::addHashData(const QString& key, const QUrl& uri)
+{
+    d_ptr->dataUri.insert(key, uri);
+}
+
+void PersonCacheItem::addFacet(PersonCacheItem::FacetTypes facets)
+{
+    d_ptr->facets |= facets;
+}
+
+void PersonCacheItem::setD(PersonCacheItemPrivate* d)
+{
+    if (d_ptr) {
+        delete d_ptr;
+    }
+
+    d_ptr = d;
 }
 

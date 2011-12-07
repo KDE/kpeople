@@ -48,6 +48,7 @@ public:
     QUrl uri() const;
 
     void addData(const QUrl &key, const QString &value);
+    void addData(const QUrl &key, const QStringList &values);
     void addHashData(const QString &key, const QUrl &uri);
     void addFacet(FacetTypes facet);
 

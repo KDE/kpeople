@@ -65,6 +65,7 @@ public:
     QHash<QString, PersonCacheItemSetPrivate*> queryResultSets;
     QMultiHash<PersonCacheItemSetPrivate*, PersonCacheItemSet*> itemSets;
     QHash<QUrl, PersonCacheItem*> persons;
+    QList<QUrl> allRequestedKeys;
 
     ResourceWatcherService *watcher;
 
@@ -161,12 +162,13 @@ PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::Fa
 
             person->addData(keyUri, it[keyString].toString());
 
-            kDebug() << keyString << it[keyString].toString();
+//             kDebug() << keyString << it[keyString].toString();
         }
 
     }
 
     d_ptr->persons.unite(set);
+    d_ptr->allRequestedKeys.append(requestedKeys);
 
     // Create the PersonCacheItemSetPrivate instance.
     PersonCacheItemSetPrivate *pcisp = new PersonCacheItemSetPrivate(set, this);
@@ -207,14 +209,18 @@ void PersonCache::removeItemSet(PersonCacheItemSet *itemSet)
 void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
 {
     PersonCacheItem *person = new PersonCacheItem(res.uri());
-    d_ptr->persons.insert(res.uri(), person);
 
-    QHashIterator<QString, Nepomuk::Variant> i(res.allProperties());
-
-    while (i.hasNext()) {
-        i.next();
-        kDebug() << i.key() << i.value();
+    Q_FOREACH (const QUrl &keyUri, d_ptr->allRequestedKeys) {
+        if (res.hasProperty(keyUri)) {
+            if (res.property(keyUri).isString()) {
+                person->addData(keyUri, res.property(keyUri).toString());
+            } else if (res.property(keyUri).isStringList()) {
+                person->addData(keyUri, res.property(keyUri).toStringList());
+            }
+        }
     }
+
+    d_ptr->persons.insert(res.uri(), person);
 
     emit personAddedToCache(person);
 }

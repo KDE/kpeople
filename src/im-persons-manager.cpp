@@ -77,7 +77,7 @@ IMPersonsManager::IMPersonsManager(PersonCache *pc, QObject *parent)
 
     m_data = pc->instance()->query(query, PersonCacheItem::IMFacet, requestedKeys);
 
-    kDebug() << m_data->data().keys();
+//     kDebug() << m_data->data().keys();
 
     m_model = new IMPersonsModel(m_data, 0);
 }

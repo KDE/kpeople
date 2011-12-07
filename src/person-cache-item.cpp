@@ -25,6 +25,7 @@
 #include <QUrl>
 
 #include "person-cache-item_p.h"
+#include <QStringList>
 
 PersonCacheItem::PersonCacheItem(const QUrl &uri)
   : d_ptr(new PersonCacheItemPrivate(this))
@@ -42,7 +43,16 @@ PersonCacheItem::~PersonCacheItem()
 
 void PersonCacheItem::addData(const QUrl &key, const QString& value)
 {
+    kDebug() << "Inserting" << value << "(" << key << ")";
     d_ptr->data.insert(key, value);
+}
+
+void PersonCacheItem::addData(const QUrl& key, const QStringList& values)
+{
+    Q_FOREACH (const QString &value, values) {
+        kDebug() << "Inserting (multi)" << value << "(" << key << ")";
+        d_ptr->data.insert(key, value);
+    }
 }
 
 void PersonCacheItem::addHashData(const QString& key, const QUrl& uri)

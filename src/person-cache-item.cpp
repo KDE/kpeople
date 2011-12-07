@@ -26,10 +26,11 @@
 
 #include "person-cache-item_p.h"
 
-PersonCacheItem::PersonCacheItem()
+PersonCacheItem::PersonCacheItem(const QUrl &uri)
   : d_ptr(new PersonCacheItemPrivate(this))
 {
-    kDebug();
+    d_ptr->uri = uri;
+//     kDebug();
 }
 
 PersonCacheItem::~PersonCacheItem()
@@ -39,7 +40,7 @@ PersonCacheItem::~PersonCacheItem()
     delete d_ptr;
 }
 
-void PersonCacheItem::addData(const QString& key, const QString& value)
+void PersonCacheItem::addData(const QUrl &key, const QString& value)
 {
     d_ptr->data.insert(key, value);
 }
@@ -54,12 +55,7 @@ void PersonCacheItem::addFacet(PersonCacheItem::FacetTypes facets)
     d_ptr->facets |= facets;
 }
 
-void PersonCacheItem::setD(PersonCacheItemPrivate* d)
+QUrl PersonCacheItem::uri() const
 {
-    if (d_ptr) {
-        delete d_ptr;
-    }
-
-    d_ptr = d;
+    return d_ptr->uri;
 }
-

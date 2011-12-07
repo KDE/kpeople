@@ -23,6 +23,8 @@
 #include <KDebug>
 
 #include "person-cache-item_p.h"
+#include <Soprano/Vocabulary/NAO>
+#include <Nepomuk/Vocabulary/NCO>
 
 /****************************** IMPersonCacheItemFacet::Private ********************************/
 
@@ -45,8 +47,8 @@ public:
 
 /****************************** IMPersonCacheItemFacet *****************************************/
 
-IMPersonCacheItemFacet::IMPersonCacheItemFacet()
-    : PersonCacheItem()
+IMPersonCacheItemFacet::IMPersonCacheItemFacet(const QUrl &uri)
+    : PersonCacheItem(uri)
 // : d_ptr(new IMPersonCacheItemFacetPrivate(this))
 {
     kDebug();
@@ -61,5 +63,15 @@ IMPersonCacheItemFacet::~IMPersonCacheItemFacet()
 
 QString IMPersonCacheItemFacet::label() const
 {
-    return d_ptr->data.value(QLatin1String("prefLabel"));
+    return d_ptr->data.value(Soprano::Vocabulary::NAO::prefLabel());
+}
+
+QString IMPersonCacheItemFacet::imNickname() const
+{
+    return d_ptr->data.value(Nepomuk::Vocabulary::NCO::imNickname());
+}
+
+QString IMPersonCacheItemFacet::imAccountType() const
+{
+    return d_ptr->data.value(Nepomuk::Vocabulary::NCO::imAccountType());
 }

@@ -25,6 +25,8 @@
 
 #include "kpeople_export.h"
 
+class PersonCacheItemSet;
+class PersonCacheItem;
 class IMPersonsModel;
 class PersonCache;
 
@@ -37,9 +39,14 @@ public:
 
     IMPersonsModel *model() const;
 
+private Q_SLOTS:
+    void onPersonAddedToCache(PersonCacheItem *person);
+
 private:
+    //FIXME d-pointer
     PersonCache *m_personCache;
     IMPersonsModel *m_model;
+    PersonCacheItemSet *m_data;
 };
 
 #endif // IM_PERSONS_MANAGER_H

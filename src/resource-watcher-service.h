@@ -18,32 +18,34 @@
 */
 
 
-#ifndef IM_PERSON_CACHE_ITEM_FACET_H
-#define IM_PERSON_CACHE_ITEM_FACET_H
+#ifndef RESOURCE_WATCHER_SERVICE_H
+#define RESOURCE_WATCHER_SERVICE_H
 
-#include <QtCore/QtGlobal>
-#include <QString>
-#include <QUrl>
+#include <QObject>
+#include <Nepomuk/Resource>
+#include <Nepomuk/Types/Property>
 
-#include "person-cache-item.h"
+class ResourceWatcherServicePrivate;
 
-class IMPersonCacheItemFacetPrivate;
-
-class IMPersonCacheItemFacet : public PersonCacheItem {
-
-//     Q_DECLARE_PRIVATE(IMPersonCacheItemFacet);
-    Q_DISABLE_COPY(IMPersonCacheItemFacet);
-
+class ResourceWatcherService : public QObject
+{
+    Q_OBJECT
 public:
-    IMPersonCacheItemFacet(const QUrl &uri);
-    virtual ~IMPersonCacheItemFacet();
+    ResourceWatcherService(QObject *parent = 0);
+    virtual ~ResourceWatcherService();
 
-    QString label() const;
-    QString imNickname() const;
-    QString imAccountType() const;
+Q_SIGNALS:
+    void personCreated(Nepomuk::Resource, QList<QUrl>);
+    void personRemoved(QUrl, QList<QUrl>);
+    void propertyChanged();
+
+public Q_SLOTS:
+    void onPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value);
 
 private:
-//     IMPersonCacheItemFacetPrivate * const d_ptr;
+    ResourceWatcherServicePrivate * const d_ptr;
+
+    friend class ResourceWatcherService;
 };
 
-#endif // IM_PERSON_CACHE_ITEM_FACET_H
+#endif // RESOURCE_WATCHER_SERVICE_H

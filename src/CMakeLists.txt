@@ -2,7 +2,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set (kpeople_SRCS im-persons-manager.cpp
+set (kpeople_SRCS resource-watcher-service.cpp im-persons-manager.cpp
      im-person-cache-item-facet.cpp
      im-persons-model.cpp
 #      basic-person-cache-item-facet.cpp
@@ -36,6 +36,8 @@ target_link_libraries (kpeople
                        ${KDE4_KIO_LIBS}
                        ${NEPOMUK_LIBRARIES}
                        ${NEPOMUK_QUERY_LIBRARIES}
+                       nepomukdatamanagement
+
 )
 
 set_target_properties (kpeople PROPERTIES

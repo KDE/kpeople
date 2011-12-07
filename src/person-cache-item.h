@@ -42,10 +42,12 @@ public:
 
     Q_DECLARE_FLAGS(FacetTypes, FacetType);
 
-    PersonCacheItem();
+    PersonCacheItem(const QUrl &uri);
     virtual ~PersonCacheItem();
 
-    void addData(const QString &key, const QString &value);
+    QUrl uri() const;
+
+    void addData(const QUrl &key, const QString &value);
     void addHashData(const QString &key, const QUrl &uri);
     void addFacet(FacetTypes facet);
 

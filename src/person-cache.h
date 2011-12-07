@@ -25,6 +25,9 @@
 #include <QtCore/QObject>
 #include "person-cache-item.h"
 
+#include <Nepomuk/Resource>
+#include <Nepomuk/Types/Property>
+
 #include "kpeople_export.h"
 
 class PersonCacheItem;
@@ -48,7 +51,15 @@ public:
      * @return the PersonCacheItemSet for that query. This should be deleted immediately you have
      * finished with it to avoid stuff being kept unnecessarily long in the cache.
      */
-    PersonCacheItemSet *query(PersonCacheItem::FacetTypes facetType, const QString &query);
+    PersonCacheItemSet *query(const QString &query, PersonCacheItem::FacetTypes facetType, QList<QUrl> requestedKeys);
+
+Q_SIGNALS:
+    void personAddedToCache(PersonCacheItem *person);
+
+private Q_SLOTS:
+    void onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types);
+    void onPersonRemoved();
+    void onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value);
 
 private:
     PersonCache();

@@ -26,20 +26,25 @@
 
 #include <KDebug>
 #include <KGlobal>
+#include <KUrl>
 
 #include <QtCore/QHash>
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
+
 #include <Nepomuk/ResourceManager>
+#include <Nepomuk/Variant>
+
+#include <Nepomuk/Vocabulary/PIMO>
+#include <Nepomuk/Vocabulary/NCO>
+#include <Soprano/Vocabulary/NAO>
+
 #include "basic-person-cache-item-facet.h"
 #include "person-cache-item.h"
 #include "im-person-cache-item-facet.h"
-#include <qmenu.h>
-#include <KUrl>
-
-
+#include "resource-watcher-service.h"
 
 /******************************** PersonCache::Private ********************************************/
 
@@ -59,6 +64,9 @@ public:
 
     QHash<QString, PersonCacheItemSetPrivate*> queryResultSets;
     QMultiHash<PersonCacheItemSetPrivate*, PersonCacheItemSet*> itemSets;
+    QHash<QUrl, PersonCacheItem*> persons;
+
+    ResourceWatcherService *watcher;
 
 };
 
@@ -78,7 +86,6 @@ public:
     }
 
     PersonCache *q;
-    QHash<QUrl, PersonCacheItem*> persons;
 };
 
 K_GLOBAL_STATIC(PersonCacheHelper, s_globalPersonCache)
@@ -104,6 +111,10 @@ PersonCache::PersonCache()
 
     Q_ASSERT(!s_globalPersonCache->q);
     s_globalPersonCache->q = this;
+
+    d_ptr->watcher = new ResourceWatcherService(this);
+    connect(d_ptr->watcher, SIGNAL(personCreated(Nepomuk::Resource,QList<QUrl>)),
+            this, SLOT(onNewPersonCreated(Nepomuk::Resource,QList<QUrl>)));
 }
 
 PersonCache::~PersonCache()
@@ -113,7 +124,7 @@ PersonCache::~PersonCache()
     delete d_ptr;
 }
 
-PersonCacheItemSet *PersonCache::query(PersonCacheItem::FacetTypes facetType, const QString &query)
+PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::FacetTypes facetType, QList<QUrl> requestedKeys)
 {
     kDebug();
 
@@ -128,22 +139,34 @@ PersonCacheItemSet *PersonCache::query(PersonCacheItem::FacetTypes facetType, co
 
     IMPersonCacheItemFacet *person;
     QHash<QUrl, PersonCacheItem*> set;
+
+    QString keyString;
+
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
 
         if (set.keys().contains(currentUri)) {
             person = dynamic_cast<IMPersonCacheItemFacet*>(set.value(currentUri));
         } else {
-            person = new IMPersonCacheItemFacet();
+            person = new IMPersonCacheItemFacet(currentUri);
             set.insert(currentUri, person);
             person->addFacet(facetType);
         }
 
-        person->addData(QLatin1String("prefLabel"), it[QLatin1String("label")].literal().toString());
-        person->addHashData(QLatin1String("hasEmailAddress"), it[QLatin1String("email")].uri());
+        Q_FOREACH(const QUrl &keyUri, requestedKeys) {
+            keyString = keyUri.toString();
+            //convert every key to correspond to the nepomuk bindings
+            //FIXME: get this method out of the loop, it repeats too many times for nothing
+            keyString = keyString.right(keyString.length() - keyString.lastIndexOf(QLatin1Char('/')) - 1).replace(QLatin1Char('#'), QLatin1Char('_'));
+
+            person->addData(keyUri, it[keyString].toString());
+
+            kDebug() << keyString << it[keyString].toString();
+        }
+
     }
 
-    s_globalPersonCache->persons.unite(set);
+    d_ptr->persons.unite(set);
 
     // Create the PersonCacheItemSetPrivate instance.
     PersonCacheItemSetPrivate *pcisp = new PersonCacheItemSetPrivate(set, this);
@@ -181,6 +204,30 @@ void PersonCache::removeItemSet(PersonCacheItemSet *itemSet)
     }
 }
 
+void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
+{
+    PersonCacheItem *person = new PersonCacheItem(res.uri());
+    d_ptr->persons.insert(res.uri(), person);
+
+    QHashIterator<QString, Nepomuk::Variant> i(res.allProperties());
+
+    while (i.hasNext()) {
+        i.next();
+        kDebug() << i.key() << i.value();
+    }
+
+    emit personAddedToCache(person);
+}
+
+void PersonCache::onPersonRemoved()
+{
+
+}
+
+void PersonCache::onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value)
+{
+
+}
+
 
 #include "person-cache.moc"
-

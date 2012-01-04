@@ -1,0 +1,52 @@
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix telepathy:     <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#> .
+@prefix nao:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nao#> .
+@prefix nrl:     <http://www.semanticdesktop.org/ontologies/2007/08/15/nrl#> .
+@prefix nco:     <http://www.semanticdesktop.org/ontologies/2007/03/22/nco#> .
+@prefix nie:     <http://www.semanticdesktop.org/ontologies/2007/01/19/nie#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+telepathy: {telepathy:accountIdentifier
+     a rdf:Property ;
+          rdfs:subPropertyOf nao:identifier ;
+          rdfs:comment "Identifier of a Local Telepathy Account (as given by the Telepathy Account Manager).";
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "accountIdentifier" ;
+          rdfs:range xsd:string ;
+          nrl:maxCardinality "1".
+
+            telepathy:statusType
+     a rdf:Property ;
+          rdfs:comment "The current presence type as defined by the Telepathy Spec. Invalid values (by the Telepathy spec) should be considered as 0, Unset.";
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "statusType" ;
+          rdfs:range xsd:integer ;
+          nrl:maxCardinality "1" .
+
+            telepathy:avatar
+     a rdf:Property ;
+          rdfs:comment "The photo which is the IM Account's avatar. This is a special case of the nco:photo property of the parent nco:personContact." ;
+          rdfs:domain nco:IMAccount ;
+          rdfs:label "avatar" ;
+          rdfs:range nie:DataObject ;
+          nrl:maxCardinality "1" .
+}
+
+<http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>
+{
+    telepathy:
+          a       nrl:DocumentGraph , nrl:Ontology ;
+          nao:hasDefaultNamespace "http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#" ;
+          nao:hasDefaultNamespaceAbbreviation "telepathy" ;
+          nao:lastModified "2009-06-20T20:46:32.866Z" ;
+          nao:serializationLanguage "TriG" ;
+          nao:status "Testing" ;
+          nrl:updatable "0" ;
+          nao:version "1" .
+
+    <http://nepomuk.kde.org/ontologies/2009/06/20/telepathy/metadata>
+          a       nrl:GraphMetadata , nrl:Ontology ;
+          nao:serializationLanguage "TriG" ;
+          nrl:coreGraphMetadataFor telepathy: .
+}

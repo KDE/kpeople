@@ -31,7 +31,7 @@ class IMPersonCacheItemFacetPrivate;
 
 class IMPersonCacheItemFacet : public PersonCacheItem {
 
-//     Q_DECLARE_PRIVATE(IMPersonCacheItemFacet);
+    Q_DECLARE_PRIVATE(IMPersonCacheItemFacet);
     Q_DISABLE_COPY(IMPersonCacheItemFacet);
 
 public:
@@ -39,8 +39,12 @@ public:
     virtual ~IMPersonCacheItemFacet();
 
     QString label() const;
+    QString avatarPath() const;
     QString imNickname() const;
     QString imAccountType() const;
+    int imStatusType() const;
+    QString accountId() const;
+    QString contactId() const;
 
 private:
 //     IMPersonCacheItemFacetPrivate * const d_ptr;

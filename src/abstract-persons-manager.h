@@ -18,34 +18,32 @@
 */
 
 
-#ifndef IM_PERSONS_MANAGER_H
-#define IM_PERSONS_MANAGER_H
+#ifndef ABSTRACT_PERSONS_MANAGER_H
+#define ABSTRACT_PERSONS_MANAGER_H
 
-#include <abstract-persons-manager.h>
+#include <QObject>
+
+class AbstractPersonsManagerPrivate;
+class PersonCache;
+class PersonCacheItem;
 
 #include "kpeople_export.h"
 
-class PersonCacheItemSet;
-class PersonCacheItem;
-class IMPersonsModel;
-class PersonCache;
-class IMPersonsManagerPrivate;
-
-class KPEOPLE_EXPORT IMPersonsManager : public AbstractPersonsManager
+class KPEOPLE_EXPORT AbstractPersonsManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit IMPersonsManager(PersonCache *pc, QObject* parent = 0);
-    ~IMPersonsManager();
+    explicit AbstractPersonsManager(PersonCache *pc, QObject *parent = 0);
+    virtual ~AbstractPersonsManager();
 
-    IMPersonsModel *model() const;
+public Q_SLOTS:
+    virtual void onPersonAddedToCache(PersonCacheItem *person) = 0;
 
-private Q_SLOTS:
-    void onPersonAddedToCache(PersonCacheItem *person);
+protected:
+    AbstractPersonsManagerPrivate * const d_ptr;
 
 private:
-    IMPersonsManagerPrivate * const d_ptr;
-    Q_DECLARE_PRIVATE(IMPersonsManager)
+    Q_DECLARE_PRIVATE(AbstractPersonsManager)
 };
 
-#endif // IM_PERSONS_MANAGER_H
+#endif // ABSTRACT_PERSONS_MANAGER_H

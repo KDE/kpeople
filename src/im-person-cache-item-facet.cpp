@@ -22,25 +22,27 @@
 
 #include <KDebug>
 
-#include "person-cache-item_p.h"
 #include <Soprano/Vocabulary/NAO>
 #include <Nepomuk/Vocabulary/NCO>
 
+#include "person-cache-item_p.h"
+#include <ontologies/telepathy.h>
+
 /****************************** IMPersonCacheItemFacet::Private ********************************/
 
-class IMPersonCacheItemFacetPrivate {
+class IMPersonCacheItemFacetPrivate : public PersonCacheItemPrivate {
 
-protected:
-    Q_DECLARE_PUBLIC(IMPersonCacheItemFacet);
-    IMPersonCacheItemFacet * const q_ptr;
-
-public:
-    explicit IMPersonCacheItemFacetPrivate(IMPersonCacheItemFacet *q)
-    : q_ptr(q)
-    { }
-
-    virtual ~IMPersonCacheItemFacetPrivate()
-    { }
+// protected:
+//     Q_DECLARE_PUBLIC(IMPersonCacheItemFacet);
+//     IMPersonCacheItemFacet * const q_ptr;
+//
+// public:
+//     explicit IMPersonCacheItemFacetPrivate(IMPersonCacheItemFacet *q)
+//     : q_ptr(q)
+//     { }
+//
+//     virtual ~IMPersonCacheItemFacetPrivate()
+//     { }
 
 };
 
@@ -63,15 +65,42 @@ IMPersonCacheItemFacet::~IMPersonCacheItemFacet()
 
 QString IMPersonCacheItemFacet::label() const
 {
-    return d_ptr->data.value(Soprano::Vocabulary::NAO::prefLabel());
+    Q_D(const IMPersonCacheItemFacet);
+    return d->data.value(Soprano::Vocabulary::NAO::prefLabel());
+}
+
+QString IMPersonCacheItemFacet::avatarPath() const
+{
+    Q_D(const IMPersonCacheItemFacet);
+    return d->data.value(Soprano::Vocabulary::NAO::prefSymbol());
 }
 
 QString IMPersonCacheItemFacet::imNickname() const
 {
-    return d_ptr->data.value(Nepomuk::Vocabulary::NCO::imNickname());
+    Q_D(const IMPersonCacheItemFacet);
+    return d->data.value(Nepomuk::Vocabulary::NCO::imNickname());
 }
 
 QString IMPersonCacheItemFacet::imAccountType() const
 {
-    return d_ptr->data.value(Nepomuk::Vocabulary::NCO::imAccountType());
+    Q_D(const IMPersonCacheItemFacet);
+    return d->data.value(Nepomuk::Vocabulary::NCO::imAccountType());
+}
+
+int IMPersonCacheItemFacet::imStatusType() const
+{
+    Q_D(const IMPersonCacheItemFacet);
+    return d->data.value(Nepomuk::Vocabulary::Telepathy::statusType()).toInt();
+}
+
+QString IMPersonCacheItemFacet::accountId() const
+{
+    Q_D(const IMPersonCacheItemFacet);
+    return d->data.value(Nepomuk::Vocabulary::Telepathy::accountIdentifier());
+}
+
+QString IMPersonCacheItemFacet::contactId() const
+{
+    Q_D(const IMPersonCacheItemFacet);
+    return d->data.value(Nepomuk::Vocabulary::NCO::imID());
 }

@@ -25,37 +25,52 @@
 #include <Soprano/Vocabulary/NAO>
 #include <Nepomuk/Vocabulary/NCO>
 
+#include "ontologies/telepathy.h"
+
 #include "person-cache.h"
 #include "person-cache-item-set.h"
 #include "im-persons-model.h"
+#include "abstract-persons-manager_p.h"
+
+class IMPersonsManagerPrivate : public AbstractPersonsManagerPrivate {
+public:
+    IMPersonsModel *model;
+    QList<QUrl> requestedKeys;
+};
 
 IMPersonsManager::IMPersonsManager(PersonCache *pc, QObject *parent)
-    : QObject(parent)
+    : AbstractPersonsManager(pc, parent), d_ptr(new IMPersonsManagerPrivate)
 {
-    m_personCache = pc;
+    Q_D(IMPersonsManager);
 
-    connect(m_personCache, SIGNAL(personAddedToCache(PersonCacheItem*)),
+    connect(pc, SIGNAL(personAddedToCache(PersonCacheItem*)),
             this, SLOT(onPersonAddedToCache(PersonCacheItem*)));
 
-    QList<QUrl> requestedKeys;
-    requestedKeys << Soprano::Vocabulary::NAO::prefLabel()
-                  << Nepomuk::Vocabulary::NCO::imNickname()
-                  << Nepomuk::Vocabulary::NCO::imAccountType()
-//                  << Nepomuk::Vocabulary::NCO::imStatusType()
-                  << Nepomuk::Vocabulary::NCO::hasEmailAddress();
+    d->requestedKeys << Soprano::Vocabulary::NAO::prefLabel()
+                     << Soprano::Vocabulary::NAO::prefSymbol()
+                     << Nepomuk::Vocabulary::NCO::imNickname()
+                     << Nepomuk::Vocabulary::NCO::imAccountType()
+                     << Nepomuk::Vocabulary::NCO::imID()
+                     << Nepomuk::Vocabulary::Telepathy::statusType()
+                     << Nepomuk::Vocabulary::NCO::imStatus()
+                     << Nepomuk::Vocabulary::NCO::hasEmailAddress()
+                     << Nepomuk::Vocabulary::Telepathy::accountIdentifier();
 
     QString query = QLatin1String("select distinct ?uri ?nao_prefLabel ?pimo_groundingOccurrence ?nco_hasIMAccount"
-                                  " ?nco_imNickname ?nco_imStatusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                                  " ?nao_prefSymbol "
+                                  " ?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
+                                  " ?nao_prefSymbol ?telepathy_accountIdentifier ?nco_imStatus "
 
                                   "WHERE { ?uri a pimo:Person ."
 
-                                  "?uri                       pimo:groundingOccurrence  ?pimo_groundingOccurrence ."
-                                  "?pimo_groundingOccurrence  nco:hasIMAccount          ?nco_hasIMAccount ."
-                                  "?nco_hasIMAccount          nco:imNickname            ?nco_imNickname ."
-//                                  "?nco_hasIMAccount          nco:imStatusType          ?nco_imStatusType ."
-                                  "?nco_hasIMAccount          nco:imID                  ?nco_imID . "
-                                  "?nco_hasIMAccount          nco:imAccountType         ?nco_imAccountType ."
+                                  "?uri                       pimo:groundingOccurrence    ?pimo_groundingOccurrence ."
+                                  "?pimo_groundingOccurrence  nco:hasIMAccount            ?nco_hasIMAccount ."
+                                  "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname ."
+                                  "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType ."
+                                  "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus ."
+                                  "?nco_hasIMAccount          nco:imID                    ?nco_imID . "
+                                  "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType ."
+                                  "?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy ."
+                                  "?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier ."
 
                                   "OPTIONAL { ?uri                       nao:prefLabel        ?nao_prefLabel . }"
                                   "OPTIONAL { ?uri                       nao:prefSymbol       ?nao_prefSymbol . }"
@@ -64,22 +79,11 @@ IMPersonsManager::IMPersonsManager(PersonCache *pc, QObject *parent)
                                   "}");
 
 
-//     select distinct ?uri ?label ?go ?im ?email ?photo ?a ?b where { ?uri a pimo:Person .
-//     OPTIONAL { ?uri nao:prefLabel ?label . }
-//     ?uri pimo:groundingOccurrence ?go .
-//
-//     ?go nco:hasIMAccount ?im .
-//     ?im nco:imNickname ?a .
-//     ?im nco:imID ?b .
-//     OPTIONAL { ?go nco:hasEmailAddress ?email . }
-//     OPTIONAL { ?uri nao:prefSymbol ?photo . }
-//     }
-
-    m_data = pc->instance()->query(query, PersonCacheItem::IMFacet, requestedKeys);
+    d->data = pc->instance()->query(query, PersonCacheItem::IMFacet, d->requestedKeys);
 
 //     kDebug() << m_data->data().keys();
 
-    m_model = new IMPersonsModel(m_data, 0);
+    d->model = new IMPersonsModel(d->data, 0);
 }
 
 IMPersonsManager::~IMPersonsManager()
@@ -89,7 +93,8 @@ IMPersonsManager::~IMPersonsManager()
 
 IMPersonsModel *IMPersonsManager::model() const
 {
-    return m_model;
+    Q_D(const IMPersonsManager);
+    return d->model;
 }
 
 void IMPersonsManager::onPersonAddedToCache(PersonCacheItem *person)

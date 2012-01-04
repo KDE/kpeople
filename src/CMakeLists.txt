@@ -2,7 +2,12 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set (kpeople_SRCS resource-watcher-service.cpp im-persons-manager.cpp
+set (kpeople_SRCS nepomuk-tp-channel-delegate.cpp
+     pim-persons-model.cpp
+     abstract-persons-manager.cpp
+#      pim-persons-manager.cpp
+     resource-watcher-service.cpp
+     im-persons-manager.cpp
      im-person-cache-item-facet.cpp
      im-persons-model.cpp
 #      basic-person-cache-item-facet.cpp
@@ -12,10 +17,12 @@ set (kpeople_SRCS resource-watcher-service.cpp im-persons-manager.cpp
 )
 
 set (kpeople_INST_HDRS
+     abstract-persons-manager.h
      kpeople_export.h
      im-persons-manager.h
      im-persons-model.h
      basic-person-cache-item-facet.h
+     nepomuk-tp-channel-delegate.h
      person-cache.h
      person-cache-item.h
      person-cache-item-set.h
@@ -36,7 +43,10 @@ target_link_libraries (kpeople
                        ${KDE4_KIO_LIBS}
                        ${NEPOMUK_LIBRARIES}
                        ${NEPOMUK_QUERY_LIBRARIES}
+                       ${TELEPATHY_QT4_LIBRARIES}
+                       ${KTP_LIBRARIES}
                        nepomukdatamanagement
+                       ontologies
 
 )
 

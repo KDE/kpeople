@@ -22,6 +22,14 @@
 #include "person-cache-item-set.h"
 #include "im-person-cache-item-facet.h"
 
+#include <QPixmap>
+
+#include <KDebug>
+#include <KIcon>
+
+#include <TelepathyQt/Presence>
+#include <KTp/presence.h>
+
 IMPersonsModel::IMPersonsModel(PersonCacheItemSet *data, QObject* parent)
     : QAbstractItemModel(parent)
 {
@@ -42,6 +50,17 @@ QVariant IMPersonsModel::data(const QModelIndex& index, int role) const
     switch (role) {
         case Qt::DisplayRole:
             return dynamic_cast<IMPersonCacheItemFacet*>(m_data.values().at(index.row()))->label();
+        case IMPersonsModel::AccountIdRole:
+            return dynamic_cast<IMPersonCacheItemFacet*>(m_data.values().at(index.row()))->accountId();
+        case IMPersonsModel::ContactIdRole:
+            return dynamic_cast<IMPersonCacheItemFacet*>(m_data.values().at(index.row()))->contactId();
+        case Qt::DecorationRole: //IMPersonsModel::PresenceIconRole
+            QPixmap presencePixmap;
+            Tp::ConnectionPresenceType status = (Tp::ConnectionPresenceType)dynamic_cast<IMPersonCacheItemFacet*>(m_data.values().at(index.row()))->imStatusType();
+
+            KTp::Presence presence(Tp::Presence(status, QString(), QString()));
+            presencePixmap = presence.icon().pixmap(16, 16);
+            return QVariant::fromValue(presencePixmap);
     }
 
     return QVariant();

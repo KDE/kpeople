@@ -18,34 +18,43 @@
 */
 
 
-#ifndef IM_PERSONS_MANAGER_H
-#define IM_PERSONS_MANAGER_H
+#include "pim-persons-model.h"
+#include "person-cache-item-set.h"
 
-#include <abstract-persons-manager.h>
-
-#include "kpeople_export.h"
-
-class PersonCacheItemSet;
-class PersonCacheItem;
-class IMPersonsModel;
-class PersonCache;
-class IMPersonsManagerPrivate;
-
-class KPEOPLE_EXPORT IMPersonsManager : public AbstractPersonsManager
+PimPersonsModel::PimPersonsModel(PersonCacheItemSet *data, QObject* parent)
+    : QAbstractItemModel(parent)
 {
-    Q_OBJECT
-public:
-    explicit IMPersonsManager(PersonCache *pc, QObject* parent = 0);
-    ~IMPersonsManager();
 
-    IMPersonsModel *model() const;
+}
 
-private Q_SLOTS:
-    void onPersonAddedToCache(PersonCacheItem *person);
 
-private:
-    IMPersonsManagerPrivate * const d_ptr;
-    Q_DECLARE_PRIVATE(IMPersonsManager)
-};
+PimPersonsModel::~PimPersonsModel()
+{
 
-#endif // IM_PERSONS_MANAGER_H
+}
+
+
+QVariant PimPersonsModel::data(const QModelIndex& index, int role) const
+{
+    return QVariant();
+}
+
+int PimPersonsModel::columnCount(const QModelIndex& parent) const
+{
+    return 0;
+}
+
+int PimPersonsModel::rowCount(const QModelIndex& parent) const
+{
+    return 0;
+}
+
+QModelIndex PimPersonsModel::parent(const QModelIndex& child) const
+{
+    return QModelIndex();
+}
+
+QModelIndex PimPersonsModel::index(int row, int column, const QModelIndex& parent) const
+{
+    return QModelIndex();
+}

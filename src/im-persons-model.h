@@ -33,7 +33,16 @@ class PersonCacheItemSet;
 class KPEOPLE_EXPORT IMPersonsModel : public QAbstractItemModel
 {
     Q_OBJECT
+    Q_ENUMS(Role)
+
 public:
+    enum Role {
+        // general roles
+        ContactIdRole = Qt::UserRole,
+        AccountIdRole,
+        ConnectionStatusTypeRole,
+        PresenceIconRole
+    };
     IMPersonsModel(PersonCacheItemSet *data, QObject *parent = 0);
     ~IMPersonsModel();
 

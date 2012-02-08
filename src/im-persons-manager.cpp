@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    IM Persons manager
+    Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -31,11 +31,12 @@
 #include "person-cache-item-set.h"
 #include "im-persons-model.h"
 #include "abstract-persons-manager_p.h"
+#include "im-person-cache-item-facet.h"
 
 class IMPersonsManagerPrivate : public AbstractPersonsManagerPrivate {
 public:
     IMPersonsModel *model;
-    QList<QUrl> requestedKeys;
+    QHash<QUrl, IMPersonCacheItemFacet*> data;
 };
 
 IMPersonsManager::IMPersonsManager(PersonCache *pc, QObject *parent)
@@ -51,10 +52,12 @@ IMPersonsManager::IMPersonsManager(PersonCache *pc, QObject *parent)
                      << Nepomuk::Vocabulary::NCO::imNickname()
                      << Nepomuk::Vocabulary::NCO::imAccountType()
                      << Nepomuk::Vocabulary::NCO::imID()
-                     << Nepomuk::Vocabulary::Telepathy::statusType()
+//                      << Nepomuk::Vocabulary::Telepathy::statusType()
+//                      << Nepomuk::Vocabulary::Telepathy::accountIdentifier()
+                     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
+                     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#accountIdentifier"))
                      << Nepomuk::Vocabulary::NCO::imStatus()
-                     << Nepomuk::Vocabulary::NCO::hasEmailAddress()
-                     << Nepomuk::Vocabulary::Telepathy::accountIdentifier();
+                     << Nepomuk::Vocabulary::NCO::hasEmailAddress();
 
     QString query = QLatin1String("select distinct ?uri ?nao_prefLabel ?pimo_groundingOccurrence ?nco_hasIMAccount"
                                   " ?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
@@ -79,16 +82,22 @@ IMPersonsManager::IMPersonsManager(PersonCache *pc, QObject *parent)
                                   "}");
 
 
-    d->data = pc->instance()->query(query, PersonCacheItem::IMFacet, d->requestedKeys);
+    createPersonsInterface(pc->instance()->query(query, PersonCacheItem::IMFacet, d->requestedKeys));
 
 //     kDebug() << m_data->data().keys();
 
-    d->model = new IMPersonsModel(d->data, 0);
+    d->model = new IMPersonsModel(&d->data, 0);
 }
 
 IMPersonsManager::~IMPersonsManager()
 {
 
+}
+
+QList<QUrl> IMPersonsManager::requestedKeys() const
+{
+    Q_D(const IMPersonsManager);
+    return d->requestedKeys;
 }
 
 IMPersonsModel *IMPersonsManager::model() const
@@ -99,5 +108,21 @@ IMPersonsModel *IMPersonsManager::model() const
 
 void IMPersonsManager::onPersonAddedToCache(PersonCacheItem *person)
 {
-    //TODO: if the person fits the IM persons, add him to the set
+    Q_D(IMPersonsManager);
+    if (person->hasFacet(PersonCacheItem::IMFacet)) {
+        d->model->beginInsertData(QModelIndex(), d->data.size(), d->data.size());
+        d->data.insert(person->uri(), new IMPersonCacheItemFacet(person));
+        d->model->endInsertData();
+    }
+}
+
+void IMPersonsManager::createPersonsInterface(PersonCacheItemSet *persons)
+{
+    Q_D(IMPersonsManager);
+
+    QHashIterator<QUrl, PersonCacheItem*> i(persons->data());
+    while (i.hasNext()) {
+        i.next();
+        d->data.insert(i.key(), new IMPersonCacheItemFacet(i.value()));
+    }
 }

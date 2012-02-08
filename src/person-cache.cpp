@@ -65,7 +65,7 @@ public:
     QHash<QString, PersonCacheItemSetPrivate*> queryResultSets;
     QMultiHash<PersonCacheItemSetPrivate*, PersonCacheItemSet*> itemSets;
     QHash<QUrl, PersonCacheItem*> persons;
-    QList<QUrl> allRequestedKeys;
+    QMultiHash<PersonCacheItem::FacetType, QUrl> allRequestedKeys;
 
     ResourceWatcherService *watcher;
 
@@ -125,7 +125,7 @@ PersonCache::~PersonCache()
     delete d_ptr;
 }
 
-PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::FacetTypes facetType, QList<QUrl> requestedKeys)
+PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::FacetType facetType, QList<QUrl> requestedKeys)
 {
     kDebug();
 
@@ -138,7 +138,7 @@ PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::Fa
     Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query,
                                                                                                       Soprano::Query::QueryLanguageSparql);
 
-    IMPersonCacheItemFacet *person;
+    PersonCacheItem *person;
     QHash<QUrl, PersonCacheItem*> set;
 
     QString keyString;
@@ -147,9 +147,9 @@ PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::Fa
         QUrl currentUri = it[QLatin1String("uri")].uri();
 
         if (set.keys().contains(currentUri)) {
-            person = dynamic_cast<IMPersonCacheItemFacet*>(set.value(currentUri));
+            person = set.value(currentUri);
         } else {
-            person = new IMPersonCacheItemFacet(currentUri);
+            person = new PersonCacheItem(currentUri);
             set.insert(currentUri, person);
             person->addFacet(facetType);
         }
@@ -161,20 +161,17 @@ PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::Fa
             keyString = keyString.right(keyString.length() - keyString.lastIndexOf(QLatin1Char('/')) - 1).replace(QLatin1Char('#'), QLatin1Char('_'));
 
             person->addData(keyUri, it[keyString].toString());
-
-//             kDebug() << keyString << it[keyString].toString();
+            d_ptr->allRequestedKeys.insert(facetType, keyUri);
         }
 
     }
 
     d_ptr->persons.unite(set);
-    d_ptr->allRequestedKeys.append(requestedKeys);
 
     // Create the PersonCacheItemSetPrivate instance.
     PersonCacheItemSetPrivate *pcisp = new PersonCacheItemSetPrivate(set, this);
 
     // Save it to the hash of query to PCISPs
-    // FIXME: Use the actual query as the key
     d_ptr->queryResultSets.insert(query, pcisp);
 
     // Create a PersonCacheItemSet to return.
@@ -208,19 +205,37 @@ void PersonCache::removeItemSet(PersonCacheItemSet *itemSet)
 
 void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
 {
+    Q_D(PersonCache);
     PersonCacheItem *person = new PersonCacheItem(res.uri());
 
-    Q_FOREACH (const QUrl &keyUri, d_ptr->allRequestedKeys) {
-        if (res.hasProperty(keyUri)) {
-            if (res.property(keyUri).isString()) {
-                person->addData(keyUri, res.property(keyUri).toString());
-            } else if (res.property(keyUri).isStringList()) {
-                person->addData(keyUri, res.property(keyUri).toStringList());
+    kDebug() << "New person created in Nepomuk";
+
+    bool facetComplete = true;
+    QList<PersonCacheItem::FacetType> keys = d->allRequestedKeys.uniqueKeys();
+    Q_FOREACH (const PersonCacheItem::FacetType &facet, keys ) {
+        QList<QUrl> values = d->allRequestedKeys.values(facet);
+        Q_FOREACH (const QUrl &keyUri, values) {
+            if (res.hasProperty(keyUri)) {
+                if (res.property(keyUri).isString()) {
+                    person->addData(keyUri, res.property(keyUri).toString());
+                } else if (res.property(keyUri).isStringList()) {
+                    person->addData(keyUri, res.property(keyUri).toStringList());
+                }
+            } else {
+                facetComplete = false;
+                break;
             }
         }
+
+        if (facetComplete) {
+            person->addFacet(facet);
+            kDebug() << "Adding facet:" << facet;
+        }
+
+        facetComplete = true;
     }
 
-    d_ptr->persons.insert(res.uri(), person);
+    d->persons.insert(res.uri(), person);
 
     emit personAddedToCache(person);
 }

@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    PIM Persons manager
+    Copyright (C) 2011 Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,7 @@
 #include "abstract-persons-manager_p.h"
 #include <Soprano/Vocabulary/NAO>
 #include <Nepomuk/Vocabulary/NCO>
+#include <ontologies/telepathy.h>
 
 class IMPersonsManagerPrivate : public AbstractPersonsManagerPrivate {
 public:
@@ -44,7 +45,7 @@ PimPersonsManager::PimPersonsManager(PersonCache *pc, QObject *parent)
                      << Soprano::Vocabulary::NAO::prefSymbol()
                      << Nepomuk::Vocabulary::NCO::hasPhoneNumber()
                      << Nepomuk::Vocabulary::NCO::hasPostalAddress()
-    //                      << Nepomuk::Vocabulary::NCO::imStatusType()
+                     << Nepomuk::Vocabulary::Telepathy::statusType()
                      << Nepomuk::Vocabulary::NCO::hasEmailAddress();
 
     QString query = QLatin1String("select distinct ?uri ?nao_prefLabel ?pimo_groundingOccurrence ?nco_hasIMAccount"
@@ -54,14 +55,14 @@ PimPersonsManager::PimPersonsManager(PersonCache *pc, QObject *parent)
                                     "WHERE { ?uri a pimo:Person ."
 
                                     "?uri                       pimo:groundingOccurrence  ?pimo_groundingOccurrence ."
-                                    "?pimo_groundingOccurrence  nco:hasIMAccount          ?nco_hasIMAccount ."
-                                    "?pimo_groundingOccurrence  nco:hasEmailAddress       ?nco_hasEmailAddress ."
 
+                                    "OPTIONAL { ?pimo_groundingOccurrence  nco:hasEmailAddress       ?nco_hasEmailAddress . }"
                                     "OPTIONAL { ?uri                       nao:prefLabel        ?nao_prefLabel . }"
                                     "OPTIONAL { ?uri                       nao:prefSymbol       ?nao_prefSymbol . }"
                                     "OPTIONAL { ?nco_hasIMAccount          nco:imID             ?nco_imID . }"
                                     "OPTIONAL { ?pimo_groundingOccurrence  nco:hasPhoneNumber   ?nco_hasPhoneNumber . }"
                                     "OPTIONAL { ?pimo_groundingOccurrence  nco:hasPostalAddress ?nco_hasPostalAddress . }"
+                                    "OPTIONAL { ?pimo_groundingOccurrence  nco:hasIMAccount     ?nco_hasIMAccount . }"
                                     "}");
 
 

@@ -2,7 +2,10 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set (kpeople_SRCS nepomuk-tp-channel-delegate.cpp
+set (kpeople_SRCS digikam-persons-model.cpp
+     digikam-person-cache-item-facet.cpp
+     digikam-persons-manager.cpp
+     nepomuk-tp-channel-delegate.cpp
      pim-persons-model.cpp
      abstract-persons-manager.cpp
 #      pim-persons-manager.cpp
@@ -18,6 +21,8 @@ set (kpeople_SRCS nepomuk-tp-channel-delegate.cpp
 
 set (kpeople_INST_HDRS
      abstract-persons-manager.h
+     digikam-persons-manager.h
+     digikam-persons-model.h
      kpeople_export.h
      im-persons-manager.h
      im-persons-model.h
@@ -46,7 +51,7 @@ target_link_libraries (kpeople
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KTP_LIBRARIES}
                        nepomukdatamanagement
-                       ontologies
+#                        ontologies
 
 )
 

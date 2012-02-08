@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    IM Person facet
+    Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -29,13 +29,13 @@
 
 class IMPersonCacheItemFacetPrivate;
 
-class IMPersonCacheItemFacet : public PersonCacheItem {
+class IMPersonCacheItemFacet {
 
     Q_DECLARE_PRIVATE(IMPersonCacheItemFacet);
     Q_DISABLE_COPY(IMPersonCacheItemFacet);
 
 public:
-    IMPersonCacheItemFacet(const QUrl &uri);
+    IMPersonCacheItemFacet(PersonCacheItem *item);
     virtual ~IMPersonCacheItemFacet();
 
     QString label() const;
@@ -47,7 +47,7 @@ public:
     QString contactId() const;
 
 private:
-//     IMPersonCacheItemFacetPrivate * const d_ptr;
+    IMPersonCacheItemFacetPrivate * const d_ptr;
 };
 
 #endif // IM_PERSON_CACHE_ITEM_FACET_H

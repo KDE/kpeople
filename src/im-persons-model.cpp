@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    IM Persons model
+    Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -30,10 +30,10 @@
 #include <TelepathyQt/Presence>
 #include <KTp/presence.h>
 
-IMPersonsModel::IMPersonsModel(PersonCacheItemSet *data, QObject* parent)
+IMPersonsModel::IMPersonsModel(QHash<QUrl, IMPersonCacheItemFacet*> *data, QObject *parent)
     : QAbstractItemModel(parent)
 {
-    m_data = data->data();
+    m_data = data;
 }
 
 IMPersonsModel::~IMPersonsModel()
@@ -49,14 +49,14 @@ QVariant IMPersonsModel::data(const QModelIndex& index, int role) const
 
     switch (role) {
         case Qt::DisplayRole:
-            return dynamic_cast<IMPersonCacheItemFacet*>(m_data.values().at(index.row()))->label();
+            return m_data->values().at(index.row())->label();
         case IMPersonsModel::AccountIdRole:
-            return dynamic_cast<IMPersonCacheItemFacet*>(m_data.values().at(index.row()))->accountId();
+            return m_data->values().at(index.row())->accountId();
         case IMPersonsModel::ContactIdRole:
-            return dynamic_cast<IMPersonCacheItemFacet*>(m_data.values().at(index.row()))->contactId();
+            return m_data->values().at(index.row())->contactId();
         case Qt::DecorationRole: //IMPersonsModel::PresenceIconRole
             QPixmap presencePixmap;
-            Tp::ConnectionPresenceType status = (Tp::ConnectionPresenceType)dynamic_cast<IMPersonCacheItemFacet*>(m_data.values().at(index.row()))->imStatusType();
+            Tp::ConnectionPresenceType status = (Tp::ConnectionPresenceType)m_data->values().at(index.row())->imStatusType();
 
             KTp::Presence presence(Tp::Presence(status, QString(), QString()));
             presencePixmap = presence.icon().pixmap(16, 16);
@@ -73,7 +73,7 @@ int IMPersonsModel::columnCount(const QModelIndex& parent) const
 
 int IMPersonsModel::rowCount(const QModelIndex& parent) const
 {
-    return m_data.size();
+    return m_data->size();
 }
 
 QModelIndex IMPersonsModel::parent(const QModelIndex& child) const
@@ -90,3 +90,12 @@ QModelIndex IMPersonsModel::index(int row, int column, const QModelIndex& parent
     return createIndex(row, column);
 }
 
+void IMPersonsModel::beginInsertData(const QModelIndex &index, int first, int last)
+{
+    beginInsertRows(index, first, last);
+}
+
+void IMPersonsModel::endInsertData()
+{
+    endInsertRows();
+}

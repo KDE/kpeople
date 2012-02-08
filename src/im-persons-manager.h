@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    IM Persons manager
+    Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,9 @@
 
 #include "kpeople_export.h"
 
+#include <QUrl>
+#include <QList>
+
 class PersonCacheItemSet;
 class PersonCacheItem;
 class IMPersonsModel;
@@ -39,11 +42,14 @@ public:
     ~IMPersonsManager();
 
     IMPersonsModel *model() const;
+    QList<QUrl> requestedKeys() const;
 
 private Q_SLOTS:
     void onPersonAddedToCache(PersonCacheItem *person);
 
 private:
+    void createPersonsInterface(PersonCacheItemSet *persons);
+
     IMPersonsManagerPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(IMPersonsManager)
 };

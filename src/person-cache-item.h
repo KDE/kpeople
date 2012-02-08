@@ -37,7 +37,8 @@ public:
     enum FacetType {
         BasicFacet = 0x0,
         IMFacet = 0x1,
-        PIMFacet = 0x2
+        PIMFacet = 0x2,
+        DigikamFacet = 0x4
     };
 
     Q_DECLARE_FLAGS(FacetTypes, FacetType);
@@ -51,6 +52,10 @@ public:
     void addData(const QUrl &key, const QStringList &values);
     void addHashData(const QString &key, const QUrl &uri);
     void addFacet(FacetTypes facet);
+    bool hasFacet(FacetType facet);
+
+    QString data(const QUrl &key);
+    QMultiHash<QUrl, QString> dataHash() const;
 
 protected:
     PersonCacheItemPrivate * d_ptr;

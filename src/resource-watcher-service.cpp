@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    Resource watcher
+    Copyright (C) 2011 Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 
 #include <nepomuk/resourcewatcher.h>
 #include <Nepomuk/Vocabulary/PIMO>
+#include <Nepomuk/Vocabulary/NCO>
 
 class ResourceWatcherServicePrivate {
 
@@ -41,6 +42,7 @@ ResourceWatcherService::ResourceWatcherService(QObject *parent)
     d_ptr->watcher = new Nepomuk::ResourceWatcher(this);
 
     d_ptr->watcher->addType(Nepomuk::Vocabulary::PIMO::Person());
+    d_ptr->watcher->addType(Nepomuk::Vocabulary::NCO::PersonContact());
 
     connect(d_ptr->watcher, SIGNAL(resourceCreated(Nepomuk::Resource,QList<QUrl>)),
             this, SIGNAL(personCreated(Nepomuk::Resource,QList<QUrl>)));

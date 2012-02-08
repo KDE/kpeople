@@ -1,6 +1,6 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2011  Martin Klapetek <email>
+    IM Persons model
+    Copyright (C) 2011  Martin Klapetek <martin.klapetek@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -27,6 +27,7 @@
 
 #include "kpeople_export.h"
 
+class IMPersonCacheItemFacet;
 class PersonCacheItem;
 class PersonCacheItemSet;
 
@@ -43,7 +44,7 @@ public:
         ConnectionStatusTypeRole,
         PresenceIconRole
     };
-    IMPersonsModel(PersonCacheItemSet *data, QObject *parent = 0);
+    IMPersonsModel(QHash<QUrl, IMPersonCacheItemFacet*> *data, QObject *parent = 0);
     ~IMPersonsModel();
 
     virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const;
@@ -52,8 +53,12 @@ public:
     virtual QModelIndex parent(const QModelIndex& child) const;
     virtual QModelIndex index(int row, int column, const QModelIndex& parent = QModelIndex()) const;
 
+    ///Called from Manager, so that the model can be properly updated
+    void beginInsertData(const QModelIndex &index, int first, int last);
+    void endInsertData();
+
 private:
-    QHash<QUrl, PersonCacheItem*> m_data;
+    QHash<QUrl, IMPersonCacheItemFacet*> *m_data;
 };
 
 #endif // IM_PERSONS_MODEL_H

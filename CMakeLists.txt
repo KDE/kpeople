@@ -33,5 +33,5 @@ include_directories (${KDE4_INCLUDES}
                      ${KTP_INCLUDE_DIR}
 )
 
-add_subdirectory (ontologies)
+# add_subdirectory (ontologies)
 add_subdirectory (src)

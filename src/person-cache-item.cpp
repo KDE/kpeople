@@ -23,9 +23,9 @@
 
 #include <KDebug>
 #include <QUrl>
+#include <QStringList>
 
 #include "person-cache-item_p.h"
-#include <QStringList>
 
 PersonCacheItem::PersonCacheItem(const QUrl &uri)
   : d_ptr(new PersonCacheItemPrivate(this))
@@ -41,31 +41,58 @@ PersonCacheItem::~PersonCacheItem()
     delete d_ptr;
 }
 
-void PersonCacheItem::addData(const QUrl &key, const QString& value)
+void PersonCacheItem::addData(const QUrl &key, const QString &value)
 {
+    Q_D(PersonCacheItem);
     kDebug() << "Inserting" << value << "(" << key << ")";
-    d_ptr->data.insert(key, value);
+    d->data.insert(key, value);
 }
 
 void PersonCacheItem::addData(const QUrl& key, const QStringList& values)
 {
+    Q_D(PersonCacheItem);
     Q_FOREACH (const QString &value, values) {
         kDebug() << "Inserting (multi)" << value << "(" << key << ")";
-        d_ptr->data.insert(key, value);
+        d->data.insert(key, value);
     }
 }
 
 void PersonCacheItem::addHashData(const QString& key, const QUrl& uri)
 {
-    d_ptr->dataUri.insert(key, uri);
+    Q_D(PersonCacheItem);
+    d->dataUri.insert(key, uri);
 }
 
 void PersonCacheItem::addFacet(PersonCacheItem::FacetTypes facets)
 {
-    d_ptr->facets |= facets;
+    Q_D(PersonCacheItem);
+    d->facets |= facets;
 }
 
 QUrl PersonCacheItem::uri() const
 {
-    return d_ptr->uri;
+    Q_D(const PersonCacheItem);
+    return d->uri;
+}
+
+QString PersonCacheItem::data(const QUrl &key)
+{
+    Q_D(PersonCacheItem);
+    return d->data.value(key);
+}
+
+QMultiHash<QUrl, QString> PersonCacheItem::dataHash() const
+{
+    Q_D(const PersonCacheItem);
+    return d->data;
+}
+
+bool PersonCacheItem::hasFacet(PersonCacheItem::FacetType facet)
+{
+    Q_D(const PersonCacheItem);
+    if (d->facets & facet) {
+        return true;
+    }
+
+    return false;
 }

@@ -20,13 +20,17 @@
 #ifndef ABSTRACT_PERSONS_MANAGER_PRIVATE_H
 #define ABSTRACT_PERSONS_MANAGER_PRIVATE_H
 
+#include <QHash>
+#include <QUrl>
+
 class PersonCache;
 class PersonCacheItemSet;
 
 class AbstractPersonsManagerPrivate {
 public:
     PersonCache *personCache;
-    PersonCacheItemSet *data;
+    QList<QUrl> requestedKeys;
+//     PersonCacheItemSet *data;
 };
 
 #endif ABSTRACT_PERSONS_MANAGER_PRIVATE_H

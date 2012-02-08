@@ -51,7 +51,7 @@ public:
      * @return the PersonCacheItemSet for that query. This should be deleted immediately you have
      * finished with it to avoid stuff being kept unnecessarily long in the cache.
      */
-    PersonCacheItemSet *query(const QString &query, PersonCacheItem::FacetTypes facetType, QList<QUrl> requestedKeys);
+    PersonCacheItemSet *query(const QString &query, PersonCacheItem::FacetType facetType, QList<QUrl> requestedKeys);
 
 Q_SIGNALS:
     void personAddedToCache(PersonCacheItem *person);

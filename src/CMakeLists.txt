@@ -9,6 +9,7 @@ set (kpeople_SRCS kpeople-manager.cpp
      nepomuk-tp-channel-delegate.cpp
      person-cache.cpp
      person-cache-item.cpp
+     resource-watcher-service.cpp
      tree-node.cpp
 )
 

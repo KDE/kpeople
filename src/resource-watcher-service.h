@@ -44,8 +44,6 @@ public Q_SLOTS:
 
 private:
     ResourceWatcherServicePrivate * const d_ptr;
-
-    friend class ResourceWatcherService;
 };
 
 #endif // RESOURCE_WATCHER_SERVICE_H

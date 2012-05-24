@@ -61,7 +61,7 @@ public:
     { }
 
     QHash<QUrl, PersonCacheItem*> persons;
-//     QMultiHash<PersonCacheItem::FacetType, QUrl> allRequestedKeys;
+    QList<QUrl> allRequestedKeys;
 
     ResourceWatcherService *watcher;
 
@@ -110,9 +110,9 @@ PersonCache::PersonCache()
     Q_ASSERT(!s_globalPersonCache->q);
     s_globalPersonCache->q = this;
 
-//     d_ptr->watcher = new ResourceWatcherService(this);
-//     connect(d_ptr->watcher, SIGNAL(personCreated(Nepomuk::Resource,QList<QUrl>)),
-//             this, SLOT(onNewPersonCreated(Nepomuk::Resource,QList<QUrl>)));
+    d_ptr->watcher = new ResourceWatcherService(this);
+    connect(d_ptr->watcher, SIGNAL(personCreated(Nepomuk::Resource,QList<QUrl>)),
+            this, SLOT(onNewPersonCreated(Nepomuk::Resource,QList<QUrl>)));
 }
 
 PersonCache::~PersonCache()
@@ -175,26 +175,31 @@ PersonsModel* PersonCache::model()
 void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
 {
     Q_D(PersonCache);
-    PersonCacheItem *person = new PersonCacheItem(res.uri());
+
+    bool newPerson = false;
+    PersonCacheItem *person;
+    if (d->persons.contains(res.resourceUri())) {
+        person = d->persons.value(res.resourceUri());
+    } else {
+        person = new PersonCacheItem(res.resourceUri());
+        newPerson = true;
+    }
 
     kDebug() << "New person created in Nepomuk";
 
-    bool facetComplete = true;
-    QList<PersonCacheItem::FacetType> keys = d->allRequestedKeys.uniqueKeys();
-    Q_FOREACH (const PersonCacheItem::FacetType &facet, keys ) {
-        QList<QUrl> values = d->allRequestedKeys.values(facet);
-        Q_FOREACH (const QUrl &keyUri, values) {
-            if (res.hasProperty(keyUri)) {
-                if (res.property(keyUri).isString()) {
-                    person->addData(keyUri, res.property(keyUri).toString());
-                } else if (res.property(keyUri).isStringList()) {
-                    person->addData(keyUri, res.property(keyUri).toStringList());
-                }
+    Q_FOREACH (const QUrl &keyUri, types) {
+        if (res.hasProperty(keyUri)) {
+            if (res.property(keyUri).isString()) {
+                person->addData(keyUri, res.property(keyUri).toString());
+            } else if (res.property(keyUri).isStringList()) {
+                person->addData(keyUri, res.property(keyUri).toStringList());
             }
         }
     }
 
-    d->persons.insert(res.uri(), person);
+    if (newPerson) {
+        d->persons.insert(res.resourceUri(), person);
+    }
 
     emit personAddedToCache(person);
 }

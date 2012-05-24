@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
+ *   @author Martin Klapetek <martin.klapetek@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,9 +22,6 @@
 
 #include "person-cache.h"
 
-#include "person-cache-item-set.h"
-#include "person-cache-item-set_p.h"
-
 #include <KDebug>
 #include <KGlobal>
 #include <KUrl>
@@ -41,10 +39,10 @@
 #include <Nepomuk/Vocabulary/NCO>
 #include <Soprano/Vocabulary/NAO>
 
-#include "basic-person-cache-item-facet.h"
 #include "person-cache-item.h"
-#include "im-person-cache-item-facet.h"
 #include "resource-watcher-service.h"
+
+#include "persons-model.h"
 
 /******************************** PersonCache::Private ********************************************/
 
@@ -62,13 +60,12 @@ public:
     virtual ~PersonCachePrivate()
     { }
 
-    QHash<QString, PersonCacheItemSetPrivate*> queryResultSets;
-    QMultiHash<PersonCacheItemSetPrivate*, PersonCacheItemSet*> itemSets;
     QHash<QUrl, PersonCacheItem*> persons;
-    QMultiHash<PersonCacheItem::FacetType, QUrl> allRequestedKeys;
+//     QMultiHash<PersonCacheItem::FacetType, QUrl> allRequestedKeys;
 
     ResourceWatcherService *watcher;
 
+    PersonsModel *model;
 };
 
 
@@ -113,9 +110,9 @@ PersonCache::PersonCache()
     Q_ASSERT(!s_globalPersonCache->q);
     s_globalPersonCache->q = this;
 
-    d_ptr->watcher = new ResourceWatcherService(this);
-    connect(d_ptr->watcher, SIGNAL(personCreated(Nepomuk::Resource,QList<QUrl>)),
-            this, SLOT(onNewPersonCreated(Nepomuk::Resource,QList<QUrl>)));
+//     d_ptr->watcher = new ResourceWatcherService(this);
+//     connect(d_ptr->watcher, SIGNAL(personCreated(Nepomuk::Resource,QList<QUrl>)),
+//             this, SLOT(onNewPersonCreated(Nepomuk::Resource,QList<QUrl>)));
 }
 
 PersonCache::~PersonCache()
@@ -125,15 +122,9 @@ PersonCache::~PersonCache()
     delete d_ptr;
 }
 
-PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::FacetType facetType, QList<QUrl> requestedKeys)
+void PersonCache::query(const QString &query, QList<QUrl> requestedKeys)
 {
     kDebug();
-
-    // TODO: Open the Nepomuk Context
-    // TODO: Facet magic
-    // TODO: All kinds of other shit
-
-    // FIXME: Assume that the query is new
 
     Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query,
                                                                                                       Soprano::Query::QueryLanguageSparql);
@@ -151,7 +142,7 @@ PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::Fa
         } else {
             person = new PersonCacheItem(currentUri);
             set.insert(currentUri, person);
-            person->addFacet(facetType);
+            //person->addFacet(facetType);
         }
 
         Q_FOREACH(const QUrl &keyUri, requestedKeys) {
@@ -161,46 +152,24 @@ PersonCacheItemSet *PersonCache::query(const QString &query, PersonCacheItem::Fa
             keyString = keyString.right(keyString.length() - keyString.lastIndexOf(QLatin1Char('/')) - 1).replace(QLatin1Char('#'), QLatin1Char('_'));
 
             person->addData(keyUri, it[keyString].toString());
-            d_ptr->allRequestedKeys.insert(facetType, keyUri);
+            kDebug() << keyUri << it[keyString].toString();
+            //d_ptr->allRequestedKeys.insert(facetType, keyUri);
         }
 
     }
 
     d_ptr->persons.unite(set);
 
-    // Create the PersonCacheItemSetPrivate instance.
-    PersonCacheItemSetPrivate *pcisp = new PersonCacheItemSetPrivate(set, this);
-
-    // Save it to the hash of query to PCISPs
-    d_ptr->queryResultSets.insert(query, pcisp);
-
-    // Create a PersonCacheItemSet to return.
-    PersonCacheItemSet *pcis = new PersonCacheItemSet(pcisp);
-
-    // Save the PCIS to the hash so that we can tell it when it should signal changes.
-    d_ptr->itemSets.insert(pcisp, pcis);
+    d_ptr->model = new PersonsModel(&d_ptr->persons);
 
     // FIXME: Connect up signals/slots so that when the nepomuk context signals something has
-    //        happened we relay it to all the PCIS's.
+    //        happened we relay it to the model
 
-    // Return the PCIS
-    return pcis;
 }
 
-void PersonCache::removeItemSet(PersonCacheItemSet *itemSet)
+PersonsModel* PersonCache::model()
 {
-    kDebug();
-
-    // Remove the calling PCIS from the hash so we don't try to access it again.
-    d_ptr->itemSets.remove(itemSet->d_ptr, itemSet);
-
-    // Check if the ItemSetPrivate should be deleted.
-    if (itemSet->d_ptr->refCount == 0) {
-        // Delete it.
-        // FIXME remove from d_ptr->queryResultSets.
-
-        // FIXME: close the Nepomuk context
-    }
+    return d_ptr->model;
 }
 
 void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
@@ -221,18 +190,8 @@ void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
                 } else if (res.property(keyUri).isStringList()) {
                     person->addData(keyUri, res.property(keyUri).toStringList());
                 }
-            } else {
-                facetComplete = false;
-                break;
             }
         }
-
-        if (facetComplete) {
-            person->addFacet(facet);
-            kDebug() << "Adding facet:" << facet;
-        }
-
-        facetComplete = true;
     }
 
     d->persons.insert(res.uri(), person);
@@ -242,13 +201,12 @@ void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
 
 void PersonCache::onPersonRemoved()
 {
-
+    //FIXME: implement me
 }
 
 void PersonCache::onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value)
 {
-
+    //FIXME: implement me
 }
-
 
 #include "person-cache.moc"

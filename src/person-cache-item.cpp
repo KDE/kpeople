@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
+ *   @author Martin Klapetek <martin.klapetek@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

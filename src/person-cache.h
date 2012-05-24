@@ -3,6 +3,7 @@
  *
  * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
+ *   @author Martin Klapetek <martin.klapetek@gmail.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,6 +31,7 @@
 
 #include "kpeople_export.h"
 
+class PersonsModel;
 class PersonCacheItem;
 class PersonCacheItemSet;
 class PersonCachePrivate;
@@ -51,7 +53,8 @@ public:
      * @return the PersonCacheItemSet for that query. This should be deleted immediately you have
      * finished with it to avoid stuff being kept unnecessarily long in the cache.
      */
-    PersonCacheItemSet *query(const QString &query, PersonCacheItem::FacetType facetType, QList<QUrl> requestedKeys);
+    void query(const QString &query, QList<QUrl> requestedKeys);
+    PersonsModel *model();
 
 Q_SIGNALS:
     void personAddedToCache(PersonCacheItem *person);
@@ -63,13 +66,7 @@ private Q_SLOTS:
 
 private:
     PersonCache();
-
-    void removeItemSet(PersonCacheItemSet *itemSet);
-
     PersonCachePrivate * const d_ptr;
-
-    friend class PersonCacheItemSet;
-    friend class PersonCacheItemSetPrivate;
 };
 
 #endif  // Header guard

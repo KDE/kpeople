@@ -2,36 +2,26 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set (kpeople_SRCS digikam-persons-model.cpp
-     digikam-person-cache-item-facet.cpp
-     digikam-persons-manager.cpp
+set (kpeople_SRCS kpeople-manager.cpp
+     persons-model-contact-item.cpp
+     persons-model-item.cpp
+     persons-model.cpp
      nepomuk-tp-channel-delegate.cpp
-     pim-persons-model.cpp
-     abstract-persons-manager.cpp
-#      pim-persons-manager.cpp
-     resource-watcher-service.cpp
-     im-persons-manager.cpp
-     im-person-cache-item-facet.cpp
-     im-persons-model.cpp
-#      basic-person-cache-item-facet.cpp
      person-cache.cpp
      person-cache-item.cpp
-     person-cache-item-set.cpp
+     tree-node.cpp
 )
 
 set (kpeople_INST_HDRS
-     abstract-persons-manager.h
-     digikam-persons-manager.h
-     digikam-persons-model.h
-     kpeople_export.h
-     im-persons-manager.h
-     im-persons-model.h
-     basic-person-cache-item-facet.h
+#      kpeople_export.h
      nepomuk-tp-channel-delegate.h
      person-cache.h
-     person-cache-item.h
-     person-cache-item-set.h
+#      person-cache-item.h
      person-cache-item-set_p.h
+     persons-model-contact-item.h
+     persons-model-item.h
+     persons-model.h
+     kpeople-manager.h
 )
 
 set (kpeople_PRETTY_HDRS

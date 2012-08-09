@@ -23,6 +23,7 @@
 #include <nepomuk/resourcewatcher.h>
 #include <Nepomuk/Vocabulary/PIMO>
 #include <Nepomuk/Vocabulary/NCO>
+#include <KDebug>
 
 class ResourceWatcherServicePrivate {
 
@@ -43,6 +44,8 @@ ResourceWatcherService::ResourceWatcherService(QObject *parent)
 
     d_ptr->watcher->addType(Nepomuk::Vocabulary::PIMO::Person());
     d_ptr->watcher->addType(Nepomuk::Vocabulary::NCO::PersonContact());
+    d_ptr->watcher->addType(Nepomuk::Vocabulary::NCO::Contact());
+   // d_ptr->watcher->addProperty(Nepomuk::Vocabulary::NCO::imNickname());
 
     connect(d_ptr->watcher, SIGNAL(resourceCreated(Nepomuk::Resource,QList<QUrl>)),
             this, SIGNAL(personCreated(Nepomuk::Resource,QList<QUrl>)));
@@ -56,7 +59,10 @@ ResourceWatcherService::ResourceWatcherService(QObject *parent)
     connect(d_ptr->watcher, SIGNAL(propertyRemoved(Nepomuk::Resource,Nepomuk::Types::Property,QVariant)),
             this, SLOT(onPropertyChanged(Nepomuk::Resource,Nepomuk::Types::Property,QVariant)));
 
+    //FIXME: find out where the propertyChanged is (4.9?)
+
     d_ptr->watcher->start();
+    kDebug() << "Starting watcher service";
 }
 
 ResourceWatcherService::~ResourceWatcherService()
@@ -66,5 +72,5 @@ ResourceWatcherService::~ResourceWatcherService()
 
 void ResourceWatcherService::onPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value)
 {
-
+    kDebug() << res.uri() << value;
 }

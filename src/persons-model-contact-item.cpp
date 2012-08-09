@@ -21,12 +21,19 @@
 
 #include "persons-model-contact-item.h"
 #include <KIcon>
+#include <KDebug>
+#include <Nepomuk/Vocabulary/NCO>
+#include <Soprano/Vocabulary/NAO>
 
 class PersonsModelContactItemPrivate {
 public:
     QString displayName;
     QString contactId;
     PersonsModel::ContactType type;
+
+    QUrl uri;
+    QMultiHash<QUrl, QString> data;
+    QMultiHash<QString, QUrl> dataUri;
 };
 
 PersonsModelContactItem::PersonsModelContactItem(const QString &displayName, const QString &contactId, PersonsModel::ContactType type)
@@ -49,6 +56,12 @@ QVariant PersonsModelContactItem::data(int role) const
     Q_D(const PersonsModelContactItem);
     switch (role) {
         case Qt::DisplayRole:
+            if (d->displayName.isEmpty()) {
+                if (!d->data.value(Nepomuk::Vocabulary::NCO::imNickname()).isEmpty()) {
+                    const_cast<PersonsModelContactItemPrivate*>(d)->displayName = d->data.value(Nepomuk::Vocabulary::NCO::imNickname());
+                    return d->displayName;
+                }
+            }
             return d->displayName;
         case PersonsModel::ContactTypeRole:
             return d->type;
@@ -69,5 +82,54 @@ bool PersonsModelContactItem::setData(int role, const QVariant& value)
 {
     return false;
 }
+
+void PersonsModelContactItem::addData(const QUrl &key, const QString &value)
+{
+    Q_D(PersonsModelContactItem);
+    kDebug() << "Inserting" << value << "(" << key << ")";
+    d->data.insert(key, value);
+}
+
+void PersonsModelContactItem::addData(const QUrl &key, const QStringList &values)
+{
+    Q_D(PersonsModelContactItem);
+    Q_FOREACH (const QString &value, values) {
+        kDebug() << "Inserting (multi)" << value << "(" << key << ")";
+        d->data.insert(key, value);
+    }
+}
+
+
+void PersonsModelContactItem::addHashData(const QString &key, const QUrl &uri)
+{
+    Q_D(PersonsModelContactItem);
+    d->dataUri.insert(key, uri);
+}
+
+QString PersonsModelContactItem::data(const QUrl &key)
+{
+    Q_D(PersonsModelContactItem);
+    return d->data.value(key);
+}
+
+QMultiHash<QUrl, QString> PersonsModelContactItem::dataHash() const
+{
+    Q_D(const PersonsModelContactItem);
+    return d->data;
+}
+
+QUrl PersonsModelContactItem::uri() const
+{
+    Q_D(const PersonsModelContactItem);
+    return d->uri;
+}
+
+void PersonsModelContactItem::setType (PersonsModel::ContactType type)
+{
+    Q_D(PersonsModelContactItem);
+    d->type = type;
+
+}
+
 
 #include "persons-model-contact-item.moc"

@@ -51,7 +51,9 @@ public:
         ContactIdRole
     };
 
-    explicit PersonsModel(QHash<QUrl, PersonCacheItem*> *data, QObject *parent = 0);
+    explicit PersonsModel(const QHash<QUrl, TreeNode *> &personNodes,
+                          const QHash<TreeNode *, QList<TreeNode *> > &contactNodes,
+                          QObject *parent = 0);
     virtual ~PersonsModel();
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;

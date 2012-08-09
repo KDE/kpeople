@@ -40,7 +40,7 @@ public:
     virtual ~PersonCacheItemPrivate()
     { }
 
-    PersonCacheItem::FacetTypes facets;
+//     PersonCacheItem::FacetTypes facets;
 
     QUrl uri;
     QMultiHash<QUrl, QString> data;

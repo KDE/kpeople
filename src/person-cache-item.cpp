@@ -45,7 +45,7 @@ PersonCacheItem::~PersonCacheItem()
 void PersonCacheItem::addData(const QUrl &key, const QString &value)
 {
     Q_D(PersonCacheItem);
-    kDebug() << "Inserting" << value << "(" << key << ")";
+//     kDebug() << "Inserting" << value << "(" << key << ")";
     d->data.insert(key, value);
 }
 
@@ -64,11 +64,11 @@ void PersonCacheItem::addHashData(const QString& key, const QUrl& uri)
     d->dataUri.insert(key, uri);
 }
 
-void PersonCacheItem::addFacet(PersonCacheItem::FacetTypes facets)
-{
-    Q_D(PersonCacheItem);
-    d->facets |= facets;
-}
+// void PersonCacheItem::addFacet(PersonCacheItem::FacetTypes facets)
+// {
+//     Q_D(PersonCacheItem);
+//     d->facets |= facets;
+// }
 
 QUrl PersonCacheItem::uri() const
 {
@@ -88,12 +88,12 @@ QMultiHash<QUrl, QString> PersonCacheItem::dataHash() const
     return d->data;
 }
 
-bool PersonCacheItem::hasFacet(PersonCacheItem::FacetType facet)
-{
-    Q_D(const PersonCacheItem);
-    if (d->facets & facet) {
-        return true;
-    }
-
-    return false;
-}
+// bool PersonCacheItem::hasFacet(PersonCacheItem::FacetType facet)
+// {
+//     Q_D(const PersonCacheItem);
+//     if (d->facets & facet) {
+//         return true;
+//     }
+//
+//     return false;
+// }

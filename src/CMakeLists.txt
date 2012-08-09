@@ -18,7 +18,7 @@ set (kpeople_INST_HDRS
      nepomuk-tp-channel-delegate.h
      person-cache.h
 #      person-cache-item.h
-     person-cache-item-set_p.h
+#      person-cache-item-set_p.h
      persons-model-contact-item.h
      persons-model-item.h
      persons-model.h

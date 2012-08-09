@@ -35,15 +35,6 @@ class PersonCacheItem {
     Q_DISABLE_COPY(PersonCacheItem);
 
 public:
-    enum FacetType {
-        BasicFacet = 0x0,
-        IMFacet = 0x1,
-        PIMFacet = 0x2,
-        DigikamFacet = 0x4
-    };
-
-    Q_DECLARE_FLAGS(FacetTypes, FacetType);
-
     PersonCacheItem(const QUrl &uri);
     virtual ~PersonCacheItem();
 
@@ -52,8 +43,6 @@ public:
     void addData(const QUrl &key, const QString &value);
     void addData(const QUrl &key, const QStringList &values);
     void addHashData(const QString &key, const QUrl &uri);
-    void addFacet(FacetTypes facet);
-    bool hasFacet(FacetType facet);
 
     QString data(const QUrl &key);
     QMultiHash<QUrl, QString> dataHash() const;
@@ -61,8 +50,6 @@ public:
 protected:
     PersonCacheItemPrivate * d_ptr;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(PersonCacheItem::FacetTypes)
 
 #endif  // Header guard
 

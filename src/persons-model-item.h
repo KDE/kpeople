@@ -26,6 +26,7 @@
 
 #include "tree-node.h"
 
+class QUrl;
 class PersonsModelItemPrivate;
 class PersonCacheItem;
 
@@ -35,8 +36,10 @@ class KPEOPLE_EXPORT PersonsModelItem : public TreeNode
     Q_DISABLE_COPY(PersonsModelItem)
 
 public:
-    PersonsModelItem(PersonCacheItem *person);
+    PersonsModelItem(const QUrl &personUri);
     virtual ~PersonsModelItem();
+
+//     void addGroundingOccurance(const QUrl &go);
 
     Q_INVOKABLE virtual QVariant data(int role) const;
     Q_INVOKABLE virtual bool setData(int role, const QVariant &value);

@@ -43,6 +43,9 @@
 #include "resource-watcher-service.h"
 
 #include "persons-model.h"
+#include "tree-node.h"
+#include "persons-model-item.h"
+#include "persons-model-contact-item.h"
 
 /******************************** PersonCache::Private ********************************************/
 
@@ -65,6 +68,7 @@ public:
 
     ResourceWatcherService *watcher;
 
+    //FIXME: make it qpointer
     PersonsModel *model;
 };
 
@@ -126,7 +130,45 @@ void PersonCache::query(const QString &query, QList<QUrl> requestedKeys)
 {
     kDebug();
 
-    Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(query,
+    QString nco_query = QString::fromUtf8("select distinct ?uri ?nao_prefLabel ?pimo_groundingOccurance ?nco_hasIMAccount"
+                      "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
+                      "?nao_prefSymbol ?telepathy_accountIdentifier ?nco_imStatus ?pimo_prefLabel ?pimo_prefSymbol"
+
+                      "WHERE { ?uri a nco:Contact ."
+
+                      "?uri                       nco:hasIMAccount            ?nco_hasIMAccount ."
+                      "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname ."
+                      "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType ."
+                      "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus ."
+                      "?nco_hasIMAccount          nco:imID                    ?nco_imID ."
+                      "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType ."
+                      "?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy ."
+                      "?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier ."
+
+                      "OPTIONAL { ?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . }"
+                      "OPTIONAL { ?pimo_groundingOccurance  nao:prefLabel      ?pimo_prefLabel . }"
+                      "OPTIONAL { ?pimo_groundingOccurance  nao:prefSymbol     ?pimo_prefSymbol . }"
+
+                      "OPTIONAL { ?uri            nao:prefLabel        ?nao_prefLabel . }"
+                      "OPTIONAL { ?uri            nao:prefSymbol       ?nao_prefSymbol . }"
+                      "OPTIONAL { ?uri            nco:hasEmailAddress  ?nco_hasEmailAddress . }"
+
+    "}");
+
+    QList<QUrl> list;
+    list << Soprano::Vocabulary::NAO::prefLabel()
+    << Soprano::Vocabulary::NAO::prefSymbol()
+    << Nepomuk::Vocabulary::NCO::imNickname()
+    << Nepomuk::Vocabulary::NCO::imAccountType()
+    << Nepomuk::Vocabulary::NCO::imID()
+    //                      << Nepomuk::Vocabulary::Telepathy::statusType()
+    //                      << Nepomuk::Vocabulary::Telepathy::accountIdentifier()
+    << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
+    << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#accountIdentifier"))
+    << Nepomuk::Vocabulary::NCO::imStatus()
+    << Nepomuk::Vocabulary::NCO::hasEmailAddress();
+
+    Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(nco_query,
                                                                                                       Soprano::Query::QueryLanguageSparql);
 
     PersonCacheItem *person;
@@ -134,33 +176,56 @@ void PersonCache::query(const QString &query, QList<QUrl> requestedKeys)
 
     QString keyString;
 
+    QHash<QUrl, TreeNode *> personNodes;
+    QHash<TreeNode *, QList<TreeNode *> > contactNodes;
+
+    //FIXME: better way?
+    TreeNode *rootNode = 0;//new TreeNode();
+    TreeNode *personNode;
+    PersonsModelContactItem *contactNode;
+
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
+        QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
 
-        if (set.keys().contains(currentUri)) {
-            person = set.value(currentUri);
+        if (!pimoPersonUri.isEmpty()) {
+            if (personNodes.keys().contains(pimoPersonUri)) {
+                personNode = personNodes.value(pimoPersonUri);
+//                 kDebug() << "Selecting existing person" << currentUri << pimoPersonUri;
+            } else {
+                personNode = new PersonsModelItem(pimoPersonUri);
+                personNodes.insert(pimoPersonUri, personNode);
+//                 kDebug() << "Inserting new person" << currentUri << pimoPersonUri;
+            }
         } else {
-            person = new PersonCacheItem(currentUri);
-            set.insert(currentUri, person);
-            //person->addFacet(facetType);
+            personNode = rootNode;
+            kDebug() << "Not a person" << currentUri << pimoPersonUri;
         }
 
-        Q_FOREACH(const QUrl &keyUri, requestedKeys) {
+        contactNode = new PersonsModelContactItem(it[QLatin1String("nao_prefLabel")].toString(), QLatin1String("id"), PersonsModel::Email);
+
+        Q_FOREACH(const QUrl &keyUri, list) {
             keyString = keyUri.toString();
             //convert every key to correspond to the nepomuk bindings
             //FIXME: get this method out of the loop, it repeats too many times for nothing
             keyString = keyString.right(keyString.length() - keyString.lastIndexOf(QLatin1Char('/')) - 1).replace(QLatin1Char('#'), QLatin1Char('_'));
 
-            person->addData(keyUri, it[keyString].toString());
-            kDebug() << keyUri << it[keyString].toString();
-            //d_ptr->allRequestedKeys.insert(facetType, keyUri);
+            contactNode->addData(keyUri, it[keyString].toString());
         }
 
+        if (!contactNode->data(Nepomuk::Vocabulary::NCO::imID()).isEmpty()) {
+            contactNode->setType(PersonsModel::IM);
+        }
+        if (!contactNode->data(Nepomuk::Vocabulary::NCO::hasEmailAddress()).isEmpty()) {
+            contactNode->setType(PersonsModel::Email);
+        }
+
+        contactNodes.insert(personNode, QList<TreeNode*>() << contactNode);
     }
 
     d_ptr->persons.unite(set);
 
-    d_ptr->model = new PersonsModel(&d_ptr->persons);
+    d_ptr->model = new PersonsModel(personNodes, contactNodes);
 
     // FIXME: Connect up signals/slots so that when the nepomuk context signals something has
     //        happened we relay it to the model

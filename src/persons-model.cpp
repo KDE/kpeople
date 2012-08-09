@@ -42,13 +42,25 @@ TreeNode *PersonsModelPrivate::node(const QModelIndex &index) const
 
 //-----------------------------------------------------------------------------
 
-PersonsModel::PersonsModel(QHash<QUrl, PersonCacheItem*> *data, QObject *parent)
+PersonsModel::PersonsModel(const QHash<QUrl, TreeNode *> &personNodes,
+                           const QHash<TreeNode *, QList<TreeNode *> > &contactNodes,
+                           QObject *parent)
     : QAbstractItemModel(parent),
       d_ptr(new PersonsModelPrivate)
 {
     Q_D(PersonsModel);
 
     d->m_tree = new TreeNode;
+
+    onItemsAdded(d->m_tree, personNodes.values());
+
+    Q_FOREACH(TreeNode *node, contactNodes.keys()) {
+        if (node == 0) {
+            onItemsAdded(d->m_tree, contactNodes.value(node));
+        } else {
+            onItemsAdded(node, contactNodes.value(node));
+        }
+    }
 
     connect(d->m_tree,
             SIGNAL(changed(TreeNode*)),
@@ -62,30 +74,6 @@ PersonsModel::PersonsModel(QHash<QUrl, PersonCacheItem*> *data, QObject *parent)
             SIGNAL(childrenRemoved(TreeNode*,int,int)),
             SLOT(onItemsRemoved(TreeNode*,int,int)));
 
-    QList<TreeNode *> personNodes;
-    QHash<TreeNode *, QList<TreeNode *> > contactNodes;
-    Q_FOREACH(PersonCacheItem *person, data->values()) {
-        personNodes << new PersonsModelItem(person);
-        kDebug() << person->data(Nepomuk::Vocabulary::NCO::imID());
-        if (!person->data(Nepomuk::Vocabulary::NCO::imID()).isEmpty()) {
-            contactNodes.insert(personNodes.last(), QList<TreeNode *>() << new PersonsModelContactItem(person->data(Nepomuk::Vocabulary::NCO::imNickname()),
-                person->data(Nepomuk::Vocabulary::NCO::imID()),
-                PersonsModel::IM));
-        }
-        if (!person->data(Nepomuk::Vocabulary::NCO::hasEmailAddress()).isEmpty()) {
-            //FIXME: put proper email here
-            contactNodes.insert(personNodes.last(), QList<TreeNode *>() << new PersonsModelContactItem(QLatin1String("Email"),
-                                                                                                       QLatin1String("Email"),
-                                                                                                       PersonsModel::Email));
-        }
-        //d->m_tree->childAt(d->m_tree->size() - 1)->addChild(new PersonsModelContactItem());
-    }
-
-    onItemsAdded(d->m_tree, personNodes);
-
-    Q_FOREACH(TreeNode *node, contactNodes.keys()) {
-        onItemsAdded(node, contactNodes.value(node));
-    }
 }
 
 PersonsModel::~PersonsModel()

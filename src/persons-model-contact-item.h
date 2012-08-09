@@ -46,6 +46,16 @@ public:
     Q_INVOKABLE virtual QVariant data(int role) const;
     Q_INVOKABLE virtual bool setData(int role, const QVariant &value);
 
+    QUrl uri() const;
+
+    void addData(const QUrl &key, const QString &value);
+    void addData(const QUrl &key, const QStringList &values);
+    void addHashData(const QString &key, const QUrl &uri);
+    void setType(PersonsModel::ContactType type);
+
+    QString data(const QUrl &key);
+    QMultiHash<QUrl, QString> dataHash() const;
+
 private:
     PersonsModelContactItemPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModelContactItem)

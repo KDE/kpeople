@@ -79,6 +79,9 @@ QVariant PersonsModelContactItem::data(int role) const
 
 void PersonsModelContactItem::addData(const QUrl &key, const QString &value)
 {
+    if(value.isEmpty())
+        return;
+
     Q_D(PersonsModelContactItem);
     kDebug() << "Inserting" << value << "(" << key << ")";
     d->data.insert(key, value);
@@ -86,6 +89,9 @@ void PersonsModelContactItem::addData(const QUrl &key, const QString &value)
 
 void PersonsModelContactItem::addData(const QUrl &key, const QStringList &values)
 {
+    if(values.isEmpty())
+        return;
+
     Q_D(PersonsModelContactItem);
     Q_FOREACH (const QString &value, values) {
         kDebug() << "Inserting (multi)" << value << "(" << key << ")";

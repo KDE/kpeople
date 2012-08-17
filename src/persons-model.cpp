@@ -26,9 +26,9 @@
 #include <Nepomuk/Vocabulary/NCO>
 #include <KDebug>
 
-class PersonsModelPrivate {
-public:
-};
+// class PersonsModelPrivate {
+// public:
+// };
 
 PersonsModel::PersonsModel(QObject *parent)
     : QStandardItemModel(parent)
@@ -37,21 +37,31 @@ PersonsModel::PersonsModel(QObject *parent)
     PersonCache* cache = PersonCache::instance();
   
     connect(cache,
-            SIGNAL(contactsFetched(QHash<QUrl,QStandardItem*>,QHash<QStandardItem*,QList<QStandardItem*> >)),
-            SLOT(init(QHash<QUrl,QStandardItem*>,QHash<QStandardItem*,QList<QStandardItem*> >)));
+            SIGNAL(contactsFetched(QHash<QUrl,PersonsModelItem*>,QHash<PersonsModelItem*,QList<PersonsModelContactItem*> >)),
+            SLOT(init(QHash<QUrl,PersonsModelItem*>,QHash<PersonsModelItem*,QList<PersonsModelContactItem*> >)));
     cache->startQuery();
 }
 
-void PersonsModel::init(const QHash< QUrl, QStandardItem* >& personNodes, const QHash< QStandardItem*, QList< QStandardItem* > >& contactNodes)
+template <class T>
+QList<QStandardItem*> toStandardItems(const QList<T*>& items)
+{
+    QList<QStandardItem*> ret;
+    foreach(QStandardItem* it, items) {
+        ret += it;
+    }
+    return ret;
+}
+
+void PersonsModel::init(const QHash<QUrl,PersonsModelItem*>& personNodes, const QHash<PersonsModelItem*, QList<PersonsModelContactItem*> >& contactNodes)
 {
     QStandardItem* root = invisibleRootItem();
-    root->appendRows(personNodes.values());
+    root->appendRows(toStandardItems(personNodes.values()));
 
-    Q_FOREACH(QStandardItem *node, contactNodes.keys()) {
+    Q_FOREACH(PersonsModelItem *node, contactNodes.keys()) {
         if (node == 0) {
-            root->appendRows(contactNodes.value(node));
+            root->appendRows(toStandardItems(contactNodes.value(node)));
         } else {
-            node->appendRows(contactNodes.value(node));
+            node->appendRows(toStandardItems(contactNodes.value(node)));
         }
     }
 }

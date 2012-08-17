@@ -27,9 +27,8 @@
 #include <QUrl>
 #include <QStandardItemModel>
 
-class PersonCacheItem;
-class PersonsModelPrivate;
-
+class PersonsModelItem;
+class PersonsModelContactItem;
 class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
 {
     Q_OBJECT
@@ -53,7 +52,7 @@ public:
     explicit PersonsModel(QObject *parent = 0);
 
 private slots:
-    void init(const QHash< QUrl, QStandardItem* >& personNodes, const QHash< QStandardItem*, QList< QStandardItem* > >& contactNodes);
+    void init(const QHash< QUrl, PersonsModelItem* >& personNodes, const QHash< PersonsModelItem*, QList< PersonsModelContactItem* > >& contactNodes);
 
 private:
 //     PersonsModelPrivate * const d_ptr;

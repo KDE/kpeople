@@ -72,6 +72,10 @@ void PersonsModelContactItem::addData(const QUrl &key, const QString &value)
     
     if(Nepomuk::Vocabulary::NCO::imNickname() == key)
         setText(value);
+    else if (Nepomuk::Vocabulary::NCO::imID() == key)
+        setType(PersonsModel::IM);
+    else if (Nepomuk::Vocabulary::NCO::hasEmailAddress() == value)
+        setType(PersonsModel::Email);
 
     Q_D(PersonsModelContactItem);
     kDebug() << "Inserting" << value << "(" << key << ")";

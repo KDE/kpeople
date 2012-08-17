@@ -203,13 +203,6 @@ void PersonCache::startQuery()
             contactNode->addData(keyUri, it[keyString].toString());
         }
 
-        if (!contactNode->dataValue(Nepomuk::Vocabulary::NCO::imID()).isEmpty()) {
-            contactNode->setType(PersonsModel::IM);
-        }
-        if (!contactNode->dataValue(Nepomuk::Vocabulary::NCO::hasEmailAddress()).isEmpty()) {
-            contactNode->setType(PersonsModel::Email);
-        }
-
         contactNodes.insert(personNode, QList<QStandardItem*>() << contactNode);
     }
 
@@ -256,6 +249,7 @@ void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
 void PersonCache::onPersonRemoved()
 {
     //FIXME: implement me
+    //NOTE: We need to know what person was removed
 }
 
 void PersonCache::onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value)

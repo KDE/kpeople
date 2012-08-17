@@ -33,7 +33,6 @@ class KPEOPLE_EXPORT PersonsModelItem : public QStandardItem
 {
 public:
     PersonsModelItem(const QUrl &personUri);
-    virtual ~PersonsModelItem();
 
     virtual QVariant data(int role) const;
 

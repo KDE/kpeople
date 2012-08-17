@@ -43,11 +43,6 @@ PersonsModelItem::PersonsModelItem(const QUrl &personUri)
     d->personUri = personUri;
 }
 
-PersonsModelItem::~PersonsModelItem()
-{
-
-}
-
 QVariant PersonsModelItem::data(int role) const
 {
     Q_D(const PersonsModelItem);

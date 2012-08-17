@@ -27,60 +27,52 @@
 
 class PersonsModelContactItemPrivate {
 public:
-    QString displayName;
-    QString contactId;
-    PersonsModel::ContactType type;
-
     QUrl uri;
     QMultiHash<QUrl, QString> data;
 };
 
-PersonsModelContactItem::PersonsModelContactItem(const QString &displayName, const QString &contactId, PersonsModel::ContactType type)
+PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri, const QString &displayName, const QString &contactId, PersonsModel::ContactType type)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
     Q_D(PersonsModelContactItem);
+    d->uri = uri;
 
-    d->displayName = displayName;
-    d->contactId = contactId;
-    d->type = type;
+    setData(contactId, PersonsModel::ContactIdRole);
+    setData(type, PersonsModel::ContactTypeRole);
+    setText(displayName);
+    
+    refreshIcon();
 }
 
 PersonsModelContactItem::~PersonsModelContactItem()
-{
+{}
 
+QMap<PersonsModel::ContactType, QIcon> initializeTypeIcons()
+{
+    QMap<PersonsModel::ContactType, QIcon> ret;
+    ret.insert(PersonsModel::Email, QIcon::fromTheme(QLatin1String("mail-mark-unread")));
+    ret.insert(PersonsModel::IM, QIcon::fromTheme(QLatin1String("im-user")));
+    ret.insert(PersonsModel::Phone, QIcon::fromTheme(QLatin1String("phone")));
+    ret.insert(PersonsModel::MobilePhone, QIcon::fromTheme(QLatin1String("phone")));
+    ret.insert(PersonsModel::Postal, QIcon::fromTheme(QLatin1String("mail-message")));
+    return ret;
 }
 
-QVariant PersonsModelContactItem::data(int role) const
+static QMap<PersonsModel::ContactType, QIcon> s_contactTypeMap = initializeTypeIcons();
+
+void PersonsModelContactItem::refreshIcon()
 {
-    Q_D(const PersonsModelContactItem);
-    switch (role) {
-        case Qt::DisplayRole:
-            if (d->displayName.isEmpty()) {
-                if (!d->data.value(Nepomuk::Vocabulary::NCO::imNickname()).isEmpty()) {
-                    const_cast<PersonsModelContactItemPrivate*>(d)->displayName = d->data.value(Nepomuk::Vocabulary::NCO::imNickname());
-                    return d->displayName;
-                }
-            }
-            return d->displayName;
-        case PersonsModel::ContactTypeRole:
-            return d->type;
-        case Qt::DecorationRole:
-            if (d->type == PersonsModel::Email) {
-                return KIcon(QLatin1String("mail-mark-unread"));
-            } else if (d->type == PersonsModel::IM) {
-                //FIXME: return the account string to have account icons
-                return KIcon(QLatin1String("im-user"));
-            }
-        case PersonsModel::ContactIdRole:
-            return d->contactId;
-    }
-    return QVariant();
+    PersonsModel::ContactType type = (PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt();
+    setIcon(s_contactTypeMap[type]);
 }
 
 void PersonsModelContactItem::addData(const QUrl &key, const QString &value)
 {
     if(value.isEmpty())
         return;
+    
+    if(Nepomuk::Vocabulary::NCO::imNickname() == key)
+        setText(value);
 
     Q_D(PersonsModelContactItem);
     kDebug() << "Inserting" << value << "(" << key << ")";
@@ -99,7 +91,7 @@ void PersonsModelContactItem::addData(const QUrl &key, const QStringList &values
     }
 }
 
-QString PersonsModelContactItem::data(const QUrl &key)
+QString PersonsModelContactItem::dataValue(const QUrl &key)
 {
     Q_D(PersonsModelContactItem);
     return d->data.value(key);
@@ -119,7 +111,6 @@ QUrl PersonsModelContactItem::uri() const
 
 void PersonsModelContactItem::setType (PersonsModel::ContactType type)
 {
-    Q_D(PersonsModelContactItem);
-    d->type = type;
-
+    setData(type, PersonsModel::ContactTypeRole);
+    refreshIcon();
 }

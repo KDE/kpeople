@@ -36,10 +36,8 @@ public:
      * @param contactId - What will be used for starting the communication (email address, IM id etc)
      * @param type - What kind of contact this is
      */
-    PersonsModelContactItem(const QString &displayName, const QString &contactId, PersonsModel::ContactType type);
+    PersonsModelContactItem(const QUrl& uri, const QString &displayName, const QString &contactId, PersonsModel::ContactType type);
     virtual ~PersonsModelContactItem();
-
-    Q_INVOKABLE virtual QVariant data(int role) const;
 
     QUrl uri() const;
 
@@ -47,10 +45,11 @@ public:
     void addData(const QUrl &key, const QStringList &values);
     void setType(PersonsModel::ContactType type);
 
-    QString data(const QUrl &key);
+    QString dataValue(const QUrl &key);
     QMultiHash<QUrl, QString> dataHash() const;
 
 private:
+    void refreshIcon();
     PersonsModelContactItemPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModelContactItem)
 

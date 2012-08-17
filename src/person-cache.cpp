@@ -219,24 +219,25 @@ void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
     Q_D(PersonCache);
 
     bool newPerson = false;
-    PersonCacheItem *person = d->persons.value(res.resourceUri());
+    PersonsModelItem *person = d->persons.value(res.resourceUri());
     if (!person) {
-        person = new PersonCacheItem(res.resourceUri());
+        person = new PersonsModelItem(res.resourceUri());
         newPerson = true;
     }
 
     kDebug() << "New person created in Nepomuk:" << newPerson;
 
-    Q_FOREACH (const QUrl &keyUri, types) {
-        if (res.hasProperty(keyUri)) {
-            person->addData(keyUri, res.property(keyUri).variant());
-        }
-    }
+//     Q_FOREACH (const QUrl &keyUri, types) {
+//         if (res.hasProperty(keyUri)) {
+//             person->addData(keyUri, res.property(keyUri).variant());
+//         }
+//     }
 
     if (newPerson) {
         d->persons.insert(res.resourceUri(), person);
     }
 
+    //TODO: Shouldn't we add the contacts now?
     emit personAddedToCache(person);
 }
 

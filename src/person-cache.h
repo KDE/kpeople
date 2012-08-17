@@ -24,7 +24,6 @@
 #define LIBKPEOPLE_PERSON_CACHE_H
 
 #include <QtCore/QObject>
-#include "person-cache-item.h"
 
 #include <Nepomuk/Resource>
 #include <Nepomuk/Types/Property>

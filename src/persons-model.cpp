@@ -19,7 +19,6 @@
 
 
 #include "persons-model.h"
-#include "person-cache-item.h"
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
 #include "person-cache.h"

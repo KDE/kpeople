@@ -39,7 +39,6 @@
 #include <Nepomuk/Vocabulary/NCO>
 #include <Soprano/Vocabulary/NAO>
 
-#include "person-cache-item.h"
 #include "persons-model.h"
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"

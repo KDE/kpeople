@@ -10,7 +10,6 @@ kde4_add_library (kpeople SHARED
     persons-model.cpp
     nepomuk-tp-channel-delegate.cpp
     person-cache.cpp
-    person-cache-item.cpp
 )
 
 target_link_libraries (kpeople

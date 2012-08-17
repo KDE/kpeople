@@ -31,9 +31,10 @@
 
 #include "kpeople_export.h"
 
+class PersonsModelContactItem;
+class PersonsModelItem;
 class QStandardItem;
 class PersonsModel;
-class PersonCacheItem;
 class PersonCacheItemSet;
 class PersonCachePrivate;
 
@@ -50,8 +51,9 @@ public:
     void startQuery();
 
 Q_SIGNALS:
-    void personAddedToCache(PersonCacheItem *person);
-    void contactsFetched(const QHash< QUrl, QStandardItem* >& personNodes, const QHash< QStandardItem*, QList< QStandardItem* > >& contactNodes);
+    void personAddedToCache(PersonsModelItem *person);
+    void contactsFetched(const QHash<QUrl, PersonsModelItem *>& personNodes,
+                         const QHash<PersonsModelItem *, QList<PersonsModelContactItem *> >& contactNodes);
 
 private Q_SLOTS:
     void onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types);

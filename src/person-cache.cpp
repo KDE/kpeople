@@ -60,7 +60,7 @@ public:
     virtual ~PersonCachePrivate()
     { }
 
-    QHash<QUrl, PersonCacheItem*> persons;
+    QHash<QUrl, PersonsModelItem*> persons;
     QList<QUrl> allRequestedKeys;
 
     //FIXME: make it qpointer
@@ -162,40 +162,31 @@ void PersonCache::startQuery()
     Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(nco_query,
                                                                                                       Soprano::Query::QueryLanguageSparql);
 
-    QHash<QUrl, PersonCacheItem*> set;
+    QHash<QUrl, PersonsModelItem*> set;
 
-    QString keyString;
-
-    QHash<QUrl, QStandardItem *> personNodes;
-    QHash<QStandardItem *, QList<QStandardItem *> > contactNodes;
-
-    //FIXME: better way?
-    QStandardItem *rootNode = 0;//new QStandardItem();
-    QStandardItem *personNode;
-    PersonsModelContactItem *contactNode;
+    QHash<QUrl, PersonsModelItem *> personNodes;
+    QHash<PersonsModelItem *, QList<PersonsModelContactItem *> > contactNodes;
 
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
         QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
 
+        QHash< QUrl, PersonsModelItem* >::const_iterator pos = personNodes.constFind(pimoPersonUri);
         if (!pimoPersonUri.isEmpty()) {
-            if (personNodes.keys().contains(pimoPersonUri)) {
-                personNode = personNodes.value(pimoPersonUri);
-//                 kDebug() << "Selecting existing person" << currentUri << pimoPersonUri;
+            if (pos != personNodes.constEnd()) {
+                set.insert(pimoPersonUri, pos.value());
             } else {
-                personNode = new PersonsModelItem(pimoPersonUri);
-                personNodes.insert(pimoPersonUri, personNode);
-//                 kDebug() << "Inserting new person" << currentUri << pimoPersonUri;
+                pos = personNodes.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
             }
         } else {
-            personNode = rootNode;
             kDebug() << "Not a person" << currentUri << pimoPersonUri;
         }
 
-        contactNode = new PersonsModelContactItem(currentUri, it[QLatin1String("nao_prefLabel")].toString(), QLatin1String("id"), PersonsModel::Email);
+        QString display = it[QLatin1String("nao_prefLabel")].toString();
+        PersonsModelContactItem* contactNode = new PersonsModelContactItem(currentUri, display);
 
         Q_FOREACH(const QUrl &keyUri, list) {
-            keyString = keyUri.toString();
+            QString keyString = keyUri.toString();
             //convert every key to correspond to the nepomuk bindings
             //FIXME: get this method out of the loop, it repeats too many times for nothing
             keyString = keyString.right(keyString.length() - keyString.lastIndexOf(QLatin1Char('/')) - 1).replace(QLatin1Char('#'), QLatin1Char('_'));
@@ -203,7 +194,7 @@ void PersonCache::startQuery()
             contactNode->addData(keyUri, it[keyString].toString());
         }
 
-        contactNodes.insert(personNode, QList<QStandardItem*>() << contactNode);
+        contactNodes[pos.value()].append(contactNode);
     }
 
     d_ptr->persons.unite(set);

@@ -27,22 +27,9 @@
 #include <Nepomuk/Vocabulary/NCO>
 #include <Soprano/Vocabulary/NAO>
 
-//TODO: remove d-pointer
-class PersonsModelItemPrivate {
-public:
-};
-
-//-----------------------------------------------------------------------------
-
 PersonsModelItem::PersonsModelItem(const QUrl &personUri)
-//     : d_ptr(new PersonsModelItemPrivate)
 {
     setData(personUri, PersonsModel::UriRole);
-}
-
-PersonsModelItem::~PersonsModelItem()
-{
-//     delete d_ptr;
 }
 
 QVariant PersonsModelItem::data(int role) const

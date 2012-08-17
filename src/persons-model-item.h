@@ -33,13 +33,8 @@ class KPEOPLE_EXPORT PersonsModelItem : public QStandardItem
 {
 public:
     PersonsModelItem(const QUrl &personUri);
-    virtual ~PersonsModelItem();
 
     virtual QVariant data(int role) const;
-
-private:
-    PersonsModelItemPrivate * const d_ptr;
-    Q_DECLARE_PRIVATE(PersonsModelItem)
 };
 
 Q_DECLARE_METATYPE(PersonsModelItem*);

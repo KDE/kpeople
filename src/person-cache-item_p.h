@@ -43,7 +43,7 @@ public:
 //     PersonCacheItem::FacetTypes facets;
 
     QUrl uri;
-    QMultiHash<QUrl, QString> data;
+    QMultiHash<QUrl, QVariant> data;
     QMultiHash<QString, QUrl> dataUri;
 };
 

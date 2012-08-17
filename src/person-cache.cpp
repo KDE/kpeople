@@ -219,23 +219,17 @@ void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
     Q_D(PersonCache);
 
     bool newPerson = false;
-    PersonCacheItem *person;
-    if (d->persons.contains(res.resourceUri())) {
-        person = d->persons.value(res.resourceUri());
-    } else {
+    PersonCacheItem *person = d->persons.value(res.resourceUri());
+    if (!person) {
         person = new PersonCacheItem(res.resourceUri());
         newPerson = true;
     }
 
-    kDebug() << "New person created in Nepomuk";
+    kDebug() << "New person created in Nepomuk:" << newPerson;
 
     Q_FOREACH (const QUrl &keyUri, types) {
         if (res.hasProperty(keyUri)) {
-            if (res.property(keyUri).isString()) {
-                person->addData(keyUri, res.property(keyUri).toString());
-            } else if (res.property(keyUri).isStringList()) {
-                person->addData(keyUri, res.property(keyUri).toStringList());
-            }
+            person->addData(keyUri, res.property(keyUri).variant());
         }
     }
 

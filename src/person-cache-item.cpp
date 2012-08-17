@@ -42,20 +42,11 @@ PersonCacheItem::~PersonCacheItem()
     delete d_ptr;
 }
 
-void PersonCacheItem::addData(const QUrl &key, const QString &value)
+void PersonCacheItem::addData(const QUrl& key, const QVariant& value)
 {
     Q_D(PersonCacheItem);
 //     kDebug() << "Inserting" << value << "(" << key << ")";
     d->data.insert(key, value);
-}
-
-void PersonCacheItem::addData(const QUrl& key, const QStringList& values)
-{
-    Q_D(PersonCacheItem);
-    Q_FOREACH (const QString &value, values) {
-        kDebug() << "Inserting (multi)" << value << "(" << key << ")";
-        d->data.insert(key, value);
-    }
 }
 
 void PersonCacheItem::addHashData(const QString& key, const QUrl& uri)
@@ -74,18 +65,6 @@ QUrl PersonCacheItem::uri() const
 {
     Q_D(const PersonCacheItem);
     return d->uri;
-}
-
-QString PersonCacheItem::data(const QUrl &key)
-{
-    Q_D(PersonCacheItem);
-    return d->data.value(key);
-}
-
-QMultiHash<QUrl, QString> PersonCacheItem::dataHash() const
-{
-    Q_D(const PersonCacheItem);
-    return d->data;
 }
 
 // bool PersonCacheItem::hasFacet(PersonCacheItem::FacetType facet)

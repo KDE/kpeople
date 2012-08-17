@@ -40,12 +40,8 @@ public:
 
     QUrl uri() const;
 
-    void addData(const QUrl &key, const QString &value);
-    void addData(const QUrl &key, const QStringList &values);
+    void addData(const QUrl &key, const QVariant &value);
     void addHashData(const QString &key, const QUrl &uri);
-
-    QString data(const QUrl &key);
-    QMultiHash<QUrl, QString> dataHash() const;
 
 protected:
     PersonCacheItemPrivate * d_ptr;

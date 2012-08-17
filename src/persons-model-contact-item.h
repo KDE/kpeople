@@ -33,10 +33,9 @@ class KPEOPLE_EXPORT PersonsModelContactItem : public QStandardItem
 public:
     /**
      * @param displayName - What will be visible to the user (used as Qt::DisplayRole)
-     * @param contactId - What will be used for starting the communication (email address, IM id etc)
      * @param type - What kind of contact this is
      */
-    PersonsModelContactItem(const QUrl& uri, const QString &displayName, const QString &contactId, PersonsModel::ContactType type);
+    PersonsModelContactItem(const QUrl& uri, const QString &displayName);
     virtual ~PersonsModelContactItem();
 
     QUrl uri() const;

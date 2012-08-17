@@ -30,11 +30,9 @@ public:
     QMultiHash<QUrl, QString> data;
 };
 
-PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri, const QString &displayName, const QString &contactId, PersonsModel::ContactType type)
+PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri, const QString& displayName)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
-    setData(contactId, PersonsModel::ContactIdRole);
-    setData(type, PersonsModel::ContactTypeRole);
     setData(uri, PersonsModel::UriRole);
     setText(displayName);
     

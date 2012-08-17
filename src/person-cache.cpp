@@ -162,7 +162,6 @@ void PersonCache::startQuery()
     Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(nco_query,
                                                                                                       Soprano::Query::QueryLanguageSparql);
 
-    PersonCacheItem *person;
     QHash<QUrl, PersonCacheItem*> set;
 
     QString keyString;

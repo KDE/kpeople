@@ -27,25 +27,24 @@
 
 class PersonsModelContactItemPrivate {
 public:
-    QUrl uri;
     QMultiHash<QUrl, QString> data;
 };
 
 PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri, const QString &displayName, const QString &contactId, PersonsModel::ContactType type)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
-    Q_D(PersonsModelContactItem);
-    d->uri = uri;
-
     setData(contactId, PersonsModel::ContactIdRole);
     setData(type, PersonsModel::ContactTypeRole);
+    setData(uri, PersonsModel::UriRole);
     setText(displayName);
     
     refreshIcon();
 }
 
 PersonsModelContactItem::~PersonsModelContactItem()
-{}
+{
+    delete d_ptr;
+}
 
 QMap<PersonsModel::ContactType, QIcon> initializeTypeIcons()
 {
@@ -105,8 +104,7 @@ QMultiHash<QUrl, QString> PersonsModelContactItem::dataHash() const
 
 QUrl PersonsModelContactItem::uri() const
 {
-    Q_D(const PersonsModelContactItem);
-    return d->uri;
+    return data(PersonsModel::UriRole).toUrl();
 }
 
 void PersonsModelContactItem::setType (PersonsModel::ContactType type)

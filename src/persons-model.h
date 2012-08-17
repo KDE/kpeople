@@ -46,7 +46,8 @@ public:
 
     enum Role {
         ContactTypeRole = Qt::UserRole,
-        ContactIdRole
+        ContactIdRole,
+        UriRole
     };
 
     explicit PersonsModel(QObject *parent = 0);

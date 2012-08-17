@@ -27,25 +27,26 @@
 #include <Nepomuk/Vocabulary/NCO>
 #include <Soprano/Vocabulary/NAO>
 
+//TODO: remove d-pointer
 class PersonsModelItemPrivate {
 public:
-    QUrl personUri;
 };
 
 //-----------------------------------------------------------------------------
 
 PersonsModelItem::PersonsModelItem(const QUrl &personUri)
-    : d_ptr(new PersonsModelItemPrivate)
+//     : d_ptr(new PersonsModelItemPrivate)
 {
-    Q_D(PersonsModelItem);
+    setData(personUri, PersonsModel::UriRole);
+}
 
-    d->personUri = personUri;
+PersonsModelItem::~PersonsModelItem()
+{
+//     delete d_ptr;
 }
 
 QVariant PersonsModelItem::data(int role) const
 {
-    Q_D(const PersonsModelItem);
-
     switch(role) {
         case Qt::DisplayRole:
             for (int i = 0; i < rowCount(); i++) {
@@ -54,7 +55,7 @@ QVariant PersonsModelItem::data(int role) const
                     return contactDisplayName;
                 }
             }
-            return QString(QLatin1String("PIMO:Person - %1")).arg(d->personUri.toString());
+            return QString(QLatin1String("PIMO:Person - %1")).arg(data(PersonsModel::UriRole).toString());
     }
 
     return QVariant();

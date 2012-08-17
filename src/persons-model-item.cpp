@@ -30,7 +30,6 @@
 class PersonsModelItemPrivate {
 public:
     QUrl personUri;
-    QString displayName;
 };
 
 //-----------------------------------------------------------------------------
@@ -49,13 +48,10 @@ QVariant PersonsModelItem::data(int role) const
 
     switch(role) {
         case Qt::DisplayRole:
-            if (d->displayName.isEmpty()) {
-                //if the pimo:person has no prefLabel, loop through contacts and use first found prefLabel
-                for (int i = 0; i < rowCount(); i++) {
-                    QString contactDisplayName = child(i)->data(Qt::DisplayRole).toString();
-                    if (!contactDisplayName.isEmpty()) {
-                        return contactDisplayName;
-                    }
+            for (int i = 0; i < rowCount(); i++) {
+                QString contactDisplayName = child(i)->data(Qt::DisplayRole).toString();
+                if (!contactDisplayName.isEmpty()) {
+                    return contactDisplayName;
                 }
             }
             return QString(QLatin1String("PIMO:Person - %1")).arg(d->personUri.toString());

@@ -192,7 +192,7 @@ void PersonCache::startQuery()
             kDebug() << "Not a person" << currentUri << pimoPersonUri;
         }
 
-        contactNode = new PersonsModelContactItem(it[QLatin1String("nao_prefLabel")].toString(), QLatin1String("id"), PersonsModel::Email);
+        contactNode = new PersonsModelContactItem(currentUri, it[QLatin1String("nao_prefLabel")].toString(), QLatin1String("id"), PersonsModel::Email);
 
         Q_FOREACH(const QUrl &keyUri, list) {
             keyString = keyUri.toString();
@@ -203,10 +203,10 @@ void PersonCache::startQuery()
             contactNode->addData(keyUri, it[keyString].toString());
         }
 
-        if (!contactNode->data(Nepomuk::Vocabulary::NCO::imID()).isEmpty()) {
+        if (!contactNode->dataValue(Nepomuk::Vocabulary::NCO::imID()).isEmpty()) {
             contactNode->setType(PersonsModel::IM);
         }
-        if (!contactNode->data(Nepomuk::Vocabulary::NCO::hasEmailAddress()).isEmpty()) {
+        if (!contactNode->dataValue(Nepomuk::Vocabulary::NCO::hasEmailAddress()).isEmpty()) {
             contactNode->setType(PersonsModel::Email);
         }
 

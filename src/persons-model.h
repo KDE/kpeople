@@ -25,13 +25,12 @@
 
 #include <QModelIndex>
 #include <QUrl>
+#include <QStandardItemModel>
 
 class PersonCacheItem;
 class PersonsModelPrivate;
-class TreeNode;
 
-
-class KPEOPLE_EXPORT PersonsModel : public QAbstractItemModel
+class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(PersonsModel)
@@ -51,26 +50,14 @@ public:
         ContactIdRole
     };
 
-    explicit PersonsModel(const QHash<QUrl, TreeNode *> &personNodes,
-                          const QHash<TreeNode *, QList<TreeNode *> > &contactNodes,
-                          QObject *parent = 0);
-    virtual ~PersonsModel();
+    explicit PersonsModel(QObject *parent = 0);
 
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QModelIndex parent(const QModelIndex &index) const;
-    virtual QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
-    virtual QModelIndex index(TreeNode *node) const;
-
-public Q_SLOTS:
-    void onItemChanged(TreeNode *node);
-    void onItemsAdded(TreeNode *parent, const QList<TreeNode *> &nodes);
-    void onItemsRemoved(TreeNode *parent, int first, int last);
+private slots:
+    void init(const QHash< QUrl, QStandardItem* >& personNodes, const QHash< QStandardItem*, QList< QStandardItem* > >& contactNodes);
 
 private:
-    PersonsModelPrivate * const d_ptr;
-    Q_DECLARE_PRIVATE(PersonsModel)
+//     PersonsModelPrivate * const d_ptr;
+//     Q_DECLARE_PRIVATE(PersonsModel)
 };
 
 #endif // PERSONS_MODEL_H

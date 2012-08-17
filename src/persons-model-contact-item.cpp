@@ -78,9 +78,8 @@ QVariant PersonsModelContactItem::data(int role) const
     return QVariant();
 }
 
-bool PersonsModelContactItem::setData(int role, const QVariant& value)
+void PersonsModelContactItem::setData(const QVariant& value, int role = Qt::UserRole + 1)
 {
-    return false;
 }
 
 void PersonsModelContactItem::addData(const QUrl &key, const QString &value)

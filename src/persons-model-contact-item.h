@@ -23,17 +23,13 @@
 #define PERSONS_MODEL_CONTACT_ITEM_H
 
 #include "kpeople_export.h"
-
-#include "tree-node.h"
+#include <QStandardItem>
 #include "persons-model.h"
 
 class PersonsModelContactItemPrivate;
 
-class KPEOPLE_EXPORT PersonsModelContactItem : public TreeNode
+class KPEOPLE_EXPORT PersonsModelContactItem : public QStandardItem
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(PersonsModelContactItem)
-
 public:
     /**
      * @param displayName - What will be visible to the user (used as Qt::DisplayRole)
@@ -44,7 +40,7 @@ public:
     virtual ~PersonsModelContactItem();
 
     Q_INVOKABLE virtual QVariant data(int role) const;
-    Q_INVOKABLE virtual bool setData(int role, const QVariant &value);
+    Q_INVOKABLE virtual void setData(const QVariant& value, int role);
 
     QUrl uri() const;
 

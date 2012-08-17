@@ -40,10 +40,7 @@
 #include <Soprano/Vocabulary/NAO>
 
 #include "person-cache-item.h"
-#include "resource-watcher-service.h"
-
 #include "persons-model.h"
-#include "tree-node.h"
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
 
@@ -65,8 +62,6 @@ public:
 
     QHash<QUrl, PersonCacheItem*> persons;
     QList<QUrl> allRequestedKeys;
-
-    ResourceWatcherService *watcher;
 
     //FIXME: make it qpointer
     PersonsModel *model;
@@ -113,10 +108,6 @@ PersonCache::PersonCache()
 
     Q_ASSERT(!s_globalPersonCache->q);
     s_globalPersonCache->q = this;
-
-    d_ptr->watcher = new ResourceWatcherService(this);
-    connect(d_ptr->watcher, SIGNAL(personCreated(Nepomuk::Resource,QList<QUrl>)),
-            this, SLOT(onNewPersonCreated(Nepomuk::Resource,QList<QUrl>)));
 }
 
 PersonCache::~PersonCache()
@@ -126,7 +117,7 @@ PersonCache::~PersonCache()
     delete d_ptr;
 }
 
-void PersonCache::query(const QString &query, QList<QUrl> requestedKeys)
+void PersonCache::startQuery()
 {
     kDebug();
 
@@ -176,12 +167,12 @@ void PersonCache::query(const QString &query, QList<QUrl> requestedKeys)
 
     QString keyString;
 
-    QHash<QUrl, TreeNode *> personNodes;
-    QHash<TreeNode *, QList<TreeNode *> > contactNodes;
+    QHash<QUrl, QStandardItem *> personNodes;
+    QHash<QStandardItem *, QList<QStandardItem *> > contactNodes;
 
     //FIXME: better way?
-    TreeNode *rootNode = 0;//new TreeNode();
-    TreeNode *personNode;
+    QStandardItem *rootNode = 0;//new QStandardItem();
+    QStandardItem *personNode;
     PersonsModelContactItem *contactNode;
 
     while(it.next()) {
@@ -220,21 +211,15 @@ void PersonCache::query(const QString &query, QList<QUrl> requestedKeys)
             contactNode->setType(PersonsModel::Email);
         }
 
-        contactNodes.insert(personNode, QList<TreeNode*>() << contactNode);
+        contactNodes.insert(personNode, QList<QStandardItem*>() << contactNode);
     }
 
     d_ptr->persons.unite(set);
 
-    d_ptr->model = new PersonsModel(personNodes, contactNodes);
-
     // FIXME: Connect up signals/slots so that when the nepomuk context signals something has
     //        happened we relay it to the model
 
-}
-
-PersonsModel* PersonCache::model()
-{
-    return d_ptr->model;
+    emit contactsFetched(personNodes, contactNodes);
 }
 
 void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)

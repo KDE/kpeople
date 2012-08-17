@@ -59,8 +59,8 @@ QVariant PersonsModelItem::data(int role) const
         case Qt::DisplayRole:
             if (d->displayName.isEmpty()) {
                 //if the pimo:person has no prefLabel, loop through contacts and use first found prefLabel
-                for (i = 0; i < size(); i++) {
-                    contact = qobject_cast<PersonsModelContactItem*>(childAt(i));
+                for (i = 0; i < rowCount(); i++) {
+                    contact = dynamic_cast<PersonsModelContactItem*>(child(i));
                     QString contactDisplayName = contact->data(Qt::DisplayRole).toString();
                     if (!contactDisplayName.isEmpty()) {
                         return contactDisplayName;
@@ -77,10 +77,3 @@ QVariant PersonsModelItem::data(int role) const
 
     return QVariant();
 }
-
-bool PersonsModelItem::setData(int role, const QVariant& value)
-{
-    return false;
-}
-
-#include "persons-model-item.moc"

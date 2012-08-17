@@ -23,26 +23,19 @@
 #define PERSONS_MODEL_ITEM_H
 
 #include "kpeople_export.h"
-
-#include "tree-node.h"
+#include <qstandarditemmodel.h>
 
 class QUrl;
 class PersonsModelItemPrivate;
 class PersonCacheItem;
 
-class KPEOPLE_EXPORT PersonsModelItem : public TreeNode
+class KPEOPLE_EXPORT PersonsModelItem : public QStandardItem
 {
-    Q_OBJECT
-    Q_DISABLE_COPY(PersonsModelItem)
-
 public:
     PersonsModelItem(const QUrl &personUri);
     virtual ~PersonsModelItem();
 
-//     void addGroundingOccurance(const QUrl &go);
-
-    Q_INVOKABLE virtual QVariant data(int role) const;
-    Q_INVOKABLE virtual bool setData(int role, const QVariant &value);
+    virtual QVariant data(int role) const;
 
 private:
     PersonsModelItemPrivate * const d_ptr;

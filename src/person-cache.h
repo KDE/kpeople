@@ -31,6 +31,7 @@
 
 #include "kpeople_export.h"
 
+class QStandardItem;
 class PersonsModel;
 class PersonCacheItem;
 class PersonCacheItemSet;
@@ -46,18 +47,11 @@ public:
     virtual ~PersonCache();
     static PersonCache *instance();
 
-    /**
-     * Get the cache to monitor the given query.
-     * @param facetType which facet type to use for the items in the cache.
-     * @param query the actual query.
-     * @return the PersonCacheItemSet for that query. This should be deleted immediately you have
-     * finished with it to avoid stuff being kept unnecessarily long in the cache.
-     */
-    void query(const QString &query, QList<QUrl> requestedKeys);
-    PersonsModel *model();
+    void startQuery();
 
 Q_SIGNALS:
     void personAddedToCache(PersonCacheItem *person);
+    void contactsFetched(const QHash< QUrl, QStandardItem* >& personNodes, const QHash< QStandardItem*, QList< QStandardItem* > >& contactNodes);
 
 private Q_SLOTS:
     void onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types);

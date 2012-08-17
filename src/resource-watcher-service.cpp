@@ -20,7 +20,7 @@
 
 #include "resource-watcher-service.h"
 
-#include <nepomuk/resourcewatcher.h>
+#include <nepomuk2/resourcewatcher.h>
 #include <Nepomuk/Vocabulary/PIMO>
 #include <Nepomuk/Vocabulary/NCO>
 #include <KDebug>
@@ -40,7 +40,7 @@ ResourceWatcherService::ResourceWatcherService(QObject *parent)
     : QObject(parent),
       d_ptr(new ResourceWatcherServicePrivate())
 {
-    d_ptr->watcher = new Nepomuk::ResourceWatcher(this);
+    d_ptr->watcher = new Nepomuk2::ResourceWatcher(this);
 
     d_ptr->watcher->addType(Nepomuk::Vocabulary::PIMO::Person());
     d_ptr->watcher->addType(Nepomuk::Vocabulary::NCO::PersonContact());

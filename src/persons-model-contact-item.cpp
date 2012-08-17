@@ -33,7 +33,6 @@ public:
 
     QUrl uri;
     QMultiHash<QUrl, QString> data;
-    QMultiHash<QString, QUrl> dataUri;
 };
 
 PersonsModelContactItem::PersonsModelContactItem(const QString &displayName, const QString &contactId, PersonsModel::ContactType type)
@@ -78,10 +77,6 @@ QVariant PersonsModelContactItem::data(int role) const
     return QVariant();
 }
 
-void PersonsModelContactItem::setData(const QVariant& value, int role = Qt::UserRole + 1)
-{
-}
-
 void PersonsModelContactItem::addData(const QUrl &key, const QString &value)
 {
     Q_D(PersonsModelContactItem);
@@ -96,13 +91,6 @@ void PersonsModelContactItem::addData(const QUrl &key, const QStringList &values
         kDebug() << "Inserting (multi)" << value << "(" << key << ")";
         d->data.insert(key, value);
     }
-}
-
-
-void PersonsModelContactItem::addHashData(const QString &key, const QUrl &uri)
-{
-    Q_D(PersonsModelContactItem);
-    d->dataUri.insert(key, uri);
 }
 
 QString PersonsModelContactItem::data(const QUrl &key)
@@ -129,6 +117,3 @@ void PersonsModelContactItem::setType (PersonsModel::ContactType type)
     d->type = type;
 
 }
-
-
-#include "persons-model-contact-item.moc"

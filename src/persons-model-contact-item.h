@@ -41,12 +41,10 @@ public:
 
     QUrl uri() const;
 
-    void addData(const QUrl &key, const QString &value);
-    void addData(const QUrl &key, const QStringList &values);
+    void addData(const QUrl &key, const QVariant &value);
     void setType(PersonsModel::ContactType type);
 
-    QString dataValue(const QUrl &key);
-    QMultiHash<QUrl, QString> dataHash() const;
+    QVariant dataValue(const QUrl& key);
 
 private:
     void refreshIcon();

@@ -28,7 +28,7 @@
 
 class PersonsModelContactItemPrivate {
 public:
-    QMultiHash<QUrl, QString> data;
+    QHash<QUrl, QVariant> data;
 };
 
 PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri, const QString& displayName)
@@ -64,45 +64,31 @@ void PersonsModelContactItem::refreshIcon()
     setIcon(s_contactTypeMap[type]);
 }
 
-void PersonsModelContactItem::addData(const QUrl &key, const QString &value)
+void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
 {
-    if(value.isEmpty())
+    if(value.isNull())
         return;
     
-    if(Nepomuk::Vocabulary::NCO::imNickname() == key)
-        setText(value);
-    else if (Nepomuk::Vocabulary::NCO::imID() == key)
+    if(Nepomuk::Vocabulary::NCO::imNickname() == key) {
+        setText(value.toString());
+        setData(value, PersonsModel::NickRole);
+    } else if (Nepomuk::Vocabulary::NCO::imID() == key) {
+        setData(value, PersonsModel::IMRole);
         setType(PersonsModel::IM);
-    else if (Nepomuk::Vocabulary::NCO::hasEmailAddress() == value)
+    } else if (Nepomuk::Vocabulary::NCO::hasEmailAddress() == value) {
         setType(PersonsModel::Email);
+        setData(value, PersonsModel::EmailRole);
+    }
 
     Q_D(PersonsModelContactItem);
     kDebug() << "Inserting" << value << "(" << key << ")";
     d->data.insert(key, value);
 }
 
-void PersonsModelContactItem::addData(const QUrl &key, const QStringList &values)
-{
-    if(values.isEmpty())
-        return;
-
-    Q_D(PersonsModelContactItem);
-    Q_FOREACH (const QString &value, values) {
-        kDebug() << "Inserting (multi)" << value << "(" << key << ")";
-        d->data.insert(key, value);
-    }
-}
-
-QString PersonsModelContactItem::dataValue(const QUrl &key)
+QVariant PersonsModelContactItem::dataValue(const QUrl &key)
 {
     Q_D(PersonsModelContactItem);
     return d->data.value(key);
-}
-
-QMultiHash<QUrl, QString> PersonsModelContactItem::dataHash() const
-{
-    Q_D(const PersonsModelContactItem);
-    return d->data;
 }
 
 QUrl PersonsModelContactItem::uri() const

@@ -30,18 +30,33 @@ PersonsModelItem::PersonsModelItem(const QUrl &personUri)
 {
     setData(personUri, PersonsModel::UriRole);
 }
+QVariant PersonsModelItem::queryChildrenForRole(int role) const
+{
+    for (int i = 0; i < rowCount(); i++) {
+        QVariant value = child(i)->data(role);
+        if (!value.isNull()) {
+            return value;
+        }
+    }
+    return QVariant();
+}
 
 QVariant PersonsModelItem::data(int role) const
 {
     switch(role) {
-        case Qt::DisplayRole:
-            for (int i = 0; i < rowCount(); i++) {
-                QString contactDisplayName = child(i)->data(Qt::DisplayRole).toString();
-                if (!contactDisplayName.isEmpty()) {
-                    return contactDisplayName;
-                }
-            }
-            return QString(QLatin1String("PIMO:Person - %1")).arg(data(PersonsModel::UriRole).toString());
+        case PersonsModel::NameRole:
+        case Qt::DisplayRole: {
+            QVariant value = queryChildrenForRole(Qt::DisplayRole);
+            if(value.isNull())
+                return QString(QLatin1String("PIMO:Person - %1")).arg(data(PersonsModel::UriRole).toString());
+            else
+                return value;
+        }
+        case PersonsModel::IMRole:
+        case PersonsModel::PhoneRole:
+        case PersonsModel::EmailRole:
+        case PersonsModel::NickRole:
+            return queryChildrenForRole(role);
     }
 
     return QStandardItem::data(role);

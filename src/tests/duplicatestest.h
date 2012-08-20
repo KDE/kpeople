@@ -30,6 +30,7 @@ class DuplicatesTest : public QObject
 
     private slots:
         void testDuplicates();
+        void testDuplicates_data();
 };
 
 #endif // DUPLICATESTEST_H

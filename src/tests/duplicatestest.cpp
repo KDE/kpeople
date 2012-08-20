@@ -25,16 +25,33 @@
 #include <QStandardItemModel>
 
 QTEST_KDEMAIN_CORE( DuplicatesTest )
+Q_DECLARE_METATYPE(QList<PersonsModelItem*>);
+Q_DECLARE_METATYPE(QList<PersonsModelContactItem*>);
+Q_DECLARE_METATYPE(QList<Match>);
 
 DuplicatesTest::DuplicatesTest(QObject* parent): QObject(parent)
 {}
 
 void DuplicatesTest::testDuplicates()
 {
+    QFETCH(QList<PersonsModelItem*>, people);
+    QFETCH(QList<PersonsModelContactItem*>, contacts);
+    QFETCH(QList<Match>, matches);
     PersonsModel m;
-//     m.appendRow();
+    m.init(people, contacts);
     
     QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
     f->start();
     QTest::kWaitForSignal(f.data(), SIGNAL(finished(KJob*)));
+    QCOMPARE(f->results(), matches);
+}
+
+void DuplicatesTest::testDuplicates_data()
+{
+    QTest::addColumn<QList<PersonsModelItem*> >("people");
+    QTest::addColumn<QList<PersonsModelContactItem*> >("contacts");
+    QTest::addColumn<QList<Match> >("matches");
+
+    
+    QTest::newRow("empty") << QList<PersonsModelItem*>() << QList<PersonsModelContactItem*>() << QList<Match>();
 }

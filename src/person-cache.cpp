@@ -45,22 +45,12 @@
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
 
-K_GLOBAL_STATIC(PersonCache, s_globalPersonCache)
-
 /******************************** PersonCache::Private ********************************************/
 
 class PersonCachePrivate {
 
-protected:
-    Q_DECLARE_PUBLIC(PersonCache);
-    PersonCache * const q_ptr;
-
 public:
-    explicit PersonCachePrivate(PersonCache *q)
-    : q_ptr(q)
-    { }
-
-    virtual ~PersonCachePrivate()
+    explicit PersonCachePrivate()
     { }
 
     QHash<QUrl, PersonsModelItem*> persons;
@@ -70,14 +60,9 @@ public:
 /******************************** PersonCache *****************************************************/
 
 
-PersonCache *PersonCache::instance()
-{
-    return s_globalPersonCache;
-}
-
-PersonCache::PersonCache()
-  : QObject(0),
-    d_ptr(new PersonCachePrivate(this))
+PersonCache::PersonCache(QObject* parent)
+  : QObject(parent),
+    d_ptr(new PersonCachePrivate)
 {}
 
 PersonCache::~PersonCache()

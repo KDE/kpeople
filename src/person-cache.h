@@ -46,9 +46,8 @@ class KPEOPLE_EXPORT PersonCache : public QObject {
     Q_DISABLE_COPY(PersonCache);
 
 public:
-    PersonCache();
+    PersonCache(QObject* parent);
     virtual ~PersonCache();
-    static PersonCache *instance();
 
     void startQuery();
 

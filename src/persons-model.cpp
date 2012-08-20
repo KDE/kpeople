@@ -34,7 +34,7 @@ PersonsModel::PersonsModel(QObject *parent)
     : QStandardItemModel(parent)
 //     , d_ptr(new PersonsModelPrivate)
 {
-    PersonCache* cache = PersonCache::instance();
+    PersonCache* cache = new PersonCache(this);
   
     connect(cache,
             SIGNAL(contactsFetched(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)),

@@ -18,14 +18,28 @@
 */
 #include <QApplication>
 #include <QTreeView>
+#include <QHeaderView>
+#include <QStyledItemDelegate>
+#include <qpainter.h>
 #include <../persons-model.h>
+
+class ContactDelegate : public QStyledItemDelegate
+{
+    virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+        QStyledItemDelegate::paint(painter, option, index);
+        if(index.parent().isValid())
+            painter->drawText(option.rect.center(), index.data(PersonsModel::IMRole).toString());
+    }
+};
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
     
     QTreeView view;
+    view.setItemDelegate(new ContactDelegate);
     view.setModel(new PersonsModel(&view));
+    view.setSortingEnabled(true);
     view.show();
     
     app.exec();

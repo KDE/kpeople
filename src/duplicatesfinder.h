@@ -26,7 +26,9 @@
 
 struct Match {
     Match(int r, int a, int b) : role(r), rowA(a), rowB(b) {}
-    
+    bool operator==(const Match& m) { return role==m.role
+                                          && rowA==m.rowA
+                                          && rowB==m.rowB; } 
     int role;
     int rowA, rowB;
 };

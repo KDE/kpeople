@@ -30,16 +30,18 @@
 // public:
 // };
 
-PersonsModel::PersonsModel(QObject *parent)
+PersonsModel::PersonsModel(QObject *parent, bool init)
     : QStandardItemModel(parent)
 //     , d_ptr(new PersonsModelPrivate)
 {
-    PersonCache* cache = new PersonCache(this);
-  
-    connect(cache,
-            SIGNAL(contactsFetched(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)),
-            SLOT(init(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)));
-    cache->startQuery();
+    if(init) {
+        PersonCache* cache = new PersonCache(this);
+    
+        connect(cache,
+                SIGNAL(contactsFetched(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)),
+                SLOT(init(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)));
+        cache->startQuery();
+    }
 }
 
 template <class T>

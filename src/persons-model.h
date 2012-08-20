@@ -55,9 +55,13 @@ public:
         IMRole
     };
 
-    explicit PersonsModel(QObject *parent = 0);
+    /**
+     * @p initialize set it to false if you don't want it to use nepomuk values
+     *               useful for unit testing.
+     */
+    explicit PersonsModel(QObject *parent = 0, bool initialize = true);
 
-private slots:
+public slots:
     void init(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);
 
 private:

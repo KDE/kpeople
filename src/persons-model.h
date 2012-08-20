@@ -53,7 +53,7 @@ public:
     explicit PersonsModel(QObject *parent = 0);
 
 private slots:
-    void init(const QHash< PersonsModelItem*, QList< PersonsModelContactItem* > >& contactNodes);
+    void init(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);
 
 private:
 //     PersonsModelPrivate * const d_ptr;

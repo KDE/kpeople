@@ -92,6 +92,7 @@ PersonCache::~PersonCache()
 
 void PersonCache::startQuery()
 {
+    Q_D(PersonCache);
     kDebug();
 
     QString nco_query = QString::fromUtf8("select distinct ?uri ?nao_prefLabel ?pimo_groundingOccurance ?nco_hasIMAccount"
@@ -135,25 +136,11 @@ void PersonCache::startQuery()
     Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(nco_query,
                                                                                                       Soprano::Query::QueryLanguageSparql);
 
-    QHash<QUrl, PersonsModelItem*> set;
-
-    QHash<QUrl, PersonsModelItem *> personNodes;
-    QHash<PersonsModelItem *, QList<PersonsModelContactItem *> > contactNodes;
+    QList<PersonsModelContactItem*> nonpersonContacts;
 
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
         QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
-
-        QHash< QUrl, PersonsModelItem* >::const_iterator pos = personNodes.constFind(pimoPersonUri);
-        if (!pimoPersonUri.isEmpty()) {
-            if (pos != personNodes.constEnd()) {
-                set.insert(pimoPersonUri, pos.value());
-            } else {
-                pos = personNodes.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
-            }
-        } else {
-            kDebug() << "Not a person" << currentUri << pimoPersonUri;
-        }
 
         QString display = it[QLatin1String("nao_prefLabel")].toString();
         PersonsModelContactItem* contactNode = new PersonsModelContactItem(currentUri, display);
@@ -167,16 +154,21 @@ void PersonCache::startQuery()
             contactNode->addData(keyUri, it[keyString].toString());
         }
 
-        contactNodes[pos.value()].append(contactNode);
+        QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+        if (!pimoPersonUri.isEmpty()) {
+            if (pos == d->persons.constEnd())
+                pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
+            pos.value()->appendRow(contactNode);
+        } else {
+            kDebug() << "Not a person" << currentUri << pimoPersonUri;
+            nonpersonContacts += contactNode;
+        }
     }
-
-    d_ptr->persons.unite(set);
 
     // FIXME: Connect up signals/slots so that when the nepomuk context signals something has
     //        happened we relay it to the model
 
-    Q_ASSERT(personNodes.values().toSet()==contactNodes.keys().toSet());
-    emit contactsFetched(contactNodes);
+    emit contactsFetched(d->persons.values(), nonpersonContacts);
 }
 
 void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)

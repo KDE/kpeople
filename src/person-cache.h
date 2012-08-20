@@ -54,7 +54,7 @@ public:
 
 Q_SIGNALS:
     void personAddedToCache(PersonsModelItem *person);
-    void contactsFetched(const QHash<PersonsModelItem *, QList<PersonsModelContactItem *> >& contactNodes);
+    void contactsFetched(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);
 
 private Q_SLOTS:
     void onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types);

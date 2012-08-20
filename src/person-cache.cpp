@@ -65,9 +65,6 @@ public:
 
     QHash<QUrl, PersonsModelItem*> persons;
     QList<QUrl> allRequestedKeys;
-
-    //FIXME: make it qpointer
-    PersonsModel *model;
 };
 
 /******************************** PersonCache *****************************************************/

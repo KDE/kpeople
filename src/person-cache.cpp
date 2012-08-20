@@ -4,6 +4,8 @@
  * Copyright (C) 2010-2011 Collabora Ltd. <info@collabora.co.uk>
  *   @author George Goldberg <george.goldberg@collabora.co.uk>
  *   @author Martin Klapetek <martin.klapetek@gmail.com>
+ * 
+ * Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

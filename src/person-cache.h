@@ -44,6 +44,7 @@ class KPEOPLE_EXPORT PersonCache : public QObject {
     Q_DISABLE_COPY(PersonCache);
 
 public:
+    PersonCache();
     virtual ~PersonCache();
     static PersonCache *instance();
 
@@ -60,7 +61,6 @@ private Q_SLOTS:
     void onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value);
 
 private:
-    PersonCache();
     PersonCachePrivate * const d_ptr;
 };
 

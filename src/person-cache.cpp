@@ -43,6 +43,8 @@
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
 
+K_GLOBAL_STATIC(PersonCache, s_globalPersonCache)
+
 /******************************** PersonCache::Private ********************************************/
 
 class PersonCachePrivate {
@@ -66,48 +68,18 @@ public:
     PersonsModel *model;
 };
 
-
-/****************************** Global Static Stuff ***********************************************/
-
-class PersonCacheHelper {
-
-public:
-    PersonCacheHelper()
-      : q(0)
-    { }
-
-    ~PersonCacheHelper()
-    {
-        delete q;
-    }
-
-    PersonCache *q;
-};
-
-K_GLOBAL_STATIC(PersonCacheHelper, s_globalPersonCache)
-
-
 /******************************** PersonCache *****************************************************/
 
 
 PersonCache *PersonCache::instance()
 {
-    if (!s_globalPersonCache->q) {
-        new PersonCache;
-    }
-
-    return s_globalPersonCache->q;
+    return s_globalPersonCache;
 }
 
 PersonCache::PersonCache()
   : QObject(0),
     d_ptr(new PersonCachePrivate(this))
-{
-    kDebug();
-
-    Q_ASSERT(!s_globalPersonCache->q);
-    s_globalPersonCache->q = this;
-}
+{}
 
 PersonCache::~PersonCache()
 {

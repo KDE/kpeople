@@ -41,6 +41,9 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
         virtual void start();
         QList<Match> results() const;
 
+    private slots:
+        void doSearch();
+
     private:
         int matchAt(const QVariant& value, const QVector< QVariantList >& collectedValues, int role) const;
         PersonsModel* m_model;

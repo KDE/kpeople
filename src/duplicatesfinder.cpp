@@ -28,6 +28,11 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel* model, QObject* parent)
 
 void DuplicatesFinder::start()
 {
+    QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
+}
+
+void DuplicatesFinder::doSearch()
+{
     QVector<int> compareRoles;
     compareRoles << PersonsModel::NameRole << PersonsModel::EmailRole << PersonsModel::NickRole << PersonsModel::PhoneRole << PersonsModel::IMRole;
     

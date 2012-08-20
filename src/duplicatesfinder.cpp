@@ -33,6 +33,8 @@ void DuplicatesFinder::start()
 
 void DuplicatesFinder::doSearch()
 {
+    //NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment
+    //maybe using nepomuk for the matching would help?
     QVector<int> compareRoles;
     compareRoles << PersonsModel::NameRole << PersonsModel::EmailRole << PersonsModel::NickRole << PersonsModel::PhoneRole << PersonsModel::IMRole;
     

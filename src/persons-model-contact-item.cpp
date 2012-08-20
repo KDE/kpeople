@@ -71,7 +71,6 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     
     if(Nepomuk::Vocabulary::NCO::imNickname() == key) {
         setText(value.toString());
-        setData(value, PersonsModel::NickRole);
     } else if (Nepomuk::Vocabulary::NCO::imID() == key) {
         setData(value, PersonsModel::IMRole);
         setType(PersonsModel::IM);
@@ -100,4 +99,16 @@ void PersonsModelContactItem::setType (PersonsModel::ContactType type)
 {
     setData(type, PersonsModel::ContactTypeRole);
     refreshIcon();
+}
+
+QVariant PersonsModelContactItem::data(int role) const
+{
+    Q_D(const PersonsModelContactItem);
+    switch(role) {
+        case PersonsModel::NickRole: return d->data.value(Nepomuk::Vocabulary::NCO::imNickname());
+        case PersonsModel::PhoneRole: return d->data.value(Nepomuk::Vocabulary::NCO::phoneNumber());
+        case PersonsModel::EmailRole: return d->data.value(Nepomuk::Vocabulary::NCO::emailAddress());
+        case PersonsModel::IMRole: return d->data.value(Nepomuk::Vocabulary::NCO::imID());
+    }
+    return QStandardItem::data(role);
 }

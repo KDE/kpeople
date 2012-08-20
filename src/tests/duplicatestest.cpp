@@ -20,14 +20,19 @@
 #include "duplicatestest.h"
 #include <duplicatesfinder.h>
 #include <persons-model.h>
+#include <persons-model-item.h>
+#include <persons-model-contact-item.h>
 
 #include <qtest_kde.h>
+#include <Nepomuk/Vocabulary/NCO>
 #include <QStandardItemModel>
 
 QTEST_KDEMAIN_CORE( DuplicatesTest )
 Q_DECLARE_METATYPE(QList<PersonsModelItem*>);
 Q_DECLARE_METATYPE(QList<PersonsModelContactItem*>);
 Q_DECLARE_METATYPE(QList<Match>);
+
+
 
 DuplicatesTest::DuplicatesTest(QObject* parent): QObject(parent)
 {}
@@ -36,22 +41,44 @@ void DuplicatesTest::testDuplicates()
 {
     QFETCH(QList<PersonsModelItem*>, people);
     QFETCH(QList<PersonsModelContactItem*>, contacts);
-    QFETCH(QList<Match>, matches);
-    PersonsModel m;
+    QFETCH(int, matches);
+    PersonsModel m(0, false);
     m.init(people, contacts);
     
     QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
     f->start();
     QTest::kWaitForSignal(f.data(), SIGNAL(finished(KJob*)));
-    QCOMPARE(f->results(), matches);
+    QCOMPARE(f->results().size(), matches);
+}
+
+PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVariant& id, const QString& nick=QString())
+{
+    PersonsModelItem* ret = new PersonsModelItem(QString("test:/%1").arg(qrand()));
+    PersonsModelContactItem* contact = new PersonsModelContactItem(QUrl("test:/"+id.toString()), nick);
+    QUrl key;
+    switch(t) {
+        case PersonsModel::IM: key = Nepomuk::Vocabulary::NCO::imID(); break;
+        case PersonsModel::Email: key = Nepomuk::Vocabulary::NCO::emailAddress(); break;
+        case PersonsModel::Phone: key = Nepomuk::Vocabulary::NCO::phoneNumber(); break;
+        default: Q_ASSERT(false && "dude!");
+    }
+    contact->addData(key, id);
+    ret->appendRow(contact);
+    return ret;
 }
 
 void DuplicatesTest::testDuplicates_data()
 {
     QTest::addColumn<QList<PersonsModelItem*> >("people");
     QTest::addColumn<QList<PersonsModelContactItem*> >("contacts");
-    QTest::addColumn<QList<Match> >("matches");
+    QTest::addColumn<int>("matches");
 
-    
-    QTest::newRow("empty") << QList<PersonsModelItem*>() << QList<PersonsModelContactItem*>() << QList<Match>();
+    QList<PersonsModelContactItem*> emptyContacts;
+    QTest::newRow("empty") << QList<PersonsModelItem*>() << emptyContacts << 0;
+    QTest::newRow("diffemails") << (QList<PersonsModelItem*>()
+            << createPerson1Contact(PersonsModel::Email, "a@a.es") << createPerson1Contact(PersonsModel::Email, "a@a.com")
+        ) << emptyContacts << 0;
+    QTest::newRow("emails") << (QList<PersonsModelItem*>()
+            << createPerson1Contact(PersonsModel::Email, "a@a.com") << createPerson1Contact(PersonsModel::Email, "a@a.com")
+        ) << emptyContacts << 1;
 }

@@ -45,6 +45,7 @@ public:
     void setType(PersonsModel::ContactType type);
 
     QVariant dataValue(const QUrl& key);
+    virtual QVariant data(int role = Qt::UserRole + 1) const;
 
 private:
     void refreshIcon();

@@ -37,6 +37,7 @@ class ResultPrinter : public QObject
     public slots:
         void print(KJob* j) {
             qDebug() << "results..." << ((DuplicatesFinder* ) j)->results();
+            QCoreApplication::instance()->quit();
         }
 };
 
@@ -44,8 +45,10 @@ int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
     
+    ResultPrinter r;
     PersonsModel model;
-    QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&model));
+    DuplicatesFinder* f = new DuplicatesFinder(&model);
+    QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
     f->start();
     
     app.exec();

@@ -34,7 +34,7 @@ void DuplicatesTest::testDuplicates()
     PersonsModel m;
 //     m.appendRow();
     
-    DuplicatesFinder f(&m);
-    f.start();
-    QTest::kWaitForSignal(&f, SIGNAL(finished(KJob*)));
+    QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
+    f->start();
+    QTest::kWaitForSignal(f.data(), SIGNAL(finished(KJob*)));
 }

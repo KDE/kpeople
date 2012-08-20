@@ -82,8 +82,6 @@ PersonCache::PersonCache()
 
 PersonCache::~PersonCache()
 {
-    kDebug();
-
     delete d_ptr;
 }
 

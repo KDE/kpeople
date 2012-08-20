@@ -44,5 +44,5 @@ QVariant PersonsModelItem::data(int role) const
             return QString(QLatin1String("PIMO:Person - %1")).arg(data(PersonsModel::UriRole).toString());
     }
 
-    return QVariant();
+    return QStandardItem::data(role);
 }

@@ -39,10 +39,12 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
         explicit DuplicatesFinder(PersonsModel* model, QObject* parent = 0);
         
         virtual void start();
+        QList<Match> results() const;
 
     private:
         int matchAt(const QVariant& value, const QVector< QVariantList >& collectedValues, int role) const;
         PersonsModel* m_model;
+        QList<Match> m_matches;
 };
 
 #endif // DUPLICATESFINDER_H

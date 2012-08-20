@@ -19,6 +19,7 @@
 
 #include "duplicatesfinder.h"
 #include "persons-model.h"
+#include <QDebug>
 
 DuplicatesFinder::DuplicatesFinder(PersonsModel* model, QObject* parent)
     : KJob(parent)
@@ -28,10 +29,10 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel* model, QObject* parent)
 void DuplicatesFinder::start()
 {
     QVector<int> compareRoles;
-    compareRoles << PersonsModel::NameRole << PersonsModel::EmailRole << PersonsModel::NickRole << PersonsModel::PhoneRole;
+    compareRoles << PersonsModel::NameRole << PersonsModel::EmailRole << PersonsModel::NickRole << PersonsModel::PhoneRole << PersonsModel::IMRole;
     
-    QVector< QVariantList > collectedValues(compareRoles.size());
-    QList< Match > candidates;
+    QVector< QVariantList > collectedValues;
+    m_matches.clear();
     
     int count = m_model->rowCount();
     for(int i=0; i<count; i++) {
@@ -45,23 +46,29 @@ void DuplicatesFinder::start()
             
             if(!value.isNull()) {
                 int matchPos = matchAt(value, collectedValues, role);
-                if(matchPos>=0) {
-                    candidates.append(Match(role, matchPos, i));
-                }
+                if(matchPos>=0)
+                    m_matches.append(Match(role, matchPos, i));
             }
         }
+        Q_ASSERT(values.size()==compareRoles.size());
         
         //we add our data
         collectedValues.append(values);
     }
+    emitResult();
 }
 
 int DuplicatesFinder::matchAt(const QVariant& value, const QVector< QVariantList >& collectedValues, int role) const
 {
-    for(int i=0; i<m_model->rowCount(); i++) {
+    for(int i=0; i<collectedValues.size(); i++) {
         const QVariant& v = collectedValues[i][role];
         if(v==value)
             return i;
     }
     return -1;
+}
+
+QList< Match > DuplicatesFinder::results() const
+{
+    return m_matches;
 }

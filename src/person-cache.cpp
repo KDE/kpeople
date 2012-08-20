@@ -186,24 +186,31 @@ void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)
 //             person->addData(keyUri, res.property(keyUri).variant());
 //         }
 //     }
-
     if (newPerson) {
         d->persons.insert(res.resourceUri(), person);
+        emit personAddedToCache(person);
     }
-
     //TODO: Shouldn't we add the contacts now?
-    emit personAddedToCache(person);
 }
 
-void PersonCache::onPersonRemoved()
+void PersonCache::onPersonRemoved(Nepomuk::Resource res)
 {
-    //FIXME: implement me
-    //NOTE: We need to know what person was removed
+    //TODO: how do we connect that?
+    Q_D(PersonCache);
+    PersonsModelItem *person = d->persons.value(res.resourceUri());
+    if(person) {
+        emit removePerson(person);
+    }
 }
 
 void PersonCache::onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value)
 {
-    //FIXME: implement me
+    //TODO: implement. wouldn't it be more interesting to listen to contacts changes? the only change for a person is different contacts...
+    Q_D(PersonCache);
+    PersonsModelItem *person = d->persons.value(res.resourceUri());
+    if(person) {
+//         person->setProperty(property, value)
+    }
 }
 
 #include "person-cache.moc"

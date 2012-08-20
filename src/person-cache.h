@@ -54,11 +54,12 @@ public:
 
 Q_SIGNALS:
     void personAddedToCache(PersonsModelItem *person);
+    void removePerson(PersonsModelItem* person);
     void contactsFetched(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);
 
 private Q_SLOTS:
     void onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types);
-    void onPersonRemoved();
+    void onPersonRemoved(Nepomuk::Resource res);
     void onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value);
 
 private:

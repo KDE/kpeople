@@ -73,12 +73,11 @@ NepomukTpChannelDelegate::NepomukTpChannelDelegate(QObject* parent)
 
 NepomukTpChannelDelegate::~NepomukTpChannelDelegate()
 {
+    delete d_ptr;
 }
 
-void NepomukTpChannelDelegate::onAccountManagerReady(Tp::PendingOperation* op)
+void NepomukTpChannelDelegate::onAccountManagerReady(Tp::PendingOperation*)
 {
-    Q_D(NepomukTpChannelDelegate);
-
     kDebug() << "Account manager ready, bitch";
 }
 
@@ -104,7 +103,7 @@ void NepomukTpChannelDelegate::finished(Tp::PendingOperation *op)
     Tp::ChannelRequestHints hints;
     hints.setHint(QLatin1String("org.kde.telepathy"), QLatin1String("forceRaiseWindow"), QVariant(true));
 
-    Tp::PendingChannelRequest* channelRequest = d->account->ensureTextChat(qobject_cast<Tp::PendingContacts*>(op)->contacts().first(),
+    d->account->ensureTextChat(qobject_cast<Tp::PendingContacts*>(op)->contacts().first(),
                                                                         QDateTime::currentDateTime(),
                                                                         PREFERRED_TEXTCHAT_HANDLER,
                                                                         hints);

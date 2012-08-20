@@ -22,6 +22,7 @@
 
 #include <KJob>
 #include <QVariantList>
+#include "kpeople_export.h"
 
 struct Match {
     Match(int r, int a, int b) : role(r), rowA(a), rowB(b) {}
@@ -31,7 +32,7 @@ struct Match {
 };
 
 class PersonsModel;
-class DuplicatesFinder : public KJob
+class KPEOPLE_EXPORT DuplicatesFinder : public KJob
 {
     Q_OBJECT
     public:

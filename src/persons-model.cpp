@@ -37,8 +37,8 @@ PersonsModel::PersonsModel(QObject *parent)
     PersonCache* cache = PersonCache::instance();
   
     connect(cache,
-            SIGNAL(contactsFetched(QHash<QUrl,PersonsModelItem*>,QHash<PersonsModelItem*,QList<PersonsModelContactItem*> >)),
-            SLOT(init(QHash<QUrl,PersonsModelItem*>,QHash<PersonsModelItem*,QList<PersonsModelContactItem*> >)));
+            SIGNAL(contactsFetched(QHash<PersonsModelItem*,QList<PersonsModelContactItem*> >)),
+            SLOT(init(QHash<PersonsModelItem*,QList<PersonsModelContactItem*> >)));
     cache->startQuery();
 }
 
@@ -52,16 +52,15 @@ QList<QStandardItem*> toStandardItems(const QList<T*>& items)
     return ret;
 }
 
-void PersonsModel::init(const QHash<QUrl,PersonsModelItem*>& personNodes, const QHash<PersonsModelItem*, QList<PersonsModelContactItem*> >& contactNodes)
+void PersonsModel::init(const QHash<PersonsModelItem*, QList<PersonsModelContactItem*> >& contactNodes)
 {
     QStandardItem* root = invisibleRootItem();
-    root->appendRows(toStandardItems(personNodes.values()));
-
     Q_FOREACH(PersonsModelItem *node, contactNodes.keys()) {
         if (node == 0) {
             root->appendRows(toStandardItems(contactNodes.value(node)));
         } else {
             node->appendRows(toStandardItems(contactNodes.value(node)));
+            appendRow(node);
         }
     }
 }

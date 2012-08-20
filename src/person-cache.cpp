@@ -175,7 +175,8 @@ void PersonCache::startQuery()
     // FIXME: Connect up signals/slots so that when the nepomuk context signals something has
     //        happened we relay it to the model
 
-    emit contactsFetched(personNodes, contactNodes);
+    Q_ASSERT(personNodes.values().toSet()==contactNodes.keys().toSet());
+    emit contactsFetched(contactNodes);
 }
 
 void PersonCache::onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types)

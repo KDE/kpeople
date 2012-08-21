@@ -39,7 +39,14 @@ class ResultPrinter : public QObject
     Q_OBJECT
     public slots:
         void print(KJob* j) {
-            qDebug() << "results..." << ((DuplicatesFinder* ) j)->results();
+            QList<Match> res = ((DuplicatesFinder* ) j)->results();
+            qDebug() << "Results:";
+            foreach(const Match& c, res) {
+                QByteArray role = model.roleNames()[c.role];
+                QModelIndex idxA = model.index(c.rowA, 0), idxB = model.index(c.rowB, 0);
+                qDebug() << "\t-" << role << ":" << c.rowA << c.rowB << "because: " << idxA.data(c.role) << idxB.data(c.role);
+            }
+            
             QCoreApplication::instance()->quit();
         }
 };

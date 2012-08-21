@@ -57,7 +57,7 @@ void DuplicatesFinder::doSearch()
         foreach(const QVariantList& valueToCompare, collectedValues) {
             QList< int > matchedRoles = matchAt(values, valueToCompare);
             if(!matchedRoles.isEmpty())
-                m_matches.append(Match(matchedRoles, j, i));
+                m_matches.append(Match(matchedRoles, i, j));
             j++;
         }
         

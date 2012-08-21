@@ -35,11 +35,13 @@ class ResultPrinter : public QObject
             qDebug() << "Results:";
             foreach(const Match& c, res) {
                 QStringList roles;
-                foreach(int i, c.role)
+                QStringList r;
+                foreach(int i, c.role) {
                     roles += model.roleNames()[i];
-                QModelIndex idxA = model.index(c.rowA, 0), idxB = model.index(c.rowB, 0);
-                qDebug() << "\t-" << roles.join(", ") << ":" << c.rowA << c.rowB << "because: "
-                         << idxA.data(c.role.first()).toString() << idxB.data(c.role.first()).toString();
+                    QModelIndex idx = model.index(c.rowA, 0);
+                    r += idx.data(c.role.first()).toString();
+                }
+                qDebug() << "\t-" << roles.join(", ") << ":" << c.rowA << c.rowB << "because: " << r.join(", ");
             }
             
             QCoreApplication::instance()->quit();

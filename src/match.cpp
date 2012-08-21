@@ -1,5 +1,5 @@
 /*
-    Persons Model
+    KPeople - Duplicates
     Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
 
     This library is free software; you can redistribute it and/or
@@ -17,33 +17,20 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef DUPLICATESFINDER_H
-#define DUPLICATESFINDER_H
-
-#include <KJob>
-#include <QVariantList>
-#include <QVector>
-#include "kpeople_export.h"
 #include "match.h"
 
-class PersonsModel;
-class KPEOPLE_EXPORT DuplicatesFinder : public KJob
+Match::Match(const QList< int >& r, int a, int b)
+    : role(r), rowA(a), rowB(b)
+{}
+
+bool Match::operator==(const Match& m) const
 {
-    Q_OBJECT
-    public:
-        explicit DuplicatesFinder(PersonsModel* model, QObject* parent = 0);
-        
-        virtual void start();
-        QList<Match> results() const;
+    return role==m.role
+           && rowA==m.rowA
+           && rowB==m.rowB;
+}
 
-    private slots:
-        void doSearch();
-
-    private:
-        QList< int > matchAt(const QVariantList& value, const QVariantList& toCompare) const;
-        PersonsModel* m_model;
-        QList<Match> m_matches;
-        QVector<int> m_compareRoles;
-};
-
-#endif // DUPLICATESFINDER_H
+bool Match::operator<(const Match& m) const
+{
+    return rowA<m.rowA || (rowA==m.rowA && rowB<m.rowB);
+}

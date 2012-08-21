@@ -26,14 +26,6 @@
 
 PersonsModel model;
 
-QDebug operator<<(QDebug dbg, const Match &c)
-{
-    QByteArray role = model.roleNames()[c.role];
-    dbg.nospace() << "(" << role << ": " << c.rowA << ", " << c.rowB << ")";
-
-    return dbg.space();
-}
-
 class ResultPrinter : public QObject
 {
     Q_OBJECT
@@ -42,9 +34,11 @@ class ResultPrinter : public QObject
             QList<Match> res = ((DuplicatesFinder* ) j)->results();
             qDebug() << "Results:";
             foreach(const Match& c, res) {
-                QByteArray role = model.roleNames()[c.role];
+                QStringList roles;
+                foreach(int i, c.role)
+                    roles += model.roleNames()[i];
                 QModelIndex idxA = model.index(c.rowA, 0), idxB = model.index(c.rowB, 0);
-                qDebug() << "\t-" << role << ":" << c.rowA << c.rowB << "because: " << idxA.data(c.role) << idxB.data(c.role);
+                qDebug() << "\t-" << roles.join(", ") << ":" << c.rowA << c.rowB << "because: " << idxA.data(c.role.first()) << idxB.data(c.role.first());
             }
             
             QCoreApplication::instance()->quit();

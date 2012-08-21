@@ -22,14 +22,15 @@
 
 #include <KJob>
 #include <QVariantList>
+#include <QVector>
 #include "kpeople_export.h"
 
 struct Match {
-    Match(int r, int a, int b) : role(r), rowA(a), rowB(b) {}
+    Match(const QList<int>& r, int a, int b) : role(r), rowA(a), rowB(b) {}
     bool operator==(const Match& m) { return role==m.role
                                           && rowA==m.rowA
                                           && rowB==m.rowB; } 
-    int role;
+    QList<int> role;
     int rowA, rowB;
 };
 
@@ -47,9 +48,10 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
         void doSearch();
 
     private:
-        int matchAt(const QVariant& value, const QVector< QVariantList >& collectedValues, int role) const;
+        QList< int > matchAt(const QVariantList& value, const QVariantList& toCompare) const;
         PersonsModel* m_model;
         QList<Match> m_matches;
+        QVector<int> m_compareRoles;
 };
 
 #endif // DUPLICATESFINDER_H

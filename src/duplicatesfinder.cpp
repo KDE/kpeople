@@ -54,7 +54,7 @@ void DuplicatesFinder::doSearch()
             if(!value.isNull()) {
                 int matchPos = matchAt(value, collectedValues, role);
                 if(matchPos>=0)
-                    m_matches.append(Match(role, matchPos, i));
+                    m_matches.append(Match(compareRoles[role], matchPos, i));
             }
         }
         Q_ASSERT(values.size()==compareRoles.size());

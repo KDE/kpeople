@@ -38,7 +38,8 @@ class ResultPrinter : public QObject
                 foreach(int i, c.role)
                     roles += model.roleNames()[i];
                 QModelIndex idxA = model.index(c.rowA, 0), idxB = model.index(c.rowB, 0);
-                qDebug() << "\t-" << roles.join(", ") << ":" << c.rowA << c.rowB << "because: " << idxA.data(c.role.first()) << idxB.data(c.role.first());
+                qDebug() << "\t-" << roles.join(", ") << ":" << c.rowA << c.rowB << "because: "
+                         << idxA.data(c.role.first()).toString() << idxB.data(c.role.first()).toString();
             }
             
             QCoreApplication::instance()->quit();

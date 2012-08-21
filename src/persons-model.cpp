@@ -34,6 +34,17 @@ PersonsModel::PersonsModel(QObject *parent, bool init)
     : QStandardItemModel(parent)
 //     , d_ptr(new PersonsModelPrivate)
 {
+    QHash<int, QByteArray> names = roleNames();
+    names.insert(PersonsModel::EmailRole, "email");
+    names.insert(PersonsModel::PhoneRole, "phone");
+    names.insert(PersonsModel::ContactIdRole, "contactId");
+    names.insert(PersonsModel::ContactTypeRole, "contactType");
+    names.insert(PersonsModel::IMRole, "im");
+    names.insert(PersonsModel::NickRole, "nick");
+    names.insert(PersonsModel::UriRole, "uri");
+    names.insert(PersonsModel::NameRole, "name");
+    setRoleNames(names);
+    
     if(init) {
         PersonCache* cache = new PersonCache(this);
     

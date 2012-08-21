@@ -24,9 +24,12 @@
 #include <duplicatesfinder.h>
 #include <qtest_kde.h>
 
+PersonsModel model;
+
 QDebug operator<<(QDebug dbg, const Match &c)
 {
-    dbg.nospace() << "(" << c.role << c.rowA << c.rowB << ")";
+    QByteArray role = model.roleNames()[c.role];
+    dbg.nospace() << "(" << role << ": " << c.rowA << ", " << c.rowB << ")";
 
     return dbg.space();
 }
@@ -46,7 +49,6 @@ int main(int argc, char** argv)
     QCoreApplication app(argc, argv);
     
     ResultPrinter r;
-    PersonsModel model;
     DuplicatesFinder* f = new DuplicatesFinder(&model);
     QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
     f->start();

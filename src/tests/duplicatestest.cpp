@@ -63,6 +63,8 @@ PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVaria
         default: Q_ASSERT(false && "dude!");
     }
     contact->addData(key, id);
+    if(!nick.isEmpty())
+        contact->addData(Nepomuk::Vocabulary::NCO::imNickname(), nick);
     ret->appendRow(contact);
     return ret;
 }

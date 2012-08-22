@@ -35,7 +35,10 @@ public:
     PersonsModelItem(const QUrl &personUri);
 
     virtual QVariant data(int role) const;
+
+private:
     QVariant queryChildrenForRole(int role) const;
+    QVariantList queryChildrenForRoleList(int role) const;
 };
 
 Q_DECLARE_METATYPE(PersonsModelItem*);

@@ -41,6 +41,18 @@ QVariant PersonsModelItem::queryChildrenForRole(int role) const
     return QVariant();
 }
 
+QVariantList PersonsModelItem::queryChildrenForRoleList(int role) const
+{
+    QVariantList ret;
+    for (int i = 0; i < rowCount(); i++) {
+        QVariant value = child(i)->data(role);
+        if (!value.isNull()) {
+            ret += value;
+        }
+    }
+    return ret;
+}
+
 QVariant PersonsModelItem::data(int role) const
 {
     switch(role) {
@@ -52,11 +64,12 @@ QVariant PersonsModelItem::data(int role) const
             else
                 return value;
         }
+        case PersonsModel::NickRole:
+            return queryChildrenForRole(role);
         case PersonsModel::IMRole:
         case PersonsModel::PhoneRole:
         case PersonsModel::EmailRole:
-        case PersonsModel::NickRole:
-            return queryChildrenForRole(role);
+            return queryChildrenForRoleList(role);
     }
 
     return QStandardItem::data(role);

@@ -38,12 +38,26 @@ Rectangle {
         }
         width: parent.width/2
         property variant contactData
-        onContactDataChanged: {
+        function dataToString(data) {
             var text = ""
-            for(var a in contactData)
-                text += a + ": " + contactData[a]+'\n'
-            contactText.text = text
-            console.log("contact selected:", text)
+            if(data.empty)
+                text="''"
+            for(var a in data) {
+                text += a + ": ";
+                var curr = data[a]
+                if(curr==null)
+                    text += "null"
+                else if(!curr.isObject)
+                    text += curr
+                else
+                    text += dataToString[curr]
+                text += '\n'
+            }
+            return text
+        }
+        onContactDataChanged: {
+            contactText.text = dataToString(contactData)
+            console.log("contact selected:", contactText.text)
         }
         
         Label {

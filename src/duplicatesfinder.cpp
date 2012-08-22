@@ -33,6 +33,7 @@ void DuplicatesFinder::start()
     QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
 }
 
+//TODO: start providing partial results so that we can start processing matches while it's not done
 void DuplicatesFinder::doSearch()
 {
     //NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment

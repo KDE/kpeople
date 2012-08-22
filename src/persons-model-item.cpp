@@ -30,6 +30,7 @@ PersonsModelItem::PersonsModelItem(const QUrl &personUri)
 {
     setData(personUri, PersonsModel::UriRole);
 }
+
 QVariant PersonsModelItem::queryChildrenForRole(int role) const
 {
     for (int i = 0; i < rowCount(); i++) {
@@ -60,7 +61,7 @@ QVariant PersonsModelItem::data(int role) const
         case Qt::DisplayRole: {
             QVariant value = queryChildrenForRole(Qt::DisplayRole);
             if(value.isNull())
-                return QString(QLatin1String("PIMO:Person - %1")).arg(data(PersonsModel::UriRole).toString());
+                return QString("PIMO:Person - %1").arg(data(PersonsModel::UriRole).toString());
             else
                 return value;
         }

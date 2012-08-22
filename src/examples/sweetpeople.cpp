@@ -31,6 +31,7 @@ int main(int argc, char** argv)
     decl.initialize();
     decl.setupBindings();
     view.setSource(QUrl("qrc:/qml/Main.qml"));
+    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
     view.show();
     
     app.exec();

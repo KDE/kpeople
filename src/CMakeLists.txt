@@ -13,6 +13,7 @@ kde4_add_library (kpeople SHARED
     person-cache.cpp
 
     duplicatesfinder.cpp
+    matchessolver.cpp
     match.cpp
 )
 

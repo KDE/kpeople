@@ -22,7 +22,9 @@
 #include <QTextStream>
 #include <persons-model.h>
 #include <duplicatesfinder.h>
-#include <qtest_kde.h>
+#include <matchessolver.h>
+#include <cstdio>
+#include <iostream>
 
 PersonsModel model;
 
@@ -32,20 +34,41 @@ class ResultPrinter : public QObject
     public slots:
         void print(KJob* j) {
             QList<Match> res = ((DuplicatesFinder* ) j)->results();
-            qDebug() << "Results:";
-            foreach(const Match& c, res) {
+            std::cout << "Results:" << std::endl;
+            for(QList<Match>::iterator it=res.begin(); it!=res.end(); ) {
                 QStringList roles;
                 QStringList r;
-                foreach(int i, c.role) {
+                foreach(int i, it->role) {
                     roles += model.roleNames()[i];
-                    QModelIndex idx = model.index(c.rowA, 0);
-                    r += idx.data(c.role.first()).toString();
+                    QModelIndex idx = model.index(it->rowA, 0);
+                    r += idx.data(it->role.first()).toString();
                 }
-                qDebug() << "\t-" << roles.join(", ") << ":" << c.rowA << c.rowB << "because: " << r.join(", ");
+                std::cout << "\t- " << qPrintable(roles.join(", ")) << ": " << it->rowA << " " << it->rowB
+                          << " because: " << qPrintable(r.join(", ")) << std::endl;
+                bool remove = false;
+                if(m_action==Apply) {
+                    for(char ans=' '; ans=='y' || ans=='n'; ) {
+                        std::cout << "apply? (y/n)";
+                        std::cin >> ans;
+                        remove = ans == 'n';
+                    }
+                }
+                if(remove)
+                    it = res.erase(it);
+                else
+                    ++it;
             }
             
-            QCoreApplication::instance()->quit();
+            if(m_action==Apply || m_action==Ask) {
+                MatchesSolver* s = new MatchesSolver(res, &model, this);
+                connect(s, SIGNAL(finished(KJob*)), QCoreApplication::instance(), SLOT(quit()));
+                s->start();
+            } else
+                QCoreApplication::instance()->quit();
         }
+    public:
+        enum MatchAction { Apply, NotApply, Ask };
+        MatchAction m_action;
 };
 
 int main(int argc, char** argv)
@@ -53,6 +76,9 @@ int main(int argc, char** argv)
     QCoreApplication app(argc, argv);
     
     ResultPrinter r;
+    r.m_action = app.arguments().contains("--apply") ? ResultPrinter::Apply
+               : app.arguments().contains("--ask") ? ResultPrinter::Ask
+               : ResultPrinter::NotApply;
     DuplicatesFinder* f = new DuplicatesFinder(&model);
     QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
     f->start();

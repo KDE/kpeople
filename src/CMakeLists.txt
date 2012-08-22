@@ -4,6 +4,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 add_subdirectory(examples)
 add_subdirectory(tests)
+add_subdirectory(declarative)
 
 kde4_add_library (kpeople SHARED
     persons-model-contact-item.cpp

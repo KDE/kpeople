@@ -57,6 +57,7 @@ Q_SIGNALS:
     void contactsFetched(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);
 
 private Q_SLOTS:
+    void query();
     void onNewPersonCreated(Nepomuk::Resource res, QList<QUrl> types);
     void onPersonRemoved(Nepomuk::Resource res);
     void onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value);

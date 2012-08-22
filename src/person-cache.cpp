@@ -72,6 +72,12 @@ PersonCache::~PersonCache()
 
 void PersonCache::startQuery()
 {
+    QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection);
+}
+
+//TODO: maybe move to a thread?
+void PersonCache::query()
+{
     Q_D(PersonCache);
     kDebug();
 

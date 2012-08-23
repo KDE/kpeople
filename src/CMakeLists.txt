@@ -12,6 +12,7 @@ kde4_add_library (kpeople SHARED
     persons-model.cpp
     nepomuk-tp-channel-delegate.cpp
     person-cache.cpp
+    personactions.cpp
 
     duplicatesfinder.cpp
     matchessolver.cpp

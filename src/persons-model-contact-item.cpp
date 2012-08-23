@@ -72,16 +72,15 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     if(Nepomuk::Vocabulary::NCO::imNickname() == key) {
         setText(value.toString());
     } else if (Nepomuk::Vocabulary::NCO::imID() == key) {
-        setData(value, PersonsModel::IMRole);
         setType(PersonsModel::IM);
     } else if (Nepomuk::Vocabulary::NCO::hasEmailAddress() == value) {
         setType(PersonsModel::Email);
-        setData(value, PersonsModel::EmailRole);
     }
 
     Q_D(PersonsModelContactItem);
     kDebug() << "Inserting" << value << "(" << key << ")";
     d->data.insert(key, value);
+    emitDataChanged();
 }
 
 QVariant PersonsModelContactItem::dataValue(const QUrl &key)

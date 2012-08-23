@@ -8,6 +8,8 @@ Rectangle {
     height: 100
     color: "red"
     
+    PersonsModel { id: people }
+    
     ListView {
         id: view
         anchors {
@@ -17,10 +19,13 @@ Rectangle {
         }
         width: parent.width/2
         
-        model: PersonsModel {}
+        model: people
         delegate:   ListItem {
+                        height: lab.font.pixelSize*1.3
                         Label {
-                            anchors.fill: parent
+                            id: lab
+                            anchors.centerIn: parent
+                            width: parent.width
                             elide: Text.ElideRight
                             text: display
                         }
@@ -29,7 +34,7 @@ Rectangle {
                     }
     }
     
-    Item {
+    Flickable {
         id: contactItem
         anchors {
             top: parent.top
@@ -38,32 +43,57 @@ Rectangle {
         }
         width: parent.width/2
         property variant contactData
-        function dataToString(data) {
-            var text = ""
-            if(data.empty)
-                text="''"
-            for(var a in data) {
-                text += a + ": ";
-                var curr = data[a]
-                if(curr==null)
-                    text += "null"
-                else if(!curr.isObject)
-                    text += curr
-                else
-                    text += dataToString[curr]
-                text += '\n'
-            }
-            return text
-        }
-        onContactDataChanged: {
-            contactText.text = dataToString(contactData)
-            console.log("contact selected:", contactText.text)
-        }
         
-        Label {
-            id: contactText
-            anchors.fill: parent
-            text: "select a contact"
+        Column {
+            anchors {
+                top: parent.top
+                left: parent.left
+                right: parent.right
+            }
+            
+            Label {
+                id: contactText
+                width: parent.width
+                text: dataToString(contactItem.contactData)
+                
+                function dataToString(data) {
+                    if(data==null)
+                        return "";
+                    
+                    var text = ""
+                    if(data.empty)
+                        text="''"
+                    for(var a in data) {
+                        text += a + ": ";
+                        var curr = data[a]
+                        if(curr==null)
+                            text += "null"
+                        else if(!curr.isObject)
+                            text += curr
+                        else
+                            text += dataToString[curr]
+                        text += '\n'
+                    }
+                    return text
+                }
+            }
+            Rectangle { color: "blue"; width: parent.width; height: 5}
+            Flow {
+                width: parent.width
+                Repeater {
+                    model: PersonActions {
+                        id: actionsModel
+                        row: contactItem.contactData!=null ? contactItem.contactData.index : -1
+                        peopleModel: people
+                    }
+                    delegate: Button {
+                        text: model.display
+                        iconSource: model.decoration
+                        onClicked: actionsModel.trigger(model.index)
+                    }
+                }
+            }
+            Rectangle { color: "green"; width: parent.width; height: 5 }
         }
     }
 }

@@ -18,6 +18,7 @@
 */
 #include <QApplication>
 #include <QDeclarativeView>
+#include <qdeclarativeerror.h>
 
 #include <kdeclarative.h>
 
@@ -32,6 +33,7 @@ int main(int argc, char** argv)
     decl.setupBindings();
     view.setSource(QUrl("qrc:/qml/Main.qml"));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
+    Q_ASSERT(view.errors().isEmpty());
     view.show();
     
     app.exec();

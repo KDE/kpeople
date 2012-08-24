@@ -25,6 +25,8 @@
 #include <KDebug>
 #include <Nepomuk/Vocabulary/NCO>
 #include <Soprano/Vocabulary/NAO>
+#include <Nepomuk/Resource>
+#include <Nepomuk/Variant>
 
 class PersonsModelContactItemPrivate {
 public:
@@ -108,6 +110,22 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::PhoneRole: return d->data.value(Nepomuk::Vocabulary::NCO::phoneNumber());
         case PersonsModel::EmailRole: return d->data.value(Nepomuk::Vocabulary::NCO::emailAddress());
         case PersonsModel::IMRole: return d->data.value(Nepomuk::Vocabulary::NCO::imID());
+        case Qt::EditRole:
+        case Qt::ToolTipRole:
+        case PersonsModel::PhotoRole: {
+            QHash<QUrl, QVariant>::const_iterator it = d->data.constFind(Nepomuk::Vocabulary::NCO::photo());
+            if(it==d->data.constEnd() || it.value().isNull()) {
+                Nepomuk::Resource res(uri());
+                Nepomuk::Resource resPhoto(res.property(Nepomuk::Vocabulary::NCO::photo()).toUrl());
+                if(resPhoto.isValid()) {
+                    QUrl url = resPhoto.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toUrl();
+                    it=d_ptr->data.insert(Nepomuk::Vocabulary::NCO::photo(), url);
+                }
+                else
+                    return QVariant();
+            }
+            return it.value();
+        }
     }
     return QStandardItem::data(role);
 }

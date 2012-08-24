@@ -52,7 +52,8 @@ public:
         EmailRole,
         NickRole,
         PhoneRole,
-        IMRole
+        IMRole,
+        PhotoRole
     };
 
     /**

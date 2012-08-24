@@ -83,7 +83,7 @@ void PersonCache::query()
 
     QString nco_query = QString::fromUtf8("select distinct ?uri ?nao_prefLabel ?pimo_groundingOccurance ?nco_hasIMAccount"
                       "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                      "?nao_prefSymbol ?telepathy_accountIdentifier ?nco_imStatus ?pimo_prefLabel ?pimo_prefSymbol"
+                      "?nao_prefSymbol ?telepathy_accountIdentifier ?nco_imStatus"
 
                       "WHERE { ?uri a nco:Contact ."
 
@@ -97,8 +97,6 @@ void PersonCache::query()
                       "?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier ."
 
                       "OPTIONAL { ?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . }"
-                      "OPTIONAL { ?pimo_groundingOccurance  nao:prefLabel      ?pimo_prefLabel . }"
-                      "OPTIONAL { ?pimo_groundingOccurance  nao:prefSymbol     ?pimo_prefSymbol . }"
 
                       "OPTIONAL { ?uri            nao:prefLabel        ?nao_prefLabel . }"
                       "OPTIONAL { ?uri            nao:prefSymbol       ?nao_prefSymbol . }"

@@ -38,3 +38,15 @@ void PersonsModelTest::testInit()
         QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
     }
 }
+
+void PersonsModelTest::testPhotos()
+{
+    PersonsModel m;
+    QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+    QBENCHMARK {
+        for(int i=0; i<m.rowCount(); ++i) {
+            QModelIndex idx = m.index(i, 0);
+            idx.data(PersonsModel::PhotoRole);
+        }
+    }
+}

@@ -65,6 +65,9 @@ public:
 public slots:
     void init(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);
 
+signals:
+    void peopleAdded();
+
 private:
 //     PersonsModelPrivate * const d_ptr;
 //     Q_DECLARE_PRIVATE(PersonsModel)

@@ -71,4 +71,5 @@ void PersonsModel::init(const QList<PersonsModelItem*>& people, const QList<Pers
     QStandardItem* root = invisibleRootItem();
     root->appendRows(toStandardItems(people));
     root->appendRows(toStandardItems(other));
+    emit peopleAdded();
 }

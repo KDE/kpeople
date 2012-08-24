@@ -117,8 +117,9 @@ void PersonCache::query()
     << Nepomuk::Vocabulary::NCO::imStatus()
     << Nepomuk::Vocabulary::NCO::hasEmailAddress();
 
-    Soprano::QueryResultIterator it = Nepomuk::ResourceManager::instance()->mainModel()->executeQuery(nco_query,
-                                                                                                      Soprano::Query::QueryLanguageSparql);
+    Soprano::Model* m = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = m->executeQuery(nco_query,
+                                                      Soprano::Query::QueryLanguageSparql);
 
     QList<PersonsModelContactItem*> nonpersonContacts;
 

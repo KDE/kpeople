@@ -94,6 +94,14 @@ Rectangle {
                 }
             }
             Rectangle { color: "green"; width: parent.width; height: 5 }
+            Row {
+                Repeater {
+                    model: contactItem.contactData.photo
+                    delegate: Image {
+                        source: modelData
+                    }
+                }
+            }
         }
     }
 }

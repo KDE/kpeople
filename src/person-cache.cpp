@@ -202,5 +202,3 @@ void PersonCache::onPersonPropertyChanged(Nepomuk::Resource res, Nepomuk::Types:
 //         person->setProperty(property, value)
     }
 }
-
-#include "person-cache.moc"

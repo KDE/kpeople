@@ -78,7 +78,7 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     }
 
     Q_D(PersonsModelContactItem);
-    kDebug() << "Inserting" << value << "(" << key << ")";
+//     kDebug() << "Inserting" << value << "(" << key << ")";
     d->data.insert(key, value);
     emitDataChanged();
 }

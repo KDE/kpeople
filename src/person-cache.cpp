@@ -124,8 +124,6 @@ void PersonCache::query()
 
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
-        QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
-
         QString display = it[QLatin1String("nao_prefLabel")].toString();
         PersonsModelContactItem* contactNode = new PersonsModelContactItem(currentUri, display);
 
@@ -133,13 +131,14 @@ void PersonCache::query()
             QString keyString = keyUri.toString();
             //convert every key to correspond to the nepomuk bindings
             //FIXME: get this method out of the loop, it repeats too many times for nothing
-            keyString = keyString.right(keyString.length() - keyString.lastIndexOf(QLatin1Char('/')) - 1).replace(QLatin1Char('#'), QLatin1Char('_'));
+            keyString = keyString.mid(keyString.lastIndexOf(QLatin1Char('/')) + 1).replace(QLatin1Char('#'), QLatin1Char('_'));
 
             contactNode->addData(keyUri, it[keyString].toString());
         }
 
-        QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+        QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
         if (!pimoPersonUri.isEmpty()) {
+            QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
             if (pos == d->persons.constEnd())
                 pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
             pos.value()->appendRow(contactNode);

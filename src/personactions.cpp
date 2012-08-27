@@ -99,16 +99,17 @@ void PersonActions::initialize(QAbstractItemModel* model, int row)
     d->actions.clear();
     for(int i=0; i<rows; i++) {
         QModelIndex idxContact = idx.child(i, 0);
-        QAction* action = new QAction(idxContact.data(Qt::DecorationRole).value<QIcon>(),
-                                      i18n("Start '%1'", idxContact.data().toString()), this);
+        QAction* action = new QAction(idxContact.data(Qt::DecorationRole).value<QIcon>(), QString(), this);
         action->setProperty("idx", qVariantFromValue(idxContact));
         bool b = false;
         switch(idxContact.data(PersonsModel::ContactTypeRole).toInt()) {
             case PersonsModel::Email:
+                action->setText(i18n("Send e-mail to '%1'", idxContact.data().toString()));
                 b = connect(action, SIGNAL(triggered(bool)), SLOT(emailTriggered()));
                 break;
             case PersonsModel::IM:
                 if(!d->ktpDelegate) d->ktpDelegate = new NepomukTpChannelDelegate(this);
+                action->setText(i18n("Chat with '%1'", idxContact.data().toString()));
                 b = connect(action, SIGNAL(triggered(bool)), SLOT(chatTriggered()));
                 break;
             case PersonsModel::Phone:

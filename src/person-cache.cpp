@@ -93,8 +93,6 @@ void PersonCache::query()
                       "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus ."
                       "?nco_hasIMAccount          nco:imID                    ?nco_imID ."
                       "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType ."
-                      "?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy ."
-                      "?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier ."
 
                       "OPTIONAL { ?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . }"
 
@@ -113,7 +111,6 @@ void PersonCache::query()
     //                      << Nepomuk::Vocabulary::Telepathy::statusType()
     //                      << Nepomuk::Vocabulary::Telepathy::accountIdentifier()
     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
-    << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#accountIdentifier"))
     << Nepomuk::Vocabulary::NCO::imStatus()
     << Nepomuk::Vocabulary::NCO::hasEmailAddress();
 

@@ -19,20 +19,26 @@
 
 #include "personactions.h"
 #include "persons-model.h"
+#include "nepomuk-tp-channel-delegate.h"
 #include <klocalizedstring.h>
 #include <qabstractitemmodel.h>
 #include <QDebug>
 #include <qaction.h>
 #include <KToolInvocation>
+#include <Nepomuk/ResourceManager>
+#include <Soprano/Node>
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
 
 Q_DECLARE_METATYPE(QModelIndex);
 
 struct PersonActionsPrivate {
-    PersonActionsPrivate() : row(-1), model(0) {}
+    PersonActionsPrivate() : row(-1), model(0), ktpDelegate(0) {}
     
     int row;
     QAbstractItemModel* model;
     QList<QAction*> actions;
+    NepomukTpChannelDelegate* ktpDelegate;
 };
 
 PersonActions::PersonActions(QObject* parent)
@@ -102,6 +108,7 @@ void PersonActions::initialize(QAbstractItemModel* model, int row)
                 b = connect(action, SIGNAL(triggered(bool)), SLOT(emailTriggered()));
                 break;
             case PersonsModel::IM:
+                if(!d->ktpDelegate) d->ktpDelegate = new NepomukTpChannelDelegate(this);
                 b = connect(action, SIGNAL(triggered(bool)), SLOT(chatTriggered()));
                 break;
             case PersonsModel::Phone:
@@ -129,7 +136,24 @@ void PersonActions::chatTriggered()
 {
     QAction* action = qobject_cast<QAction*>(sender());
     QModelIndex idxContact = action->property("idx").value<QModelIndex>();
-    //TODO: call startChat
+    const QString query = QString::fromLatin1("select ?telepathy_accountIdentifier WHERE {"
+        "%1                         nco:hasIMAccount            ?nco_hasIMAccount . "
+        "?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy . "
+        "?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . "
+    "   }").arg( Soprano::Node::resourceToN3(idxContact.data(PersonsModel::UriRole).toUrl()) );
+    
+    Soprano::Model* model = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator qit = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+
+    QString account;
+    if( qit.next() ) {
+        account = qit["telepathy_accountIdentifier"].toString();
+    }
+    
+    if(!account.isEmpty()) {
+        Q_D(const PersonActions);
+        d->ktpDelegate->startChat(account, idxContact.data(PersonsModel::IMRole).toString());
+    }
 }
 
 QVariant PersonActions::data(const QModelIndex& index, int role) const

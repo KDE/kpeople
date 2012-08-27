@@ -30,8 +30,8 @@ class PersonsModelTest : public QObject
 
     private slots:
         void testInit();
-        
         void testPhotos();
+        void testActions();
 };
 
 #endif // PERSONSMODELTEST_H

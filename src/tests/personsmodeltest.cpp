@@ -21,6 +21,7 @@
 #include <persons-model.h>
 #include <persons-model-item.h>
 #include <persons-model-contact-item.h>
+#include <personactions.h>
 
 #include <qtest_kde.h>
 #include <Nepomuk/Vocabulary/NCO>
@@ -52,4 +53,16 @@ void PersonsModelTest::testPhotos()
         }
     }
     QVERIFY(count>0); //there should be someone with photos...
+}
+
+void PersonsModelTest::testActions()
+{
+    PersonsModel m;
+    QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+    for(int i=0; i<m.rowCount(); ++i) {
+        PersonActions a;
+        a.setModel(&m);
+        a.setRow(i);
+        QVERIFY(a.rowCount(QModelIndex())>0);
+    }
 }

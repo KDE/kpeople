@@ -25,8 +25,11 @@
 #include <KDebug>
 #include <Nepomuk/Vocabulary/NCO>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
 #include <Nepomuk/Resource>
 #include <Nepomuk/Variant>
+#include <Nepomuk/ResourceManager>
 
 class PersonsModelContactItemPrivate {
 public:
@@ -115,16 +118,17 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::PhotoRole: {
             QHash<QUrl, QVariant>::const_iterator it = d->data.constFind(Nepomuk::Vocabulary::NCO::photo());
             if(it==d->data.constEnd() || it.value().isNull()) {
-                Nepomuk::Resource res(uri());
-                Nepomuk::Resource resPhoto(res.property(Nepomuk::Vocabulary::NCO::photo()).toUrl());
-                if(resPhoto.isValid()) {
-                    QUrl url = resPhoto.property(QUrl("http://www.semanticdesktop.org/ontologies/2007/01/19/nie#url")).toUrl();
-                    it=d_ptr->data.insert(Nepomuk::Vocabulary::NCO::photo(), url);
+                const QString query = QString::fromLatin1("select ?url where { %1 nco:photo ?phRes. ?phRes nie:url ?url . }")
+                                                          .arg( Soprano::Node::resourceToN3(uri()) );
+                Soprano::Model* model = Nepomuk::ResourceManager::instance()->mainModel();
+                Soprano::QueryResultIterator qit = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+            
+                if( qit.next() ) {
+                    QUrl url = qit["url"].uri();
+                    it = d_ptr->data.insert(Nepomuk::Vocabulary::NCO::photo(), url);
                 }
-                else
-                    return QVariant();
             }
-            return it.value();
+            return it!=d->data.constEnd() ? it.value() : QVariant();
         }
     }
     return QStandardItem::data(role);

@@ -1,6 +1,7 @@
 import QtQuick 1.1
 import org.kde.people 0.1
 import org.kde.plasma.components 0.1
+import org.kde.plasma.core 0.1 as Core
 import org.kde.plasma.extras 0.1
 
 Rectangle {
@@ -8,12 +9,23 @@ Rectangle {
     height: 100
     color: "red"
     
-    PersonsModel { id: people }
+    Core.SortFilterModel {
+        id: filteredPeople
+        sourceModel: PersonsModel {}
+        filterRegExp: searchField.text
+    }
     
+    TextField {
+        id: searchField
+        anchors {
+            left: parent.left
+            right: view.right
+        }
+    }
     GridView {
         id: view
         anchors {
-            top: parent.top
+            top: searchField.bottom
             bottom: parent.bottom
             left: parent.left
             right: contactItem.left
@@ -21,7 +33,7 @@ Rectangle {
         
         cellWidth: 100
         cellHeight: 100
-        model: people
+        model: filteredPeople
         delegate:   ListItem {
                         height: view.cellHeight
                         width: view.cellWidth-5
@@ -90,7 +102,7 @@ Rectangle {
                         model: PersonActions {
                             id: actionsModel
                             row: contactItem.contactData!=null ? contactItem.contactData.index : -1
-                            peopleModel: people
+                            peopleModel: filteredPeople
                         }
                         delegate: Button {
                             text: model.display

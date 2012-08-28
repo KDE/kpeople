@@ -117,16 +117,17 @@ QVariant PersonsModelContactItem::data(int role) const
         case Qt::ToolTipRole:
         case PersonsModel::PhotoRole: {
             QHash<QUrl, QVariant>::const_iterator it = d->data.constFind(Nepomuk::Vocabulary::NCO::photo());
-            if(it==d->data.constEnd() || it.value().isNull()) {
+            if(it==d->data.constEnd()) {
                 const QString query = QString::fromLatin1("select ?url where { %1 nco:photo ?phRes. ?phRes nie:url ?url . }")
                                                           .arg( Soprano::Node::resourceToN3(uri()) );
                 Soprano::Model* model = Nepomuk::ResourceManager::instance()->mainModel();
                 Soprano::QueryResultIterator qit = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
             
+                QUrl url;
                 if( qit.next() ) {
-                    QUrl url = qit["url"].uri();
-                    it = d_ptr->data.insert(Nepomuk::Vocabulary::NCO::photo(), url);
+                    url = qit["url"].uri();
                 }
+                it = d_ptr->data.insert(Nepomuk::Vocabulary::NCO::photo(), url);
             }
             return it!=d->data.constEnd() ? it.value() : QVariant();
         }

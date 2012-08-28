@@ -78,8 +78,10 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
         setText(value.toString());
     } else if (Nepomuk::Vocabulary::NCO::imID() == key) {
         setType(PersonsModel::IM);
-    } else if (Nepomuk::Vocabulary::NCO::hasEmailAddress() == value) {
+    } else if (Nepomuk::Vocabulary::NCO::hasEmailAddress() == key) {
         setType(PersonsModel::Email);
+    }else if (Nepomuk::Vocabulary::NCO::emailAddress() == key) {
+        setText(value.toString());
     }
 
     Q_D(PersonsModelContactItem);
@@ -113,8 +115,6 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::PhoneRole: return d->data.value(Nepomuk::Vocabulary::NCO::phoneNumber());
         case PersonsModel::EmailRole: return d->data.value(Nepomuk::Vocabulary::NCO::emailAddress());
         case PersonsModel::IMRole: return d->data.value(Nepomuk::Vocabulary::NCO::imID());
-        case Qt::EditRole:
-        case Qt::ToolTipRole:
         case PersonsModel::PhotoRole: {
             QHash<QUrl, QVariant>::const_iterator it = d->data.constFind(Nepomuk::Vocabulary::NCO::photo());
             if(it==d->data.constEnd()) {

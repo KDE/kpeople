@@ -108,7 +108,7 @@ void PersonActions::initialize(QAbstractItemModel* model, int row)
                 b = connect(action, SIGNAL(triggered(bool)), SLOT(emailTriggered()));
                 break;
             case PersonsModel::IM:
-                if(!d->ktpDelegate) d->ktpDelegate = new NepomukTpChannelDelegate(this);
+                if(!d->ktpDelegate) d->ktpDelegate = new NepomukTpChannelDelegate(this); //check nco:IMCapability
                 action->setText(i18n("Chat with '%1'", idxContact.data().toString()));
                 b = connect(action, SIGNAL(triggered(bool)), SLOT(chatTriggered()));
                 break;

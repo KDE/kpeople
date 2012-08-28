@@ -100,7 +100,7 @@ void PersonCache::query()
     Q_D(PersonCache);
     kDebug();
 
-    QString nco_query = QString::fromUtf8("select distinct ?uri ?pimo_groundingOccurance ?nco_hasIMAccount"
+    QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurance ?nco_hasIMAccount"
                       "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
                       "?nco_imStatus"
 

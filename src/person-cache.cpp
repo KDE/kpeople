@@ -61,7 +61,8 @@ public:
         //                      << Nepomuk::Vocabulary::Telepathy::accountIdentifier()
         << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
         << Nepomuk::Vocabulary::NCO::imStatus()
-        << Nepomuk::Vocabulary::NCO::hasEmailAddress();
+        << Nepomuk::Vocabulary::NCO::hasEmailAddress()
+        << Nepomuk::Vocabulary::NCO::emailAddress();
         
         foreach(const QUrl& keyUri, list) {
             QString keyString = keyUri.toString();
@@ -102,22 +103,26 @@ void PersonCache::query()
 
     QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurance ?nco_hasIMAccount"
                       "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                      "?nco_imStatus"
+                      "?nco_imStatus "
 
-                      "WHERE { ?uri a nco:Contact ."
+                      "WHERE { ?uri a nco:PersonContact ."
 
-                      "?uri                       nco:hasIMAccount            ?nco_hasIMAccount ."
-                      "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname ."
-                      "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType ."
-                      "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus ."
-                      "?nco_hasIMAccount          nco:imID                    ?nco_imID ."
-                      "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType ."
+                      "OPTIONAL { "
+                            "?uri                       nco:hasIMAccount            ?nco_hasIMAccount ."
+                            "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname ."
+                            "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType ."
+                            "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus ."
+                            "?nco_hasIMAccount          nco:imID                    ?nco_imID ."
+                            "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType ."
+                      " } "
+                      
+                      "OPTIONAL { "
+                            "?uri            nco:hasEmailAddress  ?nco_hasEmailAddress . "
+                            "?nco_hasEmailAddress nco:emailAddress ?nco_emailAddress . "
+                      " } "
 
-                      "OPTIONAL { ?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . }"
-
-                      "OPTIONAL { ?uri            nco:hasEmailAddress  ?nco_hasEmailAddress . }"
-
-    "}");
+                      "OPTIONAL { ?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . } "
+                "}");
 
     Soprano::Model* m = Nepomuk::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = m->executeQuery(nco_query,
@@ -142,7 +147,7 @@ void PersonCache::query()
                 pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
             pos.value()->appendRow(contactNode);
         } else {
-            kDebug() << "Not a person" << currentUri << pimoPersonUri;
+            kDebug() << "Not a person" << currentUri;
             nonpersonContacts += contactNode;
         }
     }

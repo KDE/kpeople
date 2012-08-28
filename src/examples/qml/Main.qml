@@ -10,24 +10,33 @@ Rectangle {
     
     PersonsModel { id: people }
     
-    ListView {
+    GridView {
         id: view
         anchors {
             top: parent.top
             bottom: parent.bottom
             left: parent.left
+            right: contactItem.left
         }
-        width: parent.width/2
         
+        cellWidth: 100
+        cellHeight: 100
         model: people
         delegate:   ListItem {
-                        height: lab.font.pixelSize*1.3
+                        height: view.cellHeight
+                        width: view.cellWidth-5
+                        Image {
+                            id: avatar
+                            source: photo[0]
+                            anchors.fill: parent
+                        }
                         Label {
-                            id: lab
-                            anchors.centerIn: parent
                             width: parent.width
-                            elide: Text.ElideRight
+                            height: parent.height
+                            clip: true
                             text: display
+                            wrapMode: Text.WrapAnywhere
+                            visible: avatar.status!=Image.Ready
                         }
                         enabled: true
                         onClicked: contactItem.contactData = model
@@ -57,13 +66,10 @@ Rectangle {
                 text: dataToString(contactItem.contactData)
                 
                 function dataToString(data) {
-                    if(data==null)
-                        return "";
-                    
                     var text = ""
-                    if(data.empty)
-                        text="''"
-                    for(var a in data) {
+                    if(data==null)
+                        return "<null>";
+                    else for(var a in data) {
                         text += a + ": ";
                         var curr = data[a]
                         if(curr==null)
@@ -96,7 +102,7 @@ Rectangle {
             Rectangle { color: "green"; width: parent.width; height: 5 }
             Row {
                 Repeater {
-                    model: contactItem.contactData.photo
+                    model: contactItem.contactData ? contactItem.contactData.photo : null
                     delegate: Image {
                         source: modelData
                     }

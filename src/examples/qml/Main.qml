@@ -74,28 +74,29 @@ Rectangle {
                         var curr = data[a]
                         if(curr==null)
                             text += "null"
-                        else if(!curr.isObject)
-                            text += curr
                         else
-                            text += dataToString[curr]
+                            text += curr
                         text += '\n'
                     }
                     return text
                 }
             }
-            Rectangle { color: "blue"; width: parent.width; height: 5}
-            Flow {
+            ToolBar {
                 width: parent.width
-                Repeater {
-                    model: PersonActions {
-                        id: actionsModel
-                        row: contactItem.contactData!=null ? contactItem.contactData.index : -1
-                        peopleModel: people
-                    }
-                    delegate: Button {
-                        text: model.display
-                        iconSource: model.decoration
-                        onClicked: actionsModel.trigger(model.index)
+                height: 30
+                Flow {
+                    anchors.fill: parent
+                    Repeater {
+                        model: PersonActions {
+                            id: actionsModel
+                            row: contactItem.contactData!=null ? contactItem.contactData.index : -1
+                            peopleModel: people
+                        }
+                        delegate: Button {
+                            text: model.display
+                            iconSource: model.decoration
+                            onClicked: actionsModel.trigger(model.index)
+                        }
                     }
                 }
             }

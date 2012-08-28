@@ -51,10 +51,29 @@ class PersonCachePrivate {
 
 public:
     explicit PersonCachePrivate()
-    { }
+    {
+        QList<QUrl> list;
+        list
+        << Nepomuk::Vocabulary::NCO::imNickname()
+        << Nepomuk::Vocabulary::NCO::imAccountType()
+        << Nepomuk::Vocabulary::NCO::imID()
+        //                      << Nepomuk::Vocabulary::Telepathy::statusType()
+        //                      << Nepomuk::Vocabulary::Telepathy::accountIdentifier()
+        << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
+        << Nepomuk::Vocabulary::NCO::imStatus()
+        << Nepomuk::Vocabulary::NCO::hasEmailAddress();
+        
+        foreach(const QUrl& keyUri, list) {
+            QString keyString = keyUri.toString();
+            //convert every key to correspond to the nepomuk bindings
+            keyString = keyString.mid(keyString.lastIndexOf(QLatin1Char('/')) + 1).replace(QLatin1Char('#'), QLatin1Char('_'));
+            uriToBinding[keyString] = keyUri;
+        }
+    }
 
     QHash<QUrl, PersonsModelItem*> persons;
     QList<QUrl> allRequestedKeys;
+    QHash<QString, QUrl> uriToBinding;
 };
 
 /******************************** PersonCache *****************************************************/
@@ -81,9 +100,9 @@ void PersonCache::query()
     Q_D(PersonCache);
     kDebug();
 
-    QString nco_query = QString::fromUtf8("select distinct ?uri ?nao_prefLabel ?pimo_groundingOccurance ?nco_hasIMAccount"
+    QString nco_query = QString::fromUtf8("select distinct ?uri ?pimo_groundingOccurance ?nco_hasIMAccount"
                       "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                      "?nao_prefSymbol ?telepathy_accountIdentifier ?nco_imStatus"
+                      "?nco_imStatus"
 
                       "WHERE { ?uri a nco:Contact ."
 
@@ -96,23 +115,9 @@ void PersonCache::query()
 
                       "OPTIONAL { ?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . }"
 
-                      "OPTIONAL { ?uri            nao:prefLabel        ?nao_prefLabel . }"
-                      "OPTIONAL { ?uri            nao:prefSymbol       ?nao_prefSymbol . }"
                       "OPTIONAL { ?uri            nco:hasEmailAddress  ?nco_hasEmailAddress . }"
 
     "}");
-
-    QList<QUrl> list;
-    list << Soprano::Vocabulary::NAO::prefLabel()
-    << Soprano::Vocabulary::NAO::prefSymbol()
-    << Nepomuk::Vocabulary::NCO::imNickname()
-    << Nepomuk::Vocabulary::NCO::imAccountType()
-    << Nepomuk::Vocabulary::NCO::imID()
-    //                      << Nepomuk::Vocabulary::Telepathy::statusType()
-    //                      << Nepomuk::Vocabulary::Telepathy::accountIdentifier()
-    << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
-    << Nepomuk::Vocabulary::NCO::imStatus()
-    << Nepomuk::Vocabulary::NCO::hasEmailAddress();
 
     Soprano::Model* m = Nepomuk::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = m->executeQuery(nco_query,
@@ -122,16 +127,12 @@ void PersonCache::query()
 
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
-        QString display = it[QLatin1String("nao_prefLabel")].toString();
+        QString display /*= it[QLatin1String("nao_prefLabel")].toString()*/;
         PersonsModelContactItem* contactNode = new PersonsModelContactItem(currentUri, display);
 
-        Q_FOREACH(const QUrl &keyUri, list) {
-            QString keyString = keyUri.toString();
-            //convert every key to correspond to the nepomuk bindings
-            //FIXME: get this method out of the loop, it repeats too many times for nothing
-            keyString = keyString.mid(keyString.lastIndexOf(QLatin1Char('/')) + 1).replace(QLatin1Char('#'), QLatin1Char('_'));
-
-            contactNode->addData(keyUri, it[keyString].toString());
+        
+        for(QHash<QString, QUrl>::const_iterator iter=d->uriToBinding.constBegin(), itEnd=d->uriToBinding.constEnd(); iter!=itEnd; ++iter) {
+            contactNode->addData(iter.value(), it[iter.key()].toString());
         }
 
         QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();

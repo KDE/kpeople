@@ -22,21 +22,26 @@
 #include "persons-model.h"
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
-#include "person-cache.h"
-#include <Nepomuk/Vocabulary/PIMO>
-#include <Nepomuk/Variant>
+#include <Soprano/Query/QueryLanguage>
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Model>
+
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/Vocabulary/PIMO>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <Nepomuk2/SimpleResource>
 #include <Nepomuk2/SimpleResourceGraph>
 #include <Nepomuk2/StoreResourcesJob>
 #include <KDebug>
 
-// class PersonsModelPrivate {
-// public:
-// };
+struct PersonsModelPrivate {
+    QHash<QUrl, PersonsModelItem*> persons;
+};
 
 PersonsModel::PersonsModel(QObject *parent, bool init)
     : QStandardItemModel(parent)
-//     , d_ptr(new PersonsModelPrivate)
+    , d_ptr(new PersonsModelPrivate)
 {
     QHash<int, QByteArray> names = roleNames();
     names.insert(PersonsModel::EmailRole, "email");
@@ -52,13 +57,92 @@ PersonsModel::PersonsModel(QObject *parent, bool init)
     setRoleNames(names);
     
     if(init) {
-        PersonCache* cache = new PersonCache(this);
-    
-        connect(cache,
-                SIGNAL(contactsFetched(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)),
-                SLOT(init(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)));
-        cache->startQuery();
+        QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection);
     }
+}
+
+QHash<QString, QUrl> initUriToBinding()
+{
+    QHash<QString, QUrl> ret;
+    QList<QUrl> list;
+    list
+    << Nepomuk2::Vocabulary::NCO::imNickname()
+    << Nepomuk2::Vocabulary::NCO::imAccountType()
+    << Nepomuk2::Vocabulary::NCO::imID()
+    //                      << Nepomuk2::Vocabulary::Telepathy::statusType()
+    //                      << Nepomuk2::Vocabulary::Telepathy::accountIdentifier()
+    << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
+    << Nepomuk2::Vocabulary::NCO::imStatus()
+    << Nepomuk2::Vocabulary::NCO::hasEmailAddress()
+    << Nepomuk2::Vocabulary::NCO::emailAddress();
+    
+    foreach(const QUrl& keyUri, list) {
+        QString keyString = keyUri.toString();
+        //convert every key to correspond to the nepomuk bindings
+        keyString = keyString.mid(keyString.lastIndexOf(QLatin1Char('/')) + 1).replace(QLatin1Char('#'), QLatin1Char('_'));
+        ret[keyString] = keyUri;
+    }
+    return ret;
+}
+
+void PersonsModel::query()
+{
+    Q_ASSERT(rowCount()==0);
+    Q_D(PersonsModel);
+    QHash<QString, QUrl> uriToBinding = initUriToBinding();
+
+    QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurance ?nco_hasIMAccount"
+                      "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
+                      "?nco_imStatus "
+
+                      "WHERE { ?uri a nco:PersonContact ."
+
+                      "OPTIONAL { "
+                            "?uri                       nco:hasIMAccount            ?nco_hasIMAccount ."
+                            "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname ."
+                            "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType ."
+                            "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus ."
+                            "?nco_hasIMAccount          nco:imID                    ?nco_imID ."
+                            "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType ."
+                      " } "
+                      
+                      "OPTIONAL { "
+                            "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress . "
+                            "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress . "
+                      " } "
+
+                      "OPTIONAL { ?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . } " //not optional?
+                "}");
+
+    Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = m->executeQuery(nco_query,
+                                                      Soprano::Query::QueryLanguageSparql);
+
+    QList<PersonsModelContactItem*> nonpersonContacts;
+
+    while(it.next()) {
+        QUrl currentUri = it[QLatin1String("uri")].uri();
+        QString display /*= it[QLatin1String("nao_prefLabel")].toString()*/;
+        PersonsModelContactItem* contactNode = new PersonsModelContactItem(currentUri, display);
+
+        
+        for(QHash<QString, QUrl>::const_iterator iter=uriToBinding.constBegin(), itEnd=uriToBinding.constEnd(); iter!=itEnd; ++iter) {
+            contactNode->addData(iter.value(), it[iter.key()].toString());
+        }
+
+        QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
+        if (!pimoPersonUri.isEmpty()) {
+            QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+            if (pos == d->persons.constEnd())
+                pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
+            pos.value()->appendRow(contactNode);
+        } else {
+            kDebug() << "Not a person" << currentUri;
+            nonpersonContacts += contactNode;
+        }
+    }
+
+    init(d->persons.values(), nonpersonContacts);
 }
 
 template <class T>
@@ -81,13 +165,13 @@ void PersonsModel::init(const QList<PersonsModelItem*>& people, const QList<Pers
 
 void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
 {
-    Nepomuk::Resource oldPerson(personUri);
-    Q_ASSERT(oldPerson.property(Nepomuk::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size()>=2 && "there's nothing to unmerge...");
-    oldPerson.removeProperty(Nepomuk::Vocabulary::PIMO::groundingOccurrence(), contactUri);
+    Nepomuk2::Resource oldPerson(personUri);
+    Q_ASSERT(oldPerson.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size()>=2 && "there's nothing to unmerge...");
+    oldPerson.removeProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
     
     Nepomuk2::SimpleResource newPerson;
-    newPerson.addType( Nepomuk::Vocabulary::PIMO::Person() );
-    newPerson.setProperty(Nepomuk::Vocabulary::PIMO::groundingOccurrence(), contactUri);
+    newPerson.addType( Nepomuk2::Vocabulary::PIMO::Person() );
+    newPerson.setProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
     
     Nepomuk2::SimpleResourceGraph graph;
     graph << newPerson;

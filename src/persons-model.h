@@ -24,13 +24,13 @@
 
 #include "kpeople_export.h"
 
-#include <QModelIndex>
-#include <QUrl>
 #include <QStandardItemModel>
 
+struct PersonsModelPrivate;
 class KJob;
 class PersonsModelItem;
 class PersonsModelContactItem;
+class QUrl;
 
 class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
 {
@@ -76,13 +76,14 @@ public slots:
 
 private slots:
     void unmergeFinished(KJob*);
+    void query();
 
 signals:
     void peopleAdded();
 
 private:
-//     PersonsModelPrivate * const d_ptr;
-//     Q_DECLARE_PRIVATE(PersonsModel)
+    PersonsModelPrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(PersonsModel)
 };
 
 #endif // PERSONS_MODEL_H

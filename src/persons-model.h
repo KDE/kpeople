@@ -71,9 +71,6 @@ public:
      */
     Q_SCRIPTABLE void unmerge(const QUrl& contactUri, const QUrl& personUri);
 
-public slots:
-    void init(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);
-
 private slots:
     void unmergeFinished(KJob*);
     void query();

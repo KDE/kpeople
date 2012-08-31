@@ -40,10 +40,9 @@ DuplicatesTest::DuplicatesTest(QObject* parent): QObject(parent)
 void DuplicatesTest::testDuplicates()
 {
     QFETCH(QList<PersonsModelItem*>, people);
-    QFETCH(QList<PersonsModelContactItem*>, contacts);
     QFETCH(int, matches);
     PersonsModel m(0, false);
-    m.init(people, contacts);
+    foreach(PersonsModelItem* item, people) m.appendRow(item);
     
     QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
     f->start();
@@ -72,15 +71,14 @@ PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVaria
 void DuplicatesTest::testDuplicates_data()
 {
     QTest::addColumn<QList<PersonsModelItem*> >("people");
-    QTest::addColumn<QList<PersonsModelContactItem*> >("contacts");
     QTest::addColumn<int>("matches");
 
     QList<PersonsModelContactItem*> emptyContacts;
-    QTest::newRow("empty") << QList<PersonsModelItem*>() << emptyContacts << 0;
+    QTest::newRow("empty") << QList<PersonsModelItem*>() << 0;
     QTest::newRow("diffemails") << (QList<PersonsModelItem*>()
             << createPerson1Contact(PersonsModel::Email, "a@a.es") << createPerson1Contact(PersonsModel::Email, "a@a.com")
-        ) << emptyContacts << 0;
+        ) << 0;
     QTest::newRow("emails") << (QList<PersonsModelItem*>()
             << createPerson1Contact(PersonsModel::Email, "a@a.com") << createPerson1Contact(PersonsModel::Email, "a@a.com")
-        ) << emptyContacts << 1;
+        ) << 1;
 }

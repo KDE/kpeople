@@ -61,6 +61,16 @@ PersonsModel::PersonsModel(QObject *parent, bool init)
     }
 }
 
+template <class T>
+QList<QStandardItem*> toStandardItems(const QList<T*>& items)
+{
+    QList<QStandardItem*> ret;
+    foreach(QStandardItem* it, items) {
+        ret += it;
+    }
+    return ret;
+}
+
 QHash<QString, QUrl> initUriToBinding()
 {
     QHash<QString, QUrl> ret;
@@ -95,7 +105,9 @@ void PersonsModel::query()
                       "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
                       "?nco_imStatus "
 
-                      "WHERE { ?uri a nco:PersonContact ."
+                      "WHERE { "
+                            "?uri a nco:PersonContact ."
+                            "?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . "
 
                       "OPTIONAL { "
                             "?uri                       nco:hasIMAccount            ?nco_hasIMAccount ."
@@ -110,15 +122,11 @@ void PersonsModel::query()
                             "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress . "
                             "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress . "
                       " } "
-
-                      "OPTIONAL { ?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . } " //not optional?
                 "}");
 
     Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = m->executeQuery(nco_query,
                                                       Soprano::Query::QueryLanguageSparql);
-
-    QList<PersonsModelContactItem*> nonpersonContacts;
 
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
@@ -131,35 +139,14 @@ void PersonsModel::query()
         }
 
         QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
-        if (!pimoPersonUri.isEmpty()) {
-            QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
-            if (pos == d->persons.constEnd())
-                pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
-            pos.value()->appendRow(contactNode);
-        } else {
-            kDebug() << "Not a person" << currentUri;
-            nonpersonContacts += contactNode;
-        }
+        Q_ASSERT(!pimoPersonUri.isEmpty());
+        QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+        if (pos == d->persons.constEnd())
+            pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
+        pos.value()->appendRow(contactNode);
     }
 
-    init(d->persons.values(), nonpersonContacts);
-}
-
-template <class T>
-QList<QStandardItem*> toStandardItems(const QList<T*>& items)
-{
-    QList<QStandardItem*> ret;
-    foreach(QStandardItem* it, items) {
-        ret += it;
-    }
-    return ret;
-}
-
-void PersonsModel::init(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other)
-{
-    QStandardItem* root = invisibleRootItem();
-    root->appendRows(toStandardItems(people));
-    root->appendRows(toStandardItems(other));
+    invisibleRootItem()->appendRows(toStandardItems(d->persons.values()));
     emit peopleAdded();
 }
 

@@ -12,6 +12,7 @@ Rectangle {
     
     Core.SortFilterModel {
         id: filteredPeople
+        sortRole: "display"
         sourceModel: PersonsModel { id: people }
         filterRegExp: searchField.text
     }

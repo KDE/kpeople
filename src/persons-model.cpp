@@ -23,7 +23,11 @@
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
 #include "person-cache.h"
-#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk/Vocabulary/PIMO>
+#include <Nepomuk/Variant>
+#include <Nepomuk2/SimpleResource>
+#include <Nepomuk2/SimpleResourceGraph>
+#include <Nepomuk2/StoreResourcesJob>
 #include <KDebug>
 
 // class PersonsModelPrivate {
@@ -72,4 +76,28 @@ void PersonsModel::init(const QList<PersonsModelItem*>& people, const QList<Pers
     root->appendRows(toStandardItems(people));
     root->appendRows(toStandardItems(other));
     emit peopleAdded();
+}
+
+void PersonsModel::unmerge(const QUrl& contactUri)
+{
+    Nepomuk2::SimpleResource personContact;
+    personContact.addType( Nepomuk::Vocabulary::PIMO::Person() );
+    
+    Nepomuk2::SimpleResource res(contactUri);
+    res.setProperty(Nepomuk::Vocabulary::PIMO::groundingOccurrence(), personContact.uri());
+    
+    Nepomuk2::SimpleResourceGraph graph;
+    graph << res << personContact;
+
+    Nepomuk2::StoreResourcesJob * job = Nepomuk2::storeResources( graph );
+    job->setProperty("uri", contactUri);
+    connect(job, SIGNAL(finished(KJob*)), SLOT(unmergeFinished(KJob*)));
+    job->start();
+}
+
+void PersonsModel::unmergeFinished(KJob* job)
+{
+    if(job->error()!=0) {
+        kWarning() << "Unmerge failed for "<<job->property("uri").toString();
+    }
 }

@@ -28,8 +28,10 @@
 #include <QUrl>
 #include <QStandardItemModel>
 
+class KJob;
 class PersonsModelItem;
 class PersonsModelContactItem;
+
 class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
 {
     Q_OBJECT
@@ -62,8 +64,16 @@ public:
      */
     explicit PersonsModel(QObject *parent = 0, bool initialize = true);
 
+    /**
+     * The @p contactUri will be removed from the person it has.
+     */
+    Q_SCRIPTABLE void unmerge(const QUrl& contactUri);
+
 public slots:
     void init(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);
+
+private slots:
+    void unmergeFinished(KJob*);
 
 signals:
     void peopleAdded();

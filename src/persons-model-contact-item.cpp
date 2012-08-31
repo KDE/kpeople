@@ -131,6 +131,18 @@ QVariant PersonsModelContactItem::data(int role) const
             }
             return it!=d->data.constEnd() ? it.value() : QVariant();
         }
+        case PersonsModel::ContactIdRole: {
+            int role = -1;
+            switch((PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt()) {
+                case PersonsModel::IM: role = PersonsModel::IMRole; break;
+                case PersonsModel::Phone: role = PersonsModel::PhoneRole; break;
+                case PersonsModel::Email: role = PersonsModel::EmailRole; break;
+                case PersonsModel::MobilePhone: role = PersonsModel::PhoneRole; break;
+                case PersonsModel::Postal: role = -1; break;
+            }
+            if(role>=0)
+                return data(role);
+        }   break;
     }
     return QStandardItem::data(role);
 }

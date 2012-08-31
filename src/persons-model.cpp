@@ -48,6 +48,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init)
     names.insert(PersonsModel::UriRole, "uri");
     names.insert(PersonsModel::NameRole, "name");
     names.insert(PersonsModel::PhotoRole, "photo");
+    names.insert(PersonsModel::ContactsCount, "contactsCount");
     setRoleNames(names);
     
     if(init) {

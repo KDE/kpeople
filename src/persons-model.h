@@ -49,6 +49,7 @@ public:
     enum Role {
         ContactTypeRole = Qt::UserRole,
         ContactIdRole,
+        ContactsCount,
         UriRole,
         NameRole,
         EmailRole,

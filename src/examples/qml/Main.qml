@@ -26,6 +26,7 @@ Rectangle {
     }
     GridView {
         id: view
+        clip: true
         anchors {
             top: searchField.bottom
             bottom: parent.bottom
@@ -37,17 +38,18 @@ Rectangle {
         cellHeight: 100
         model: filteredPeople
         delegate:   ListItem {
+                        clip: true
                         height: view.cellHeight
                         width: view.cellWidth-5
                         Image {
                             id: avatar
                             source: photo[0]
+                            fillMode: Image.PreserveAspectCrop
                             anchors.fill: parent
                         }
                         Label {
                             width: parent.width
                             height: parent.height
-                            clip: true
                             text: display
                             wrapMode: Text.WrapAnywhere
                             visible: avatar.status!=Image.Ready

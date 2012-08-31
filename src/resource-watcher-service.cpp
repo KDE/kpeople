@@ -42,37 +42,38 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     : QObject(parent),
       d_ptr(new ResourceWatcherServicePrivate(parent))
 {
-    d_ptr->personWatcher = new Nepomuk2::ResourceWatcher(this);
-    d_ptr->personWatcher->addType(Nepomuk2::Vocabulary::PIMO::Person());
+    Q_D(ResourceWatcherService);
+    d->personWatcher = new Nepomuk2::ResourceWatcher(this);
+    d->personWatcher->addType(Nepomuk2::Vocabulary::PIMO::Person());
 
-    connect(d_ptr->personWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
+    connect(d->personWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
             this, SIGNAL(personCreated(Nepomuk2::Resource,QList<QUrl>)));
-    connect(d_ptr->personWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
+    connect(d->personWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
             this, SIGNAL(personRemoved(QUrl,QList<QUrl>)));
-    connect(d_ptr->personWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
+    connect(d->personWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
             this, SLOT(onPersonPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
-    connect(d_ptr->personWatcher, SIGNAL(propertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
+    connect(d->personWatcher, SIGNAL(propertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
             this, SLOT(onPersonPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
-    connect(d_ptr->personWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
-            this, SLOT(onPersonPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
+    connect(d->personWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
+            this, SLOT(onPersonPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
     
-    d_ptr->personWatcher->start();
+    d->personWatcher->start();
     
-    d_ptr->contactWatcher = new Nepomuk2::ResourceWatcher(this);
-    d_ptr->contactWatcher->addType(Nepomuk2::Vocabulary::NCO::PersonContact());
+    d->contactWatcher = new Nepomuk2::ResourceWatcher(this);
+    d->contactWatcher->addType(Nepomuk2::Vocabulary::NCO::PersonContact());
     
-    connect(d_ptr->contactWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
+    connect(d->contactWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
             this, SIGNAL(contactCreated(Nepomuk2::Resource,QList<QUrl>)));
-    connect(d_ptr->contactWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
+    connect(d->contactWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
             this, SIGNAL(contactRemoved(QUrl,QList<QUrl>)));
-    connect(d_ptr->contactWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
+    connect(d->contactWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
             this, SLOT(onContactPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
-    connect(d_ptr->contactWatcher, SIGNAL(propertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
+    connect(d->contactWatcher, SIGNAL(propertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
             this, SLOT(onContactPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
-    connect(d_ptr->contactWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
-            this, SLOT(onContactPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
+    connect(d->contactWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
+            this, SLOT(onContactPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
     
-    d_ptr->contactWatcher->start();
+    d->contactWatcher->start();
 }
 
 ResourceWatcherService::~ResourceWatcherService()
@@ -86,4 +87,16 @@ void ResourceWatcherService::onContactPropertyChanged(const Nepomuk2::Resource& 
 void ResourceWatcherService::onPersonPropertyChanged(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
     kDebug() << "stuff2";
+}
+
+void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
+                                                      const QVariantList& removed, const QVariantList& after)
+{
+    kDebug() << "stuff3";
+}
+
+void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
+                                                      const QVariantList& removed, const QVariantList& after)
+{
+    kDebug() << "stuff4";
 }

@@ -22,6 +22,7 @@
 #include "persons-model.h"
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
+#include "resource-watcher-service.h"
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
@@ -58,6 +59,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init)
     
     if(init) {
         QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection);
+        new ResourceWatcherService(this);
     }
 }
 
@@ -109,14 +111,14 @@ void PersonsModel::query()
                             "?uri a nco:PersonContact ."
                             "?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . "
 
-                      "OPTIONAL { "
+//                       "OPTIONAL { "
                             "?uri                       nco:hasIMAccount            ?nco_hasIMAccount ."
                             "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname ."
                             "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType ."
                             "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus ."
                             "?nco_hasIMAccount          nco:imID                    ?nco_imID ."
                             "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType ."
-                      " } "
+//                       " } "
                       
                       "OPTIONAL { "
                             "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress . "

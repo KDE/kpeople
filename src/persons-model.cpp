@@ -89,7 +89,7 @@ void PersonsModel::unmerge(const QUrl& contactUri)
     Nepomuk2::SimpleResourceGraph graph;
     graph << res << personContact;
 
-    Nepomuk2::StoreResourcesJob * job = Nepomuk2::storeResources( graph );
+    KJob * job = Nepomuk2::storeResources( graph );
     job->setProperty("uri", contactUri);
     connect(job, SIGNAL(finished(KJob*)), SLOT(unmergeFinished(KJob*)));
     job->start();
@@ -98,6 +98,6 @@ void PersonsModel::unmerge(const QUrl& contactUri)
 void PersonsModel::unmergeFinished(KJob* job)
 {
     if(job->error()!=0) {
-        kWarning() << "Unmerge failed for "<<job->property("uri").toString();
+        kWarning() << "Unmerge failed for "<< job->property("uri").toString();
     }
 }

@@ -3,6 +3,7 @@ import org.kde.people 0.1
 import org.kde.plasma.components 0.1
 import org.kde.plasma.core 0.1 as Core
 import org.kde.plasma.extras 0.1
+import org.kde.qtextracomponents 0.1
 
 Rectangle {
     width: 100
@@ -11,7 +12,7 @@ Rectangle {
     
     Core.SortFilterModel {
         id: filteredPeople
-        sourceModel: PersonsModel {}
+        sourceModel: PersonsModel { id: people }
         filterRegExp: searchField.text
     }
     
@@ -66,12 +67,8 @@ Rectangle {
         property variant contactData
         
         Column {
-            anchors {
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-            
+            width: parent.width
+            spacing: 5
             Label {
                 id: contactText
                 width: parent.width
@@ -119,6 +116,58 @@ Rectangle {
                     delegate: Image {
                         source: modelData
                     }
+                }
+            }
+            Rectangle { color: "blue"; width: parent.width; height: 5}
+            Button {
+                text: "Unmerge"
+                onClicked: {
+                    dialogLoader.sourceComponent = unmergeDialogComponent
+                    dialogLoader.item.open()
+                }
+                Loader {
+                    id: dialogLoader
+                }
+            }
+        }
+    }
+    
+    Component {
+        id: unmergeDialogComponent
+        CommonDialog {
+            id: unmergeDialog
+            property string name: contactItem.contactData.name
+            property int index: contactItem.contactData.index
+            
+            buttonTexts: ["Unmerge", "Cancel"]
+            titleText: i18n("Unmerging %1", unmergeDialog.name)
+            content: Column {
+                width: 500
+                height: 200
+                Repeater {
+                    id: unmergesView
+                    model: FullModelAccess {
+                        rootIndex: indexFromModel(filteredPeople, unmergeDialog.index)
+                        onRootIndexChanged: console.log("fuuuuuu", unmergesView.count)
+                    }
+                    delegate: ListItem {
+                        property alias checked: willUnmerge.checked
+                        property string contactUri: uri
+                        enabled: true
+                        onClicked: willUnmerge.checked=!willUnmerge.checked
+                        Row {
+                            spacing: 5
+                            CheckBox { id: willUnmerge }
+                            Label { text: display+" - "+contactId }
+                        }
+                    }
+                }
+            }
+            onButtonClicked: if(index==0) {
+                for(var i=0; i<unmergesView.count; ++i) {
+                    var item = unmergesView.itemAt(i)
+                    if(item.checked)
+                        people.unmerge(item.contactUri)
                 }
             }
         }

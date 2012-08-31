@@ -18,6 +18,7 @@ Rectangle {
     
     TextField {
         id: searchField
+        focus: true
         anchors {
             left: parent.left
             right: view.right
@@ -98,8 +99,8 @@ Rectangle {
                     Repeater {
                         model: PersonActions {
                             id: actionsModel
-                            row: contactItem.contactData!=null ? contactItem.contactData.index : -1
-                            peopleModel: filteredPeople
+                            row: contactItem.contactData!=null ? filteredPeople.mapRowToSource(contactItem.contactData.index) : -1
+                            peopleModel: people
                         }
                         delegate: Button {
                             text: model.display
@@ -121,6 +122,7 @@ Rectangle {
             Rectangle { color: "blue"; width: parent.width; height: 5}
             Button {
                 text: "Unmerge"
+                visible: contactItem.contactData!=null && contactItem.contactData.contactsCount>1
                 onClicked: {
                     dialogLoader.sourceComponent = unmergeDialogComponent
                     dialogLoader.item.open()
@@ -137,7 +139,8 @@ Rectangle {
         CommonDialog {
             id: unmergeDialog
             property string name: contactItem.contactData.name
-            property int index: contactItem.contactData.index
+            property int index: filteredPeople.mapRowToSource(contactItem.contactData.index)
+            property url uri: contactItem.contactData.uri
             
             buttonTexts: ["Unmerge", "Cancel"]
             titleText: i18n("Unmerging %1", unmergeDialog.name)
@@ -147,8 +150,7 @@ Rectangle {
                 Repeater {
                     id: unmergesView
                     model: FullModelAccess {
-                        rootIndex: indexFromModel(filteredPeople, unmergeDialog.index)
-                        onRootIndexChanged: console.log("fuuuuuu", unmergesView.count)
+                        rootIndex: indexFromModel(people, unmergeDialog.index)
                     }
                     delegate: ListItem {
                         property alias checked: willUnmerge.checked
@@ -167,7 +169,7 @@ Rectangle {
                 for(var i=0; i<unmergesView.count; ++i) {
                     var item = unmergesView.itemAt(i)
                     if(item.checked)
-                        people.unmerge(item.contactUri)
+                        people.unmerge(item.contactUri, uri)
                 }
             }
         }

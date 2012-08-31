@@ -78,16 +78,18 @@ void PersonsModel::init(const QList<PersonsModelItem*>& people, const QList<Pers
     emit peopleAdded();
 }
 
-void PersonsModel::unmerge(const QUrl& contactUri)
+void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
 {
-    Nepomuk2::SimpleResource personContact;
-    personContact.addType( Nepomuk::Vocabulary::PIMO::Person() );
+    Nepomuk::Resource oldPerson(personUri);
+    Q_ASSERT(oldPerson.property(Nepomuk::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size()>=2 && "there's nothing to unmerge...");
+    oldPerson.removeProperty(Nepomuk::Vocabulary::PIMO::groundingOccurrence(), contactUri);
     
-    Nepomuk2::SimpleResource res(contactUri);
-    res.setProperty(Nepomuk::Vocabulary::PIMO::groundingOccurrence(), personContact.uri());
+    Nepomuk2::SimpleResource newPerson;
+    newPerson.addType( Nepomuk::Vocabulary::PIMO::Person() );
+    newPerson.setProperty(Nepomuk::Vocabulary::PIMO::groundingOccurrence(), contactUri);
     
     Nepomuk2::SimpleResourceGraph graph;
-    graph << res << personContact;
+    graph << newPerson;
 
     KJob * job = Nepomuk2::storeResources( graph );
     job->setProperty("uri", contactUri);
@@ -98,6 +100,8 @@ void PersonsModel::unmerge(const QUrl& contactUri)
 void PersonsModel::unmergeFinished(KJob* job)
 {
     if(job->error()!=0) {
-        kWarning() << "Unmerge failed for "<< job->property("uri").toString();
+        kWarning() << "Unmerge failed for "<< job->property("uri").toString() << job->errorText() << job->errorString();
+    } else {
+        kWarning() << "Unmerge done: "<< job->property("uri").toString();
     }
 }

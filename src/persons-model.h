@@ -65,9 +65,10 @@ public:
     explicit PersonsModel(QObject *parent = 0, bool initialize = true);
 
     /**
-     * The @p contactUri will be removed from the person it has.
+     * The @p contactUri will be removed from @p personUri and it will be added to a new 
+     * empty pimo:Person instance.
      */
-    Q_SCRIPTABLE void unmerge(const QUrl& contactUri);
+    Q_SCRIPTABLE void unmerge(const QUrl& contactUri, const QUrl& personUri);
 
 public slots:
     void init(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other);

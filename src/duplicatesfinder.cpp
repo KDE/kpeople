@@ -73,8 +73,10 @@ QList<int> DuplicatesFinder::matchAt(const QVariantList& value, const QVariantLi
     QList<int> ret;
     Q_ASSERT(value.size()==toCompare.size());
     for(int i=0; i<toCompare.size(); i++) {
-        if(!value[i].isNull() && value[i]==toCompare[i])
+        const QVariant& v = value[i];
+        if(!v.isNull() && v==toCompare[i] && (v.type()!=QVariant::List || !v.toList().isEmpty())) {
             ret += m_compareRoles[i];
+        }
     }
     return ret;
 }

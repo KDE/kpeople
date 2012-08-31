@@ -22,8 +22,8 @@
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
 
-#include <Nepomuk/Vocabulary/PIMO>
-#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/PIMO>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <Soprano/Vocabulary/NAO>
 
 PersonsModelItem::PersonsModelItem(const QUrl &personUri)

@@ -24,7 +24,7 @@
 #include <personactions.h>
 
 #include <qtest_kde.h>
-#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <QStandardItemModel>
 
 QTEST_KDEMAIN_CORE( PersonsModelTest )

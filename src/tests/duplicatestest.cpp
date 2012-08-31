@@ -24,7 +24,7 @@
 #include <persons-model-contact-item.h>
 
 #include <qtest_kde.h>
-#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <QStandardItemModel>
 
 QTEST_KDEMAIN_CORE( DuplicatesTest )
@@ -57,14 +57,14 @@ PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVaria
     PersonsModelContactItem* contact = new PersonsModelContactItem(QUrl("test:/"+id.toString()), nick);
     QUrl key;
     switch(t) {
-        case PersonsModel::IM: key = Nepomuk::Vocabulary::NCO::imID(); break;
-        case PersonsModel::Email: key = Nepomuk::Vocabulary::NCO::emailAddress(); break;
-        case PersonsModel::Phone: key = Nepomuk::Vocabulary::NCO::phoneNumber(); break;
+        case PersonsModel::IM: key = Nepomuk2::Vocabulary::NCO::imID(); break;
+        case PersonsModel::Email: key = Nepomuk2::Vocabulary::NCO::emailAddress(); break;
+        case PersonsModel::Phone: key = Nepomuk2::Vocabulary::NCO::phoneNumber(); break;
         default: Q_ASSERT(false && "dude!");
     }
     contact->addData(key, id);
     if(!nick.isEmpty())
-        contact->addData(Nepomuk::Vocabulary::NCO::imNickname(), nick);
+        contact->addData(Nepomuk2::Vocabulary::NCO::imNickname(), nick);
     ret->appendRow(contact);
     return ret;
 }

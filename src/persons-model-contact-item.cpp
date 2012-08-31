@@ -23,13 +23,13 @@
 #include "persons-model-contact-item.h"
 #include <KIcon>
 #include <KDebug>
-#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
-#include <Nepomuk/Resource>
-#include <Nepomuk/Variant>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/ResourceManager>
 
 class PersonsModelContactItemPrivate {
 public:
@@ -74,13 +74,13 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     if(value.isNull())
         return;
     
-    if(Nepomuk::Vocabulary::NCO::imNickname() == key) {
+    if(Nepomuk2::Vocabulary::NCO::imNickname() == key) {
         setText(value.toString());
-    } else if (Nepomuk::Vocabulary::NCO::imID() == key) {
+    } else if (Nepomuk2::Vocabulary::NCO::imID() == key) {
         setType(PersonsModel::IM);
-    } else if (Nepomuk::Vocabulary::NCO::hasEmailAddress() == key) {
+    } else if (Nepomuk2::Vocabulary::NCO::hasEmailAddress() == key) {
         setType(PersonsModel::Email);
-    }else if (Nepomuk::Vocabulary::NCO::emailAddress() == key) {
+    }else if (Nepomuk2::Vocabulary::NCO::emailAddress() == key) {
         setText(value.toString());
     }
 
@@ -111,23 +111,23 @@ QVariant PersonsModelContactItem::data(int role) const
 {
     Q_D(const PersonsModelContactItem);
     switch(role) {
-        case PersonsModel::NickRole: return d->data.value(Nepomuk::Vocabulary::NCO::imNickname());
-        case PersonsModel::PhoneRole: return d->data.value(Nepomuk::Vocabulary::NCO::phoneNumber());
-        case PersonsModel::EmailRole: return d->data.value(Nepomuk::Vocabulary::NCO::emailAddress());
-        case PersonsModel::IMRole: return d->data.value(Nepomuk::Vocabulary::NCO::imID());
+        case PersonsModel::NickRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imNickname());
+        case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
+        case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());
+        case PersonsModel::IMRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imID());
         case PersonsModel::PhotoRole: {
-            QHash<QUrl, QVariant>::const_iterator it = d->data.constFind(Nepomuk::Vocabulary::NCO::photo());
+            QHash<QUrl, QVariant>::const_iterator it = d->data.constFind(Nepomuk2::Vocabulary::NCO::photo());
             if(it==d->data.constEnd()) {
                 const QString query = QString::fromLatin1("select ?url where { %1 nco:photo ?phRes. ?phRes nie:url ?url . }")
                                                           .arg( Soprano::Node::resourceToN3(uri()) );
-                Soprano::Model* model = Nepomuk::ResourceManager::instance()->mainModel();
+                Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
                 Soprano::QueryResultIterator qit = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
             
                 QUrl url;
                 if( qit.next() ) {
                     url = qit["url"].uri();
                 }
-                it = d_ptr->data.insert(Nepomuk::Vocabulary::NCO::photo(), url);
+                it = d_ptr->data.insert(Nepomuk2::Vocabulary::NCO::photo(), url);
             }
             return it!=d->data.constEnd() ? it.value() : QVariant();
         }

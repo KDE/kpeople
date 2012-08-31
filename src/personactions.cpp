@@ -25,7 +25,7 @@
 #include <QDebug>
 #include <qaction.h>
 #include <KToolInvocation>
-#include <Nepomuk/ResourceManager>
+#include <Nepomuk2/ResourceManager>
 #include <Soprano/Node>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
@@ -143,7 +143,7 @@ void PersonActions::chatTriggered()
         "?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . "
     "   }").arg( Soprano::Node::resourceToN3(idxContact.data(PersonsModel::UriRole).toUrl()) );
     
-    Soprano::Model* model = Nepomuk::ResourceManager::instance()->mainModel();
+    Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator qit = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
     QString account;

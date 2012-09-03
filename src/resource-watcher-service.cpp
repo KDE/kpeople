@@ -52,9 +52,9 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     connect(d->personWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
             this, SLOT(personRemoved(QUrl,QList<QUrl>)));
     connect(d->personWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
-            this, SLOT(onPersonPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
+            this, SLOT(onPersonPropertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
     connect(d->personWatcher, SIGNAL(propertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
-            this, SLOT(onPersonPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
+            this, SLOT(onPersonPropertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
     connect(d->personWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SLOT(onPersonPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
     
@@ -68,9 +68,9 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     connect(d->contactWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
             this, SLOT(contactRemoved(QUrl,QList<QUrl>)));
     connect(d->contactWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
-            this, SLOT(onContactPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
+            this, SLOT(onContactPropertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
     connect(d->contactWatcher, SIGNAL(propertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
-            this, SLOT(onContactPropertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
+            this, SLOT(onContactPropertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
     connect(d->contactWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SLOT(onContactPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
     
@@ -80,29 +80,39 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
 ResourceWatcherService::~ResourceWatcherService()
 {}
 
-void ResourceWatcherService::onPersonPropertyChanged(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
+void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
-    kDebug() << "stuff2";
+    kDebug() << "person property added:" << res.uri() << property.name() << value;
+}
+
+void ResourceWatcherService::onPersonPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
+{
+    kDebug() << "person property removed:" << res.uri() << property.name() << value;
     //check if the occurrences changed
 }
 
 void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
                                                       const QVariantList& removed, const QVariantList& after)
 {
-    kDebug() << "stuff3";
+    kDebug() << "person changed:" << res.uri() << property.name() << removed << after;
     //check if the occurrences changed
 }
 
-void ResourceWatcherService::onContactPropertyChanged(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
+void ResourceWatcherService::onContactPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
-    kDebug() << "stuff";
+    kDebug() << "contact property added:" << res.uri() << property.name() << value;
+}
+
+void ResourceWatcherService::onContactPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
+{
+    kDebug() << "contact property removed:" << res.uri() << property.name() << value;
     //just modify addData()
 }
 
 void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
                                                       const QVariantList& removed, const QVariantList& after)
 {
-    kDebug() << "stuff4";
+    kDebug() << "contact changed:" << res.uri() << property.name() << removed << after;
     //modify
 }
 
@@ -110,6 +120,7 @@ void ResourceWatcherService::contactCreated(const Nepomuk2::Resource& res, const
 {
     //check if it has a person
     //add it or otherwise we shouldn't do anything
+    kDebug() << "new contact" << res.uri() << types;
 }
 
 void ResourceWatcherService::personCreated(const Nepomuk2::Resource& res, const QList< QUrl >& types)
@@ -119,6 +130,7 @@ void ResourceWatcherService::personCreated(const Nepomuk2::Resource& res, const 
     
     //check for its contacts
     //if it has no contacts it shouldn't be added until the groundingOccurrences change
+    kDebug() << "new person" << res.uri() << types;
 }
 
 void ResourceWatcherService::contactRemoved(const QUrl& uri, const QList< QUrl >&)
@@ -127,6 +139,7 @@ void ResourceWatcherService::contactRemoved(const QUrl& uri, const QList< QUrl >
     QModelIndex idx = d->m_model->indexForUri(uri);
     if(uri.isValid())
         d->m_model->removeRow(idx.row());
+    kDebug() << "contact removed" << uri;
 }
 
 void ResourceWatcherService::personRemoved(const QUrl& uri, const QList< QUrl >&)
@@ -135,4 +148,5 @@ void ResourceWatcherService::personRemoved(const QUrl& uri, const QList< QUrl >&
     QModelIndex idx = d->m_model->indexForUri(uri);
     if(uri.isValid())
         d->m_model->removeRow(idx.row());
+    kDebug() << "person removed" << uri;
 }

@@ -36,8 +36,10 @@ public:
     virtual ~ResourceWatcherService();
 
 private Q_SLOTS:
-    void onPersonPropertyChanged(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
-    void onContactPropertyChanged(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
+    void onPersonPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
+    void onContactPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
+    void onPersonPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
+    void onContactPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
     void onPersonPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
                                   const QVariantList& removed, const QVariantList& after);
     void onContactPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,

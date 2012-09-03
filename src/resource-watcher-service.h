@@ -35,22 +35,21 @@ public:
     ResourceWatcherService(PersonsModel* model);
     virtual ~ResourceWatcherService();
 
-Q_SIGNALS:
-    void personCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
-    void personRemoved(const QUrl& url, const QList<QUrl>& types);
-    void contactCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
-    void contactRemoved(const QUrl& url, const QList<QUrl>& types);
-
-public Q_SLOTS:
+private Q_SLOTS:
     void onPersonPropertyChanged(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
     void onContactPropertyChanged(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
     void onPersonPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
                                   const QVariantList& removed, const QVariantList& after);
     void onContactPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
                                   const QVariantList& removed, const QVariantList& after);
+    void personCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
+    void personRemoved(const QUrl& uri, const QList< QUrl >& types);
+    void contactCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
+    void contactRemoved(const QUrl& uri, const QList< QUrl >& types);
 
 private:
     ResourceWatcherServicePrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(ResourceWatcherService)
 };
 
 #endif // RESOURCE_WATCHER_SERVICE_H

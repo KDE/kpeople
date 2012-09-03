@@ -16,7 +16,8 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <QApplication>
+#include <KApplication>
+#include <KCmdLineArgs>
 #include <QDeclarativeView>
 #include <qdeclarativeerror.h>
 
@@ -24,7 +25,9 @@
 
 int main(int argc, char** argv)
 {
-    QApplication app(argc, argv);
+    KCmdLineArgs::init(argc, argv, QByteArray("sweetpeople"), "", ki18n("SweetPeople - KPeople Example"), "0.1");
+    
+    KApplication app;
     
     QDeclarativeView view;
     KDeclarative decl;

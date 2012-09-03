@@ -17,14 +17,57 @@ Rectangle {
         filterRegExp: searchField.text
     }
     
+    CheckBox {
+        id: areWeMerging
+        anchors {
+            top: parent.top
+            left: parent.left
+        }
+        text: "Merging"
+        onCheckedChanged: toMergeItems.clear()
+    }
+    
     TextField {
         id: searchField
         focus: true
         anchors {
-            left: parent.left
-            right: view.right
+            left: areWeMerging.right
+            right: mergeLabel.left
         }
     }
+    
+    Label {
+        id: mergeLabel
+        anchors {
+            top: parent.top
+            right: view.right
+        }
+        ListModel {
+            id: toMergeItems
+            
+            function addUri(uri, name) {
+                toMergeItems.append({ "uri": uri, "name": name })
+            }
+            
+            function uris() {
+                var ret = new Array
+                for(var i=0; i<count; ++i) {
+                    ret.push(get(i).uri)
+                }
+                return ret
+            }
+            
+            function removeUri(uri) {
+                for(var i=0; i<count; ++i) {
+                    if(get(i).uri==uri) {
+                        remove(i)
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    
     GridView {
         id: view
         clip: true
@@ -56,7 +99,11 @@ Rectangle {
                             visible: avatar.status!=Image.Ready
                         }
                         enabled: true
-                        onClicked: contactItem.contactData = model
+                        onClicked: {
+                            contactItem.contactData = model
+                            if(areWeMerging.checked)
+                                toMergeItems.addUri(model.uri, model.name)
+                        }
                     }
     }
     
@@ -73,6 +120,22 @@ Rectangle {
         Column {
             width: parent.width
             spacing: 5
+            Column {
+                visible: toMergeItems.count>0
+                Label { text: "To Merge:" }
+                Repeater {
+                    model:toMergeItems
+                    delegate: Label { text: name + " - " + uri }
+                }
+                Button {
+                    text: "Merge!"
+                    onClicked: {
+                        console.log("falalal", toMergeItems.uris())
+                        people.merge(toMergeItems.uris())
+                    }
+                }
+            }
+            
             Label {
                 id: contactText
                 width: parent.width

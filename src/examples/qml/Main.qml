@@ -6,8 +6,8 @@ import org.kde.plasma.extras 0.1
 import org.kde.qtextracomponents 0.1
 
 Rectangle {
-    width: 100
-    height: 100
+    width: 300
+    height: 300
     color: "red"
     
     Core.SortFilterModel {
@@ -45,8 +45,18 @@ Rectangle {
         ListModel {
             id: toMergeItems
             
+            function uriIndex(uri) {
+                var ret = -1
+                for(var i=0; i<count && ret<0; ++i) {
+                    if(get(i).uri==uri)
+                        ret=i
+                }
+                return ret
+            }
+            
             function addUri(uri, name) {
-                toMergeItems.append({ "uri": uri, "name": name })
+                if(uriIndex(uri)<0)
+                    toMergeItems.append({ "uri": uri, "name": name })
             }
             
             function uris() {
@@ -58,12 +68,7 @@ Rectangle {
             }
             
             function removeUri(uri) {
-                for(var i=0; i<count; ++i) {
-                    if(get(i).uri==uri) {
-                        remove(i)
-                        break;
-                    }
-                }
+                remove(uriIndex(uri))
             }
         }
     }
@@ -130,7 +135,6 @@ Rectangle {
                 Button {
                     text: "Merge!"
                     onClicked: {
-                        console.log("falalal", toMergeItems.uris())
                         people.merge(toMergeItems.uris())
                     }
                 }

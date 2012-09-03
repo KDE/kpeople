@@ -219,7 +219,7 @@ Rectangle {
                 height: 200
                 Repeater {
                     id: unmergesView
-                    model: FullModelAccess {
+                    model: ColumnProxyModel {
                         rootIndex: indexFromModel(people, unmergeDialog.index)
                     }
                     delegate: ListItem {

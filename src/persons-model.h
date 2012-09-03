@@ -86,6 +86,8 @@ signals:
     void peopleAdded();
 
 private:
+    QModelIndex findRecursively(int role, const QVariant& value, const QModelIndex& idx=QModelIndex()) const;
+    
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel)
 };

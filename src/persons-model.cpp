@@ -196,7 +196,20 @@ void PersonsModel::jobFinished(KJob* job)
     }
 }
 
+QModelIndex PersonsModel::findRecursively(int role, const QVariant& value, const QModelIndex& idx) const
+{
+    if(data(idx, role)==value)
+        return idx;
+    int rows = rowCount(idx);
+    for(int i=0; i<rows; i++) {
+        QModelIndex ret = findRecursively(role, value, index(i, 0, idx));
+        if(ret.isValid())
+            return ret;
+    }
+    return QModelIndex();
+}
+
 QModelIndex PersonsModel::indexForUri(const QUrl& uri) const
 {
-    return QModelIndex();
+    return findRecursively(PersonsModel::UriRole, uri);
 }

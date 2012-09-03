@@ -71,8 +71,15 @@ public:
      */
     Q_SCRIPTABLE void unmerge(const QUrl& contactUri, const QUrl& personUri);
 
+    /** Merge all the contacts inside the @p persons */
+    void merge(const QList<QUrl>& persons);
+
+    /** this one is because QML is not smart enough to understand what's going on */
+    Q_SCRIPTABLE void merge(const QVariantList& persons);
+
+    QModelIndex indexForUri(const QUrl& uri) const;
 private slots:
-    void unmergeFinished(KJob*);
+    void jobFinished(KJob*);
     void query();
 
 signals:

@@ -167,15 +167,36 @@ void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
 
     KJob * job = Nepomuk2::storeResources( graph );
     job->setProperty("uri", contactUri);
-    connect(job, SIGNAL(finished(KJob*)), SLOT(unmergeFinished(KJob*)));
+    job->setObjectName("Unmerge");
+    connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
     job->start();
 }
 
-void PersonsModel::unmergeFinished(KJob* job)
+void PersonsModel::merge(const QList< QUrl >& persons)
+{
+    KJob* job = Nepomuk2::mergeResources( persons );
+    job->setObjectName("Merge");
+    connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
+}
+
+void PersonsModel::merge(const QVariantList& persons)
+{
+    QList<QUrl> conv;
+    foreach(const QVariant& p, persons)
+        conv += p.toUrl();
+    merge(conv);
+}
+
+void PersonsModel::jobFinished(KJob* job)
 {
     if(job->error()!=0) {
-        kWarning() << "Unmerge failed for "<< job->property("uri").toString() << job->errorText() << job->errorString();
+        kWarning() << job->objectName() << " failed for "<< job->property("uri").toString() << job->errorText() << job->errorString();
     } else {
-        kWarning() << "Unmerge done: "<< job->property("uri").toString();
+        kWarning() << job->objectName() << " done: "<< job->property("uri").toString();
     }
+}
+
+QModelIndex PersonsModel::indexForUri(const QUrl& uri) const
+{
+    return QModelIndex();
 }

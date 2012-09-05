@@ -85,7 +85,7 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     }
 
     Q_D(PersonsModelContactItem);
-//     kDebug() << "Inserting" << value << "(" << key << ")";
+//     kDebug() << "Inserting" << "[" << key << "]" << value;
     d->data.insert(key, value);
     emitDataChanged();
 }
@@ -115,22 +115,7 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
         case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());
         case PersonsModel::IMRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imID());
-        case PersonsModel::PhotoRole: {
-            QHash<QUrl, QVariant>::const_iterator it = d->data.constFind(Nepomuk2::Vocabulary::NCO::photo());
-            if(it==d->data.constEnd()) {
-                const QString query = QString::fromLatin1("select ?url where { %1 nco:photo ?phRes. ?phRes nie:url ?url . }")
-                                                          .arg( Soprano::Node::resourceToN3(uri()) );
-                Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
-                Soprano::QueryResultIterator qit = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-            
-                QUrl url;
-                if( qit.next() ) {
-                    url = qit["url"].uri();
-                }
-                it = d_ptr->data.insert(Nepomuk2::Vocabulary::NCO::photo(), url);
-            }
-            return it!=d->data.constEnd() ? it.value() : QVariant();
-        }
+        case PersonsModel::PhotoRole: return d->data.value(Nepomuk2::Vocabulary::NCO::photo());
         case PersonsModel::ContactIdRole: {
             int role = -1;
             switch((PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt()) {

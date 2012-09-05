@@ -31,6 +31,7 @@
 #include <Nepomuk2/Variant>
 #include <Nepomuk2/Vocabulary/PIMO>
 #include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NIE>
 #include <Nepomuk2/SimpleResource>
 #include <Nepomuk2/SimpleResourceGraph>
 #include <Nepomuk2/StoreResourcesJob>
@@ -86,7 +87,8 @@ QHash<QString, QUrl> initUriToBinding()
     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
     << Nepomuk2::Vocabulary::NCO::imStatus()
     << Nepomuk2::Vocabulary::NCO::hasEmailAddress()
-    << Nepomuk2::Vocabulary::NCO::emailAddress();
+    << Nepomuk2::Vocabulary::NCO::emailAddress()
+    << Nepomuk2::Vocabulary::NCO::photo();
     
     foreach(const QUrl& keyUri, list) {
         QString keyString = keyUri.toString();
@@ -105,21 +107,24 @@ void PersonsModel::query()
 
     QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurance ?nco_hasIMAccount"
                       "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                      "?nco_imStatus "
+                      "?nco_imStatus ?nco_photo "
 
                       "WHERE { "
                             "?uri a nco:PersonContact ."
-                            "?pimo_groundingOccurance  pimo:groundingOccurrence    ?uri . "
+                            "?pimo_groundingOccurance  pimo:groundingOccurrence     ?uri . "
 
-//                       "OPTIONAL { "
-                            "?uri                       nco:hasIMAccount            ?nco_hasIMAccount ."
-                            "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname ."
-                            "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType ."
-                            "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus ."
-                            "?nco_hasIMAccount          nco:imID                    ?nco_imID ."
-                            "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType ."
-//                       " } "
-                      
+                      "OPTIONAL { "
+                            "?uri                       nco:hasIMAccount            ?nco_hasIMAccount . "
+                            "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname . "
+                            "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType . "
+                            "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus . "
+                            "?nco_hasIMAccount          nco:imID                    ?nco_imID . "
+                            "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType . "
+                      " } "
+                      "OPTIONAL {"
+                            "?uri                       nco:photo                   ?phRes. "
+                            "?phRes                     nie:url                     ?nco_photo. "
+                      " } "
                       "OPTIONAL { "
                             "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress . "
                             "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress . "

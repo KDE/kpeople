@@ -136,6 +136,7 @@ Rectangle {
                     text: "Merge!"
                     onClicked: {
                         people.merge(toMergeItems.uris())
+                        toMergeItems.clear()
                     }
                 }
             }

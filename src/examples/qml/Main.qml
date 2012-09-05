@@ -92,7 +92,7 @@ Rectangle {
                         width: view.cellWidth-5
                         Image {
                             id: avatar
-                            source: photo[0]
+                            source: photo[0] || ""
                             fillMode: Image.PreserveAspectCrop
                             anchors.fill: parent
                         }

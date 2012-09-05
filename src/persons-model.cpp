@@ -120,7 +120,6 @@ void PersonsModel::query()
                             "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus . "
                             "?nco_hasIMAccount          nco:imID                    ?nco_imID . "
                             "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType . "
-                            "?nco_hasIMAccount          nco:hasIMCapability         ?nco_hasIMCapability . "
                       " } "
                       "OPTIONAL {"
                             "?uri                       nco:photo                   ?phRes. "

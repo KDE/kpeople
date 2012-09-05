@@ -34,6 +34,9 @@ Q_DECLARE_METATYPE(QModelIndex);
 
 struct PersonActionsPrivate {
     PersonActionsPrivate() : row(-1), model(0), ktpDelegate(0) {}
+    ~PersonActionsPrivate() { delete ktpDelegate; }
+    
+    void initKTPDelegate() { if(!ktpDelegate) ktpDelegate = new NepomukTpChannelDelegate; }
     
     int row;
     QAbstractItemModel* model;
@@ -99,28 +102,38 @@ void PersonActions::initialize(QAbstractItemModel* model, int row)
     d->actions.clear();
     for(int i=0; i<rows; i++) {
         QModelIndex idxContact = idx.child(i, 0);
-        QAction* action = new QAction(idxContact.data(Qt::DecorationRole).value<QIcon>(), QString(), this);
-        action->setProperty("idx", qVariantFromValue(idxContact));
-        bool b = false;
         switch(idxContact.data(PersonsModel::ContactTypeRole).toInt()) {
-            case PersonsModel::Email:
+            case PersonsModel::Email: {
+                QAction* action = new QAction(idxContact.data(Qt::DecorationRole).value<QIcon>(), QString(), this);
+                action->setProperty("idx", qVariantFromValue(idxContact));
                 action->setText(i18n("Send e-mail to '%1'", idxContact.data().toString()));
-                b = connect(action, SIGNAL(triggered(bool)), SLOT(emailTriggered()));
-                break;
-            case PersonsModel::IM:
-                if(!d->ktpDelegate) d->ktpDelegate = new NepomukTpChannelDelegate(this); //check nco:IMCapability
-                action->setText(i18n("Chat with '%1'", idxContact.data().toString()));
-                b = connect(action, SIGNAL(triggered(bool)), SLOT(chatTriggered()));
-                break;
+                connect(action, SIGNAL(triggered(bool)), SLOT(emailTriggered()));
+                d->actions += action;
+            }   break;
+            case PersonsModel::IM: {
+                d->initKTPDelegate();
+                {
+                    const QString query = QString::fromLatin1("select ?cap WHERE {"
+                                "%1                         nco:hasIMAccount            ?nco_hasIMAccount. "
+                                "?nco_hasIMAccount          nco:hasIMCapability         ?cap. "
+                            "   }").arg( Soprano::Node::resourceToN3(idxContact.data(PersonsModel::UriRole).toUrl()) );
+                    Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
+                    Soprano::QueryResultIterator it = m->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+                    while(it.next()) {
+                        QAction* action = new QAction(idxContact.data(Qt::DecorationRole).value<QIcon>(), QString(), this);
+                        action->setProperty("idx", qVariantFromValue(idxContact));
+                        QString ss = it["cap"].toString();
+                        action->setText(i18n("%1 with '%2'", ss.mid(ss.lastIndexOf('#')), idxContact.data().toString()));
+                        connect(action, SIGNAL(triggered(bool)), SLOT(chatTriggered()));
+                        d->actions += action;
+                    }
+                }
+            }   break;
             case PersonsModel::Phone:
             case PersonsModel::MobilePhone:
             case PersonsModel::Postal:
                 break;
         }
-        if(b) {
-            d->actions += action;
-        } else
-            delete action;
     }
     endResetModel();
     emit actionsChanged();

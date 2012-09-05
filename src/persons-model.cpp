@@ -120,6 +120,7 @@ void PersonsModel::query()
                             "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus . "
                             "?nco_hasIMAccount          nco:imID                    ?nco_imID . "
                             "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType . "
+                            "?nco_hasIMAccount          nco:hasIMCapability         ?nco_hasIMCapability . "
                       " } "
                       "OPTIONAL {"
                             "?uri                       nco:photo                   ?phRes. "
@@ -132,25 +133,33 @@ void PersonsModel::query()
                 "}");
 
     Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = m->executeQuery(nco_query,
-                                                      Soprano::Query::QueryLanguageSparql);
-
+    Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
+    QHash<QUrl, PersonsModelContactItem*> contacts;
+    
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
-        QString display /*= it[QLatin1String("nao_prefLabel")].toString()*/;
-        PersonsModelContactItem* contactNode = new PersonsModelContactItem(currentUri, display);
+        PersonsModelContactItem* contactNode = contacts.value(currentUri);
+        bool newContact = false;
+        if(!contactNode) {
+            QString display /*= it[QLatin1String("nao_prefLabel")].toString()*/;
+            contactNode = new PersonsModelContactItem(currentUri, display);
+            contacts.insert(currentUri, contactNode);
+            newContact = true;
+        }
 
         
         for(QHash<QString, QUrl>::const_iterator iter=uriToBinding.constBegin(), itEnd=uriToBinding.constEnd(); iter!=itEnd; ++iter) {
             contactNode->addData(iter.value(), it[iter.key()].toString());
         }
 
-        QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
-        Q_ASSERT(!pimoPersonUri.isEmpty());
-        QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
-        if (pos == d->persons.constEnd())
-            pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
-        pos.value()->appendRow(contactNode);
+        if(newContact) {
+            QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
+            Q_ASSERT(!pimoPersonUri.isEmpty());
+            QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+            if (pos == d->persons.constEnd())
+                pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
+            pos.value()->appendRow(contactNode);
+        }
     }
 
     invisibleRootItem()->appendRows(toStandardItems(d->persons.values()));

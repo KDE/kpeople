@@ -105,13 +105,13 @@ void PersonsModel::query()
     Q_D(PersonsModel);
     QHash<QString, QUrl> uriToBinding = initUriToBinding();
 
-    QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurance ?nco_hasIMAccount"
+    QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
                       "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
                       "?nco_imStatus ?nco_photo "
 
                       "WHERE { "
                             "?uri a nco:PersonContact ."
-                            "?pimo_groundingOccurance  pimo:groundingOccurrence     ?uri . "
+                            "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri . "
 
                       "OPTIONAL { "
                             "?uri                       nco:hasIMAccount            ?nco_hasIMAccount . "
@@ -152,7 +152,7 @@ void PersonsModel::query()
         }
 
         if(newContact) {
-            QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurance")].uri();
+            QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurrence")].uri();
             Q_ASSERT(!pimoPersonUri.isEmpty());
             QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
             if (pos == d->persons.constEnd())

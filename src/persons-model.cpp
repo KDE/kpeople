@@ -138,12 +138,10 @@ void PersonsModel::query()
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
         PersonsModelContactItem* contactNode = contacts.value(currentUri);
-        bool newContact = false;
+        bool newContact = !contactNode;
         if(!contactNode) {
-            QString display /*= it[QLatin1String("nao_prefLabel")].toString()*/;
-            contactNode = new PersonsModelContactItem(currentUri, display);
+            contactNode = new PersonsModelContactItem(currentUri, QString());
             contacts.insert(currentUri, contactNode);
-            newContact = true;
         }
 
         

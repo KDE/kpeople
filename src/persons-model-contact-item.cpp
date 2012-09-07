@@ -41,8 +41,7 @@ PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri, const QString&
 {
     setData(uri, PersonsModel::UriRole);
     setText(displayName);
-    
-    refreshIcon();
+    setType(PersonsModel::MobilePhone);
 }
 
 PersonsModelContactItem::~PersonsModelContactItem()
@@ -101,7 +100,7 @@ QUrl PersonsModelContactItem::uri() const
     return data(PersonsModel::UriRole).toUrl();
 }
 
-void PersonsModelContactItem::setType (PersonsModel::ContactType type)
+void PersonsModelContactItem::setType(PersonsModel::ContactType type)
 {
     setData(type, PersonsModel::ContactTypeRole);
     refreshIcon();

@@ -113,18 +113,20 @@ void PersonActions::initialize(QAbstractItemModel* model, int row)
             case PersonsModel::IM: {
                 d->initKTPDelegate();
                 {
-                    const QString query = QString::fromLatin1("select ?cap WHERE {"
+                    const QString query = QString::fromLatin1("select ?cap WHERE { "
                                 "%1                         nco:hasIMAccount            ?nco_hasIMAccount. "
                                 "?nco_hasIMAccount          nco:hasIMCapability         ?cap. "
                             "   }").arg( Soprano::Node::resourceToN3(idxContact.data(PersonsModel::UriRole).toUrl()) );
                     Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
                     Soprano::QueryResultIterator it = m->executeQuery(query, Soprano::Query::QueryLanguageSparql);
                     while(it.next()) {
-                        QAction* action = new QAction(idxContact.data(Qt::DecorationRole).value<QIcon>(), QString(), this);
-                        action->setProperty("idx", qVariantFromValue(idxContact));
                         QString ss = it["cap"].toString();
-                        action->setText(i18n("%1 with '%2'", ss.mid(ss.lastIndexOf('#')), idxContact.data().toString()));
-                        connect(action, SIGNAL(triggered(bool)), SLOT(chatTriggered()));
+                        
+                        QAction* action = new QAction(this);
+                        action->setProperty("idx", qVariantFromValue(idxContact));
+                        action->setProperty("capability", ss);
+                        action->setText(i18n("%1 with '%2'", ss.mid(ss.lastIndexOf('#')+13), idxContact.data().toString()));
+                        connect(action, SIGNAL(triggered(bool)), SLOT(imTriggered()));
                         d->actions += action;
                     }
                 }
@@ -146,7 +148,7 @@ void PersonActions::emailTriggered()
     KToolInvocation::invokeMailer(idxContact.data(PersonsModel::EmailRole).toString(), QString());
 }
 
-void PersonActions::chatTriggered()
+void PersonActions::imTriggered()
 {
     QAction* action = qobject_cast<QAction*>(sender());
     QModelIndex idxContact = action->property("idx").value<QModelIndex>();
@@ -166,7 +168,7 @@ void PersonActions::chatTriggered()
     
     if(!account.isEmpty()) {
         Q_D(const PersonActions);
-        d->ktpDelegate->startChat(account, idxContact.data(PersonsModel::IMRole).toString());
+        d->ktpDelegate->startIM(account, idxContact.data(PersonsModel::IMRole).toString(), action->property("capability").toString());
     }
 }
 

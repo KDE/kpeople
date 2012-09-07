@@ -48,7 +48,7 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
 
     public slots:
         void emailTriggered();
-        void chatTriggered();
+        void imTriggered();
 
     signals:
         void actionsChanged();

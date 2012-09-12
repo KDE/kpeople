@@ -36,7 +36,7 @@ public:
      * @param displayName - What will be visible to the user (used as Qt::DisplayRole)
      * @param type - What kind of contact this is
      */
-    PersonsModelContactItem(const QUrl& uri, const QString &displayName);
+    PersonsModelContactItem(const QUrl& uri);
     virtual ~PersonsModelContactItem();
 
     QUrl uri() const;

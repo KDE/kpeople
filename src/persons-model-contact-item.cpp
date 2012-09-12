@@ -36,11 +36,10 @@ public:
     QHash<QUrl, QVariant> data;
 };
 
-PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri, const QString& displayName)
+PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
     setData(uri, PersonsModel::UriRole);
-    setText(displayName);
     setType(PersonsModel::MobilePhone);
 }
 
@@ -73,17 +72,13 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     if(value.isNull())
         return;
     
-    if(Nepomuk2::Vocabulary::NCO::imNickname() == key) {
-        setText(value.toString());
-    } else if (Nepomuk2::Vocabulary::NCO::imID() == key) {
+    Q_D(PersonsModelContactItem);
+    if (Nepomuk2::Vocabulary::NCO::imID() == key) {
         setType(PersonsModel::IM);
     } else if (Nepomuk2::Vocabulary::NCO::hasEmailAddress() == key) {
         setType(PersonsModel::Email);
-    }else if (Nepomuk2::Vocabulary::NCO::emailAddress() == key) {
-        setText(value.toString());
     }
 
-    Q_D(PersonsModelContactItem);
 //     kDebug() << "Inserting" << "[" << key << "]" << value;
     d->data.insert(key, value);
     emitDataChanged();
@@ -110,6 +105,7 @@ QVariant PersonsModelContactItem::data(int role) const
 {
     Q_D(const PersonsModelContactItem);
     switch(role) {
+        case Qt::DisplayRole: return data(PersonsModel::NickRole);
         case PersonsModel::NickRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imNickname());
         case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
         case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());

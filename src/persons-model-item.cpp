@@ -61,6 +61,8 @@ QVariant PersonsModelItem::data(int role) const
         case Qt::DisplayRole: {
             QVariant value = queryChildrenForRole(Qt::DisplayRole);
             if(value.isNull())
+                value = queryChildrenForRole(PersonsModel::ContactIdRole);
+            if(value.isNull())
                 return QString("PIMO:Person - %1").arg(data(PersonsModel::UriRole).toString());
             else
                 return value;

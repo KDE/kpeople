@@ -86,7 +86,7 @@ QHash<QString, QUrl> initUriToBinding()
     //                      << Nepomuk2::Vocabulary::Telepathy::accountIdentifier()
     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
     << Nepomuk2::Vocabulary::NCO::imStatus()
-    << Nepomuk2::Vocabulary::NCO::hasEmailAddress()
+    << Nepomuk2::Vocabulary::NCO::hasIMAccount()
     << Nepomuk2::Vocabulary::NCO::emailAddress()
     << Nepomuk2::Vocabulary::NCO::photo();
     
@@ -110,24 +110,24 @@ void PersonsModel::query()
                       "?nco_imStatus ?nco_photo "
 
                       "WHERE { "
-                            "?uri a nco:PersonContact ."
-                            "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri . "
+                            "?uri a nco:PersonContact. "
+                            "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. "
 
                       "OPTIONAL { "
-                            "?uri                       nco:hasIMAccount            ?nco_hasIMAccount . "
-                            "?nco_hasIMAccount          nco:imNickname              ?nco_imNickname . "
-                            "?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType . "
-                            "?nco_hasIMAccount          nco:imStatus                ?nco_imStatus . "
-                            "?nco_hasIMAccount          nco:imID                    ?nco_imID . "
-                            "?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType . "
+                            "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
+                            "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
+                            "OPTIONAL { ?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType. } "
+                            "OPTIONAL { ?nco_hasIMAccount          nco:imStatus                ?nco_imStatus. } "
+                            "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
+                            "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
                       " } "
                       "OPTIONAL {"
                             "?uri                       nco:photo                   ?phRes. "
                             "?phRes                     nie:url                     ?nco_photo. "
                       " } "
                       "OPTIONAL { "
-                            "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress . "
-                            "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress . "
+                            "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
+                            "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
                       " } "
                 "}");
 
@@ -140,7 +140,7 @@ void PersonsModel::query()
         PersonsModelContactItem* contactNode = contacts.value(currentUri);
         bool newContact = !contactNode;
         if(!contactNode) {
-            contactNode = new PersonsModelContactItem(currentUri, QString());
+            contactNode = new PersonsModelContactItem(currentUri);
             contacts.insert(currentUri, contactNode);
         }
 

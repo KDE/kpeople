@@ -25,7 +25,7 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel* model, QObject* parent)
     : KJob(parent)
     , m_model(model)
 {
-    m_compareRoles << PersonsModel::NameRole << PersonsModel::EmailRole << PersonsModel::NickRole << PersonsModel::PhoneRole << PersonsModel::IMRole;
+    m_compareRoles << PersonsModel::NameRole << PersonsModel::ContactIdRole << PersonsModel::NickRole << PersonsModel::PhoneRole;
 }
 
 void DuplicatesFinder::start()
@@ -74,7 +74,20 @@ QList<int> DuplicatesFinder::matchAt(const QVariantList& value, const QVariantLi
     Q_ASSERT(value.size()==toCompare.size());
     for(int i=0; i<toCompare.size(); i++) {
         const QVariant& v = value[i];
-        if(!v.isNull() && v==toCompare[i] && (v.type()!=QVariant::List || !v.toList().isEmpty())) {
+        if(v.type()==QVariant::List) {
+            QList<QVariant> listA = v.toList(), listB=toCompare[i].toList();
+            if(!listA.isEmpty())
+                foreach(const QVariant& v, listB) {
+                    if(listA.contains(v)) {
+                        Q_ASSERT(!ret.contains(m_compareRoles[i]) && "B");
+                        ret += m_compareRoles[i];
+                        break;
+                    }
+                }
+        } else if(!v.isNull() && v==toCompare[i]
+            && (v.type()!=QVariant::String || !v.toString().isEmpty()))
+        {
+            Q_ASSERT(!ret.contains(m_compareRoles[i]) && "A");
             ret += m_compareRoles[i];
         }
     }

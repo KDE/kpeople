@@ -37,6 +37,7 @@ struct ResourceWatcherServicePrivate {
 
     Nepomuk2::ResourceWatcher *personWatcher;
     Nepomuk2::ResourceWatcher *contactWatcher;
+    Nepomuk2::ResourceWatcher *imWatcher;
     PersonsModel* m_model;
 
 };
@@ -77,6 +78,14 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
             this, SLOT(onContactPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
     
     d->contactWatcher->start();
+    
+    d->imWatcher = new Nepomuk2::ResourceWatcher(this);
+    d->imWatcher->addType(Nepomuk2::Vocabulary::NCO::IMAccount());
+    
+    connect(d->contactWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
+            this, SLOT(updateIMAccount(Nepomuk2::Resource)));
+    
+    d->imWatcher->start();
 }
 
 ResourceWatcherService::~ResourceWatcherService()
@@ -201,4 +210,14 @@ void ResourceWatcherService::personRemoved(const QUrl& uri)
     if(uri.isValid())
         d->m_model->removeRow(idx.row());
     kDebug() << "person removed" << uri;
+}
+
+void ResourceWatcherService::updateIMAccount(const Nepomuk2::Resource& res)
+{
+    Q_D(ResourceWatcherService);
+    PersonsModelContactItem* it = d->m_model->contactForIMAccount(res.uri());
+    if(it) {
+        it->addData(Nepomuk2::Vocabulary::NCO::hasIMAccount(), res.uri());
+        it->pullResourceProperties(res);
+    }
 }

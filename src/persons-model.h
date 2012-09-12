@@ -26,10 +26,8 @@
 
 #include <QStandardItemModel>
 
-namespace Nepomuk2 {
-    class Resource;
-}
-
+namespace Nepomuk2 { class Resource; }
+class PersonsModelContactItem;
 struct PersonsModelPrivate;
 class KJob;
 class QUrl;
@@ -82,6 +80,8 @@ public:
     QModelIndex indexForUri(const QUrl& uri) const;
     
     void createPerson(const Nepomuk2::Resource& res);
+    PersonsModelContactItem* contactForIMAccount(const QUrl& uri) const;
+    
 private slots:
     void jobFinished(KJob*);
     void query();

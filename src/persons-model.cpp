@@ -230,3 +230,9 @@ void PersonsModel::createPerson(const Nepomuk2::Resource& res)
     Q_ASSERT(!indexForUri(res.uri()).isValid());
     appendRow(new PersonsModelItem(res));
 }
+
+PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl& uri) const
+{
+    QStandardItem* it = itemFromIndex(indexForUri(uri));
+    return dynamic_cast<PersonsModelContactItem*>(it);
+}

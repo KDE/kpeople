@@ -49,9 +49,9 @@ public:
     QVariant dataValue(const QUrl& key);
     virtual QVariant data(int role = Qt::UserRole + 1) const;
     void removeData(const QUrl& uri);
+    void pullResourceProperties(const Nepomuk2::Resource& res);
 
 private:
-    void pullResourceProperties(const Nepomuk2::Resource& res);
     void refreshIcon();
 
     PersonsModelContactItemPrivate * const d_ptr;

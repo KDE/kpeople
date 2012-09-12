@@ -59,14 +59,23 @@ class ResultPrinter : public QObject
                     ++it;
             }
             
-            if(m_action==Apply || m_action==Ask) {
+            if((m_action==Apply || m_action==Ask) && !res.isEmpty()) {
                 MatchesSolver* s = new MatchesSolver(res, &model, this);
-                connect(s, SIGNAL(finished(KJob*)), QCoreApplication::instance(), SLOT(quit()));
+                connect(s, SIGNAL(finished(KJob*)), this, SLOT(matchesSolverDone(KJob*)));
                 s->start();
             } else
                 QCoreApplication::instance()->quit();
         }
 
+        void matchesSolverDone(KJob* job) {
+            if(job->error()==0)
+                std::cout << "Matching successfully finished" << std::endl;
+            else
+                std::cout << "Matching failed with error: " << job->error() << std::endl;
+            QCoreApplication::instance()->quit();
+        }
+
+    private:
         QString variantToString(const QVariant& data) {
             if(data.type()==QVariant::List) {
                 QList<QVariant> list = data.toList();

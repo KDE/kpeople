@@ -8,4 +8,4 @@ target_link_libraries(sweetpeople ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY}
     ${QT_QTDECLARATIVE_LIBRARY} ${KDECLARATIVE_LIBRARIES} ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS})
 
 kde4_add_executable(duplicates duplicates.cpp)
-target_link_libraries(duplicates ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} kpeople)
+target_link_libraries(duplicates ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBRARY} kpeople)

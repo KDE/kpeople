@@ -228,12 +228,5 @@ QModelIndex PersonsModel::indexForUri(const QUrl& uri) const
 void PersonsModel::createPerson(const Nepomuk2::Resource& res)
 {
     Q_ASSERT(!indexForUri(res.uri()).isValid());
-    QList<Nepomuk2::Resource> contacts = res.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toResourceList();
-    Q_ASSERT(!contacts.isEmpty());
-    
-    PersonsModelItem* person = new PersonsModelItem(res.uri());
-    foreach(const Nepomuk2::Resource& contact, contacts) {
-        person->appendRow(new PersonsModelContactItem(contact));
-    }
-    appendRow(person);
+    appendRow(new PersonsModelItem(res));
 }

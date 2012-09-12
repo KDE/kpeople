@@ -47,16 +47,26 @@ PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource& conta
     : d_ptr(new PersonsModelContactItemPrivate)
 {
     setData(contact.uri(), PersonsModel::UriRole);
+    pullResourceProperties(contact);
     
-    QHash<QUrl, Nepomuk2::Variant> props = contact.properties();
-    for(QHash<QUrl, Nepomuk2::Variant>::const_iterator it=props.constBegin(), itEnd=props.constEnd(); it!=itEnd; ++it) {
-        addData(it.key(), it->variant());
-    }
+    QUrl val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toUrl();
+    if(val.isValid()) pullResourceProperties(Nepomuk2::Resource(val));
+    
+    val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::photo()).toUrl();
+    if(val.isValid()) pullResourceProperties(Nepomuk2::Resource(val));
 }
 
 PersonsModelContactItem::~PersonsModelContactItem()
 {
     delete d_ptr;
+}
+
+void PersonsModelContactItem::pullResourceProperties(const Nepomuk2::Resource& res)
+{
+    QHash<QUrl, Nepomuk2::Variant> props = res.properties();
+    for(QHash<QUrl, Nepomuk2::Variant>::const_iterator it=props.constBegin(), itEnd=props.constEnd(); it!=itEnd; ++it) {
+        addData(it.key(), it->variant());
+    }
 }
 
 QMap<PersonsModel::ContactType, QIcon> initializeTypeIcons()

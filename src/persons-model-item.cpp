@@ -25,12 +25,20 @@
 #include <Nepomuk2/Vocabulary/PIMO>
 #include <Nepomuk2/Vocabulary/NCO>
 #include <Nepomuk2/Resource>
+#include <Nepomuk2/Variant>
 #include <Soprano/Vocabulary/NAO>
 #include <KDebug>
 
 PersonsModelItem::PersonsModelItem(const QUrl &personUri)
 {
     setData(personUri, PersonsModel::UriRole);
+}
+
+PersonsModelItem::PersonsModelItem(const Nepomuk2::Resource& person)
+{
+    setData(person.uri(), PersonsModel::UriRole);
+    setContacts(person.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList());
+    qDebug() << "new person" << text() << rowCount();
 }
 
 QVariant PersonsModelItem::queryChildrenForRole(int role) const
@@ -94,32 +102,44 @@ void PersonsModelItem::removeContacts(const QList<QUrl>& contacts)
         else
             ++i;
     }
+    emitDataChanged();
 }
 
-void PersonsModelItem::addContacts(const QList<QUrl>& contacts)
+void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
 {
+    QList<QUrl> contacts(_contacts);
+    QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
+    foreach(const QUrl& uri, _contacts) {
+        if(uris.contains(uri))
+            contacts.removeOne(uri);
+    }
+    
     kDebug() << "add contacts" << contacts;
     QList<PersonsModelContactItem*> rows;
     foreach(const QUrl& uri, contacts) {
         appendRow(new PersonsModelContactItem(Nepomuk2::Resource(uri)));
     }
+    emitDataChanged();
 }
 
 void PersonsModelItem::setContacts(const QList<QUrl>& contacts)
 {
     kDebug() << "set contacts" << contacts;
-    QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
-    QList<QUrl> toRemove, toAdd;
-    foreach(const QUrl& contact, contacts) {
-        if(!uris.contains(contact))
-            toAdd += contact;
+    
+    if(hasChildren()) {
+        QList<QUrl> toRemove;
+        QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
+        foreach(const QVariant& contact, uris) {
+            if(!contacts.contains(contact.toUrl()))
+                toRemove += contact.toUrl();
+        }
+        removeContacts(toRemove);
     }
     
-    foreach(const QVariant& contact, uris) {
-        if(!contacts.contains(contact.toUrl()))
-            toRemove += contact.toUrl();
+    QList<QUrl> toAdd;
+    foreach(const QUrl& contact, contacts) {
+        toAdd += contact;
     }
-    removeContacts(toRemove);
     addContacts(toAdd);
     Q_ASSERT(hasChildren());
 }

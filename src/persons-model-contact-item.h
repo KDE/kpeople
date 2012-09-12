@@ -51,10 +51,11 @@ public:
     void removeData(const QUrl& uri);
 
 private:
+    void pullResourceProperties(const Nepomuk2::Resource& res);
     void refreshIcon();
+
     PersonsModelContactItemPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModelContactItem)
-
 };
 
 Q_DECLARE_METATYPE(PersonsModelContactItem*);

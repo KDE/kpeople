@@ -37,6 +37,7 @@ class KPEOPLE_EXPORT PersonsModelItem : public QStandardItem
 {
 public:
     PersonsModelItem(const QUrl &personUri);
+    PersonsModelItem(const Nepomuk2::Resource& person);
 
     virtual QVariant data(int role) const;
     

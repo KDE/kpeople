@@ -24,7 +24,9 @@
 
 #include <Nepomuk2/Vocabulary/PIMO>
 #include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Resource>
 #include <Soprano/Vocabulary/NAO>
+#include <KDebug>
 
 PersonsModelItem::PersonsModelItem(const QUrl &personUri)
 {
@@ -80,4 +82,44 @@ QVariant PersonsModelItem::data(int role) const
     }
 
     return QStandardItem::data(role);
+}
+
+void PersonsModelItem::removeContacts(const QList<QUrl>& contacts)
+{
+    kDebug() << "remove contacts" << contacts;
+    for(int i=0; i<rowCount(); ) {
+        QStandardItem* item = child(i);
+        if(contacts.contains(item->data(PersonsModel::UriRole).toUrl()))
+            removeRow(i);
+        else
+            ++i;
+    }
+}
+
+void PersonsModelItem::addContacts(const QList<QUrl>& contacts)
+{
+    kDebug() << "add contacts" << contacts;
+    QList<PersonsModelContactItem*> rows;
+    foreach(const QUrl& uri, contacts) {
+        appendRow(new PersonsModelContactItem(Nepomuk2::Resource(uri)));
+    }
+}
+
+void PersonsModelItem::setContacts(const QList<QUrl>& contacts)
+{
+    kDebug() << "set contacts" << contacts;
+    QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
+    QList<QUrl> toRemove, toAdd;
+    foreach(const QUrl& contact, contacts) {
+        if(!uris.contains(contact))
+            toAdd += contact;
+    }
+    
+    foreach(const QVariant& contact, uris) {
+        if(!contacts.contains(contact.toUrl()))
+            toRemove += contact.toUrl();
+    }
+    removeContacts(toRemove);
+    addContacts(toAdd);
+    Q_ASSERT(hasChildren());
 }

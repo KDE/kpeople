@@ -21,11 +21,13 @@
 #include "resource-watcher-service.h"
 #include "persons-model.h"
 #include "persons-model-item.h"
+#include "persons-model-contact-item.h"
 
 #include <Nepomuk2/Resource>
 #include <nepomuk2/resourcewatcher.h>
 #include <Nepomuk2/Vocabulary/PIMO>
 #include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Variant>
 #include <KDebug>
 
 struct ResourceWatcherServicePrivate {
@@ -50,7 +52,7 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     connect(d->personWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
             this, SLOT(personCreated(Nepomuk2::Resource,QList<QUrl>)));
     connect(d->personWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
-            this, SLOT(personRemoved(QUrl,QList<QUrl>)));
+            this, SLOT(personRemoved(QUrl)));
     connect(d->personWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
             this, SLOT(onPersonPropertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
     connect(d->personWatcher, SIGNAL(propertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
@@ -82,55 +84,96 @@ ResourceWatcherService::~ResourceWatcherService()
 
 void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
-    kDebug() << "person property added:" << res.uri() << property.name() << value;
+    kDebug() << "person property added:" /*<< res.uri() */<< property.name() << value;
 }
 
-void ResourceWatcherService::onPersonPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
+void ResourceWatcherService::onPersonPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& _value)
 {
-    kDebug() << "person property removed:" << res.uri() << property.name() << value;
-    //check if the occurrences changed
+    QVariantList value = _value.toList();
+    kDebug() << "person property removed:" /*<< res.uri() */<< property.name() << value;
+    
+    if(property.name()=="groundingOccurrence") {
+        if(value.isEmpty())
+            personRemoved(res.uri());
+        else {
+            Q_D(ResourceWatcherService);
+            PersonsModelItem* item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+            if(item)
+                item->setContacts(res.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList());
+        }
+    }
+}
+
+template <typename T>
+QList<T> qvariantlist_cast(const QVariantList& vals)
+{
+    QList<T> ret;
+    foreach(const QVariant& v, vals)
+        ret += v.value<T>();
+    return ret;
 }
 
 void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
-                                                      const QVariantList& removed, const QVariantList& after)
+                                                      const QVariantList& added, const QVariantList& removed)
 {
-    kDebug() << "person changed:" << res.uri() << property.name() << removed << after;
-    //check if the occurrences changed
+    kDebug() << "person changed:" /*<< res.uri() */<< property.name() << removed << added << " // " << res.property(property.uri());
+    Q_D(ResourceWatcherService);
+    Q_ASSERT(property == Nepomuk2::Vocabulary::PIMO::groundingOccurrence());
+    
+    PersonsModelItem* item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+    if(item) {
+        item->removeContacts(qvariantlist_cast<QUrl>(removed));
+        item->addContacts(qvariantlist_cast<QUrl>(added));
+    }
 }
 
 void ResourceWatcherService::onContactPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
-    kDebug() << "contact property added:" << res.uri() << property.name() << value;
+    kDebug() << "contact property added:" /*<< res.uri() */<< property.name() << value;
+    
+    Q_D(ResourceWatcherService);
+    PersonsModelContactItem* item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+    if(item)
+        item->addData(property.uri(), value);
 }
 
 void ResourceWatcherService::onContactPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
-    kDebug() << "contact property removed:" << res.uri() << property.name() << value;
-    //just modify addData()
+    kDebug() << "contact property removed:" /*<< res.uri() */<< property.name() << value;
+    
+    Q_D(ResourceWatcherService);
+    PersonsModelContactItem* item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+    if(item)
+        item->removeData(property.uri());
 }
 
 void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
-                                                      const QVariantList& removed, const QVariantList& after)
+                                                      const QVariantList& added, const QVariantList& removed)
 {
-    kDebug() << "contact changed:" << res.uri() << property.name() << removed << after;
-    //modify
+    kDebug() << "contact changed:" /*<< res.uri() */<< property.name() << removed << added;
+    
+    Q_D(ResourceWatcherService);
+    PersonsModelContactItem* item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+    item->modifyData(property.uri(), added);
 }
 
 void ResourceWatcherService::contactCreated(const Nepomuk2::Resource& res, const QList< QUrl >& types)
 {
-    //check if it has a person
-    //add it or otherwise we shouldn't do anything
-    kDebug() << "new contact" << res.uri() << types;
+    kDebug() << "new contact" /*<< res.uri() */<< types;
 }
 
 void ResourceWatcherService::personCreated(const Nepomuk2::Resource& res, const QList< QUrl >& types)
 {
     Q_D(ResourceWatcherService);
-    Q_ASSERT(!d->m_model->indexForUri(res.uri()).isValid());
-    
-    //check for its contacts
-    //if it has no contacts it shouldn't be added until the groundingOccurrences change
-    kDebug() << "new person" << res.uri() << types;
+    Q_ASSERT(res.hasProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()));
+    QModelIndex idx = d->m_model->indexForUri(res.uri());
+    if(!idx.isValid())
+        d->m_model->createPerson(res);
+    else {
+        PersonsModelItem* personItem = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(idx));
+        personItem->setContacts(res.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList());
+    }
+    kDebug() << "new person" /*<< res.uri() */<< types;
 }
 
 void ResourceWatcherService::contactRemoved(const QUrl& uri, const QList< QUrl >&)
@@ -142,7 +185,7 @@ void ResourceWatcherService::contactRemoved(const QUrl& uri, const QList< QUrl >
     kDebug() << "contact removed" << uri;
 }
 
-void ResourceWatcherService::personRemoved(const QUrl& uri, const QList< QUrl >&)
+void ResourceWatcherService::personRemoved(const QUrl& uri)
 {
     Q_D(ResourceWatcherService);
     QModelIndex idx = d->m_model->indexForUri(uri);

@@ -38,7 +38,7 @@
 #include <KDebug>
 
 struct PersonsModelPrivate {
-    QHash<QUrl, PersonsModelItem*> persons;
+    
 };
 
 PersonsModel::PersonsModel(QObject *parent, bool init)
@@ -102,7 +102,7 @@ QHash<QString, QUrl> initUriToBinding()
 void PersonsModel::query()
 {
     Q_ASSERT(rowCount()==0);
-    Q_D(PersonsModel);
+    QHash<QUrl, PersonsModelItem*> persons;
     QHash<QString, QUrl> uriToBinding = initUriToBinding();
 
     QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
@@ -152,14 +152,14 @@ void PersonsModel::query()
         if(newContact) {
             QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurrence")].uri();
             Q_ASSERT(!pimoPersonUri.isEmpty());
-            QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
-            if (pos == d->persons.constEnd())
-                pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
+            QHash< QUrl, PersonsModelItem* >::const_iterator pos = persons.constFind(pimoPersonUri);
+            if (pos == persons.constEnd())
+                pos = persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
             pos.value()->appendRow(contactNode);
         }
     }
 
-    invisibleRootItem()->appendRows(toStandardItems(d->persons.values()));
+    invisibleRootItem()->appendRows(toStandardItems(persons.values()));
     emit peopleAdded();
 }
 
@@ -223,4 +223,17 @@ QModelIndex PersonsModel::findRecursively(int role, const QVariant& value, const
 QModelIndex PersonsModel::indexForUri(const QUrl& uri) const
 {
     return findRecursively(PersonsModel::UriRole, uri);
+}
+
+void PersonsModel::createPerson(const Nepomuk2::Resource& res)
+{
+    Q_ASSERT(!indexForUri(res.uri()).isValid());
+    QList<Nepomuk2::Resource> contacts = res.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toResourceList();
+    Q_ASSERT(!contacts.isEmpty());
+    
+    PersonsModelItem* person = new PersonsModelItem(res.uri());
+    foreach(const Nepomuk2::Resource& contact, contacts) {
+        person->appendRow(new PersonsModelContactItem(contact));
+    }
+    appendRow(person);
 }

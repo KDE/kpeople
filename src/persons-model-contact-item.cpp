@@ -43,6 +43,17 @@ PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri)
     setType(PersonsModel::MobilePhone);
 }
 
+PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource& contact)
+    : d_ptr(new PersonsModelContactItemPrivate)
+{
+    setData(contact.uri(), PersonsModel::UriRole);
+    
+    QHash<QUrl, Nepomuk2::Variant> props = contact.properties();
+    for(QHash<QUrl, Nepomuk2::Variant>::const_iterator it=props.constBegin(), itEnd=props.constEnd(); it!=itEnd; ++it) {
+        addData(it.key(), it->variant());
+    }
+}
+
 PersonsModelContactItem::~PersonsModelContactItem()
 {
     delete d_ptr;
@@ -125,4 +136,18 @@ QVariant PersonsModelContactItem::data(int role) const
         }   break;
     }
     return QStandardItem::data(role);
+}
+
+void PersonsModelContactItem::modifyData(const QUrl& name, const QVariantList& added)
+{
+    Q_D(PersonsModelContactItem);
+    d->data[name] = added;
+    emitDataChanged();
+}
+
+void PersonsModelContactItem::removeData(const QUrl& uri)
+{
+    Q_D(PersonsModelContactItem);
+    d->data.remove(uri);
+    emitDataChanged();
 }

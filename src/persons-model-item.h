@@ -25,6 +25,10 @@
 #include "kpeople_export.h"
 #include <qstandarditemmodel.h>
 
+namespace Nepomuk2 {
+class Resource;
+}
+
 class QUrl;
 class PersonsModelItemPrivate;
 class PersonCacheItem;
@@ -35,6 +39,10 @@ public:
     PersonsModelItem(const QUrl &personUri);
 
     virtual QVariant data(int role) const;
+    
+    void removeContacts(const QList<QUrl>& contacts);
+    void addContacts(const QList<QUrl>& contacts);
+    void setContacts(const QList< QUrl >& contacts);
 
 private:
     QVariant queryChildrenForRole(int role) const;

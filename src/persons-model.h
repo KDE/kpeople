@@ -26,10 +26,12 @@
 
 #include <QStandardItemModel>
 
+namespace Nepomuk2 {
+    class Resource;
+}
+
 struct PersonsModelPrivate;
 class KJob;
-class PersonsModelItem;
-class PersonsModelContactItem;
 class QUrl;
 
 class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
@@ -78,6 +80,8 @@ public:
     Q_SCRIPTABLE void merge(const QVariantList& persons);
 
     QModelIndex indexForUri(const QUrl& uri) const;
+    
+    void createPerson(const Nepomuk2::Resource& res);
 private slots:
     void jobFinished(KJob*);
     void query();

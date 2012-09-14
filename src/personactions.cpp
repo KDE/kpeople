@@ -141,12 +141,12 @@ void PersonActions::initialize(QAbstractItemModel* model, int row)
     for(int i=0; i<rows; i++) {
         QModelIndex idxContact = idx.child(i, 0);
         switch(idxContact.data(PersonsModel::ContactTypeRole).toInt()) {
-            case PersonsModel::Email: {
+            case PersonsModel::Email:
                 d->actions += d->createEmailAction(this, idxContact.data(Qt::DecorationRole).value<QIcon>(), idxContact.data().toString(), idxContact.data(PersonsModel::EmailRole).toString());
-            }   break;
-            case PersonsModel::IM: {
+                break;
+            case PersonsModel::IM:
                 d->actions += d->createIMActions(this, idxContact.data(PersonsModel::UriRole).toUrl(), idxContact.data(PersonsModel::IMRole).toString(), idxContact.data().toString());
-            }   break;
+                break;
             case PersonsModel::Phone:
             case PersonsModel::MobilePhone:
             case PersonsModel::Postal:

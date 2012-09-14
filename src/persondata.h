@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QUrl>
 
+namespace Nepomuk2 { class Resource; }
 struct PersonDataPrivate;
 
 class KPEOPLE_EXPORT PersonData : public QObject
@@ -47,6 +48,8 @@ class KPEOPLE_EXPORT PersonData : public QObject
         QString nickname() const;
         
         QString status() const;
+        
+        QList<Nepomuk2::Resource> contacts() const;
         
     signals:
         void contactChanged();

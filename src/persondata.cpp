@@ -112,3 +112,9 @@ QString PersonData::nickname() const
     }
     return QString();
 }
+
+QList< Nepomuk2::Resource > PersonData::contacts() const
+{
+    Q_D(const PersonData);
+    return d->contacts;
+}

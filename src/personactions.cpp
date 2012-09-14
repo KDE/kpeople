@@ -20,12 +20,16 @@
 #include "personactions.h"
 #include "persons-model.h"
 #include "nepomuk-tp-channel-delegate.h"
+#include "persondata.h"
 #include <klocalizedstring.h>
 #include <qabstractitemmodel.h>
 #include <QDebug>
 #include <qaction.h>
 #include <KToolInvocation>
 #include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Variant>
 #include <Soprano/Node>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
@@ -33,7 +37,7 @@
 Q_DECLARE_METATYPE(QModelIndex);
 
 struct PersonActionsPrivate {
-    PersonActionsPrivate() : row(-1), model(0), ktpDelegate(0) {}
+    PersonActionsPrivate() : row(-1), model(0), ktpDelegate(0), person(0) {}
     ~PersonActionsPrivate() { delete ktpDelegate; }
     
     void initKTPDelegate() { if(!ktpDelegate) ktpDelegate = new NepomukTpChannelDelegate; }
@@ -42,6 +46,40 @@ struct PersonActionsPrivate {
     QAbstractItemModel* model;
     QList<QAction*> actions;
     NepomukTpChannelDelegate* ktpDelegate;
+    PersonData* person;
+    
+    QAction* createEmailAction(PersonActions* pactions, const QIcon& icon, const QString& name, const QString& email)
+    {
+        QAction* action = new QAction(icon, i18n("Send e-mail to '%1'", name), pactions);
+        action->setProperty("email", email);
+        QObject::connect(action, SIGNAL(triggered(bool)), pactions, SLOT(emailTriggered()));
+        return action;
+    }
+    
+    QList<QAction*> createIMActions(PersonActions* pactions, const QUrl& contactUri, const QString& imrole, const QString& nickname)
+    {
+        Q_ASSERT(!contactUri.isEmpty());
+        initKTPDelegate();
+        QList<QAction*> actions;
+        const QString query = QString::fromLatin1("select ?cap WHERE { "
+                    "%1                         nco:hasIMAccount            ?nco_hasIMAccount. "
+                    "?nco_hasIMAccount          nco:hasIMCapability         ?cap. "
+                "   }").arg( Soprano::Node::resourceToN3(contactUri) );
+        Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
+        Soprano::QueryResultIterator it = m->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        while(it.next()) {
+            QString ss = it["cap"].toString();
+            
+            QAction* action = new QAction(pactions);
+            action->setProperty("uri", contactUri);
+            action->setProperty("imrole", imrole);
+            action->setProperty("capability", ss);
+            action->setText(i18n("%1 with '%2'", ss.mid(ss.lastIndexOf('#')+13), nickname));
+            QObject::connect(action, SIGNAL(triggered(bool)), pactions, SLOT(imTriggered()));
+            actions += action;
+        }
+        return actions;
+    }
 };
 
 PersonActions::PersonActions(QObject* parent)
@@ -104,32 +142,10 @@ void PersonActions::initialize(QAbstractItemModel* model, int row)
         QModelIndex idxContact = idx.child(i, 0);
         switch(idxContact.data(PersonsModel::ContactTypeRole).toInt()) {
             case PersonsModel::Email: {
-                QAction* action = new QAction(idxContact.data(Qt::DecorationRole).value<QIcon>(), QString(), this);
-                action->setProperty("idx", qVariantFromValue(idxContact));
-                action->setText(i18n("Send e-mail to '%1'", idxContact.data().toString()));
-                connect(action, SIGNAL(triggered(bool)), SLOT(emailTriggered()));
-                d->actions += action;
+                d->actions += d->createEmailAction(this, idxContact.data(Qt::DecorationRole).value<QIcon>(), idxContact.data().toString(), idxContact.data(PersonsModel::EmailRole).toString());
             }   break;
             case PersonsModel::IM: {
-                d->initKTPDelegate();
-                {
-                    const QString query = QString::fromLatin1("select ?cap WHERE { "
-                                "%1                         nco:hasIMAccount            ?nco_hasIMAccount. "
-                                "?nco_hasIMAccount          nco:hasIMCapability         ?cap. "
-                            "   }").arg( Soprano::Node::resourceToN3(idxContact.data(PersonsModel::UriRole).toUrl()) );
-                    Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
-                    Soprano::QueryResultIterator it = m->executeQuery(query, Soprano::Query::QueryLanguageSparql);
-                    while(it.next()) {
-                        QString ss = it["cap"].toString();
-                        
-                        QAction* action = new QAction(this);
-                        action->setProperty("idx", qVariantFromValue(idxContact));
-                        action->setProperty("capability", ss);
-                        action->setText(i18n("%1 with '%2'", ss.mid(ss.lastIndexOf('#')+13), idxContact.data().toString()));
-                        connect(action, SIGNAL(triggered(bool)), SLOT(imTriggered()));
-                        d->actions += action;
-                    }
-                }
+                d->actions += d->createIMActions(this, idxContact.data(PersonsModel::UriRole).toUrl(), idxContact.data(PersonsModel::IMRole).toString(), idxContact.data().toString());
             }   break;
             case PersonsModel::Phone:
             case PersonsModel::MobilePhone:
@@ -144,19 +160,17 @@ void PersonActions::initialize(QAbstractItemModel* model, int row)
 void PersonActions::emailTriggered()
 {
     QAction* action = qobject_cast<QAction*>(sender());
-    QModelIndex idxContact = action->property("idx").value<QModelIndex>();
-    KToolInvocation::invokeMailer(idxContact.data(PersonsModel::EmailRole).toString(), QString());
+    KToolInvocation::invokeMailer(action->property("email").toString(), QString());
 }
 
 void PersonActions::imTriggered()
 {
     QAction* action = qobject_cast<QAction*>(sender());
-    QModelIndex idxContact = action->property("idx").value<QModelIndex>();
     const QString query = QString::fromLatin1("select ?telepathy_accountIdentifier WHERE {"
         "%1                         nco:hasIMAccount            ?nco_hasIMAccount . "
         "?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy . "
         "?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . "
-    "   }").arg( Soprano::Node::resourceToN3(idxContact.data(PersonsModel::UriRole).toUrl()) );
+    "   }").arg( Soprano::Node::resourceToN3(action->property("uri").toUrl()) );
     
     Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator qit = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
@@ -168,7 +182,7 @@ void PersonActions::imTriggered()
     
     if(!account.isEmpty()) {
         Q_D(const PersonActions);
-        d->ktpDelegate->startIM(account, idxContact.data(PersonsModel::IMRole).toString(), action->property("capability").toString());
+        d->ktpDelegate->startIM(account, action->property("imrole").toString(), action->property("capability").toString());
     }
 }
 
@@ -196,4 +210,36 @@ void PersonActions::trigger(int actionsRow)
 {
     Q_D(PersonActions);
     d->actions[actionsRow]->trigger();
+}
+
+void PersonActions::setPerson(PersonData* data)
+{
+    Q_D(PersonActions);
+    if(d->person == data)
+        return;
+    
+    beginResetModel();
+    qDeleteAll(d->actions);
+    d->actions.clear();
+    
+    foreach(const Nepomuk2::Resource& res, data->contacts()) {
+        if(res.hasProperty(Nepomuk2::Vocabulary::NCO::hasEmailAddress())) {
+            Nepomuk2::Resource email = res.property(Nepomuk2::Vocabulary::NCO::hasEmailAddress()).toResource();
+            QString emailAddress = email.property(Nepomuk2::Vocabulary::NCO::emailAddress()).toString();
+            d->actions += d->createEmailAction(this, QIcon::fromTheme("email"), data->nickname(), emailAddress);
+        }
+        
+        if(res.hasProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount())) {
+            Nepomuk2::Resource imaccount = res.property(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toResource();
+            d->actions += d->createIMActions(this, res.uri(), imaccount.property(Nepomuk2::Vocabulary::NCO::imID()).toString(), data->nickname());
+        }
+    }
+    endResetModel();
+    emit actionsChanged();
+}
+
+PersonData* PersonActions::person() const
+{
+    Q_D(const PersonActions);
+    return d->person;
 }

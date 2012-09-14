@@ -23,6 +23,7 @@
 #include "kpeople_export.h"
 #include <qabstractitemmodel.h>
 
+class PersonData;
 class QAction;
 struct PersonActionsPrivate;
 
@@ -31,6 +32,7 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
     Q_OBJECT
     Q_PROPERTY(QAbstractItemModel* peopleModel READ model WRITE setModel)
     Q_PROPERTY(int row READ row WRITE setRow)
+    Q_PROPERTY(PersonData* person READ person WRITE setPerson)
     public:
         explicit PersonActions(QObject* parent = 0);
         virtual ~PersonActions();
@@ -41,12 +43,16 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
         int row() const;
         void setRow(int row);
         void initialize(QAbstractItemModel* model, int row);
+        
+        PersonData* person() const;
+        void setPerson(PersonData* data);
+        
         Q_INVOKABLE void trigger(int actionsRow);
         
         virtual QVariant data(const QModelIndex& index, int role) const;
         virtual int rowCount(const QModelIndex& parent) const;
 
-    public slots:
+    private slots:
         void emailTriggered();
         void imTriggered();
 

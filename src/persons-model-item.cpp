@@ -110,8 +110,7 @@ void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
     QList<QUrl> contacts(_contacts);
     QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
     foreach(const QUrl& uri, _contacts) {
-        if(uris.contains(uri))
-            contacts.removeOne(uri);
+        contacts.removeOne(uri);
     }
     
     kDebug() << "add contacts" << contacts;

@@ -233,6 +233,6 @@ void PersonsModel::createPerson(const Nepomuk2::Resource& res)
 
 PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl& uri) const
 {
-    QStandardItem* it = itemFromIndex(indexForUri(uri));
+    QStandardItem* it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
     return dynamic_cast<PersonsModelContactItem*>(it);
 }

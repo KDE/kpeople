@@ -56,7 +56,8 @@ public:
         NickRole,
         PhoneRole,
         IMRole,
-        PhotoRole
+        PhotoRole,
+        IMAccountUriRole
     };
 
     /**

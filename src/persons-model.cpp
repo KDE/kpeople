@@ -102,7 +102,6 @@ QHash<QString, QUrl> initUriToBinding()
 void PersonsModel::query()
 {
     Q_ASSERT(rowCount()==0);
-    QHash<QUrl, PersonsModelItem*> persons;
     QHash<QString, QUrl> uriToBinding = initUriToBinding();
 
     QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
@@ -134,6 +133,7 @@ void PersonsModel::query()
     Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
     QHash<QUrl, PersonsModelContactItem*> contacts;
+    QHash<QUrl, PersonsModelItem*> persons;
     
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();

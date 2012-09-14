@@ -60,7 +60,8 @@ void PersonData::setContactId(const QString& id)
         d->resource = Nepomuk2::Resource(it["uri"].uri());
         d->contacts = d->resource.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toResourceList();
         emit contactChanged();
-    }
+    } else
+        qWarning() << "Couldn't find " << id;
 }
 
 QString PersonData::contactId() const
@@ -103,9 +104,11 @@ QString PersonData::nickname() const
 {
     Q_D(const PersonData);
     foreach(const Nepomuk2::Resource& res, d->contacts) {
-        Nepomuk2::Resource imacc(res.property(Nepomuk2::Vocabulary::NCO::nickname()).toResource());
-        if(imacc.hasProperty(Nepomuk2::Vocabulary::NCO::nickname()))
-            return imacc.property(Nepomuk2::Vocabulary::NCO::nickname()).toString();
+        if(res.hasProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount())) {
+            Nepomuk2::Resource imacc(res.property(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toResource());
+            if(imacc.hasProperty(Nepomuk2::Vocabulary::NCO::imStatus()))
+                return imacc.property(Nepomuk2::Vocabulary::NCO::imNickname()).toString();
+        }
     }
     return QString();
 }

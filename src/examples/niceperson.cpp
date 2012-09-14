@@ -21,7 +21,10 @@
 #include <QFormLayout>
 #include <QLabel>
 #include <QDebug>
+#include <QToolButton>
+#include <QMenu>
 #include <persondata.h>
+#include <personactions.h>
 
     int main(int argc, char** argv)
 {
@@ -43,6 +46,16 @@
     QLabel* avatar = new QLabel;
     avatar->setPixmap(QPixmap(d.avatar().toLocalFile()));
     l->addRow("avatar:", avatar);
+    
+    PersonActions* actions = new PersonActions(&d);
+    actions->setPerson(&d);
+    QToolButton* b = new QToolButton;
+    b->setText("Actions");
+    QMenu* m = new QMenu(b);
+    m->addActions(actions->actions());
+    b->setPopupMode(QToolButton::MenuButtonPopup);
+    b->setMenu(m);
+    l->addRow("actions:", b);
     
     w.show();
     app.exec();

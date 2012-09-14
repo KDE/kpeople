@@ -13,6 +13,7 @@ Rectangle {
     Core.SortFilterModel {
         id: filteredPeople
         sortRole: "display"
+        sortCaseSensitivity: Qt.CaseInsensitive
         sourceModel: PersonsModel { id: people }
         filterRegExp: searchField.text
     }

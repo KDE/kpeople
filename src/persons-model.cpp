@@ -88,7 +88,7 @@ QHash<QString, QUrl> initUriToBinding()
     << Nepomuk2::Vocabulary::NCO::imStatus()
     << Nepomuk2::Vocabulary::NCO::hasIMAccount()
     << Nepomuk2::Vocabulary::NCO::emailAddress()
-    << Nepomuk2::Vocabulary::NCO::photo();
+    << Nepomuk2::Vocabulary::NIE::url();
     
     foreach(const QUrl& keyUri, list) {
         QString keyString = keyUri.toString();
@@ -107,7 +107,7 @@ void PersonsModel::query()
 
     QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
                       "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                      "?nco_imStatus ?nco_photo "
+                      "?nco_imStatus ?nie_url "
 
                       "WHERE { "
                             "?uri a nco:PersonContact. "
@@ -123,7 +123,7 @@ void PersonsModel::query()
                       " } "
                       "OPTIONAL {"
                             "?uri                       nco:photo                   ?phRes. "
-                            "?phRes                     nie:url                     ?nco_photo. "
+                            "?phRes                     nie:url                     ?nie_url. "
                       " } "
                       "OPTIONAL { "
                             "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "

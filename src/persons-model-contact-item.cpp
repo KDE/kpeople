@@ -24,6 +24,7 @@
 #include <KIcon>
 #include <KDebug>
 #include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NIE>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
@@ -131,7 +132,7 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
         case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());
         case PersonsModel::IMRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imID());
-        case PersonsModel::PhotoRole: return d->data.value(Nepomuk2::Vocabulary::NCO::photo());
+        case PersonsModel::PhotoRole: return d->data.value(Nepomuk2::Vocabulary::NIE::url());
         case PersonsModel::ContactIdRole: {
             int role = -1;
             switch((PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt()) {

@@ -45,13 +45,13 @@ void PersonsModelTest::testPhotos()
     PersonsModel m;
     QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
     int count = 0;
-    QBENCHMARK {
+//     QBENCHMARK {
         for(int i=0; i<m.rowCount(); ++i) {
             QModelIndex idx = m.index(i, 0);
             QVariant ret = idx.data(PersonsModel::PhotoRole);
             count += ret.toList().size();
         }
-    }
+//     }
     QVERIFY(count>0); //there should be someone with photos...
 }
 

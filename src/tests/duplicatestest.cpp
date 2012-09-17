@@ -53,7 +53,7 @@ void DuplicatesTest::testDuplicates()
 PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVariant& id, const QString& nick=QString())
 {
     PersonsModelItem* ret = new PersonsModelItem(QString("test:/%1").arg(qrand()));
-    PersonsModelContactItem* contact = new PersonsModelContactItem(QUrl("test:/"+id.toString()));
+    PersonsModelContactItem* contact = new PersonsModelContactItem(QUrl("test:/"+id.toString()+QString::number(qrand())));
     QUrl key;
     switch(t) {
         case PersonsModel::IM: key = Nepomuk2::Vocabulary::NCO::imID(); break;
@@ -64,6 +64,8 @@ PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVaria
     contact->addData(key, id);
     if(!nick.isEmpty())
         contact->addData(Nepomuk2::Vocabulary::NCO::imNickname(), nick);
+    
+    Q_ASSERT(contact->data(PersonsModel::ContactTypeRole).toInt()==t);
     ret->appendRow(contact);
     return ret;
 }

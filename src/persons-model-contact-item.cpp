@@ -97,7 +97,7 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     Q_D(PersonsModelContactItem);
     if (Nepomuk2::Vocabulary::NCO::imID() == key) {
         setType(PersonsModel::IM);
-    } else if (Nepomuk2::Vocabulary::NCO::hasEmailAddress() == key) {
+    } else if (Nepomuk2::Vocabulary::NCO::emailAddress() == key) {
         setType(PersonsModel::Email);
     }
 

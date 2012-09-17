@@ -63,6 +63,9 @@ void PersonsModelTest::testActions()
         PersonActions a;
         a.setModel(&m);
         a.setRow(i);
+        
+        if(a.rowCount(QModelIndex())==0)
+            qDebug() << "error: " << i << m.index(i, 0).data();
         QVERIFY(a.rowCount(QModelIndex())>0);
     }
 }

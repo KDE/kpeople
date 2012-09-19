@@ -59,7 +59,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
     setRoleNames(names);
     
     if(init) {
-        QString nco_query;
+        QString nco_query = customQuery;
         if(customQuery.isEmpty())
             nco_query = QString::fromUtf8(
             "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
@@ -135,7 +135,6 @@ void PersonsModel::query(const QString& nco_query)
 
     Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
-    qDebug() << "......." << m->isEmpty() << endl << nco_query;
     QHash<QUrl, PersonsModelContactItem*> contacts;
     QHash<QUrl, PersonsModelItem*> persons;
     

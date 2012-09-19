@@ -51,7 +51,6 @@ void PersonData::setContactId(const QString& id)
 //                     "?x                         ?y                           \"%1\"^^xsd:string. "
     //it should be basically the same query as in the persons model
     //only that here we're restricting it to a person
-    qDebug() << "laaaaaaa" << id;
     QString query = QString::fromUtf8(
             "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
                 "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
@@ -80,7 +79,7 @@ void PersonData::setContactId(const QString& id)
             "}");
     
     delete d->model;
-    d->model = new PersonsModel(this, true/*, query*/);
+    d->model = new PersonsModel(this, true, query);
     connect(d->model, SIGNAL(peopleAdded()), SLOT(personInitialized()));
 }
 
@@ -88,6 +87,7 @@ void PersonData::personInitialized()
 {
     Q_D(PersonData);
     Q_ASSERT(d->model->rowCount()>0);
+    emit dataInitialized();
 }
 
 QString PersonData::contactId() const

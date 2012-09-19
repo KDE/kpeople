@@ -42,6 +42,7 @@ void PersonDataTest::testLocalPeople()
     foreach(const QString& id, m_contactIds) {
         PersonData d;
         d.setContactId(id);
+        QTest::kWaitForSignal(&d, SIGNAL(dataInitialized()));
         
         PersonActions actions;
         actions.setPerson(&d);

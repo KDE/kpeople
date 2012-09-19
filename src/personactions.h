@@ -30,7 +30,7 @@ struct PersonActionsPrivate;
 class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
 {
     Q_OBJECT
-    Q_PROPERTY(QAbstractItemModel* peopleModel READ model WRITE setModel)
+    Q_PROPERTY(const QAbstractItemModel* peopleModel READ model WRITE setModel)
     Q_PROPERTY(int row READ row WRITE setRow)
     Q_PROPERTY(PersonData* person READ person WRITE setPerson)
     public:
@@ -38,11 +38,10 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
         virtual ~PersonActions();
         
         QList<QAction*> actions();
-        void setModel(QAbstractItemModel* model);
-        QAbstractItemModel* model() const;
+        void setModel(const QAbstractItemModel* model);
+        const QAbstractItemModel* model() const;
         int row() const;
         void setRow(int row);
-        void initialize(QAbstractItemModel* model, int row);
         
         PersonData* person() const;
         void setPerson(PersonData* data);
@@ -50,7 +49,7 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
         Q_INVOKABLE void trigger(int actionsRow);
         
         virtual QVariant data(const QModelIndex& index, int role) const;
-        virtual int rowCount(const QModelIndex& parent) const;
+        virtual int rowCount(const QModelIndex& parent=QModelIndex()) const;
 
     private slots:
         void emailTriggered();
@@ -60,6 +59,9 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
         void actionsChanged();
 
     private:
+        void initialize(const QAbstractItemModel* model, int row);
+        void initialize(const QModelIndex& personIndex);
+        
         PersonActionsPrivate * const d_ptr;
         Q_DECLARE_PRIVATE(PersonActions);
 };

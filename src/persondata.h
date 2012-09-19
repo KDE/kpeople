@@ -25,6 +25,7 @@
 #include <QObject>
 #include <QUrl>
 
+class QModelIndex;
 namespace Nepomuk2 { class Resource; }
 struct PersonDataPrivate;
 
@@ -49,9 +50,13 @@ class KPEOPLE_EXPORT PersonData : public QObject
         
         QString status() const;
         
-        QList<Nepomuk2::Resource> contacts() const;
-        
+        QModelIndex personIndex() const;
+
+    private slots:
+        void personInitialized();
+
     signals:
+        void dataInitialized();
         void contactChanged();
 
     private:

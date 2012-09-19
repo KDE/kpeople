@@ -41,7 +41,7 @@ struct PersonsModelPrivate {
     
 };
 
-PersonsModel::PersonsModel(QObject *parent, bool init)
+PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuery)
     : QStandardItemModel(parent)
     , d_ptr(new PersonsModelPrivate)
 {
@@ -59,7 +59,36 @@ PersonsModel::PersonsModel(QObject *parent, bool init)
     setRoleNames(names);
     
     if(init) {
-        QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection);
+        QString nco_query;
+        if(customQuery.isEmpty())
+            nco_query = QString::fromUtf8(
+            "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
+                "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
+                "?nco_imStatus ?nie_url "
+
+                "WHERE { "
+                    "?uri a nco:PersonContact. "
+                    "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. "
+
+                "OPTIONAL { "
+                    "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
+                    "OPTIONAL { ?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imStatus                ?nco_imStatus. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
+                " } "
+                "OPTIONAL {"
+                    "?uri                       nco:photo                   ?phRes. "
+                    "?phRes                     nie:url                     ?nie_url. "
+                " } "
+                "OPTIONAL { "
+                    "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
+                    "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
+                " } "
+            "}");
+        
+        QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, nco_query));
         new ResourceWatcherService(this);
     }
 }
@@ -99,39 +128,14 @@ QHash<QString, QUrl> initUriToBinding()
     return ret;
 }
 
-void PersonsModel::query()
+void PersonsModel::query(const QString& nco_query)
 {
     Q_ASSERT(rowCount()==0);
     QHash<QString, QUrl> uriToBinding = initUriToBinding();
 
-    QString nco_query = QString::fromUtf8("select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
-                      "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                      "?nco_imStatus ?nie_url "
-
-                      "WHERE { "
-                            "?uri a nco:PersonContact. "
-                            "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. "
-
-                      "OPTIONAL { "
-                            "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
-                            "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
-                            "OPTIONAL { ?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType. } "
-                            "OPTIONAL { ?nco_hasIMAccount          nco:imStatus                ?nco_imStatus. } "
-                            "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
-                            "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
-                      " } "
-                      "OPTIONAL {"
-                            "?uri                       nco:photo                   ?phRes. "
-                            "?phRes                     nie:url                     ?nie_url. "
-                      " } "
-                      "OPTIONAL { "
-                            "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
-                            "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
-                      " } "
-                "}");
-
     Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
+    qDebug() << "......." << m->isEmpty() << endl << nco_query;
     QHash<QUrl, PersonsModelContactItem*> contacts;
     QHash<QUrl, PersonsModelItem*> persons;
     

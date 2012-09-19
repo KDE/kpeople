@@ -43,7 +43,7 @@ struct PersonActionsPrivate {
     void initKTPDelegate() { if(!ktpDelegate) ktpDelegate = new NepomukTpChannelDelegate; }
     
     int row;
-    QAbstractItemModel* model;
+    const QAbstractItemModel* model;
     QList<QAction*> actions;
     NepomukTpChannelDelegate* ktpDelegate;
     PersonData* person;
@@ -98,13 +98,13 @@ QList< QAction* > PersonActions::actions()
     return d->actions;
 }
 
-QAbstractItemModel* PersonActions::model() const
+const QAbstractItemModel* PersonActions::model() const
 {
     Q_D(const PersonActions);
     return d->model;
 }
 
-void PersonActions::setModel(QAbstractItemModel* model)
+void PersonActions::setModel(const QAbstractItemModel* model)
 {
     Q_D(PersonActions);
     d->model = model;
@@ -124,17 +124,28 @@ void PersonActions::setRow(int row)
     initialize(d->model, d->row);
 }
 
-void PersonActions::initialize(QAbstractItemModel* model, int row)
+void PersonActions::initialize(const QAbstractItemModel* model, int row)
 {
     if(!model || row<0)
         return;
     
     Q_D(PersonActions);
-    d->model = model;
-    d->row = row;
     QModelIndex idx = model->index(row, 0);
-    int rows = model->rowCount(idx);
+    d->model = idx.model();
+    d->row = idx.row();
     
+    initialize(idx);
+}
+
+void PersonActions::initialize(const QModelIndex& idx)
+{
+    Q_D(PersonActions);
+    Q_ASSERT(idx.isValid());
+    
+    d->model = idx.model();
+    d->row = idx.row();
+    
+    int rows = d->model->rowCount(idx);
     beginResetModel();
     qDeleteAll(d->actions);
     d->actions.clear();
@@ -217,25 +228,7 @@ void PersonActions::setPerson(PersonData* data)
     Q_D(PersonActions);
     if(d->person == data)
         return;
-    
-    beginResetModel();
-    qDeleteAll(d->actions);
-    d->actions.clear();
-    
-    foreach(const Nepomuk2::Resource& res, data->contacts()) {
-        if(res.hasProperty(Nepomuk2::Vocabulary::NCO::hasEmailAddress())) {
-            Nepomuk2::Resource email = res.property(Nepomuk2::Vocabulary::NCO::hasEmailAddress()).toResource();
-            QString emailAddress = email.property(Nepomuk2::Vocabulary::NCO::emailAddress()).toString();
-            d->actions += d->createEmailAction(this, QIcon::fromTheme("email"), data->nickname(), emailAddress);
-        }
-        
-        if(res.hasProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount())) {
-            Nepomuk2::Resource imaccount = res.property(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toResource();
-            d->actions += d->createIMActions(this, res.uri(), imaccount.property(Nepomuk2::Vocabulary::NCO::imID()).toString(), data->nickname());
-        }
-    }
-    endResetModel();
-    emit actionsChanged();
+    initialize(data->personIndex());
 }
 
 PersonData* PersonActions::person() const

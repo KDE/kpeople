@@ -18,6 +18,7 @@
 */
 
 #include "persondata.h"
+#include "persons-model.h"
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Query/Query>
 #include <Nepomuk2/ResourceManager>
@@ -29,9 +30,10 @@
 #include <Soprano/QueryResultIterator>
 
 struct PersonDataPrivate {
+    PersonDataPrivate() : model(0) {}
+    
+    PersonsModel* model;
     QString id;
-    Nepomuk2::Resource resource;
-    QList< Nepomuk2::Resource > contacts;
 };
 
 PersonData::PersonData(QObject* parent)
@@ -42,26 +44,50 @@ PersonData::PersonData(QObject* parent)
 void PersonData::setContactId(const QString& id)
 {
     Q_D(PersonData);
-    if(id==d->id)
+    if(d->id==id)
         return;
     
+//                     "?uri                       nco:hasContactMedium         ?x. "
+//                     "?x                         ?y                           \"%1\"^^xsd:string. "
+    //it should be basically the same query as in the persons model
+    //only that here we're restricting it to a person
+    qDebug() << "laaaaaaa" << id;
     QString query = QString::fromUtf8(
-        "select distinct ?uri where { "
-            "?uri a pimo:Person. "
-            "?uri pimo:groundingOccurrence ?u. "
-            "?u nco:hasContactMedium ?x. "
-            "?x ?y \"%1\"^^xsd:string. "
-        "}").arg(id);
+            "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
+                "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
+                "?nco_imStatus ?nie_url "
 
-    Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = m->executeQuery(query, Soprano::Query::QueryLanguageSparql);
-    if(it.next()) {
-        d->id = id;
-        d->resource = Nepomuk2::Resource(it["uri"].uri());
-        d->contacts = d->resource.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toResourceList();
-        emit contactChanged();
-    } else
-        qWarning() << "Couldn't find " << id;
+                "WHERE { "
+                    "?uri a nco:PersonContact. "
+                    "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. "
+
+                "OPTIONAL { "
+                    "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
+                    "OPTIONAL { ?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imStatus                ?nco_imStatus. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
+                " } "
+                "OPTIONAL {"
+                    "?uri                       nco:photo                   ?phRes. "
+                    "?phRes                     nie:url                     ?nie_url. "
+                " } "
+                "OPTIONAL { "
+                    "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
+                    "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
+                " } "
+            "}");
+    
+    delete d->model;
+    d->model = new PersonsModel(this, true/*, query*/);
+    connect(d->model, SIGNAL(peopleAdded()), SLOT(personInitialized()));
+}
+
+void PersonData::personInitialized()
+{
+    Q_D(PersonData);
+    Q_ASSERT(d->model->rowCount()>0);
 }
 
 QString PersonData::contactId() const
@@ -72,49 +98,29 @@ QString PersonData::contactId() const
 
 QUrl PersonData::uri() const
 {
-    Q_D(const PersonData);
-    return d->resource.uri();
+    return personIndex().data(PersonsModel::UriRole).toString();
 }
 
 QString PersonData::status() const
 {
-    Q_D(const PersonData);
-    foreach(const Nepomuk2::Resource& res, d->contacts) {
-        if(res.hasProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount())) {
-            Nepomuk2::Resource imacc(res.property(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toResource());
-            if(imacc.hasProperty(Nepomuk2::Vocabulary::NCO::imStatus()))
-                return imacc.property(Nepomuk2::Vocabulary::NCO::imStatus()).toString();
-        }
-    }
-    return QString();
+    return personIndex().data(PersonsModel::StatusRole).toString();
 }
 
 QUrl PersonData::avatar() const
 {
-    Q_D(const PersonData);
-    foreach(const Nepomuk2::Resource& res, d->contacts) {
-        Nepomuk2::Resource imacc(res.property(Nepomuk2::Vocabulary::NCO::photo()).toResource());
-        if(imacc.hasProperty(Nepomuk2::Vocabulary::NIE::url()))
-            return imacc.property(Nepomuk2::Vocabulary::NIE::url()).toUrl();
-    }
-    return QUrl();
+    return personIndex().data(PersonsModel::PhotoRole).toUrl();
 }
 
 QString PersonData::nickname() const
 {
-    Q_D(const PersonData);
-    foreach(const Nepomuk2::Resource& res, d->contacts) {
-        if(res.hasProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount())) {
-            Nepomuk2::Resource imacc(res.property(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toResource());
-            if(imacc.hasProperty(Nepomuk2::Vocabulary::NCO::imStatus()))
-                return imacc.property(Nepomuk2::Vocabulary::NCO::imNickname()).toString();
-        }
-    }
-    return QString();
+    return personIndex().data(PersonsModel::NickRole).toString();
 }
 
-QList< Nepomuk2::Resource > PersonData::contacts() const
+QModelIndex PersonData::personIndex() const
 {
     Q_D(const PersonData);
-    return d->contacts;
+    Q_ASSERT(d->model->rowCount()>0);
+    QModelIndex idx = d->model->index(0,0);
+    Q_ASSERT(idx.isValid());
+    return idx;
 }

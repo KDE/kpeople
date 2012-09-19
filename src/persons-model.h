@@ -65,7 +65,7 @@ public:
      * @p initialize set it to false if you don't want it to use nepomuk values
      *               useful for unit testing.
      */
-    explicit PersonsModel(QObject *parent = 0, bool initialize = true);
+    explicit PersonsModel(QObject* parent=0, bool init=true, const QString& customQuery=QString());
 
     /**
      * The @p contactUri will be removed from @p personUri and it will be added to a new 
@@ -86,7 +86,7 @@ public:
     
 private slots:
     void jobFinished(KJob*);
-    void query();
+    void query(const QString& queryString);
 
 signals:
     void peopleAdded();

@@ -77,6 +77,7 @@ QVariant PersonsModelItem::data(int role) const
             else
                 return value;
         }
+        case PersonsModel::StatusRole: //TODO: use a better algorithm for finding the actual status
         case PersonsModel::NickRole:
             return queryChildrenForRole(role);
         case PersonsModel::IMRole:

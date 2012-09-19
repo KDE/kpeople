@@ -57,7 +57,8 @@ public:
         PhoneRole,
         IMRole,
         PhotoRole,
-        IMAccountUriRole
+        IMAccountUriRole,
+        StatusRole
     };
 
     /**

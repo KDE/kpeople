@@ -43,7 +43,7 @@ install (TARGETS kpeople
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES persons-model.h persondata.h kpeople_export.h
+install (FILES persons-model.h persondata.h personactions.h kpeople_export.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
 )

@@ -28,8 +28,6 @@ target_link_libraries (kpeople
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KTP_LIBRARIES}
                        nepomukcore
-#                        ontologies
-
 )
 
 set_target_properties (kpeople PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
@@ -45,7 +43,7 @@ install (TARGETS kpeople
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES persons-model.h
+install (FILES persons-model.h persondata.h kpeople_export.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
 )

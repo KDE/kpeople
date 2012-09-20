@@ -17,16 +17,35 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "peopleqmlplugin.h"
+#include "persondatatest.h"
 #include <persons-model.h>
-#include <personactions.h>
 #include <persondata.h>
-#include <QtDeclarative/QDeclarativeItem>
+#include <personactions.h>
 
-void PeopleQMLPlugin::registerTypes(const char* uri)
+#include <qtest_kde.h>
+
+QTEST_KDEMAIN_CORE( PersonDataTest )
+
+PersonDataTest::PersonDataTest(QObject* parent)
+    : QObject(parent)
 {
-    qmlRegisterType<PersonsModel>(uri, 0, 1, "PersonsModel");
-    qmlRegisterType<PersonActions>(uri, 0, 1, "PersonActions");
-    qmlRegisterType<PersonData>(uri, 0, 1, "PersonData");
-    qmlRegisterType<QAbstractItemModel>();
+    PersonsModel m;
+    QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+    
+    for(int i=0; i<m.rowCount(); i++) {
+        m_contactIds.append(m.data(m.index(i,0), PersonsModel::ContactIdRole).toList().first().toString());
+    }
+}
+
+void PersonDataTest::testLocalPeople()
+{
+    foreach(const QString& id, m_contactIds) {
+        PersonData d;
+        d.setContactId(id);
+        QTest::kWaitForSignal(&d, SIGNAL(dataInitialized()));
+        
+        PersonActions actions;
+        actions.setPerson(&d);
+        QVERIFY(actions.rowCount()>0);
+    }
 }

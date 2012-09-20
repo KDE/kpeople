@@ -18,32 +18,42 @@
 */
 
 
-#ifndef RESOURCE_WATCHER_SERVICE_H
-#define RESOURCE_WATCHER_SERVICE_H
+#ifndef PEOPLE_RESOURCE_WATCHER_SERVICE_H
+#define PEOPLE_RESOURCE_WATCHER_SERVICE_H
 
 #include <QObject>
-#include <Nepomuk/Resource>
-#include <Nepomuk/Types/Property>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/Types/Property>
 
+class PersonsModel;
 class ResourceWatcherServicePrivate;
 
 class ResourceWatcherService : public QObject
 {
     Q_OBJECT
 public:
-    ResourceWatcherService(QObject *parent = 0);
+    ResourceWatcherService(PersonsModel* model);
     virtual ~ResourceWatcherService();
 
-Q_SIGNALS:
-    void personCreated(Nepomuk::Resource, QList<QUrl>);
-    void personRemoved(QUrl, QList<QUrl>);
-    void propertyChanged();
-
-public Q_SLOTS:
-    void onPropertyChanged(Nepomuk::Resource res, Nepomuk::Types::Property property, QVariant value);
+private Q_SLOTS:
+    void onPersonPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
+    void onContactPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
+    void onPersonPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
+    void onContactPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
+    void onPersonPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
+                                  const QVariantList& removed, const QVariantList& after);
+    void onContactPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
+                                  const QVariantList& removed, const QVariantList& after);
+    void personCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
+    void personRemoved(const QUrl& uri);
+    void contactCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
+    void contactRemoved(const QUrl& uri, const QList< QUrl >& types);
+    
+    void updateIMAccount(const Nepomuk2::Resource& res);
 
 private:
     ResourceWatcherServicePrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(ResourceWatcherService)
 };
 
 #endif // RESOURCE_WATCHER_SERVICE_H

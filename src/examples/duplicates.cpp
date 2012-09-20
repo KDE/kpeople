@@ -37,18 +37,18 @@ class ResultPrinter : public QObject
             std::cout << "Results:" << std::endl;
             for(QList<Match>::iterator it=res.begin(); it!=res.end(); ) {
                 QStringList roles;
-                QStringList r;
+                QStringList rA, rB;
                 foreach(int i, it->role) {
                     roles += model.roleNames()[i];
-                    QModelIndex idx = model.index(it->rowA, 0);
-                    r += idx.data(it->role.first()).toString();
+                    rA += variantToString(model.index(it->rowA, 0).data(it->role.first()));
+                    rB += variantToString(model.index(it->rowB, 0).data(it->role.first()));
                 }
                 std::cout << "\t- " << qPrintable(roles.join(", ")) << ": " << it->rowA << " " << it->rowB
-                          << " because: " << qPrintable(r.join(", ")) << std::endl;
+                          << " because: " << qPrintable(rA.join(", ")) << " // " << qPrintable(rB.join(", ")) << '.' << std::endl;
                 bool remove = false;
-                if(m_action==Apply) {
-                    for(char ans=' '; ans=='y' || ans=='n'; ) {
-                        std::cout << "apply? (y/n)";
+                if(m_action==Ask) {
+                    for(char ans=' '; ans!='y' && ans!='n'; ) {
+                        std::cout << "apply? (y/n) ";
                         std::cin >> ans;
                         remove = ans == 'n';
                     }
@@ -59,13 +59,34 @@ class ResultPrinter : public QObject
                     ++it;
             }
             
-            if(m_action==Apply || m_action==Ask) {
+            if((m_action==Apply || m_action==Ask) && !res.isEmpty()) {
                 MatchesSolver* s = new MatchesSolver(res, &model, this);
-                connect(s, SIGNAL(finished(KJob*)), QCoreApplication::instance(), SLOT(quit()));
+                connect(s, SIGNAL(finished(KJob*)), this, SLOT(matchesSolverDone(KJob*)));
                 s->start();
             } else
                 QCoreApplication::instance()->quit();
         }
+
+        void matchesSolverDone(KJob* job) {
+            if(job->error()==0)
+                std::cout << "Matching successfully finished" << std::endl;
+            else
+                std::cout << "Matching failed with error: " << job->error() << std::endl;
+            QCoreApplication::instance()->quit();
+        }
+
+    private:
+        QString variantToString(const QVariant& data) {
+            if(data.type()==QVariant::List) {
+                QList<QVariant> list = data.toList();
+                QStringList strings;
+                foreach(const QVariant& v, list)
+                    strings += variantToString(v);
+                return "("+strings.join(", ")+")";
+            } else
+                return data.toString();
+        }
+
     public:
         enum MatchAction { Apply, NotApply, Ask };
         MatchAction m_action;

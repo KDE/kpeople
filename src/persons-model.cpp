@@ -22,17 +22,28 @@
 #include "persons-model.h"
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
-#include "person-cache.h"
-#include <Nepomuk/Vocabulary/NCO>
+#include "resource-watcher-service.h"
+#include <Soprano/Query/QueryLanguage>
+#include <Soprano/QueryResultIterator>
+#include <Soprano/Model>
+
+#include <Nepomuk2/ResourceManager>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/Vocabulary/PIMO>
+#include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NIE>
+#include <Nepomuk2/SimpleResource>
+#include <Nepomuk2/SimpleResourceGraph>
+#include <Nepomuk2/StoreResourcesJob>
 #include <KDebug>
 
-// class PersonsModelPrivate {
-// public:
-// };
+struct PersonsModelPrivate {
+    
+};
 
-PersonsModel::PersonsModel(QObject *parent, bool init)
+PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuery)
     : QStandardItemModel(parent)
-//     , d_ptr(new PersonsModelPrivate)
+    , d_ptr(new PersonsModelPrivate)
 {
     QHash<int, QByteArray> names = roleNames();
     names.insert(PersonsModel::EmailRole, "email");
@@ -43,15 +54,42 @@ PersonsModel::PersonsModel(QObject *parent, bool init)
     names.insert(PersonsModel::NickRole, "nick");
     names.insert(PersonsModel::UriRole, "uri");
     names.insert(PersonsModel::NameRole, "name");
+    names.insert(PersonsModel::PhotoRole, "photo");
+    names.insert(PersonsModel::ContactsCount, "contactsCount");
     setRoleNames(names);
     
     if(init) {
-        PersonCache* cache = new PersonCache(this);
-    
-        connect(cache,
-                SIGNAL(contactsFetched(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)),
-                SLOT(init(QList<PersonsModelItem*>,QList<PersonsModelContactItem*>)));
-        cache->startQuery();
+        QString nco_query = customQuery;
+        if(customQuery.isEmpty())
+            nco_query = QString::fromUtf8(
+            "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
+                "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
+                "?nco_imStatus ?nie_url "
+
+                "WHERE { "
+                    "?uri a nco:PersonContact. "
+                    "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. "
+
+                "OPTIONAL { "
+                    "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
+                    "OPTIONAL { ?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imStatus                ?nco_imStatus. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
+                    "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
+                " } "
+                "OPTIONAL {"
+                    "?uri                       nco:photo                   ?phRes. "
+                    "?phRes                     nie:url                     ?nie_url. "
+                " } "
+                "OPTIONAL { "
+                    "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
+                    "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
+                " } "
+            "}");
+        
+        QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, nco_query));
+        new ResourceWatcherService(this);
     }
 }
 
@@ -65,10 +103,139 @@ QList<QStandardItem*> toStandardItems(const QList<T*>& items)
     return ret;
 }
 
-void PersonsModel::init(const QList<PersonsModelItem*>& people, const QList<PersonsModelContactItem*>& other)
+QHash<QString, QUrl> initUriToBinding()
 {
-    QStandardItem* root = invisibleRootItem();
-    root->appendRows(toStandardItems(people));
-    root->appendRows(toStandardItems(other));
+    QHash<QString, QUrl> ret;
+    QList<QUrl> list;
+    list
+    << Nepomuk2::Vocabulary::NCO::imNickname()
+    << Nepomuk2::Vocabulary::NCO::imAccountType()
+    << Nepomuk2::Vocabulary::NCO::imID()
+    //                      << Nepomuk2::Vocabulary::Telepathy::statusType()
+    //                      << Nepomuk2::Vocabulary::Telepathy::accountIdentifier()
+    << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
+    << Nepomuk2::Vocabulary::NCO::imStatus()
+    << Nepomuk2::Vocabulary::NCO::hasIMAccount()
+    << Nepomuk2::Vocabulary::NCO::emailAddress()
+    << Nepomuk2::Vocabulary::NIE::url();
+    
+    foreach(const QUrl& keyUri, list) {
+        QString keyString = keyUri.toString();
+        //convert every key to correspond to the nepomuk bindings
+        keyString = keyString.mid(keyString.lastIndexOf(QLatin1Char('/')) + 1).replace(QLatin1Char('#'), QLatin1Char('_'));
+        ret[keyString] = keyUri;
+    }
+    return ret;
+}
+
+void PersonsModel::query(const QString& nco_query)
+{
+    Q_ASSERT(rowCount()==0);
+    QHash<QString, QUrl> uriToBinding = initUriToBinding();
+
+    Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
+    QHash<QUrl, PersonsModelContactItem*> contacts;
+    QHash<QUrl, PersonsModelItem*> persons;
+    
+    while(it.next()) {
+        QUrl currentUri = it[QLatin1String("uri")].uri();
+        PersonsModelContactItem* contactNode = contacts.value(currentUri);
+        bool newContact = !contactNode;
+        if(!contactNode) {
+            contactNode = new PersonsModelContactItem(currentUri);
+            contacts.insert(currentUri, contactNode);
+        }
+
+        
+        for(QHash<QString, QUrl>::const_iterator iter=uriToBinding.constBegin(), itEnd=uriToBinding.constEnd(); iter!=itEnd; ++iter) {
+            contactNode->addData(iter.value(), it[iter.key()].toString());
+        }
+
+        if(newContact) {
+            QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurrence")].uri();
+            Q_ASSERT(!pimoPersonUri.isEmpty());
+            QHash< QUrl, PersonsModelItem* >::const_iterator pos = persons.constFind(pimoPersonUri);
+            if (pos == persons.constEnd())
+                pos = persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
+            pos.value()->appendRow(contactNode);
+        }
+    }
+
+    invisibleRootItem()->appendRows(toStandardItems(persons.values()));
     emit peopleAdded();
+}
+
+void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
+{
+    Nepomuk2::Resource oldPerson(personUri);
+    Q_ASSERT(oldPerson.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size()>=2 && "there's nothing to unmerge...");
+    oldPerson.removeProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
+    
+    Nepomuk2::SimpleResource newPerson;
+    newPerson.addType( Nepomuk2::Vocabulary::PIMO::Person() );
+    newPerson.setProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
+    
+    Nepomuk2::SimpleResourceGraph graph;
+    graph << newPerson;
+
+    KJob * job = Nepomuk2::storeResources( graph );
+    job->setProperty("uri", contactUri);
+    job->setObjectName("Unmerge");
+    connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
+    job->start();
+}
+
+void PersonsModel::merge(const QList< QUrl >& persons)
+{
+    KJob* job = Nepomuk2::mergeResources( persons );
+    job->setObjectName("Merge");
+    connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
+}
+
+void PersonsModel::merge(const QVariantList& persons)
+{
+    QList<QUrl> conv;
+    foreach(const QVariant& p, persons)
+        conv += p.toUrl();
+    merge(conv);
+}
+
+void PersonsModel::jobFinished(KJob* job)
+{
+    if(job->error()!=0) {
+        kWarning() << job->objectName() << " failed for "<< job->property("uri").toString() << job->errorText() << job->errorString();
+    } else {
+        kWarning() << job->objectName() << " done: "<< job->property("uri").toString();
+    }
+}
+
+QModelIndex PersonsModel::findRecursively(int role, const QVariant& value, const QModelIndex& idx) const
+{
+    if(idx.isValid() && data(idx, role)==value)
+        return idx;
+    int rows = rowCount(idx);
+    for(int i=0; i<rows; i++) {
+        QModelIndex ret = findRecursively(role, value, index(i, 0, idx));
+        if(ret.isValid())
+            return ret;
+    }
+    return QModelIndex();
+}
+
+QModelIndex PersonsModel::indexForUri(const QUrl& uri) const
+{
+    return findRecursively(PersonsModel::UriRole, uri);
+}
+
+void PersonsModel::createPerson(const Nepomuk2::Resource& res)
+{
+    Q_ASSERT(!indexForUri(res.uri()).isValid());
+    appendRow(new PersonsModelItem(res));
+}
+
+PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl& uri) const
+{
+    QStandardItem* it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
+    return dynamic_cast<PersonsModelContactItem*>(it);
 }

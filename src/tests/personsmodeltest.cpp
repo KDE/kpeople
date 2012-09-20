@@ -21,9 +21,10 @@
 #include <persons-model.h>
 #include <persons-model-item.h>
 #include <persons-model-contact-item.h>
+#include <personactions.h>
 
 #include <qtest_kde.h>
-#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <QStandardItemModel>
 
 QTEST_KDEMAIN_CORE( PersonsModelTest )
@@ -36,5 +37,35 @@ void PersonsModelTest::testInit()
     QBENCHMARK {
         PersonsModel m;
         QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+    }
+}
+
+void PersonsModelTest::testPhotos()
+{
+    PersonsModel m;
+    QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+    int count = 0;
+//     QBENCHMARK {
+        for(int i=0; i<m.rowCount(); ++i) {
+            QModelIndex idx = m.index(i, 0);
+            QVariant ret = idx.data(PersonsModel::PhotoRole);
+            count += ret.toList().size();
+        }
+//     }
+    QVERIFY(count>0); //there should be someone with photos...
+}
+
+void PersonsModelTest::testActions()
+{
+    PersonsModel m;
+    QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+    for(int i=0; i<m.rowCount(); ++i) {
+        PersonActions a;
+        a.setModel(&m);
+        a.setRow(i);
+        
+        if(a.rowCount(QModelIndex())==0)
+            qDebug() << "error: " << i << m.index(i, 0).data();
+        QVERIFY(a.rowCount(QModelIndex())>0);
     }
 }

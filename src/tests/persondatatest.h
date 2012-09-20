@@ -17,16 +17,23 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "peopleqmlplugin.h"
-#include <persons-model.h>
-#include <personactions.h>
-#include <persondata.h>
-#include <QtDeclarative/QDeclarativeItem>
+#ifndef PERSONDATATEST_H
+#define PERSONDATATEST_H
 
-void PeopleQMLPlugin::registerTypes(const char* uri)
+#include <QtCore/QObject>
+#include <QStringList>
+
+class PersonDataTest : public QObject
 {
-    qmlRegisterType<PersonsModel>(uri, 0, 1, "PersonsModel");
-    qmlRegisterType<PersonActions>(uri, 0, 1, "PersonActions");
-    qmlRegisterType<PersonData>(uri, 0, 1, "PersonData");
-    qmlRegisterType<QAbstractItemModel>();
-}
+    Q_OBJECT
+    public:
+        explicit PersonDataTest(QObject* parent = 0);
+
+    private slots:
+        void testLocalPeople();
+        
+    private:
+        QStringList m_contactIds;
+};
+
+#endif // PERSONDATATEST_H

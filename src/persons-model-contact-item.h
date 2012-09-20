@@ -36,22 +36,26 @@ public:
      * @param displayName - What will be visible to the user (used as Qt::DisplayRole)
      * @param type - What kind of contact this is
      */
-    PersonsModelContactItem(const QUrl& uri, const QString &displayName);
+    explicit PersonsModelContactItem(const QUrl& uri);
+    explicit PersonsModelContactItem(const Nepomuk2::Resource& res);
     virtual ~PersonsModelContactItem();
 
     QUrl uri() const;
 
     void addData(const QUrl &key, const QVariant &value);
+    void modifyData(const QUrl& name, const QVariantList& newValue);
     void setType(PersonsModel::ContactType type);
 
     QVariant dataValue(const QUrl& key);
     virtual QVariant data(int role = Qt::UserRole + 1) const;
+    void removeData(const QUrl& uri);
+    void pullResourceProperties(const Nepomuk2::Resource& res);
 
 private:
     void refreshIcon();
+
     PersonsModelContactItemPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModelContactItem)
-
 };
 
 Q_DECLARE_METATYPE(PersonsModelContactItem*);

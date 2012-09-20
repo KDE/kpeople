@@ -25,9 +25,9 @@
 #include <TelepathyQt/ContactManager>
 #include <TelepathyQt/PendingContacts>
 #include <KDebug>
+#include <Nepomuk2/Vocabulary/NCO>
 
 #define PREFERRED_TEXTCHAT_HANDLER QLatin1String("org.freedesktop.Telepathy.Client.KDE.TextUi")
-
 
 class NepomukTpChannelDelegatePrivate {
 public:
@@ -81,7 +81,7 @@ void NepomukTpChannelDelegate::onAccountManagerReady(Tp::PendingOperation*)
     kDebug() << "Account manager ready, bitch";
 }
 
-void NepomukTpChannelDelegate::startChat(const QString& accountId, const QString& contactId)
+void NepomukTpChannelDelegate::startIM(const QString& accountId, const QString& contactId, const QUrl& capability)
 {
     Q_D(NepomukTpChannelDelegate);
     if (!d->accountManager->isReady()) {
@@ -89,22 +89,14 @@ void NepomukTpChannelDelegate::startChat(const QString& accountId, const QString
         return;
     }
     d->account = d->accountManager->accountForPath(accountId);
-    kDebug() << d->account.isNull();
 
-    Tp::PendingContacts *contacts = d->account->connection()->contactManager()->contactsForIdentifiers(QStringList() << contactId);
-
-    connect(contacts, SIGNAL(finished(Tp::PendingOperation*)),
-            this, SLOT(finished(Tp::PendingOperation*)));
-}
-
-void NepomukTpChannelDelegate::finished(Tp::PendingOperation *op)
-{
-    Q_D(NepomukTpChannelDelegate);
     Tp::ChannelRequestHints hints;
     hints.setHint(QLatin1String("org.kde.telepathy"), QLatin1String("forceRaiseWindow"), QVariant(true));
 
-    d->account->ensureTextChat(qobject_cast<Tp::PendingContacts*>(op)->contacts().first(),
-                                                                        QDateTime::currentDateTime(),
-                                                                        PREFERRED_TEXTCHAT_HANDLER,
-                                                                        hints);
+    if(capability==Nepomuk2::Vocabulary::NCO::imCapabilityText())
+        d->account->ensureTextChat(contactId, QDateTime::currentDateTime(), PREFERRED_TEXTCHAT_HANDLER, hints);
+    else if(capability==Nepomuk2::Vocabulary::NCO::imCapabilityAudio())
+        d->account->ensureAudioCall(contactId, QString(), QDateTime::currentDateTime(), QString(), hints);
+    else if(capability==Nepomuk2::Vocabulary::NCO::imCapabilityVideo())
+        d->account->ensureAudioVideoCall(contactId, QString(), QString(), QDateTime::currentDateTime(), QString(), hints);
 }

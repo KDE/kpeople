@@ -24,7 +24,7 @@
 #include <persons-model-contact-item.h>
 
 #include <qtest_kde.h>
-#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NCO>
 #include <QStandardItemModel>
 
 QTEST_KDEMAIN_CORE( DuplicatesTest )
@@ -40,10 +40,9 @@ DuplicatesTest::DuplicatesTest(QObject* parent): QObject(parent)
 void DuplicatesTest::testDuplicates()
 {
     QFETCH(QList<PersonsModelItem*>, people);
-    QFETCH(QList<PersonsModelContactItem*>, contacts);
     QFETCH(int, matches);
     PersonsModel m(0, false);
-    m.init(people, contacts);
+    foreach(PersonsModelItem* item, people) m.appendRow(item);
     
     QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
     f->start();
@@ -54,17 +53,19 @@ void DuplicatesTest::testDuplicates()
 PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVariant& id, const QString& nick=QString())
 {
     PersonsModelItem* ret = new PersonsModelItem(QString("test:/%1").arg(qrand()));
-    PersonsModelContactItem* contact = new PersonsModelContactItem(QUrl("test:/"+id.toString()), nick);
+    PersonsModelContactItem* contact = new PersonsModelContactItem(QUrl("test:/"+id.toString()+QString::number(qrand())));
     QUrl key;
     switch(t) {
-        case PersonsModel::IM: key = Nepomuk::Vocabulary::NCO::imID(); break;
-        case PersonsModel::Email: key = Nepomuk::Vocabulary::NCO::emailAddress(); break;
-        case PersonsModel::Phone: key = Nepomuk::Vocabulary::NCO::phoneNumber(); break;
+        case PersonsModel::IM: key = Nepomuk2::Vocabulary::NCO::imID(); break;
+        case PersonsModel::Email: key = Nepomuk2::Vocabulary::NCO::emailAddress(); break;
+        case PersonsModel::Phone: key = Nepomuk2::Vocabulary::NCO::phoneNumber(); break;
         default: Q_ASSERT(false && "dude!");
     }
     contact->addData(key, id);
     if(!nick.isEmpty())
-        contact->addData(Nepomuk::Vocabulary::NCO::imNickname(), nick);
+        contact->addData(Nepomuk2::Vocabulary::NCO::imNickname(), nick);
+    
+    Q_ASSERT(contact->data(PersonsModel::ContactTypeRole).toInt()==t);
     ret->appendRow(contact);
     return ret;
 }
@@ -72,15 +73,14 @@ PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVaria
 void DuplicatesTest::testDuplicates_data()
 {
     QTest::addColumn<QList<PersonsModelItem*> >("people");
-    QTest::addColumn<QList<PersonsModelContactItem*> >("contacts");
     QTest::addColumn<int>("matches");
 
     QList<PersonsModelContactItem*> emptyContacts;
-    QTest::newRow("empty") << QList<PersonsModelItem*>() << emptyContacts << 0;
+    QTest::newRow("empty") << QList<PersonsModelItem*>() << 0;
     QTest::newRow("diffemails") << (QList<PersonsModelItem*>()
             << createPerson1Contact(PersonsModel::Email, "a@a.es") << createPerson1Contact(PersonsModel::Email, "a@a.com")
-        ) << emptyContacts << 0;
+        ) << 0;
     QTest::newRow("emails") << (QList<PersonsModelItem*>()
             << createPerson1Contact(PersonsModel::Email, "a@a.com") << createPerson1Contact(PersonsModel::Email, "a@a.com")
-        ) << emptyContacts << 1;
+        ) << 1;
 }

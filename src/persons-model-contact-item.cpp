@@ -23,26 +23,51 @@
 #include "persons-model-contact-item.h"
 #include <KIcon>
 #include <KDebug>
-#include <Nepomuk/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NIE>
 #include <Soprano/Vocabulary/NAO>
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/ResourceManager>
 
 class PersonsModelContactItemPrivate {
 public:
     QHash<QUrl, QVariant> data;
 };
 
-PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri, const QString& displayName)
+PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
     setData(uri, PersonsModel::UriRole);
-    setText(displayName);
+    setType(PersonsModel::MobilePhone);
+}
+
+PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource& contact)
+    : d_ptr(new PersonsModelContactItemPrivate)
+{
+    setData(contact.uri(), PersonsModel::UriRole);
+    pullResourceProperties(contact);
     
-    refreshIcon();
+    QUrl val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toUrl();
+    if(val.isValid()) pullResourceProperties(Nepomuk2::Resource(val));
+    
+    val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::photo()).toUrl();
+    if(val.isValid()) pullResourceProperties(Nepomuk2::Resource(val));
 }
 
 PersonsModelContactItem::~PersonsModelContactItem()
 {
     delete d_ptr;
+}
+
+void PersonsModelContactItem::pullResourceProperties(const Nepomuk2::Resource& res)
+{
+    QHash<QUrl, Nepomuk2::Variant> props = res.properties();
+    for(QHash<QUrl, Nepomuk2::Variant>::const_iterator it=props.constBegin(), itEnd=props.constEnd(); it!=itEnd; ++it) {
+        addData(it.key(), it->variant());
+    }
 }
 
 QMap<PersonsModel::ContactType, QIcon> initializeTypeIcons()
@@ -69,16 +94,14 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     if(value.isNull())
         return;
     
-    if(Nepomuk::Vocabulary::NCO::imNickname() == key) {
-        setText(value.toString());
-    } else if (Nepomuk::Vocabulary::NCO::imID() == key) {
+    Q_D(PersonsModelContactItem);
+    if (Nepomuk2::Vocabulary::NCO::imID() == key) {
         setType(PersonsModel::IM);
-    } else if (Nepomuk::Vocabulary::NCO::hasEmailAddress() == value) {
+    } else if (Nepomuk2::Vocabulary::NCO::emailAddress() == key) {
         setType(PersonsModel::Email);
     }
 
-    Q_D(PersonsModelContactItem);
-//     kDebug() << "Inserting" << value << "(" << key << ")";
+//     kDebug() << "Inserting" << "[" << key << "]" << value;
     d->data.insert(key, value);
     emitDataChanged();
 }
@@ -94,7 +117,7 @@ QUrl PersonsModelContactItem::uri() const
     return data(PersonsModel::UriRole).toUrl();
 }
 
-void PersonsModelContactItem::setType (PersonsModel::ContactType type)
+void PersonsModelContactItem::setType(PersonsModel::ContactType type)
 {
     setData(type, PersonsModel::ContactTypeRole);
     refreshIcon();
@@ -104,10 +127,40 @@ QVariant PersonsModelContactItem::data(int role) const
 {
     Q_D(const PersonsModelContactItem);
     switch(role) {
-        case PersonsModel::NickRole: return d->data.value(Nepomuk::Vocabulary::NCO::imNickname());
-        case PersonsModel::PhoneRole: return d->data.value(Nepomuk::Vocabulary::NCO::phoneNumber());
-        case PersonsModel::EmailRole: return d->data.value(Nepomuk::Vocabulary::NCO::emailAddress());
-        case PersonsModel::IMRole: return d->data.value(Nepomuk::Vocabulary::NCO::imID());
+        case Qt::DisplayRole: return data(PersonsModel::NickRole);
+        case PersonsModel::NickRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imNickname());
+        case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
+        case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());
+        case PersonsModel::IMRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imID());
+        case PersonsModel::PhotoRole: return d->data.value(Nepomuk2::Vocabulary::NIE::url());
+        case PersonsModel::IMAccountUriRole: return d->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount());
+        case PersonsModel::StatusRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imStatus());
+        case PersonsModel::ContactIdRole: {
+            int role = -1;
+            switch((PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt()) {
+                case PersonsModel::IM: role = PersonsModel::IMRole; break;
+                case PersonsModel::Phone: role = PersonsModel::PhoneRole; break;
+                case PersonsModel::Email: role = PersonsModel::EmailRole; break;
+                case PersonsModel::MobilePhone: role = PersonsModel::PhoneRole; break;
+                case PersonsModel::Postal: role = -1; break;
+            }
+            if(role>=0)
+                return data(role);
+        }   break;
     }
     return QStandardItem::data(role);
+}
+
+void PersonsModelContactItem::modifyData(const QUrl& name, const QVariantList& added)
+{
+    Q_D(PersonsModelContactItem);
+    d->data[name] = added;
+    emitDataChanged();
+}
+
+void PersonsModelContactItem::removeData(const QUrl& uri)
+{
+    Q_D(PersonsModelContactItem);
+    d->data.remove(uri);
+    emitDataChanged();
 }

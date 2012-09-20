@@ -20,9 +20,8 @@
 #include "matchessolver.h"
 #include "match.h"
 #include "persons-model.h"
-#include <Nepomuk/Resource>
-#include <Nepomuk/Vocabulary/PIMO>
 #include <nepomuk2/datamanagement.h>
+#include <QUrl>
 
 MatchesSolver::MatchesSolver(const QList<Match>& matches, PersonsModel* model, QObject* parent)
     : KJob(parent)

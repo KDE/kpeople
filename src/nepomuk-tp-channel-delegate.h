@@ -42,11 +42,10 @@ public:
     explicit NepomukTpChannelDelegate(QObject* parent = 0);
     ~NepomukTpChannelDelegate();
 
-    void startChat(const QString &accountId, const QString &contactId);
+    void startIM(const QString& accountId, const QString& contactId, const QUrl& capability);
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
-    void finished(Tp::PendingOperation *op);
 
 private:
     NepomukTpChannelDelegatePrivate * d_ptr;

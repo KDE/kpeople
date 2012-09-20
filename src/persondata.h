@@ -50,6 +50,8 @@ class KPEOPLE_EXPORT PersonData : public QObject
         
         QString status() const;
         
+        QStringList contacts() const;
+
         QModelIndex personIndex() const;
 
     private slots:

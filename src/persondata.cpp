@@ -116,6 +116,11 @@ QString PersonData::nickname() const
     return personIndex().data(PersonsModel::NickRole).toString();
 }
 
+QStringList PersonData::contacts() const
+{
+    return personIndex().data(PersonsModel::ContactIdRole).toStringList();
+}
+
 QModelIndex PersonData::personIndex() const
 {
     Q_D(const PersonData);

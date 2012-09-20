@@ -34,3 +34,6 @@ include_directories (${KDE4_INCLUDES}
 
 add_subdirectory (ontologies)
 add_subdirectory (src)
+
+set(module_install_dir ${DATA_INSTALL_DIR}/cmake/modules )
+install(FILES cmake/FindKPeople.cmake DESTINATION ${module_install_dir})

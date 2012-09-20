@@ -34,6 +34,11 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_OBJECT
     Q_PROPERTY(QString contactId READ contactId WRITE setContactId NOTIFY contactChanged)
     Q_PROPERTY(QUrl uri READ uri NOTIFY contactChanged)
+    
+    Q_PROPERTY(QUrl avatar READ avatar NOTIFY dataChanged)
+    Q_PROPERTY(QString nickname READ nickname NOTIFY dataChanged)
+    Q_PROPERTY(QString status READ status NOTIFY dataChanged)
+    Q_PROPERTY(QStringList contacts READ contacts NOTIFY dataChanged)
     public:
         explicit PersonData(QObject* parent = 0);
         
@@ -44,22 +49,32 @@ class KPEOPLE_EXPORT PersonData : public QObject
         void setContactId(const QString& id);
         QString contactId() const;
         
+        /** @returns a url pointing to the avatar image */
         QUrl avatar() const;
         
         QString nickname() const;
         
         QString status() const;
         
+        /** @returns a list of contact id's for the current person */
         QStringList contacts() const;
 
+        /** @returns a model index so that we can query it like it was from PersonsModel */
         QModelIndex personIndex() const;
 
     private slots:
         void personInitialized();
 
     signals:
+        //FIXME: Shouldn't have such a demanding API...
+        /** The data has been initialized, now we can start pulling data. */
         void dataInitialized();
+        
+        /** The person we're pointing to has changed */
         void contactChanged();
+        
+        /** Some of the person's data we're offering has changed */
+        void dataChanged();
 
     private:
         Q_DECLARE_PRIVATE(PersonData)

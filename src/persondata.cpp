@@ -81,6 +81,7 @@ void PersonData::setContactId(const QString& id)
     delete d->model;
     d->model = new PersonsModel(this, true, query);
     connect(d->model, SIGNAL(peopleAdded()), SLOT(personInitialized()));
+    connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SIGNAL(dataChanged()));
 }
 
 void PersonData::personInitialized()

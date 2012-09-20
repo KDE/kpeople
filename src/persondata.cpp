@@ -47,8 +47,6 @@ void PersonData::setContactId(const QString& id)
     if(d->id==id)
         return;
     
-//                     "?uri                       nco:hasContactMedium         ?x. "
-//                     "?x                         ?y                           \"%1\"^^xsd:string. "
     //it should be basically the same query as in the persons model
     //only that here we're restricting it to a person
     QString query = QString::fromUtf8(
@@ -59,6 +57,8 @@ void PersonData::setContactId(const QString& id)
                 "WHERE { "
                     "?uri a nco:PersonContact. "
                     "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. "
+                    "?uri                       nco:hasContactMedium         ?x. "
+                    "?x                         ?y                           \"%1\"^^xsd:string. "
 
                 "OPTIONAL { "
                     "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
@@ -76,7 +76,7 @@ void PersonData::setContactId(const QString& id)
                     "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
                     "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
                 " } "
-            "}");
+            "}").arg(id);
     
     delete d->model;
     d->model = new PersonsModel(this, true, query);

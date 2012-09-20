@@ -26,7 +26,44 @@
 #include <persondata.h>
 #include <personactions.h>
 
-    int main(int argc, char** argv)
+class PersonWidget : public QWidget
+{
+    Q_OBJECT
+    public:
+        explicit PersonWidget(const QString& contactId, QWidget* parent = 0, Qt::WindowFlags f = 0)
+        {
+            m_person.setContactId(contactId);
+            connect(&m_person, SIGNAL(dataInitialized()), SLOT(initGUI()));
+        }
+
+    private slots:
+        void initGUI() {
+            QFormLayout* l = new QFormLayout(this);
+            l->addRow("contactId:", new QLabel(m_person.contactId()));
+            l->addRow("All Contacts:", new QLabel(m_person.contacts().join(", ")));
+            l->addRow("nickname:", new QLabel(m_person.nickname()));
+            l->addRow("status:", new QLabel(m_person.status()));
+            
+            QLabel* avatar = new QLabel;
+            avatar->setPixmap(QPixmap(m_person.avatar().toLocalFile()));
+            l->addRow("avatar:", avatar);
+            
+            PersonActions* actions = new PersonActions(&m_person);
+            actions->setPerson(&m_person);
+            QToolButton* b = new QToolButton;
+            b->setText("Actions");
+            QMenu* m = new QMenu(b);
+            m->addActions(actions->actions());
+            b->setPopupMode(QToolButton::MenuButtonPopup);
+            b->setMenu(m);
+            l->addRow("actions:", b);
+        }
+        
+    private:
+        PersonData m_person;
+};
+
+int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
     if(app.argc()<2) {
@@ -34,29 +71,10 @@
         return 1;
     }
     
-    PersonData d;
-    d.setContactId(app.arguments()[1]);
-    
-    QWidget w;
-    QFormLayout* l = new QFormLayout(&w);
-    l->addRow("contactId:", new QLabel(d.contactId()));
-    l->addRow("nickname:", new QLabel(d.nickname()));
-    l->addRow("status:", new QLabel(d.status()));
-    
-    QLabel* avatar = new QLabel;
-    avatar->setPixmap(QPixmap(d.avatar().toLocalFile()));
-    l->addRow("avatar:", avatar);
-    
-    PersonActions* actions = new PersonActions(&d);
-    actions->setPerson(&d);
-    QToolButton* b = new QToolButton;
-    b->setText("Actions");
-    QMenu* m = new QMenu(b);
-    m->addActions(actions->actions());
-    b->setPopupMode(QToolButton::MenuButtonPopup);
-    b->setMenu(m);
-    l->addRow("actions:", b);
+    PersonWidget w(app.arguments()[1]);
     
     w.show();
     app.exec();
 }
+
+#include "niceperson.moc"

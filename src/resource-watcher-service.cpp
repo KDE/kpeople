@@ -136,6 +136,11 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource& 
                                                       const QVariantList& added, const QVariantList& removed)
 {
     kDebug() << "person changed:" /*<< res.uri() */<< property.name() << removed << added << " // " << res.property(property.uri());
+    if (removed.isEmpty()) {
+        //if the removed() is empty, it means the property was added, not really changed
+        //in which case it is handled by the propertyAdded
+        return;
+    }
     Q_D(ResourceWatcherService);
     if(property == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
         PersonsModelItem* item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
@@ -171,6 +176,12 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource&
 {
     kDebug() << "contact changed:" /*<< res.uri() */<< property.name() << removed << added;
     
+    if (removed.isEmpty()) {
+        //if the removed() is empty, it means the property was added, not really changed
+        //in which case it is handled by the propertyAdded
+        return;
+    }
+
     Q_D(ResourceWatcherService);
     PersonsModelContactItem* item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     item->modifyData(property.uri(), added);

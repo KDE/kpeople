@@ -194,16 +194,13 @@ void ResourceWatcherService::contactCreated(const Nepomuk2::Resource& res, const
 
 void ResourceWatcherService::personCreated(const Nepomuk2::Resource& res, const QList< QUrl >& types)
 {
+    kDebug() << "new person" /*<< res.uri() */<< types;
     Q_D(ResourceWatcherService);
     Q_ASSERT(res.hasProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()));
     QModelIndex idx = d->m_model->indexForUri(res.uri());
-    if(!idx.isValid())
+    if (!idx.isValid()) {
         d->m_model->createPerson(res);
-    else {
-        PersonsModelItem* personItem = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(idx));
-        personItem->setContacts(res.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList());
     }
-    kDebug() << "new person" /*<< res.uri() */<< types;
 }
 
 void ResourceWatcherService::contactRemoved(const QUrl& uri, const QList< QUrl >&)

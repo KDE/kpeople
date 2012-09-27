@@ -62,14 +62,14 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
         QString nco_query = customQuery;
         if(customQuery.isEmpty())
             nco_query = QString::fromUtf8(
-            "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
+            "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
                 "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
                 "?nco_imStatus ?nie_url "
 
                 "WHERE { "
                     "?uri a nco:PersonContact. "
-                    "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. "
 
+                "OPTIONAL { ?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. }"
                 "OPTIONAL { "
                     "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
                     "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "

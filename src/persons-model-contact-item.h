@@ -44,6 +44,7 @@ public:
 
     void addData(const QUrl &key, const QVariant &value);
     void modifyData(const QUrl& name, const QVariantList& newValue);
+    void modifyData(const QUrl& name, const QVariant& newValue);
     void setType(PersonsModel::ContactType type);
 
     QVariant dataValue(const QUrl& key);

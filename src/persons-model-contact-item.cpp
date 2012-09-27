@@ -158,6 +158,15 @@ void PersonsModelContactItem::modifyData(const QUrl& name, const QVariantList& a
     emitDataChanged();
 }
 
+void PersonsModelContactItem::modifyData(const QUrl& name, const QVariant& newValue)
+{
+    Q_D(PersonsModelContactItem);
+    kDebug() << "Old data:" << d->data[name];
+    d->data[name] = newValue;
+    kDebug() << "New Data:" << d->data[name];
+    emitDataChanged();
+}
+
 void PersonsModelContactItem::removeData(const QUrl& uri)
 {
     Q_D(PersonsModelContactItem);

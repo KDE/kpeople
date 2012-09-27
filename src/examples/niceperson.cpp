@@ -43,11 +43,11 @@ class PersonWidget : public QWidget
             l->addRow("All Contacts:", new QLabel(m_person.contacts().join(", ")));
             l->addRow("nickname:", new QLabel(m_person.nickname()));
             l->addRow("status:", new QLabel(m_person.status()));
-            
+
             QLabel* avatar = new QLabel;
             avatar->setPixmap(QPixmap(m_person.avatar().toLocalFile()));
             l->addRow("avatar:", avatar);
-            
+
             PersonActions* actions = new PersonActions(&m_person);
             actions->setPerson(&m_person);
             QToolButton* b = new QToolButton;
@@ -58,7 +58,7 @@ class PersonWidget : public QWidget
             b->setMenu(m);
             l->addRow("actions:", b);
         }
-        
+
     private:
         PersonData m_person;
 };
@@ -70,9 +70,9 @@ int main(int argc, char** argv)
         qWarning() << "Missing argument: \"" << qPrintable(app.arguments().first()) << " <contact id>\"";
         return 1;
     }
-    
+
     PersonWidget w(app.arguments()[1]);
-    
+
     w.show();
     app.exec();
 }

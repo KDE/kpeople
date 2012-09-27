@@ -49,10 +49,10 @@ PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource& conta
 {
     setData(contact.uri(), PersonsModel::UriRole);
     pullResourceProperties(contact);
-    
+
     QUrl val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toUrl();
     if(val.isValid()) pullResourceProperties(Nepomuk2::Resource(val));
-    
+
     val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::photo()).toUrl();
     if(val.isValid()) pullResourceProperties(Nepomuk2::Resource(val));
 }
@@ -93,7 +93,7 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
 {
     if(value.isNull())
         return;
-    
+
     Q_D(PersonsModelContactItem);
     if (Nepomuk2::Vocabulary::NCO::imID() == key) {
         setType(PersonsModel::IM);
@@ -176,6 +176,7 @@ void PersonsModelContactItem::modifyData(const QUrl& name, const QVariant& newVa
     kDebug() << "New Data:" << d->data[name];
     emitDataChanged();
 }
+
 
 void PersonsModelContactItem::removeData(const QUrl& uri)
 {

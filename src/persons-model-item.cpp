@@ -113,7 +113,7 @@ void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
     foreach(const QVariant& uri, uris) {
         contacts.removeOne(uri.toUrl());
     }
-    
+
     kDebug() << "add contacts" << contacts;
     QList<PersonsModelContactItem*> rows;
     foreach(const QUrl& uri, contacts) {
@@ -139,7 +139,7 @@ void PersonsModelItem::setContacts(const QList<QUrl>& contacts)
         }
         removeContacts(toRemove);
     }
-    
+
     QList<QUrl> toAdd;
     foreach(const QUrl& contact, contacts) {
         toAdd += contact;

@@ -40,7 +40,7 @@ public:
     PersonsModelItem(const Nepomuk2::Resource& person);
 
     virtual QVariant data(int role) const;
-    
+
     void removeContacts(const QList<QUrl>& contacts);
     void addContacts(const QList<QUrl>& contacts);
     void setContacts(const QList< QUrl >& contacts);

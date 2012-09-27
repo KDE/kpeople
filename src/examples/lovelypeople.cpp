@@ -39,12 +39,12 @@ class ContactDelegate : public QStyledItemDelegate
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    
+
     QTreeView view;
     view.setItemDelegate(new ContactDelegate);
     view.setModel(new PersonsModel(&view));
     view.setSortingEnabled(true);
     view.show();
-    
+
     app.exec();
 }

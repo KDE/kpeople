@@ -38,21 +38,21 @@ void DuplicatesFinder::doSearch()
 {
     //NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment
     //maybe using nepomuk for the matching would help?
-    
+
     QVector< QVariantList > collectedValues;
     m_matches.clear();
-    
+
     int count = m_model->rowCount();
     for(int i=0; i<count; i++) {
         QModelIndex idx = m_model->index(i, 0);
-        
+
         //we gather the values
         QVariantList values;
         for(int role=0; role<m_compareRoles.size(); role++) {
             values += idx.data(m_compareRoles[role]);
         }
         Q_ASSERT(values.size()==m_compareRoles.size());
-        
+
         //we check if it matches
         int j=0;
         foreach(const QVariantList& valueToCompare, collectedValues) {
@@ -61,7 +61,7 @@ void DuplicatesFinder::doSearch()
                 m_matches.append(Match(matchedRoles, i, j));
             j++;
         }
-        
+
         //we add our data for comparing later
         collectedValues.append(values);
     }

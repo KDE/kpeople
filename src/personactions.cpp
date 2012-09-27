@@ -39,15 +39,15 @@ Q_DECLARE_METATYPE(QModelIndex);
 struct PersonActionsPrivate {
     PersonActionsPrivate() : row(-1), model(0), ktpDelegate(0), person(0) {}
     ~PersonActionsPrivate() { delete ktpDelegate; }
-    
+
     void initKTPDelegate() { if(!ktpDelegate) ktpDelegate = new NepomukTpChannelDelegate; }
-    
+
     int row;
     const QAbstractItemModel* model;
     QList<QAction*> actions;
     NepomukTpChannelDelegate* ktpDelegate;
     PersonData* person;
-    
+
     QAction* createEmailAction(PersonActions* pactions, const QIcon& icon, const QString& name, const QString& email)
     {
         QAction* action = new QAction(icon, i18n("Send e-mail to '%1'", name), pactions);
@@ -55,7 +55,7 @@ struct PersonActionsPrivate {
         QObject::connect(action, SIGNAL(triggered(bool)), pactions, SLOT(emailTriggered()));
         return action;
     }
-    
+
     QList<QAction*> createIMActions(PersonActions* pactions, const QUrl& contactUri, const QString& imrole, const QString& nickname)
     {
         Q_ASSERT(!contactUri.isEmpty());
@@ -69,7 +69,7 @@ struct PersonActionsPrivate {
         Soprano::QueryResultIterator it = m->executeQuery(query, Soprano::Query::QueryLanguageSparql);
         while(it.next()) {
             QString ss = it["cap"].toString();
-            
+
             QAction* action = new QAction(pactions);
             action->setProperty("uri", contactUri);
             action->setProperty("imrole", imrole);
@@ -128,12 +128,12 @@ void PersonActions::initialize(const QAbstractItemModel* model, int row)
 {
     if(!model || row<0)
         return;
-    
+
     Q_D(PersonActions);
     QModelIndex idx = model->index(row, 0);
     d->model = idx.model();
     d->row = idx.row();
-    
+
     initialize(idx);
 }
 
@@ -141,10 +141,10 @@ void PersonActions::initialize(const QModelIndex& idx)
 {
     Q_D(PersonActions);
     Q_ASSERT(idx.isValid());
-    
+
     d->model = idx.model();
     d->row = idx.row();
-    
+
     int rows = d->model->rowCount(idx);
     beginResetModel();
     qDeleteAll(d->actions);
@@ -182,7 +182,7 @@ void PersonActions::imTriggered()
         "?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy . "
         "?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . "
     "   }").arg( Soprano::Node::resourceToN3(action->property("uri").toUrl()) );
-    
+
     Soprano::Model* model = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator qit = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
 
@@ -190,7 +190,7 @@ void PersonActions::imTriggered()
     if( qit.next() ) {
         account = qit["telepathy_accountIdentifier"].toString();
     }
-    
+
     if(!account.isEmpty()) {
         Q_D(const PersonActions);
         d->ktpDelegate->startIM(account, action->property("imrole").toString(), action->property("capability").toString());

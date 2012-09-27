@@ -68,7 +68,7 @@ public:
     explicit PersonsModel(QObject* parent=0, bool init=true, const QString& customQuery=QString());
 
     /**
-     * The @p contactUri will be removed from @p personUri and it will be added to a new 
+     * The @p contactUri will be removed from @p personUri and it will be added to a new
      * empty pimo:Person instance.
      */
     Q_SCRIPTABLE void unmerge(const QUrl& contactUri, const QUrl& personUri);
@@ -80,10 +80,10 @@ public:
     Q_SCRIPTABLE void merge(const QVariantList& persons);
 
     QModelIndex indexForUri(const QUrl& uri) const;
-    
+
     void createPerson(const Nepomuk2::Resource& res);
     PersonsModelContactItem* contactForIMAccount(const QUrl& uri) const;
-    
+
 private slots:
     void jobFinished(KJob*);
     void query(const QString& queryString);
@@ -93,7 +93,7 @@ signals:
 
 private:
     QModelIndex findRecursively(int role, const QVariant& value, const QModelIndex& idx=QModelIndex()) const;
-    
+
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel)
 };

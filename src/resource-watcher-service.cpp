@@ -81,10 +81,13 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     
     d->imWatcher = new Nepomuk2::ResourceWatcher(this);
     d->imWatcher->addType(Nepomuk2::Vocabulary::NCO::IMAccount());
-    
+    d->imWatcher->addProperty(Nepomuk2::Vocabulary::NCO::imStatus());
+
     connect(d->contactWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
             this, SLOT(updateIMAccount(Nepomuk2::Resource)));
-    
+    connect(d->imWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
+            this, SLOT(onIMAccountPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
+
     d->imWatcher->start();
 }
 
@@ -185,6 +188,29 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource&
     Q_D(ResourceWatcherService);
     PersonsModelContactItem* item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     item->modifyData(property.uri(), added);
+}
+
+void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariantList& added, const QVariantList& removed)
+{
+    kDebug() << "IM contact changed:" << res.uri() << property.name() << removed << added;
+
+    if (removed.isEmpty()) {
+        //if the removed() is empty, it means the property was added, not really changed
+        //in which case it is handled by the propertyAdded
+        return;
+    }
+
+    Q_D(ResourceWatcherService);
+    kDebug() << d->m_model->contactForIMAccount(res.uri());
+    PersonsModelContactItem* item = static_cast<PersonsModelContactItem*>(d->m_model->contactForIMAccount(res.uri()));
+    if (!item) {
+        return;
+    }
+    if (property.name() == QLatin1String("imStatus") || property.name() == QLatin1String("statusType")) {
+        item->modifyData(property.uri(), added.first());
+    } else {
+        item->modifyData(property.uri(), added);
+    }
 }
 
 void ResourceWatcherService::contactCreated(const Nepomuk2::Resource& res, const QList< QUrl >& types)

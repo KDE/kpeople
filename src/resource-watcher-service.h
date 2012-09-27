@@ -44,6 +44,8 @@ private Q_SLOTS:
                                   const QVariantList& removed, const QVariantList& after);
     void onContactPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
                                   const QVariantList& removed, const QVariantList& after);
+    void onIMAccountPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
+                                     const QVariantList& added, const QVariantList& removed);
     void personCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
     void personRemoved(const QUrl& uri);
     void contactCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);

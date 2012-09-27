@@ -127,7 +127,17 @@ QVariant PersonsModelContactItem::data(int role) const
 {
     Q_D(const PersonsModelContactItem);
     switch(role) {
-        case Qt::DisplayRole: return data(PersonsModel::NickRole);
+        case Qt::DisplayRole:
+            if (!data(PersonsModel::NickRole).toString().isEmpty()) {
+                return data(PersonsModel::NickRole);
+            }
+            if (!data(PersonsModel::EmailRole).toString().isEmpty()) {
+                return data(PersonsModel::EmailRole);
+            }
+            if (!data(PersonsModel::PhoneRole).toString().isEmpty()) {
+                return data(PersonsModel::PhoneRole);
+            }
+            return QString("Unknown person"); //FIXME: temporary
         case PersonsModel::NickRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imNickname());
         case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
         case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());

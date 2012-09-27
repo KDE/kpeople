@@ -50,7 +50,7 @@ private Q_SLOTS:
     void personRemoved(const QUrl& uri);
     void contactCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
     void contactRemoved(const QUrl& uri, const QList< QUrl >& types);
-    
+
     void updateIMAccount(const Nepomuk2::Resource& res);
 
 private:

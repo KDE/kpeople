@@ -60,12 +60,12 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
             this, SLOT(onPersonPropertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
     connect(d->personWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SLOT(onPersonPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
-    
+
     d->personWatcher->start();
-    
+
     d->contactWatcher = new Nepomuk2::ResourceWatcher(this);
     d->contactWatcher->addType(Nepomuk2::Vocabulary::NCO::PersonContact());
-    
+
     connect(d->contactWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
             this, SLOT(contactCreated(Nepomuk2::Resource,QList<QUrl>)));
     connect(d->contactWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
@@ -76,9 +76,9 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
             this, SLOT(onContactPropertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
     connect(d->contactWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SLOT(onContactPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
-    
+
     d->contactWatcher->start();
-    
+
     d->imWatcher = new Nepomuk2::ResourceWatcher(this);
     d->imWatcher->addType(Nepomuk2::Vocabulary::NCO::IMAccount());
     d->imWatcher->addProperty(Nepomuk2::Vocabulary::NCO::imStatus());
@@ -97,7 +97,7 @@ ResourceWatcherService::~ResourceWatcherService()
 void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
     kDebug() << "person property added:" /*<< res.uri() */<< property.name() << value;
-    
+
     if(property.uri()==Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
         Q_D(ResourceWatcherService);
         PersonsModelItem* item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
@@ -113,7 +113,7 @@ void ResourceWatcherService::onPersonPropertyRemoved(const Nepomuk2::Resource& r
 {
     QVariantList value = _value.toList();
     kDebug() << "person property removed:" /*<< res.uri() */<< property.name() << value;
-    
+
     if(property.name()=="groundingOccurrence") {
         if(value.isEmpty())
             personRemoved(res.uri());
@@ -157,7 +157,7 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource& 
 void ResourceWatcherService::onContactPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
     kDebug() << "contact property added:" /*<< res.uri() */<< property.name() << value;
-    
+
     Q_D(ResourceWatcherService);
     PersonsModelContactItem* item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     if(item)
@@ -167,7 +167,7 @@ void ResourceWatcherService::onContactPropertyAdded(const Nepomuk2::Resource& re
 void ResourceWatcherService::onContactPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value)
 {
     kDebug() << "contact property removed:" /*<< res.uri() */<< property.name() << value;
-    
+
     Q_D(ResourceWatcherService);
     PersonsModelContactItem* item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     if(item)

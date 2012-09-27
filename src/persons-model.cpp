@@ -38,7 +38,7 @@
 #include <KDebug>
 
 struct PersonsModelPrivate {
-    
+
 };
 
 PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuery)
@@ -57,7 +57,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
     names.insert(PersonsModel::PhotoRole, "photo");
     names.insert(PersonsModel::ContactsCount, "contactsCount");
     setRoleNames(names);
-    
+
     if(init) {
         QString nco_query = customQuery;
         if(customQuery.isEmpty())
@@ -87,7 +87,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
                     "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
                 " } "
             "}");
-        
+
         QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, nco_query));
         new ResourceWatcherService(this);
     }
@@ -118,7 +118,7 @@ QHash<QString, QUrl> initUriToBinding()
     << Nepomuk2::Vocabulary::NCO::hasIMAccount()
     << Nepomuk2::Vocabulary::NCO::emailAddress()
     << Nepomuk2::Vocabulary::NIE::url();
-    
+
     foreach(const QUrl& keyUri, list) {
         QString keyString = keyUri.toString();
         //convert every key to correspond to the nepomuk bindings
@@ -137,7 +137,7 @@ void PersonsModel::query(const QString& nco_query)
     Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
     QHash<QUrl, PersonsModelContactItem*> contacts;
     QHash<QUrl, PersonsModelItem*> persons;
-    
+
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
         PersonsModelContactItem* contactNode = contacts.value(currentUri);
@@ -146,7 +146,6 @@ void PersonsModel::query(const QString& nco_query)
             contactNode = new PersonsModelContactItem(currentUri);
         }
 
-        
         for(QHash<QString, QUrl>::const_iterator iter=uriToBinding.constBegin(), itEnd=uriToBinding.constEnd(); iter!=itEnd; ++iter) {
             contactNode->addData(iter.value(), it[iter.key()].toString());
         }
@@ -176,11 +175,11 @@ void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
     Nepomuk2::Resource oldPerson(personUri);
     Q_ASSERT(oldPerson.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size()>=2 && "there's nothing to unmerge...");
     oldPerson.removeProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
-    
+
     Nepomuk2::SimpleResource newPerson;
     newPerson.addType( Nepomuk2::Vocabulary::PIMO::Person() );
     newPerson.setProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
-    
+
     Nepomuk2::SimpleResourceGraph graph;
     graph << newPerson;
 

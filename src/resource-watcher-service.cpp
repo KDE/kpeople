@@ -98,10 +98,11 @@ void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource& res
     if(property.uri()==Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
         Q_D(ResourceWatcherService);
         PersonsModelItem* item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
-        if(item)
+        if (item) {
             item->addContacts(QList<QUrl>() << value.toUrl());
-        else
-            d->m_model->createPerson(res);
+        } else {
+            kWarning() << "Non-existing person specified!";
+        }
     }
 }
 

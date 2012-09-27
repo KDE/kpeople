@@ -125,7 +125,11 @@ void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
 void PersonsModelItem::setContacts(const QList<QUrl>& contacts)
 {
     kDebug() << "set contacts" << contacts;
-    
+    if (contacts.isEmpty()) {
+        //nothing to do here
+        return;
+    }
+
     if(hasChildren()) {
         QList<QUrl> toRemove;
         QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);

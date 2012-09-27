@@ -144,7 +144,6 @@ void PersonsModel::query(const QString& nco_query)
         bool newContact = !contactNode;
         if(!contactNode) {
             contactNode = new PersonsModelContactItem(currentUri);
-            contacts.insert(currentUri, contactNode);
         }
 
         
@@ -152,18 +151,24 @@ void PersonsModel::query(const QString& nco_query)
             contactNode->addData(iter.value(), it[iter.key()].toString());
         }
 
-        if(newContact) {
-            QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurrence")].uri();
-            Q_ASSERT(!pimoPersonUri.isEmpty());
+        QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurrence")].uri();
+
+        if (pimoPersonUri.isEmpty()) {
+            //TODO: look for other contacts and possibly automerge
+            contacts.insert(currentUri, contactNode);
+        } else {
             QHash< QUrl, PersonsModelItem* >::const_iterator pos = persons.constFind(pimoPersonUri);
-            if (pos == persons.constEnd())
+            if (pos == persons.constEnd()) {
                 pos = persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
+            }
             pos.value()->appendRow(contactNode);
         }
     }
 
     invisibleRootItem()->appendRows(toStandardItems(persons.values()));
+    invisibleRootItem()->appendRows(toStandardItems(contacts.values()));
     emit peopleAdded();
+    kDebug() << "Model ready";
 }
 
 void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)

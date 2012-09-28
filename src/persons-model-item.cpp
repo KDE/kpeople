@@ -116,6 +116,23 @@ void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
         contacts.removeOne(uri.toUrl());
     }
 
+    //query the model for the contacts, if they are present, then need to be just moved
+    QList<QStandardItem*> toplevelContacts;
+    foreach(const QUrl &uri, contacts) {
+        QModelIndex contactIndex = qobject_cast<PersonsModel*>(model())->indexForUri(uri);
+        if (contactIndex.isValid()) {
+             toplevelContacts.append(qobject_cast<PersonsModel*>(model())->takeRow(contactIndex.row()));
+        }
+    }
+
+    //append the moved contacts to this person and remove them from 'contacts'
+    //so they are not added twice
+    foreach(QStandardItem *contactItem, toplevelContacts) {
+        PersonsModelContactItem *contact = dynamic_cast<PersonsModelContactItem*>(contactItem);
+        appendRow(contact);
+        contacts.removeOne(contact->uri());
+    }
+
     kDebug() << "add contacts" << contacts;
     QList<PersonsModelContactItem*> rows;
     foreach(const QUrl& uri, contacts) {

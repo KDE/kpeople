@@ -58,7 +58,13 @@ public:
         IMRole,
         PhotoRole,
         IMAccountUriRole,
-        StatusRole
+        StatusRole,
+        ResourceTypeRole
+    };
+
+    enum ResourceType {
+        Person,
+        Contact
     };
 
     /**

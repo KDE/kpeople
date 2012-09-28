@@ -157,6 +157,8 @@ QVariant PersonsModelContactItem::data(int role) const
             if(role>=0)
                 return data(role);
         }   break;
+        case PersonsModel::ResourceTypeRole:
+            return PersonsModel::Contact;
     }
     return QStandardItem::data(role);
 }

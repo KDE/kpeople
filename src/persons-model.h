@@ -85,6 +85,12 @@ public:
     /** this one is because QML is not smart enough to understand what's going on */
     Q_SCRIPTABLE void merge(const QVariantList& persons);
 
+    /** Creates a pimo:person with contacts as groundingOccurances */
+    void createPersonFromContacts(const QList<QUrl> &contacts);
+
+    /** Removes the link between all contacts, removes the pimo:person but leaves the contacts intact */
+    void removePerson(const QUrl &uri);
+    //FIXME: maybe merge with ^ ?
     void removePersonFromModel(const QModelIndex &index);
 
     QModelIndex indexForUri(const QUrl& uri) const;

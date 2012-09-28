@@ -243,6 +243,30 @@ PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl& uri) cons
     QStandardItem* it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
     return dynamic_cast<PersonsModelContactItem*>(it);
 }
+
+void PersonsModel::createPersonFromContacts(const QList<QUrl>& contacts)
+{
+    Nepomuk2::SimpleResource newPimoPerson;
+    newPimoPerson.addType(Nepomuk2::Vocabulary::PIMO::Person());
+
+    foreach(const QUrl &contact, contacts) {
+        newPimoPerson.addProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contact);
+    }
+
+    Nepomuk2::SimpleResourceGraph graph;
+    graph << newPimoPerson;
+
+    KJob *job = Nepomuk2::storeResources( graph, Nepomuk2::IdentifyNew, Nepomuk2::OverwriteProperties );
+    connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+    //the new person will be added to the model by the resourceCreated and propertyAdded Nepomuk signals
+}
+
+void PersonsModel::removePerson(const QUrl &uri)
+{
+    Nepomuk2::Resource oldPerson(uri);
+    oldPerson.remove();
+}
+
 void PersonsModel::removePersonFromModel(const QModelIndex &index)
 {
     PersonsModelItem *person = dynamic_cast<PersonsModelItem*>(itemFromIndex(index));

@@ -242,8 +242,9 @@ void ResourceWatcherService::personRemoved(const QUrl& uri)
 {
     Q_D(ResourceWatcherService);
     QModelIndex idx = d->m_model->indexForUri(uri);
-    if(uri.isValid())
-        d->m_model->removeRow(idx.row());
+    if (idx.isValid()) {
+        d->m_model->removePersonFromModel(idx);
+    }
     kDebug() << "person removed" << uri;
 }
 

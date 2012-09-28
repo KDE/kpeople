@@ -243,3 +243,14 @@ PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl& uri) cons
     QStandardItem* it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
     return dynamic_cast<PersonsModelContactItem*>(it);
 }
+void PersonsModel::removePersonFromModel(const QModelIndex &index)
+{
+    PersonsModelItem *person = dynamic_cast<PersonsModelItem*>(itemFromIndex(index));
+
+    for (int i = 0; i < person->rowCount(); i++) {
+        //reparent the contacts to toplevel
+        invisibleRootItem()->appendRow(person->takeChild(i));
+    }
+
+    removeRow(index.row());
+}

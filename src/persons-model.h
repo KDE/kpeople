@@ -79,6 +79,8 @@ public:
     /** this one is because QML is not smart enough to understand what's going on */
     Q_SCRIPTABLE void merge(const QVariantList& persons);
 
+    void removePersonFromModel(const QModelIndex &index);
+
     QModelIndex indexForUri(const QUrl& uri) const;
 
     void createPerson(const Nepomuk2::Resource& res);

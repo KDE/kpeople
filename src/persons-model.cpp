@@ -175,6 +175,9 @@ void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
     Nepomuk2::Resource oldPerson(personUri);
     Q_ASSERT(oldPerson.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size()>=2 && "there's nothing to unmerge...");
     oldPerson.removeProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
+    if (!oldPerson.hasProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence())) {
+        oldPerson.remove();
+    }
 
     Nepomuk2::SimpleResource newPerson;
     newPerson.addType( Nepomuk2::Vocabulary::PIMO::Person() );

@@ -238,7 +238,16 @@ QModelIndex PersonsModel::indexForUri(const QUrl& uri) const
 void PersonsModel::createPerson(const Nepomuk2::Resource& res)
 {
     Q_ASSERT(!indexForUri(res.uri()).isValid());
-    appendRow(new PersonsModelItem(res));
+    //pass only the uri as that will not add the contacts from groundingOccurrence
+    //rationale: if we're adding contacts to the person, we need to check the model
+    //           if those contacts are not already in the model and if they are,
+    //           we need to remove them from the toplevel and put them only under
+    //           the person item. In the time of creation, the model() call from
+    //           PersonsModelItem is null, so we cannot check the model.
+    //           Furthermore this slot is used only when new pimo:Person is created
+    //           in Nepomuk and in that case Nepomuk *always* signals propertyAdded
+    //           with "groundingOccurrence", so we get the contacts either way.
+    appendRow(new PersonsModelItem(res.uri()));
 }
 
 PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl& uri) const

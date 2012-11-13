@@ -147,6 +147,9 @@ void PersonsModel::query(const QString& nco_query)
 
     while(it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
+        if (currentUri == QUrl(QLatin1String("nepomuk:/me"))) {
+            continue;
+        }
         PersonsModelContactItem* contactNode = contacts.value(currentUri);
         bool newContact = !contactNode;
         if(!contactNode) {
@@ -158,6 +161,9 @@ void PersonsModel::query(const QString& nco_query)
         }
 
         QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurrence")].uri();
+        if (pimoPersonUri == QUrl(QLatin1String("nepomuk:/me"))) {
+            continue;
+        }
 
         if (pimoPersonUri.isEmpty()) {
             //TODO: look for other contacts and possibly automerge

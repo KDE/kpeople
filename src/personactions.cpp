@@ -19,13 +19,17 @@
 
 #include "personactions.h"
 #include "persons-model.h"
-#include "nepomuk-tp-channel-delegate.h"
 #include "persondata.h"
-#include <klocalizedstring.h>
-#include <qabstractitemmodel.h>
-#include <QDebug>
-#include <qaction.h>
+#include "nepomuk-tp-channel-delegate.h"
+
+#include <KLocalizedString>
+
+#include <QAbstractItemModel>
+#include <QAction>
+
 #include <KToolInvocation>
+#include <KDebug>
+
 #include <Nepomuk2/ResourceManager>
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Vocabulary/NCO>
@@ -41,9 +45,9 @@ struct PersonActionsPrivate {
     ~PersonActionsPrivate() {}
 
     int row;
-    const QAbstractItemModel* model;
+    const QAbstractItemModel *model;
     QList<QAction*> actions;
-    PersonData* person;
+    PersonData *person;
 
     QAction* createEmailAction(PersonActions* pactions, const QIcon& icon, const QString& name, const QString& email)
     {
@@ -66,7 +70,7 @@ struct PersonActionsPrivate {
         while(it.next()) {
             QString ss = it["cap"].toString();
 
-            QAction* action = new QAction(pactions);
+            QAction *action = new QAction(pactions);
             action->setProperty("uri", contactUri);
             action->setProperty("imrole", imrole);
             action->setProperty("capability", ss);

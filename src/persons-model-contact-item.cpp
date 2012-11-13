@@ -19,7 +19,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "persons-model-contact-item.h"
 #include "personactions.h"
 
@@ -27,14 +26,16 @@
 
 #include <KIcon>
 #include <KDebug>
+
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/Variant>
+#include <Nepomuk2/ResourceManager>
+
 #include <Nepomuk2/Vocabulary/NCO>
 #include <Nepomuk2/Vocabulary/NIE>
 #include <Soprano/Vocabulary/NAO>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
-#include <Nepomuk2/Resource>
-#include <Nepomuk2/Variant>
-#include <Nepomuk2/ResourceManager>
 
 class PersonsModelContactItemPrivate {
 public:

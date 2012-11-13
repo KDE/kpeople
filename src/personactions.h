@@ -37,18 +37,18 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
     public:
         explicit PersonActions(QObject* parent = 0);
         virtual ~PersonActions();
-        
+
         QList<QAction*> actions();
         void setModel(const QAbstractItemModel* model);
         const QAbstractItemModel* model() const;
         int row() const;
         void setRow(int row);
-        
+
         PersonData* person() const;
         void setPerson(PersonData* data);
-        
+
         Q_INVOKABLE void trigger(int actionsRow);
-        
+
         virtual QVariant data(const QModelIndex& index, int role) const;
         virtual int rowCount(const QModelIndex& parent=QModelIndex()) const;
 

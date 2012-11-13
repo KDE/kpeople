@@ -31,7 +31,7 @@
 
 struct PersonDataPrivate {
     PersonDataPrivate() : model(0) {}
-    
+
     PersonsModel* model;
     QString id;
     QUrl uri;
@@ -47,7 +47,7 @@ void PersonData::setContactId(const QString& id)
     Q_D(PersonData);
     if(d->id==id)
         return;
-    
+
     //it should be basically the same query as in the persons model
     //only that here we're restricting it to a person
     QString query = QString::fromUtf8(
@@ -78,7 +78,7 @@ void PersonData::setContactId(const QString& id)
                     "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
                 " } "
             "}").arg(id);
-    
+
     delete d->model;
     d->model = new PersonsModel(this, true, query);
     connect(d->model, SIGNAL(peopleAdded()), SLOT(personInitialized()));
@@ -170,6 +170,7 @@ void PersonData::setContactUri(const QUrl &uri)
         connect(d->model, SIGNAL(peopleAdded()), SLOT(personInitialized()));
         connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SIGNAL(dataChanged()));
 }
+
 
 void PersonData::personInitialized()
 {

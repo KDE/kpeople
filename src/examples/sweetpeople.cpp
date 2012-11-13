@@ -26,9 +26,9 @@
 int main(int argc, char** argv)
 {
     KCmdLineArgs::init(argc, argv, QByteArray("sweetpeople"), "", ki18n("SweetPeople - KPeople Example"), "0.1");
-    
+
     KApplication app;
-    
+
     QDeclarativeView view;
     KDeclarative decl;
     decl.setDeclarativeEngine(view.engine());
@@ -38,6 +38,6 @@ int main(int argc, char** argv)
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
     Q_ASSERT(view.errors().isEmpty());
     view.show();
-    
+
     app.exec();
 }

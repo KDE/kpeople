@@ -21,6 +21,10 @@
 
 
 #include "persons-model-contact-item.h"
+#include "personactions.h"
+
+#include <QAction>
+
 #include <KIcon>
 #include <KDebug>
 #include <Nepomuk2/Vocabulary/NCO>
@@ -35,6 +39,7 @@
 class PersonsModelContactItemPrivate {
 public:
     QHash<QUrl, QVariant> data;
+    mutable QList<QAction *> actions;
 };
 
 PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri)
@@ -157,6 +162,15 @@ QVariant PersonsModelContactItem::data(int role) const
             if(role>=0)
                 return data(role);
         }   break;
+        case PersonsModel::ContactActionsRole:
+            if (d->actions.isEmpty()) {
+                PersonActions *actions = new PersonActions();
+                actions->initialize(index());
+                d->actions = actions->actions();
+            }
+
+            return QVariant::fromValue<QList<QAction *> >(d->actions);
+
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Contact;
     }

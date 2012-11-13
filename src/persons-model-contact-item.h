@@ -27,6 +27,7 @@
 #include <QStandardItem>
 #include "persons-model.h"
 
+class QAction;
 class PersonsModelContactItemPrivate;
 
 class KPEOPLE_EXPORT PersonsModelContactItem : public QStandardItem
@@ -60,5 +61,6 @@ private:
 };
 
 Q_DECLARE_METATYPE(PersonsModelContactItem*);
+Q_DECLARE_METATYPE(QList<QAction *>)
 
 #endif // PERSONS_MODEL_CONTACT_ITEM_H

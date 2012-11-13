@@ -23,6 +23,7 @@
 #include "kpeople_export.h"
 #include <qabstractitemmodel.h>
 
+class PersonsModelContactItem;
 class PersonData;
 class QAction;
 struct PersonActionsPrivate;
@@ -61,7 +62,9 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
     private:
         void initialize(const QAbstractItemModel* model, int row);
         void initialize(const QModelIndex& personIndex);
-        
+
+        friend class PersonsModelContactItem;
+
         PersonActionsPrivate * const d_ptr;
         Q_DECLARE_PRIVATE(PersonActions);
 };

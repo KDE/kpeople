@@ -62,6 +62,9 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** @returns a model index so that we can query it like it was from PersonsModel */
         QModelIndex personIndex() const;
 
+        /** @p uri uri of the nepomuk resource (either contact or person) */
+        void setContactUri(const QUrl &uri);
+
     private slots:
         void personInitialized();
 

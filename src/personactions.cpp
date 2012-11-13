@@ -37,15 +37,12 @@
 Q_DECLARE_METATYPE(QModelIndex);
 
 struct PersonActionsPrivate {
-    PersonActionsPrivate() : row(-1), model(0), ktpDelegate(0), person(0) {}
-    ~PersonActionsPrivate() { delete ktpDelegate; }
-
-    void initKTPDelegate() { if(!ktpDelegate) ktpDelegate = new NepomukTpChannelDelegate; }
+    PersonActionsPrivate() : row(-1), model(0), person(0) {}
+    ~PersonActionsPrivate() {}
 
     int row;
     const QAbstractItemModel* model;
     QList<QAction*> actions;
-    NepomukTpChannelDelegate* ktpDelegate;
     PersonData* person;
 
     QAction* createEmailAction(PersonActions* pactions, const QIcon& icon, const QString& name, const QString& email)
@@ -59,7 +56,6 @@ struct PersonActionsPrivate {
     QList<QAction*> createIMActions(PersonActions* pactions, const QUrl& contactUri, const QString& imrole, const QString& nickname)
     {
         Q_ASSERT(!contactUri.isEmpty());
-        initKTPDelegate();
         QList<QAction*> actions;
         const QString query = QString::fromLatin1("select ?cap WHERE { "
                     "%1                         nco:hasIMAccount            ?nco_hasIMAccount. "
@@ -193,7 +189,9 @@ void PersonActions::imTriggered()
 
     if(!account.isEmpty()) {
         Q_D(const PersonActions);
-        d->ktpDelegate->startIM(account, action->property("imrole").toString(), action->property("capability").toString());
+        qobject_cast<const PersonsModel*>(d->model)->tpChannelDelegate()->startIM(account,
+                                                                                  action->property("imrole").toString(),
+                                                                                  action->property("capability").toString());
     }
 }
 

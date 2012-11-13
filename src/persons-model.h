@@ -26,6 +26,7 @@
 
 #include <QStandardItemModel>
 
+class NepomukTpChannelDelegate;
 namespace Nepomuk2 { class Resource; }
 class PersonsModelContactItem;
 struct PersonsModelPrivate;
@@ -97,6 +98,8 @@ public:
 
     void createPerson(const Nepomuk2::Resource& res);
     PersonsModelContactItem* contactForIMAccount(const QUrl& uri) const;
+
+    NepomukTpChannelDelegate* tpChannelDelegate() const;
 
 private slots:
     void jobFinished(KJob*);

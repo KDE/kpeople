@@ -98,6 +98,7 @@ public:
     QModelIndex indexForUri(const QUrl& uri) const;
 
     void createPerson(const Nepomuk2::Resource& res);
+    void createContact(const Nepomuk2::Resource &res);
     PersonsModelContactItem* contactForIMAccount(const QUrl& uri) const;
 
     NepomukTpChannelDelegate* tpChannelDelegate() const;

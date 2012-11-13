@@ -265,6 +265,11 @@ void PersonsModel::createPerson(const Nepomuk2::Resource& res)
     appendRow(new PersonsModelItem(res.uri()));
 }
 
+void PersonsModel::createContact(const Nepomuk2::Resource& res)
+{
+    appendRow(new PersonsModelContactItem(res.uri()));
+}
+
 PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl& uri) const
 {
     QStandardItem* it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));

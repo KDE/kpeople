@@ -216,6 +216,12 @@ void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resourc
 void ResourceWatcherService::contactCreated(const Nepomuk2::Resource& res, const QList< QUrl >& types)
 {
     kDebug() << "new contact" /*<< res.uri() */<< types;
+    Q_D(ResourceWatcherService);
+
+    QModelIndex idx = d->m_model->indexForUri(res.uri());
+    if (!idx.isValid()) {
+        d->m_model->createContact(res);
+    }
 }
 
 void ResourceWatcherService::personCreated(const Nepomuk2::Resource& res, const QList< QUrl >& types)

@@ -145,12 +145,26 @@ void PersonActions::initialize(const QModelIndex& idx)
     d->model = idx.model();
     d->row = idx.row();
 
-    int rows = d->model->rowCount(idx);
+    int rows;
+
+    if (idx.data(PersonsModel::ResourceTypeRole) == PersonsModel::Person) {
+        rows = d->model->rowCount(idx);
+    } else if (idx.data(PersonsModel::ResourceTypeRole) == PersonsModel::Contact) {
+        rows = 1;
+    }
+
     beginResetModel();
     qDeleteAll(d->actions);
     d->actions.clear();
     for(int i=0; i<rows; i++) {
-        QModelIndex idxContact = idx.child(i, 0);
+        QModelIndex idxContact;
+
+        if (idx.data(PersonsModel::ResourceTypeRole) == PersonsModel::Person) {
+            idxContact = idx.child(i, 0);
+        } else if (idx.data(PersonsModel::ResourceTypeRole) == PersonsModel::Contact) {
+            idxContact = idx;
+        }
+
         switch(idxContact.data(PersonsModel::ContactTypeRole).toInt()) {
             case PersonsModel::Email:
                 d->actions += d->createEmailAction(this, idxContact.data(Qt::DecorationRole).value<QIcon>(), idxContact.data().toString(), idxContact.data(PersonsModel::EmailRole).toString());

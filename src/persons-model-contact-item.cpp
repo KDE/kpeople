@@ -38,6 +38,7 @@
 
 class PersonsModelContactItemPrivate {
 public:
+    QUrl uri;
     QHash<QUrl, QVariant> data;
     mutable QList<QAction *> actions;
 };
@@ -45,14 +46,16 @@ public:
 PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
-    setData(uri, PersonsModel::UriRole);
+//     setData(uri, PersonsModel::UriRole);
+    d_ptr->uri = uri;
     setType(PersonsModel::MobilePhone);
 }
 
 PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource& contact)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
-    setData(contact.uri(), PersonsModel::UriRole);
+//     setData(contact.uri(), PersonsModel::UriRole);
+    d_ptr->uri = contact.uri();
     pullResourceProperties(contact);
 
     QUrl val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toUrl();
@@ -119,7 +122,8 @@ QVariant PersonsModelContactItem::dataValue(const QUrl &key)
 
 QUrl PersonsModelContactItem::uri() const
 {
-    return data(PersonsModel::UriRole).toUrl();
+    Q_D(const PersonsModelContactItem);
+    return d->uri;
 }
 
 void PersonsModelContactItem::setType(PersonsModel::ContactType type)
@@ -143,6 +147,7 @@ QVariant PersonsModelContactItem::data(int role) const
                 return data(PersonsModel::PhoneRole);
             }
             return QString("Unknown person"); //FIXME: temporary
+        case PersonsModel::UriRole: return d->uri; break;
         case PersonsModel::NickRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imNickname());
         case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
         case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());

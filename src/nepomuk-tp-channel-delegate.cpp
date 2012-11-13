@@ -78,7 +78,7 @@ NepomukTpChannelDelegate::~NepomukTpChannelDelegate()
 
 void NepomukTpChannelDelegate::onAccountManagerReady(Tp::PendingOperation*)
 {
-    kDebug() << "Account manager ready, bitch";
+    kDebug() << "Account manager ready";
 }
 
 void NepomukTpChannelDelegate::startIM(const QString& accountId, const QString& contactId, const QUrl& capability)

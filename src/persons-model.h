@@ -53,6 +53,7 @@ public:
         ContactsCount,
         UriRole,
         NameRole,
+        LabelRole,
         EmailRole,
         NickRole,
         PhoneRole,

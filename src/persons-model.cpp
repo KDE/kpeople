@@ -28,6 +28,7 @@
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
+#include <Soprano/Vocabulary/NAO>
 
 #include <Nepomuk2/ResourceManager>
 #include <Nepomuk2/Variant>
@@ -70,31 +71,33 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
         QString nco_query = customQuery;
         if(customQuery.isEmpty())
             nco_query = QString::fromUtf8(
-            "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
-                "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                "?nco_imStatus ?nie_url "
+            "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount "
+                "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
+                "?nco_imStatus ?nie_url ?nao_prefLabel "
 
                 "WHERE { "
                     "?uri a nco:PersonContact. "
 
-                "OPTIONAL { ?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. }"
-                "OPTIONAL { "
-                    "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
-                    "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
-                    "OPTIONAL { ?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType. } "
-                    "OPTIONAL { ?nco_hasIMAccount          nco:imStatus                ?nco_imStatus. } "
-                    "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
-                    "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
-                " } "
-                "OPTIONAL {"
-                    "?uri                       nco:photo                   ?phRes. "
-                    "?phRes                     nie:url                     ?nie_url. "
-                " } "
-                "OPTIONAL { "
-                    "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
-                    "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
-                " } "
-            "}");
+                    "OPTIONAL { ?pimo_groundingOccurrence  pimo:groundingOccurrence  ?uri. }"
+                    "OPTIONAL { ?uri  nao:prefLabel  ?nao_prefLabel. }"
+
+                    "OPTIONAL { "
+                        "?uri                     nco:hasIMAccount            ?nco_hasIMAccount. "
+                        "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
+                        "OPTIONAL { ?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType. } "
+                        "OPTIONAL { ?nco_hasIMAccount          nco:imStatus                ?nco_imStatus. } "
+                        "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
+                        "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
+                    " } "
+                    "OPTIONAL {"
+                        "?uri                       nco:photo                   ?phRes. "
+                        "?phRes                     nie:url                     ?nie_url. "
+                    " } "
+                    "OPTIONAL { "
+                        "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
+                        "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
+                    " } "
+                "}");
 
         QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, nco_query));
         new ResourceWatcherService(this);
@@ -119,6 +122,7 @@ QHash<QString, QUrl> initUriToBinding()
     << Nepomuk2::Vocabulary::NCO::imNickname()
     << Nepomuk2::Vocabulary::NCO::imAccountType()
     << Nepomuk2::Vocabulary::NCO::imID()
+    << Soprano::Vocabulary::NAO::prefLabel()
     //                      << Nepomuk2::Vocabulary::Telepathy::statusType()
     //                      << Nepomuk2::Vocabulary::Telepathy::accountIdentifier()
     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))

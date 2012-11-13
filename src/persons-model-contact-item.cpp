@@ -141,6 +141,9 @@ QVariant PersonsModelContactItem::data(int role) const
             if (!data(PersonsModel::NickRole).toString().isEmpty()) {
                 return data(PersonsModel::NickRole);
             }
+            if (!data(PersonsModel::LabelRole).toString().isEmpty()) {
+                return data(PersonsModel::LabelRole);
+            }
             if (!data(PersonsModel::EmailRole).toString().isEmpty()) {
                 return data(PersonsModel::EmailRole);
             }
@@ -150,6 +153,7 @@ QVariant PersonsModelContactItem::data(int role) const
             return QString("Unknown person"); //FIXME: temporary
         case PersonsModel::UriRole: return d->uri; break;
         case PersonsModel::NickRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imNickname());
+        case PersonsModel::LabelRole: return d->data.value(Soprano::Vocabulary::NAO::prefLabel());
         case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
         case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());
         case PersonsModel::IMRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imID());

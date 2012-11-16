@@ -113,6 +113,7 @@ void PersonsModelItem::removeContacts(const QList<QUrl>& contacts)
 void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
 {
     QList<QUrl> contacts(_contacts);
+    //get existing child-contacts and remove them from the new ones
     QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
     foreach(const QVariant& uri, uris) {
         contacts.removeOne(uri.toUrl());

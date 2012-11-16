@@ -38,7 +38,7 @@ PersonsModelItem::PersonsModelItem(const Nepomuk2::Resource& person)
 {
     setData(person.uri(), PersonsModel::UriRole);
     setContacts(person.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList());
-    qDebug() << "new person" << text() << rowCount();
+    kDebug() << "new person" << text() << rowCount();
 }
 
 QVariant PersonsModelItem::queryChildrenForRole(int role) const

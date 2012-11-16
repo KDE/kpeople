@@ -29,6 +29,7 @@
 
 #include <KToolInvocation>
 #include <KDebug>
+#include <KIcon>
 
 #include <Nepomuk2/ResourceManager>
 #include <Nepomuk2/Resource>
@@ -74,7 +75,20 @@ struct PersonActionsPrivate {
             action->setProperty("uri", contactUri);
             action->setProperty("imrole", imrole);
             action->setProperty("capability", ss);
-            action->setText(i18n("%1 with '%2'", ss.mid(ss.lastIndexOf('#')+13), nickname));
+
+            if (ss == QLatin1String("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#imCapabilityText")) {
+                action->setText(i18n("Start chat..."));
+                action->setIcon(KIcon("text-x-generic"));
+            }
+            if (ss == QLatin1String("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#imCapabilityAudio")) {
+                action->setText(i18n("Start Audio Call..."));
+                action->setIcon(KIcon("audio-headset"));
+            }
+            if (ss == QLatin1String("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#imCapabilityVideo")) {
+                action->setText(i18n("Start Video Call..."));
+                action->setIcon(KIcon("camera-web"));
+            }
+
             QObject::connect(action, SIGNAL(triggered(bool)), pactions, SLOT(imTriggered()));
             actions += action;
         }

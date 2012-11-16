@@ -38,6 +38,7 @@
 #include <Nepomuk2/SimpleResource>
 #include <Nepomuk2/SimpleResourceGraph>
 #include <Nepomuk2/StoreResourcesJob>
+
 #include <KDebug>
 
 struct PersonsModelPrivate {
@@ -48,7 +49,7 @@ struct PersonsModelPrivate {
     NepomukTpChannelDelegate *ktpDelegate;
 };
 
-PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuery)
+PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuery)
     : QStandardItemModel(parent)
     , d_ptr(new PersonsModelPrivate)
 {
@@ -67,9 +68,9 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
     names.insert(PersonsModel::ContactActionsRole, "contactActions");
     setRoleNames(names);
 
-    if(init) {
+    if (init) {
         QString nco_query = customQuery;
-        if(customQuery.isEmpty())
+        if (customQuery.isEmpty()) {
             nco_query = QString::fromUtf8(
             "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount "
                 "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
@@ -98,6 +99,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
                         "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
                     " } "
                 "}");
+        }
 
         QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, nco_query));
         new ResourceWatcherService(this);
@@ -105,10 +107,10 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
 }
 
 template <class T>
-QList<QStandardItem*> toStandardItems(const QList<T*>& items)
+QList<QStandardItem*> toStandardItems(const QList<T*> &items)
 {
     QList<QStandardItem*> ret;
-    foreach(QStandardItem* it, items) {
+    foreach (QStandardItem *it, items) {
         ret += it;
     }
     return ret;
@@ -131,7 +133,7 @@ QHash<QString, QUrl> initUriToBinding()
     << Nepomuk2::Vocabulary::NCO::emailAddress()
     << Nepomuk2::Vocabulary::NIE::url();
 
-    foreach(const QUrl& keyUri, list) {
+    foreach (const QUrl &keyUri, list) {
         QString keyString = keyUri.toString();
         //convert every key to correspond to the nepomuk bindings
         keyString = keyString.mid(keyString.lastIndexOf(QLatin1Char('/')) + 1).replace(QLatin1Char('#'), QLatin1Char('_'));
@@ -140,28 +142,28 @@ QHash<QString, QUrl> initUriToBinding()
     return ret;
 }
 
-void PersonsModel::query(const QString& nco_query)
+void PersonsModel::query(const QString &nco_query)
 {
-    Q_ASSERT(rowCount()==0);
+    Q_ASSERT(rowCount() == 0);
     QHash<QString, QUrl> uriToBinding = initUriToBinding();
 
-    Soprano::Model* m = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
     QHash<QUrl, PersonsModelContactItem*> contacts;
     QHash<QUrl, PersonsModelItem*> persons;
 
-    while(it.next()) {
+    while (it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
         if (currentUri == QUrl(QLatin1String("nepomuk:/me"))) {
             continue;
         }
         PersonsModelContactItem* contactNode = contacts.value(currentUri);
         bool newContact = !contactNode;
-        if(!contactNode) {
+        if (!contactNode) {
             contactNode = new PersonsModelContactItem(currentUri);
         }
 
-        for(QHash<QString, QUrl>::const_iterator iter=uriToBinding.constBegin(), itEnd=uriToBinding.constEnd(); iter!=itEnd; ++iter) {
+        for(QHash<QString, QUrl>::const_iterator iter = uriToBinding.constBegin(), itEnd = uriToBinding.constEnd(); iter != itEnd; ++iter) {
             contactNode->addData(iter.value(), it[iter.key()].toString());
         }
 
@@ -189,10 +191,10 @@ void PersonsModel::query(const QString& nco_query)
     kDebug() << "Model ready";
 }
 
-void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
+void PersonsModel::unmerge(const QUrl &contactUri, const QUrl &personUri)
 {
     Nepomuk2::Resource oldPerson(personUri);
-    Q_ASSERT(oldPerson.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size()>=2 && "there's nothing to unmerge...");
+    Q_ASSERT(oldPerson.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size() >= 2 && "there's nothing to unmerge...");
     oldPerson.removeProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
     if (!oldPerson.hasProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence())) {
         oldPerson.remove();
@@ -212,49 +214,52 @@ void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
 //     job->start();
 }
 
-void PersonsModel::merge(const QList< QUrl >& persons)
+void PersonsModel::merge(const QList<QUrl> &persons)
 {
-    KJob* job = Nepomuk2::mergeResources( persons );
+    KJob *job = Nepomuk2::mergeResources(persons);
     job->setObjectName("Merge");
     connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
 }
 
-void PersonsModel::merge(const QVariantList& persons)
+void PersonsModel::merge(const QVariantList &persons)
 {
     QList<QUrl> conv;
-    foreach(const QVariant& p, persons)
+    foreach (const QVariant &p, persons)
         conv += p.toUrl();
     merge(conv);
 }
 
-void PersonsModel::jobFinished(KJob* job)
+void PersonsModel::jobFinished(KJob *job)
 {
-    if(job->error()!=0) {
+    if (job->error()!=0) {
         kWarning() << job->objectName() << " failed for "<< job->property("uri").toString() << job->errorText() << job->errorString();
     } else {
         kWarning() << job->objectName() << " done: "<< job->property("uri").toString();
     }
 }
 
-QModelIndex PersonsModel::findRecursively(int role, const QVariant& value, const QModelIndex& idx) const
+QModelIndex PersonsModel::findRecursively(int role, const QVariant &value, const QModelIndex &idx) const
 {
-    if(idx.isValid() && data(idx, role)==value)
+    if (idx.isValid() && data(idx, role) == value) {
         return idx;
-    int rows = rowCount(idx);
-    for(int i=0; i<rows; i++) {
-        QModelIndex ret = findRecursively(role, value, index(i, 0, idx));
-        if(ret.isValid())
-            return ret;
     }
+    int rows = rowCount(idx);
+    for (int i = 0; i < rows; i++) {
+        QModelIndex ret = findRecursively(role, value, index(i, 0, idx));
+        if (ret.isValid()) {
+            return ret;
+        }
+    }
+
     return QModelIndex();
 }
 
-QModelIndex PersonsModel::indexForUri(const QUrl& uri) const
+QModelIndex PersonsModel::indexForUri(const QUrl &uri) const
 {
     return findRecursively(PersonsModel::UriRole, uri);
 }
 
-void PersonsModel::createPerson(const Nepomuk2::Resource& res)
+void PersonsModel::createPerson(const Nepomuk2::Resource &res)
 {
     Q_ASSERT(!indexForUri(res.uri()).isValid());
     //pass only the uri as that will not add the contacts from groundingOccurrence
@@ -269,18 +274,18 @@ void PersonsModel::createPerson(const Nepomuk2::Resource& res)
     appendRow(new PersonsModelItem(res.uri()));
 }
 
-void PersonsModel::createContact(const Nepomuk2::Resource& res)
+void PersonsModel::createContact(const Nepomuk2::Resource &res)
 {
     appendRow(new PersonsModelContactItem(res.uri()));
 }
 
-PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl& uri) const
+PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl &uri) const
 {
-    QStandardItem* it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
+    QStandardItem *it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
     return dynamic_cast<PersonsModelContactItem*>(it);
 }
 
-void PersonsModel::createPersonFromContacts(const QList<QUrl>& contacts)
+void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
 {
     Nepomuk2::SimpleResource newPimoPerson;
     newPimoPerson.addType(Nepomuk2::Vocabulary::PIMO::Person());

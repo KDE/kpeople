@@ -19,18 +19,19 @@
 
 #include "match.h"
 
-Match::Match(const QList< int >& r, int a, int b)
+Match::Match(const QList< int > &r, int a, int b)
     : role(r), rowA(a), rowB(b)
 {}
 
-bool Match::operator==(const Match& m) const
+bool Match::operator==(const Match &m) const
 {
-    return role==m.role
-           && rowA==m.rowA
-           && rowB==m.rowB;
+    return role == m.role
+           && rowA == m.rowA
+           && rowB == m.rowB;
 }
 
-bool Match::operator<(const Match& m) const
+bool Match::operator<(const Match &m) const
 {
-    return rowA<m.rowA || (rowA==m.rowA && rowB<m.rowB);
+    return rowA < m.rowA
+           || (rowA == m.rowA && rowB < m.rowB);
 }

@@ -44,7 +44,7 @@ public:
     mutable QList<QAction *> actions;
 };
 
-PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri)
+PersonsModelContactItem::PersonsModelContactItem(const QUrl &uri)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
 //     setData(uri, PersonsModel::UriRole);
@@ -52,7 +52,7 @@ PersonsModelContactItem::PersonsModelContactItem(const QUrl& uri)
     setType(PersonsModel::MobilePhone);
 }
 
-PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource& contact)
+PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource &contact)
     : d_ptr(new PersonsModelContactItemPrivate)
 {
 //     setData(contact.uri(), PersonsModel::UriRole);
@@ -60,10 +60,14 @@ PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource& conta
     pullResourceProperties(contact);
 
     QUrl val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toUrl();
-    if(val.isValid()) pullResourceProperties(Nepomuk2::Resource(val));
+    if (val.isValid()) {
+        pullResourceProperties(Nepomuk2::Resource(val));
+    }
 
     val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::photo()).toUrl();
-    if(val.isValid()) pullResourceProperties(Nepomuk2::Resource(val));
+    if (val.isValid()) {
+        pullResourceProperties(Nepomuk2::Resource(val));
+    }
 }
 
 PersonsModelContactItem::~PersonsModelContactItem()
@@ -71,10 +75,10 @@ PersonsModelContactItem::~PersonsModelContactItem()
     delete d_ptr;
 }
 
-void PersonsModelContactItem::pullResourceProperties(const Nepomuk2::Resource& res)
+void PersonsModelContactItem::pullResourceProperties(const Nepomuk2::Resource &res)
 {
     QHash<QUrl, Nepomuk2::Variant> props = res.properties();
-    for(QHash<QUrl, Nepomuk2::Variant>::const_iterator it=props.constBegin(), itEnd=props.constEnd(); it!=itEnd; ++it) {
+    for (QHash<QUrl, Nepomuk2::Variant>::const_iterator it = props.constBegin(), itEnd = props.constEnd(); it != itEnd; ++it) {
         addData(it.key(), it->variant());
     }
 }
@@ -170,8 +174,10 @@ QVariant PersonsModelContactItem::data(int role) const
                 case PersonsModel::MobilePhone: role = PersonsModel::PhoneRole; break;
                 case PersonsModel::Postal: role = -1; break;
             }
-            if(role>=0)
+
+            if (role >= 0) {
                 return data(role);
+            }
         }   break;
         case PersonsModel::ContactActionsRole:
             if (d->actions.isEmpty()) {
@@ -188,14 +194,14 @@ QVariant PersonsModelContactItem::data(int role) const
     return QStandardItem::data(role);
 }
 
-void PersonsModelContactItem::modifyData(const QUrl& name, const QVariantList& added)
+void PersonsModelContactItem::modifyData(const QUrl &name, const QVariantList &added)
 {
     Q_D(PersonsModelContactItem);
     d->data[name] = added;
     emitDataChanged();
 }
 
-void PersonsModelContactItem::modifyData(const QUrl& name, const QVariant& newValue)
+void PersonsModelContactItem::modifyData(const QUrl &name, const QVariant &newValue)
 {
     Q_D(PersonsModelContactItem);
     kDebug() << "Old data:" << d->data[name];
@@ -205,7 +211,7 @@ void PersonsModelContactItem::modifyData(const QUrl& name, const QVariant& newVa
 }
 
 
-void PersonsModelContactItem::removeData(const QUrl& uri)
+void PersonsModelContactItem::removeData(const QUrl &uri)
 {
     Q_D(PersonsModelContactItem);
     d->data.remove(uri);

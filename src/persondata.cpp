@@ -32,21 +32,23 @@
 struct PersonDataPrivate {
     PersonDataPrivate() : model(0) {}
 
-    PersonsModel* model;
+    PersonsModel *model;
     QString id;
     QUrl uri;
 };
 
-PersonData::PersonData(QObject* parent)
-    : QObject(parent)
-    , d_ptr(new PersonDataPrivate)
-{}
+PersonData::PersonData(QObject *parent)
+    : QObject(parent),
+      d_ptr(new PersonDataPrivate)
+{
+}
 
-void PersonData::setContactId(const QString& id)
+void PersonData::setContactId(const QString &id)
 {
     Q_D(PersonData);
-    if(d->id==id)
+    if (d->id == id) {
         return;
+    }
 
     //it should be basically the same query as in the persons model
     //only that here we're restricting it to a person
@@ -88,8 +90,9 @@ void PersonData::setContactId(const QString& id)
 void PersonData::setContactUri(const QUrl &uri)
 {
     Q_D(PersonData);
-    if(d->uri == uri)
+    if (d->uri == uri) {
         return;
+    }
 
     bool isContact = false;
     bool isPerson = false;
@@ -97,7 +100,7 @@ void PersonData::setContactUri(const QUrl &uri)
     QString query = QString::fromLatin1("select ?type WHERE { <%1> a ?type. }").arg(uri.toString());
 
     Soprano::QueryResultIterator it = Nepomuk2::ResourceManager::instance()->mainModel()->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    while( it.next() ) {
+    while (it.next()) {
         kDebug() << it["type"];
         if (it["type"].toString() == Nepomuk2::Vocabulary::PIMO::Person().toString()) {
             isPerson = true;

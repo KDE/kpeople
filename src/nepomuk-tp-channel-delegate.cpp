@@ -35,7 +35,7 @@ public:
     Tp::AccountPtr          account;
 };
 
-NepomukTpChannelDelegate::NepomukTpChannelDelegate(QObject* parent)
+NepomukTpChannelDelegate::NepomukTpChannelDelegate(QObject *parent)
     : QObject(parent),
       d_ptr(new NepomukTpChannelDelegatePrivate)
 {
@@ -45,27 +45,27 @@ NepomukTpChannelDelegate::NepomukTpChannelDelegate(QObject* parent)
     // Start setting up the Telepathy AccountManager.
     Tp::AccountFactoryPtr  accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
                                                                        Tp::Features() << Tp::Account::FeatureCore
-                                                                       << Tp::Account::FeatureAvatar
-                                                                       << Tp::Account::FeatureCapabilities
-                                                                       << Tp::Account::FeatureProtocolInfo
-                                                                       << Tp::Account::FeatureProfile);
+                                                                                      << Tp::Account::FeatureAvatar
+                                                                                      << Tp::Account::FeatureCapabilities
+                                                                                      << Tp::Account::FeatureProtocolInfo
+                                                                                      << Tp::Account::FeatureProfile);
 
     Tp::ConnectionFactoryPtr connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
                                                                                Tp::Features() << Tp::Connection::FeatureCore
-                                                                               << Tp::Connection::FeatureSelfContact);
+                                                                                              << Tp::Connection::FeatureSelfContact);
 
     Tp::ContactFactoryPtr contactFactory = Tp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias
-    << Tp::Contact::FeatureAvatarData
-    << Tp::Contact::FeatureSimplePresence
-    << Tp::Contact::FeatureCapabilities);
+                                                                                      << Tp::Contact::FeatureAvatarData
+                                                                                      << Tp::Contact::FeatureSimplePresence
+                                                                                      << Tp::Contact::FeatureCapabilities);
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
     d->accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
-                                                  accountFactory,
-                                                  connectionFactory,
-                                                  channelFactory,
-                                                  contactFactory);
+                                                   accountFactory,
+                                                   connectionFactory,
+                                                   channelFactory,
+                                                   contactFactory);
 
     connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
@@ -81,7 +81,7 @@ void NepomukTpChannelDelegate::onAccountManagerReady(Tp::PendingOperation*)
     kDebug() << "Account manager ready";
 }
 
-void NepomukTpChannelDelegate::startIM(const QString& accountId, const QString& contactId, const QUrl& capability)
+void NepomukTpChannelDelegate::startIM(const QString &accountId, const QString &contactId, const QUrl &capability)
 {
     Q_D(NepomukTpChannelDelegate);
     if (!d->accountManager->isReady()) {

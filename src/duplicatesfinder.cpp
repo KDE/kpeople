@@ -21,7 +21,7 @@
 #include "persons-model.h"
 #include <QDebug>
 
-DuplicatesFinder::DuplicatesFinder(PersonsModel* model, QObject* parent)
+DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)
     : KJob(parent)
     , m_model(model)
 {
@@ -43,22 +43,23 @@ void DuplicatesFinder::doSearch()
     m_matches.clear();
 
     int count = m_model->rowCount();
-    for(int i=0; i<count; i++) {
+    for (int i=0; i < count; i++) {
         QModelIndex idx = m_model->index(i, 0);
 
         //we gather the values
         QVariantList values;
-        for(int role=0; role<m_compareRoles.size(); role++) {
+        for (int role = 0; role < m_compareRoles.size(); role++) {
             values += idx.data(m_compareRoles[role]);
         }
-        Q_ASSERT(values.size()==m_compareRoles.size());
+        Q_ASSERT(values.size() == m_compareRoles.size());
 
         //we check if it matches
-        int j=0;
-        foreach(const QVariantList& valueToCompare, collectedValues) {
+        int j = 0;
+        foreach (const QVariantList &valueToCompare, collectedValues) {
             QList< int > matchedRoles = matchAt(values, valueToCompare);
-            if(!matchedRoles.isEmpty())
+            if (!matchedRoles.isEmpty()) {
                 m_matches.append(Match(matchedRoles, i, j));
+            }
             j++;
         }
 
@@ -68,24 +69,25 @@ void DuplicatesFinder::doSearch()
     emitResult();
 }
 
-QList<int> DuplicatesFinder::matchAt(const QVariantList& value, const QVariantList& toCompare) const
+QList<int> DuplicatesFinder::matchAt(const QVariantList &value, const QVariantList &toCompare) const
 {
     QList<int> ret;
-    Q_ASSERT(value.size()==toCompare.size());
-    for(int i=0; i<toCompare.size(); i++) {
-        const QVariant& v = value[i];
-        if(v.type()==QVariant::List) {
+    Q_ASSERT(value.size() == toCompare.size());
+    for (int i = 0; i<toCompare.size(); i++) {
+        const QVariant &v = value[i];
+        if (v.type() == QVariant::List) {
             QList<QVariant> listA = v.toList(), listB=toCompare[i].toList();
-            if(!listA.isEmpty())
-                foreach(const QVariant& v, listB) {
-                    if(listA.contains(v)) {
+            if (!listA.isEmpty()) {
+                foreach (const QVariant &v, listB) {
+                    if (listA.contains(v)) {
                         Q_ASSERT(!ret.contains(m_compareRoles[i]) && "B");
                         ret += m_compareRoles[i];
                         break;
                     }
                 }
-        } else if(!v.isNull() && v==toCompare[i]
-            && (v.type()!=QVariant::String || !v.toString().isEmpty()))
+            }
+        } else if (!v.isNull() && v == toCompare[i]
+            && (v.type() != QVariant::String || !v.toString().isEmpty()))
         {
             Q_ASSERT(!ret.contains(m_compareRoles[i]) && "A");
             ret += m_compareRoles[i];

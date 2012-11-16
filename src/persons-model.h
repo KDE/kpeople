@@ -74,19 +74,19 @@ public:
      * @p initialize set it to false if you don't want it to use nepomuk values
      *               useful for unit testing.
      */
-    explicit PersonsModel(QObject* parent=0, bool init=true, const QString& customQuery=QString());
+    PersonsModel(QObject *parent = 0, bool init = true, const QString &customQuery = QString());
 
     /**
      * The @p contactUri will be removed from @p personUri and it will be added to a new
      * empty pimo:Person instance.
      */
-    Q_SCRIPTABLE void unmerge(const QUrl& contactUri, const QUrl& personUri);
+    Q_SCRIPTABLE void unmerge(const QUrl &contactUri, const QUrl &personUri);
 
     /** Merge all the contacts inside the @p persons */
-    void merge(const QList<QUrl>& persons);
+    void merge(const QList<QUrl> &persons);
 
     /** this one is because QML is not smart enough to understand what's going on */
-    Q_SCRIPTABLE void merge(const QVariantList& persons);
+    Q_SCRIPTABLE void merge(const QVariantList &persons);
 
     /** Creates a pimo:person with contacts as groundingOccurances */
     void createPersonFromContacts(const QList<QUrl> &contacts);
@@ -96,23 +96,23 @@ public:
     //FIXME: maybe merge with ^ ?
     void removePersonFromModel(const QModelIndex &index);
 
-    QModelIndex indexForUri(const QUrl& uri) const;
+    QModelIndex indexForUri(const QUrl &uri) const;
 
-    void createPerson(const Nepomuk2::Resource& res);
+    void createPerson(const Nepomuk2::Resource &res);
     void createContact(const Nepomuk2::Resource &res);
-    PersonsModelContactItem* contactForIMAccount(const QUrl& uri) const;
+    PersonsModelContactItem* contactForIMAccount(const QUrl &uri) const;
 
     NepomukTpChannelDelegate* tpChannelDelegate() const;
 
 private slots:
-    void jobFinished(KJob*);
-    void query(const QString& queryString);
+    void jobFinished(KJob *job);
+    void query(const QString &queryString);
 
 signals:
     void peopleAdded();
 
 private:
-    QModelIndex findRecursively(int role, const QVariant& value, const QModelIndex& idx=QModelIndex()) const;
+    QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel)

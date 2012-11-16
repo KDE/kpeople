@@ -25,8 +25,8 @@
 struct Match
 {
     Match(const QList<int>& r, int a, int b);
-    bool operator==(const Match& m) const;
-    bool operator<(const Match& m) const;
+    bool operator==(const Match &m) const;
+    bool operator<(const Match &m) const;
 
     QList<int> role;
     int rowA, rowB;

@@ -23,11 +23,12 @@
 #include <nepomuk2/datamanagement.h>
 #include <QUrl>
 
-MatchesSolver::MatchesSolver(const QList<Match>& matches, PersonsModel* model, QObject* parent)
+MatchesSolver::MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent)
     : KJob(parent)
     , m_matches(matches)
     , m_model(model)
-{}
+{
+}
 
 void MatchesSolver::start()
 {
@@ -36,33 +37,34 @@ void MatchesSolver::start()
 
 void MatchesSolver::startMatching()
 {
-    foreach(const Match& m, m_matches) {
+    foreach(const Match &m, m_matches) {
         QModelIndex idxDestination = m_model->index(m.rowA, 0);
         QModelIndex idxOrigin = m_model->index(m.rowB, 0);
-        
+
         QList<QUrl> persons;
         persons << idxDestination.data(PersonsModel::UriRole).toUrl();
         persons << idxOrigin.data(PersonsModel::UriRole).toUrl();
-        
-        KJob* job = Nepomuk2::mergeResources( persons );
+
+        KJob *job = Nepomuk2::mergeResources(persons);
         connect(job, SIGNAL(finished(KJob*)), SLOT(jobDone(KJob*)));
     }
     jobDone(0);
 }
 
-QList<QUrl> MatchesSolver::contactUris(const QModelIndex& idxOrigin)
+QList<QUrl> MatchesSolver::contactUris(const QModelIndex &idxOrigin)
 {
     QList<QUrl> ret;
     QModelIndex idx=idxOrigin.child(0,0);
-    for(; idx.isValid(); idx=idx.sibling(idx.row()+1, 0)) {
+    for (; idx.isValid(); idx = idx.sibling(idx.row() + 1, 0)) {
         ret += idx.data(PersonsModel::UriRole).toUrl();
     }
     return ret;
 }
 
-void MatchesSolver::jobDone(KJob* job)
+void MatchesSolver::jobDone(KJob *job)
 {
     m_pending.remove(job);
-    if(m_pending.isEmpty())
+    if (m_pending.isEmpty()) {
         emitResult();
+    }
 }

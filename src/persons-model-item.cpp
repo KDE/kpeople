@@ -34,7 +34,7 @@ PersonsModelItem::PersonsModelItem(const QUrl &personUri)
     setData(personUri, PersonsModel::UriRole);
 }
 
-PersonsModelItem::PersonsModelItem(const Nepomuk2::Resource& person)
+PersonsModelItem::PersonsModelItem(const Nepomuk2::Resource &person)
 {
     setData(person.uri(), PersonsModel::UriRole);
     setContacts(person.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList());
@@ -70,12 +70,14 @@ QVariant PersonsModelItem::data(int role) const
         case PersonsModel::NameRole:
         case Qt::DisplayRole: {
             QVariant value = queryChildrenForRole(Qt::DisplayRole);
-            if(value.isNull())
+            if (value.isNull()) {
                 value = queryChildrenForRole(PersonsModel::ContactIdRole);
-            if(value.isNull())
+            }
+            if (value.isNull()) {
                 return QString("PIMO:Person - %1").arg(data(PersonsModel::UriRole).toString());
-            else
+            } else {
                 return value;
+            }
         }
         case PersonsModel::StatusRole: //TODO: use a better algorithm for finding the actual status
         case PersonsModel::NickRole:
@@ -97,31 +99,32 @@ QVariant PersonsModelItem::data(int role) const
     return QStandardItem::data(role);
 }
 
-void PersonsModelItem::removeContacts(const QList<QUrl>& contacts)
+void PersonsModelItem::removeContacts(const QList<QUrl> &contacts)
 {
     kDebug() << "remove contacts" << contacts;
-    for(int i=0; i<rowCount(); ) {
+    for (int i = 0; i < rowCount(); ) {
         QStandardItem* item = child(i);
-        if(contacts.contains(item->data(PersonsModel::UriRole).toUrl()))
+        if (contacts.contains(item->data(PersonsModel::UriRole).toUrl())) {
             removeRow(i);
-        else
+        } else {
             ++i;
+        }
     }
     emitDataChanged();
 }
 
-void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
+void PersonsModelItem::addContacts(const QList<QUrl> &_contacts)
 {
     QList<QUrl> contacts(_contacts);
     //get existing child-contacts and remove them from the new ones
     QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
-    foreach(const QVariant& uri, uris) {
+    foreach (const QVariant &uri, uris) {
         contacts.removeOne(uri.toUrl());
     }
 
     //query the model for the contacts, if they are present, then need to be just moved
     QList<QStandardItem*> toplevelContacts;
-    foreach(const QUrl &uri, contacts) {
+    foreach (const QUrl &uri, contacts) {
         QModelIndex contactIndex = qobject_cast<PersonsModel*>(model())->indexForUri(uri);
         if (contactIndex.isValid()) {
              toplevelContacts.append(qobject_cast<PersonsModel*>(model())->takeRow(contactIndex.row()));
@@ -130,7 +133,7 @@ void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
 
     //append the moved contacts to this person and remove them from 'contacts'
     //so they are not added twice
-    foreach(QStandardItem *contactItem, toplevelContacts) {
+    foreach (QStandardItem *contactItem, toplevelContacts) {
         PersonsModelContactItem *contact = dynamic_cast<PersonsModelContactItem*>(contactItem);
         appendRow(contact);
         contacts.removeOne(contact->uri());
@@ -138,13 +141,13 @@ void PersonsModelItem::addContacts(const QList<QUrl>& _contacts)
 
     kDebug() << "add contacts" << contacts;
     QList<PersonsModelContactItem*> rows;
-    foreach(const QUrl& uri, contacts) {
+    foreach (const QUrl &uri, contacts) {
         appendRow(new PersonsModelContactItem(Nepomuk2::Resource(uri)));
     }
     emitDataChanged();
 }
 
-void PersonsModelItem::setContacts(const QList<QUrl>& contacts)
+void PersonsModelItem::setContacts(const QList<QUrl> &contacts)
 {
     kDebug() << "set contacts" << contacts;
     if (contacts.isEmpty()) {
@@ -152,18 +155,18 @@ void PersonsModelItem::setContacts(const QList<QUrl>& contacts)
         return;
     }
 
-    if(hasChildren()) {
+    if (hasChildren()) {
         QList<QUrl> toRemove;
         QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
-        foreach(const QVariant& contact, uris) {
-            if(!contacts.contains(contact.toUrl()))
+        foreach (const QVariant &contact, uris) {
+            if (!contacts.contains(contact.toUrl()))
                 toRemove += contact.toUrl();
         }
         removeContacts(toRemove);
     }
 
     QList<QUrl> toAdd;
-    foreach(const QUrl& contact, contacts) {
+    foreach (const QUrl &contact, contacts) {
         toAdd += contact;
     }
     addContacts(toAdd);

@@ -32,26 +32,26 @@ class ResourceWatcherService : public QObject
 {
     Q_OBJECT
 public:
-    ResourceWatcherService(PersonsModel* model);
+    explicit ResourceWatcherService(PersonsModel *model);
     virtual ~ResourceWatcherService();
 
 private Q_SLOTS:
-    void onPersonPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
-    void onContactPropertyAdded(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
-    void onPersonPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
-    void onContactPropertyRemoved(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property, const QVariant& value);
-    void onPersonPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
-                                  const QVariantList& removed, const QVariantList& after);
-    void onContactPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
-                                  const QVariantList& removed, const QVariantList& after);
-    void onIMAccountPropertyModified(const Nepomuk2::Resource& res, const Nepomuk2::Types::Property& property,
-                                     const QVariantList& added, const QVariantList& removed);
-    void personCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
-    void personRemoved(const QUrl& uri);
-    void contactCreated(const Nepomuk2::Resource& res, const QList<QUrl>& types);
-    void contactRemoved(const QUrl& uri, const QList< QUrl >& types);
+    void onPersonPropertyAdded(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &value);
+    void onContactPropertyAdded(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &value);
+    void onPersonPropertyRemoved(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &value);
+    void onContactPropertyRemoved(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &value);
+    void onPersonPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
+                                  const QVariantList &removed, const QVariantList &after);
+    void onContactPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
+                                  const QVariantList &removed, const QVariantList &after);
+    void onIMAccountPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
+                                     const QVariantList &added, const QVariantList &removed);
+    void personCreated(const Nepomuk2::Resource &res, const QList<QUrl> &types);
+    void personRemoved(const QUrl &uri);
+    void contactCreated(const Nepomuk2::Resource &res, const QList<QUrl> &types);
+    void contactRemoved(const QUrl &uri, const QList< QUrl > &types);
 
-    void updateIMAccount(const Nepomuk2::Resource& res);
+    void updateIMAccount(const Nepomuk2::Resource &res);
 
 private:
     ResourceWatcherServicePrivate * const d_ptr;

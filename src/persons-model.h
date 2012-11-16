@@ -27,11 +27,12 @@
 #include <QStandardItemModel>
 
 class NepomukTpChannelDelegate;
-namespace Nepomuk2 { class Resource; }
 class PersonsModelContactItem;
-struct PersonsModelPrivate;
 class KJob;
 class QUrl;
+struct PersonsModelPrivate;
+
+namespace Nepomuk2 { class Resource; }
 
 class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
 {

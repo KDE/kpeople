@@ -87,7 +87,7 @@ QVariant PersonsModelItem::data(int role) const
         case PersonsModel::PhotoRole:
         case PersonsModel::ContactIdRole:
             return queryChildrenForRoleList(role);
-        case PersonsModel::ContactsCount:
+        case PersonsModel::ContactsCountRole:
             return rowCount();
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Person;

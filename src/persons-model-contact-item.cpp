@@ -160,6 +160,7 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::PhotoRole: return d->data.value(Nepomuk2::Vocabulary::NIE::url());
         case PersonsModel::IMAccountUriRole: return d->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount());
         case PersonsModel::StatusRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imStatus());
+        case PersonsModel::ContactsCountRole: return 1;
         case PersonsModel::ContactIdRole: {
             int role = -1;
             switch((PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt()) {

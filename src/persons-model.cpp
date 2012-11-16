@@ -62,7 +62,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString& customQuer
     names.insert(PersonsModel::UriRole, "uri");
     names.insert(PersonsModel::NameRole, "name");
     names.insert(PersonsModel::PhotoRole, "photo");
-    names.insert(PersonsModel::ContactsCount, "contactsCount");
+    names.insert(PersonsModel::ContactsCountRole, "contactsCount");
     names.insert(PersonsModel::ResourceTypeRole, "resourceType");
     names.insert(PersonsModel::ContactActionsRole, "contactActions");
     setRoleNames(names);

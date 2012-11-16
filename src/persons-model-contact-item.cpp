@@ -41,7 +41,7 @@ class PersonsModelContactItemPrivate {
 public:
     QUrl uri;
     QHash<QUrl, QVariant> data;
-    mutable QList<QAction *> actions;
+    mutable PersonActions *actions;
 };
 
 PersonsModelContactItem::PersonsModelContactItem(const QUrl &uri)
@@ -180,13 +180,14 @@ QVariant PersonsModelContactItem::data(int role) const
             }
         }   break;
         case PersonsModel::ContactActionsRole:
-            if (d->actions.isEmpty()) {
-                PersonActions *actions = new PersonActions();
-                actions->initialize(index());
-                d->actions = actions->actions();
+            //FIXME: this probably won't catch changes in person actions
+            if (!d->actions) {
+                d->actions = new PersonActions();
+                d->actions->initialize(index());
+                kDebug() << d->actions->actions();
             }
 
-            return QVariant::fromValue<QList<QAction *> >(d->actions);
+            return QVariant::fromValue<QList<QAction *> >(d->actions->actions());
 
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Contact;

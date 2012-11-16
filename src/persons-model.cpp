@@ -198,18 +198,18 @@ void PersonsModel::unmerge(const QUrl& contactUri, const QUrl& personUri)
         oldPerson.remove();
     }
 
-    Nepomuk2::SimpleResource newPerson;
-    newPerson.addType( Nepomuk2::Vocabulary::PIMO::Person() );
-    newPerson.setProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
-
-    Nepomuk2::SimpleResourceGraph graph;
-    graph << newPerson;
-
-    KJob * job = Nepomuk2::storeResources( graph );
-    job->setProperty("uri", contactUri);
-    job->setObjectName("Unmerge");
-    connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
-    job->start();
+//     Nepomuk2::SimpleResource newPerson;
+//     newPerson.addType( Nepomuk2::Vocabulary::PIMO::Person() );
+//     newPerson.setProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
+//
+//     Nepomuk2::SimpleResourceGraph graph;
+//     graph << newPerson;
+//
+//     KJob * job = Nepomuk2::storeResources( graph );
+//     job->setProperty("uri", contactUri);
+//     job->setObjectName("Unmerge");
+//     connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
+//     job->start();
 }
 
 void PersonsModel::merge(const QList< QUrl >& persons)

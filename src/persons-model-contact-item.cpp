@@ -49,6 +49,8 @@ PersonsModelContactItem::PersonsModelContactItem(const QUrl &uri)
 {
 //     setData(uri, PersonsModel::UriRole);
     d_ptr->uri = uri;
+    d_ptr->actions = 0;
+
     setType(PersonsModel::MobilePhone);
 }
 
@@ -181,6 +183,7 @@ QVariant PersonsModelContactItem::data(int role) const
         }   break;
         case PersonsModel::ContactActionsRole:
             //FIXME: this probably won't catch changes in person actions
+            //FIXME: qpointer
             if (!d->actions) {
                 d->actions = new PersonActions();
                 d->actions->initialize(index());
@@ -199,6 +202,14 @@ void PersonsModelContactItem::modifyData(const QUrl &name, const QVariantList &a
 {
     Q_D(PersonsModelContactItem);
     d->data[name] = added;
+
+    //check if the capabilities changed, then we need to recreate the PersonActions
+    if (name == QUrl(QLatin1String("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasIMCapability"))) {
+        if (d->actions) {
+            delete d->actions;
+            d->actions = 0;
+        }
+    }
     emitDataChanged();
 }
 

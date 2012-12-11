@@ -46,6 +46,7 @@ public:
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
+    void onChannelRequestFinished(Tp::PendingOperation *op);
 
 private:
     NepomukTpChannelDelegatePrivate * d_ptr;

@@ -93,10 +93,22 @@ void NepomukTpChannelDelegate::startIM(const QString &accountId, const QString &
     Tp::ChannelRequestHints hints;
     hints.setHint(QLatin1String("org.kde.telepathy"), QLatin1String("forceRaiseWindow"), QVariant(true));
 
-    if(capability==Nepomuk2::Vocabulary::NCO::imCapabilityText())
-        d->account->ensureTextChat(contactId, QDateTime::currentDateTime(), PREFERRED_TEXTCHAT_HANDLER, hints);
-    else if(capability==Nepomuk2::Vocabulary::NCO::imCapabilityAudio())
-        d->account->ensureAudioCall(contactId, QString(), QDateTime::currentDateTime(), QString(), hints);
-    else if(capability==Nepomuk2::Vocabulary::NCO::imCapabilityVideo())
-        d->account->ensureAudioVideoCall(contactId, QString(), QString(), QDateTime::currentDateTime(), QString(), hints);
+    Tp::PendingChannelRequest *channelRequest;
+    if (capability == Nepomuk2::Vocabulary::NCO::imCapabilityText()) {
+        channelRequest = d->account->ensureTextChat(contactId, QDateTime::currentDateTime(), PREFERRED_TEXTCHAT_HANDLER, hints);
+    } else if(capability == Nepomuk2::Vocabulary::NCO::imCapabilityAudio()) {
+        channelRequest = d->account->ensureAudioCall(contactId, QString(), QDateTime::currentDateTime(), QString(), hints);
+    } else if(capability == Nepomuk2::Vocabulary::NCO::imCapabilityVideo()) {
+        channelRequest = d->account->ensureAudioVideoCall(contactId, QString(), QString(), QDateTime::currentDateTime(), QString(), hints);
+    }
+
+    connect(channelRequest, SIGNAL(finished(Tp::PendingOperation*)),
+            this, SLOT(onChannelRequestFinished(Tp::PendingOperation*)));
+}
+
+void NepomukTpChannelDelegate::onChannelRequestFinished(Tp::PendingOperation *op)
+{
+    if (op->isError()) {
+        kDebug() << "Channel request error:" << op->errorMessage();
+    }
 }

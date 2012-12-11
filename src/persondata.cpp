@@ -221,7 +221,7 @@ QUrl PersonData::avatar() const
     return personIndex().data(PersonsModel::PhotoRole).toUrl();
 }
 
-QString PersonData::nickname() const
+QString PersonData::imNickname() const
 {
     return personIndex().data(PersonsModel::NickRole).toString();
 }

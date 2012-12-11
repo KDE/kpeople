@@ -36,7 +36,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_PROPERTY(QUrl uri READ uri NOTIFY contactChanged)
 
     Q_PROPERTY(QUrl avatar READ avatar NOTIFY dataChanged)
-    Q_PROPERTY(QString imNickname READ nickname NOTIFY dataChanged)
+    Q_PROPERTY(QString imNickname READ imNickname NOTIFY dataChanged)
     Q_PROPERTY(QString status READ status NOTIFY dataChanged)
     Q_PROPERTY(QStringList contacts READ contacts NOTIFY dataChanged)
     public:
@@ -52,7 +52,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** @returns a url pointing to the avatar image */
         QUrl avatar() const;
 
-        QString nickname() const;
+        QString imNickname() const;
 
         QString status() const;
 

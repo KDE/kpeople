@@ -93,6 +93,9 @@ public:
     /** Creates a pimo:person with contacts as groundingOccurances */
     void createPersonFromContacts(const QList<QUrl> &contacts);
 
+    /** Adds contacts to existing PIMO:Person */
+    void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
+
     /** Removes the link between all contacts, removes the pimo:person but leaves the contacts intact */
     void removePerson(const QUrl &uri);
     //FIXME: maybe merge with ^ ?

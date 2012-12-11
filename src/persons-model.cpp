@@ -302,6 +302,18 @@ void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
     //the new person will be added to the model by the resourceCreated and propertyAdded Nepomuk signals
 }
 
+void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts)
+{
+    Nepomuk2::SimpleResource pimoPerson(personUri);
+
+    foreach(const QUrl &contact, contacts) {
+        KJob *job = Nepomuk2::addProperty(QList<QUrl>() << personUri,
+                                          Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
+                                          QVariantList() << contact);
+        connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+    }
+}
+
 void PersonsModel::removePerson(const QUrl &uri)
 {
     Nepomuk2::Resource oldPerson(uri);

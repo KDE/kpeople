@@ -18,6 +18,7 @@
 */
 #include <KApplication>
 #include <KCmdLineArgs>
+#include <KDebug>
 #include <QDeclarativeView>
 #include <qdeclarativeerror.h>
 
@@ -36,7 +37,7 @@ int main(int argc, char** argv)
     decl.setupBindings();
     view.setSource(QUrl("qrc:/qml/Main.qml"));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    Q_ASSERT(view.errors().isEmpty());
+    kDebug() << view.errors();
     view.show();
 
     app.exec();

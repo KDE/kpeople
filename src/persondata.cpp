@@ -182,10 +182,10 @@ void PersonData::setContactUri(const QUrl &uri)
             "}").arg(uri.toString());
     }
 
-        delete d->model;
-        d->model = new PersonsModel(this, true, query);
-        connect(d->model, SIGNAL(peopleAdded()), SLOT(personInitialized()));
-        connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SIGNAL(dataChanged()));
+    delete d->model;
+    d->model = new PersonsModel(this, true, query);
+    connect(d->model, SIGNAL(peopleAdded()), SLOT(personInitialized()));
+    connect(d->model, SIGNAL(dataChanged(QModelIndex,QModelIndex)), SIGNAL(dataChanged()));
 }
 
 

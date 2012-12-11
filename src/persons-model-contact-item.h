@@ -61,6 +61,6 @@ private:
 };
 
 Q_DECLARE_METATYPE(PersonsModelContactItem*);
-Q_DECLARE_METATYPE(QList<QAction *>)
+Q_DECLARE_METATYPE(QList<QAction *>);
 
 #endif // PERSONS_MODEL_CONTACT_ITEM_H

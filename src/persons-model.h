@@ -61,6 +61,7 @@ public:
         IMRole,
         PhotoRole,
         IMAccountUriRole,
+        IMAccountTypeRole,
         StatusRole,
         ResourceTypeRole,
         ContactActionsRole

@@ -84,6 +84,7 @@ QVariant PersonsModelItem::data(int role) const
             return queryChildrenForRole(role);
         case PersonsModel::LabelRole:
         case PersonsModel::IMRole:
+        case PersonsModel::IMAccountTypeRole:
         case PersonsModel::PhoneRole:
         case PersonsModel::EmailRole:
         case PersonsModel::PhotoRole:

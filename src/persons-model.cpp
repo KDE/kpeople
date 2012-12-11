@@ -131,6 +131,7 @@ QHash<QString, QUrl> initUriToBinding()
     << Nepomuk2::Vocabulary::NCO::imStatus()
     << Nepomuk2::Vocabulary::NCO::hasIMAccount()
     << Nepomuk2::Vocabulary::NCO::emailAddress()
+    << Nepomuk2::Vocabulary::NCO::phoneNumber()
     << Nepomuk2::Vocabulary::NIE::url();
 
     foreach (const QUrl &keyUri, list) {

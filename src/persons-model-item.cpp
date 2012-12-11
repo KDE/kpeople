@@ -90,7 +90,13 @@ QVariant PersonsModelItem::data(int role) const
         case PersonsModel::PhotoRole:
         case PersonsModel::ContactIdRole:
         case PersonsModel::ContactTypeRole:
-            return queryChildrenForRoleList(role);
+            //we need to return empty qvariant here, otherwise we'd get a qvariant
+            //with empty qvariantlist, which would get parsed as non-empty qvariant
+            if (queryChildrenForRoleList(role).isEmpty()) {
+                return QVariant();
+            } else {
+                return queryChildrenForRoleList(role);
+            }
         case PersonsModel::ContactsCountRole:
             return rowCount();
         case PersonsModel::ResourceTypeRole:

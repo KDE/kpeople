@@ -198,6 +198,11 @@ void PersonData::personInitialized()
 QString PersonData::contactId() const
 {
     Q_D(const PersonData);
+    //if we initialized from uri, we don't have id
+    if (d->id.isEmpty()) {
+        return personIndex().data(PersonsModel::ContactIdRole).toString();
+    }
+
     return d->id;
 }
 

@@ -19,6 +19,7 @@
 
 #include "persondata.h"
 #include "persons-model.h"
+#include "persons-model-item.h"
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Query/Query>
 #include <Nepomuk2/ResourceManager>
@@ -226,7 +227,12 @@ QString PersonData::imNickname() const
     return personIndex().data(PersonsModel::NickRole).toString();
 }
 
-QStringList PersonData::contacts() const
+QString PersonData::name() const
+{
+    return personIndex().data(Qt::DisplayRole).toString();
+}
+
+QStringList PersonData::bareContacts() const
 {
     return personIndex().data(PersonsModel::ContactIdRole).toStringList();
 }
@@ -238,4 +244,9 @@ QModelIndex PersonData::personIndex() const
     QModelIndex idx = d->model->index(0,0);
     Q_ASSERT(idx.isValid());
     return idx;
+}
+
+bool PersonData::isPerson() const
+{
+    return (PersonsModel::ResourceType)personIndex().data(PersonsModel::ResourceTypeRole).toInt() == PersonsModel::Person;
 }

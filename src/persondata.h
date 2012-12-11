@@ -38,7 +38,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_PROPERTY(QUrl avatar READ avatar NOTIFY dataChanged)
     Q_PROPERTY(QString imNickname READ imNickname NOTIFY dataChanged)
     Q_PROPERTY(QString status READ status NOTIFY dataChanged)
-    Q_PROPERTY(QStringList contacts READ contacts NOTIFY dataChanged)
+    Q_PROPERTY(QStringList bareContacts READ bareContacts NOTIFY dataChanged)
     public:
         explicit PersonData(QObject *parent = 0);
 
@@ -54,16 +54,20 @@ class KPEOPLE_EXPORT PersonData : public QObject
 
         QString imNickname() const;
 
+        QString name() const;
+
         QString status() const;
 
         /** @returns a list of contact id's for the current person */
-        QStringList contacts() const;
+        QStringList bareContacts() const;
 
         /** @returns a model index so that we can query it like it was from PersonsModel */
         QModelIndex personIndex() const;
 
         /** @p uri uri of the nepomuk resource (either contact or person) */
         void setContactUri(const QUrl &uri);
+
+        bool isPerson() const;
 
     private slots:
         void personInitialized();

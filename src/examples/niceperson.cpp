@@ -32,7 +32,7 @@ class PersonWidget : public QWidget
     public:
         explicit PersonWidget(const QString& contactId, QWidget* parent = 0, Qt::WindowFlags f = 0)
         {
-            m_person.setContactId(contactId);
+            m_person.setContactUri(QUrl(contactId));
             connect(&m_person, SIGNAL(dataInitialized()), SLOT(initGUI()));
         }
 
@@ -40,8 +40,8 @@ class PersonWidget : public QWidget
         void initGUI() {
             QFormLayout* l = new QFormLayout(this);
             l->addRow("contactId:", new QLabel(m_person.contactId()));
-            l->addRow("All Contacts:", new QLabel(m_person.contacts().join(", ")));
-            l->addRow("nickname:", new QLabel(m_person.nickname()));
+            l->addRow("All Contacts:", new QLabel(m_person.bareContacts().join(", ")));
+            l->addRow("nickname:", new QLabel(m_person.imNickname()));
             l->addRow("status:", new QLabel(m_person.status()));
 
             QLabel* avatar = new QLabel;

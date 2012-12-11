@@ -86,7 +86,6 @@ QVariant PersonsModelItem::data(int role) const
         case PersonsModel::IMAccountTypeRole:
         case PersonsModel::PhoneRole:
         case PersonsModel::EmailRole:
-        case PersonsModel::PhotoRole:
         case PersonsModel::ContactIdRole:
         case PersonsModel::ContactTypeRole:
             //we need to return empty qvariant here, otherwise we'd get a qvariant
@@ -96,6 +95,8 @@ QVariant PersonsModelItem::data(int role) const
             } else {
                 return queryChildrenForRoleList(role);
             }
+        case PersonsModel::PhotoRole:
+            return queryChildrenForRole(role);
         case PersonsModel::ContactsCountRole:
             return rowCount();
         case PersonsModel::ResourceTypeRole:

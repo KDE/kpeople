@@ -55,13 +55,15 @@ void PersonData::setContactId(const QString &id)
     QString query = QString::fromUtf8(
             "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
                 "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-                "?nco_imStatus ?nie_url "
+                "?nco_imStatus ?nie_url ?nco_emailAddress ?nao_prefLabel "
 
                 "WHERE { "
                     "?uri a nco:PersonContact. "
                     "?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. "
                     "?uri                       nco:hasContactMedium         ?x. "
-                    "?x                         ?y                           \"%1\"^^xsd:string. "
+                    "?x                         ?y                           <%1>. "
+
+                "OPTIONAL { ?uri                       nao:prefLabel                ?nao_prefLabel. }"
 
                 "OPTIONAL { "
                     "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
@@ -114,11 +116,12 @@ void PersonData::setContactUri(const QUrl &uri)
         query = QString::fromUtf8(
             "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
             "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-            "?nco_imStatus ?nie_url "
+            "?nco_imStatus ?nie_url ?nao_prefLabel ?nco_emailAddress ?nco_phoneNumber "
 
             "WHERE { "
             "?uri a nco:PersonContact. "
             "OPTIONAL { ?pimo_groundingOccurrence  pimo:groundingOccurrence     ?uri. }"
+            "OPTIONAL { ?uri                       nao:prefLabel                ?nao_prefLabel. }"
 
             "OPTIONAL { "
             "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
@@ -135,6 +138,10 @@ void PersonData::setContactUri(const QUrl &uri)
             "OPTIONAL { "
             "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
             "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
+            " } "
+            "OPTIONAL { "
+            "?uri                       nco:hasPhoneNumber         ?nco_hasPhoneNumber. "
+            "?nco_hasPhoneNumber        nco:phoneNumber            ?nco_phoneNumber. "
             " } "
             "FILTER (?uri = <%1>)"
             "}").arg(uri.toString());
@@ -142,11 +149,13 @@ void PersonData::setContactUri(const QUrl &uri)
         query = QString::fromUtf8(
             "select ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount"
             "?nco_imNickname ?telepathy_statusType ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress"
-            "?nco_imStatus ?nie_url "
+            "?nco_imStatus ?nie_url ?nao_prefLabel ?nco_emailAddress ?nco_phoneNumber "
 
             "WHERE { "
             "?uri a nco:PersonContact. "
             "?pimo_groundingOccurrence pimo:groundingOccurrence     ?uri. "
+
+            "OPTIONAL { ?uri                       nao:prefLabel                ?nao_prefLabel. }"
 
             "OPTIONAL { "
             "?uri                       nco:hasIMAccount            ?nco_hasIMAccount. "
@@ -163,6 +172,10 @@ void PersonData::setContactUri(const QUrl &uri)
             "OPTIONAL { "
             "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
             "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
+            " } "
+            "OPTIONAL { "
+            "?uri                       nco:hasPhoneNumber         ?nco_hasPhoneNumber. "
+            "?nco_hasPhoneNumber        nco:phoneNumber            ?nco_phoneNumber. "
             " } "
             "FILTER (?pimo_groundingOccurrence = <%1>)"
             "}").arg(uri.toString());

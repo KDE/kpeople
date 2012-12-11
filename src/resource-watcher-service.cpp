@@ -189,6 +189,10 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
     }
 
     Q_D(ResourceWatcherService);
+    if (!d->m_model->indexForUri(res.uri()).isValid()) {
+        return;
+    }
+
     PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     item->modifyData(property.uri(), added);
 }

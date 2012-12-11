@@ -88,6 +88,10 @@ void NepomukTpChannelDelegate::startIM(const QString &accountId, const QString &
         kDebug() << "Account manager not ready, come back later";
         return;
     }
+    if (capability.isEmpty()) {
+        return;
+    }
+
     d->account = d->accountManager->accountForPath(accountId);
 
     Tp::ChannelRequestHints hints;

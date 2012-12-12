@@ -339,10 +339,9 @@ void PersonsModel::removePerson(const QUrl &uri)
 void PersonsModel::removePersonFromModel(const QModelIndex &index)
 {
     PersonsModelItem *person = dynamic_cast<PersonsModelItem*>(itemFromIndex(index));
-
-    for (int i = 0; i < person->rowCount(); i++) {
+    for (int i = 0; i < person->rowCount(); ) {
         //reparent the contacts to toplevel
-        invisibleRootItem()->appendRow(person->takeChild(i));
+        invisibleRootItem()->appendRow(person->takeRow(i));
     }
 
     removeRow(index.row());

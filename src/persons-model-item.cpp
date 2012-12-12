@@ -110,9 +110,9 @@ void PersonsModelItem::removeContacts(const QList<QUrl> &contacts)
 {
     kDebug() << "remove contacts" << contacts;
     for (int i = 0; i < rowCount(); ) {
-        QStandardItem* item = child(i);
-        if (contacts.contains(item->data(PersonsModel::UriRole).toUrl())) {
-            removeRow(i);
+        QStandardItem *item = child(i);
+        if (item && contacts.contains(item->data(PersonsModel::UriRole).toUrl())) {
+            model()->invisibleRootItem()->appendRow(takeRow(i));
         } else {
             ++i;
         }

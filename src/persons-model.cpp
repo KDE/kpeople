@@ -305,13 +305,18 @@ void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
 
 void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts)
 {
-    Nepomuk2::SimpleResource pimoPerson(personUri);
+    //put the contacts from QList<QUrl> into QVariantList
+    QVariantList contactsList;
+    Q_FOREACH(const QUrl &contact, contacts) {
+        contactsList << contact;
+    }
 
-    foreach(const QUrl &contact, contacts) {
-        KJob *job = Nepomuk2::addProperty(QList<QUrl>() << personUri,
-                                          Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
-                                          QVariantList() << contact);
-        connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+    KJob *job = Nepomuk2::addProperty(QList<QUrl>() << personUri,
+                                      Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
+                                      QVariantList() << contactsList);
+    connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+}
+
 void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts)
 {
     QVariantList contactsList;

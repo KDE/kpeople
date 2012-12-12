@@ -18,7 +18,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "persons-model.h"
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
@@ -150,44 +149,75 @@ void PersonsModel::query(const QString &nco_query)
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
-    QHash<QUrl, PersonsModelContactItem*> contacts;
-    QHash<QUrl, PersonsModelItem*> persons;
+
+    QHash<QUrl, PersonsModelContactItem*> contacts; //all contacts in the model
+    QHash<QUrl, PersonsModelItem*> persons;         //all persons
+    QList<QUrl> pimoOccurances;                     //contacts that are groundingOccurrences of persons
 
     while (it.next()) {
         QUrl currentUri = it[QLatin1String("uri")].uri();
+
+        //skip nepomuk:/me, we don't want that in the model
         if (currentUri == QUrl(QLatin1String("nepomuk:/me"))) {
             continue;
         }
-        PersonsModelContactItem* contactNode = contacts.value(currentUri);
-        bool newContact = !contactNode;
-        if (!contactNode) {
-            contactNode = new PersonsModelContactItem(currentUri);
-        }
 
-        for(QHash<QString, QUrl>::const_iterator iter = uriToBinding.constBegin(), itEnd = uriToBinding.constEnd(); iter != itEnd; ++iter) {
-            contactNode->addData(iter.value(), it[iter.key()].toString());
-        }
-
+        //before any further processing, check if the current contact
+        //is not a groundingOccurrence of a nepomuk:/me person, if yes, don't process it
         QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurrence")].uri();
         if (pimoPersonUri == QUrl(QLatin1String("nepomuk:/me"))) {
             continue;
         }
 
-        if (pimoPersonUri.isEmpty()) {
-            //TODO: look for other contacts and possibly automerge
+        //see if we don't have this contact already
+        PersonsModelContactItem *contactNode = contacts.value(currentUri);
+
+        bool newContact = !contactNode;
+
+        if (newContact) {
+            contactNode = new PersonsModelContactItem(currentUri);
             contacts.insert(currentUri, contactNode);
         } else {
+            //FIXME: for some reason we get most of the contacts twice in the resultset,
+            //       disabling duplicate processing for now to speedup loading time;
+            //       also it turns out that the same values are always passed the second time
+            //       so no point processing it again
+            continue;
+        }
+
+        //iterate over the results and add the wanted properties into the contact
+        for(QHash<QString, QUrl>::const_iterator iter = uriToBinding.constBegin(), itEnd = uriToBinding.constEnd(); iter != itEnd; ++iter) {
+            contactNode->addData(iter.value(), it[iter.key()].toString());
+        }
+
+        if (!pimoPersonUri.isEmpty()) {
+            //look for existing person items
             QHash< QUrl, PersonsModelItem* >::const_iterator pos = persons.constFind(pimoPersonUri);
             if (pos == persons.constEnd()) {
+                //this means no person exists yet, so lets create new one
                 pos = persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
             }
-            pos.value()->appendRow(contactNode);
+            //FIXME: we need to check if the contact is not already present in person's children,
+            //       from testing however it turns out that checking newContact == true
+            //       is enough
+            if (newContact) {
+                pos.value()->appendRow(contactNode);
+                pimoOccurances.append(currentUri);
+            }
         }
     }
 
+    //add the persons to the model
     invisibleRootItem()->appendRows(toStandardItems(persons.values()));
+
+    Q_FOREACH(const QUrl &uri, pimoOccurances) {
+        //remove all contacts being groundingOccurrences
+        contacts.remove(uri);
+    }
+    //add the remaining contacts to the model as top level items
     invisibleRootItem()->appendRows(toStandardItems(contacts.values()));
     emit peopleAdded();
+    //prepare the telepathy channel delegate to be able to start chats immediately
     d_ptr->initKTPDelegate();
     kDebug() << "Model ready";
 }

@@ -96,6 +96,9 @@ public:
     /** Adds contacts to existing PIMO:Person */
     void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
 
+    /** Removes given contacts from existing PIMO:Person */
+    void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
+
     /** Removes the link between all contacts, removes the pimo:person but leaves the contacts intact */
     void removePerson(const QUrl &uri);
     //FIXME: maybe merge with ^ ?

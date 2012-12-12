@@ -312,7 +312,17 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
                                           Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
                                           QVariantList() << contact);
         connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts)
+{
+    QVariantList contactsList;
+    Q_FOREACH(const QUrl &contact, contacts) {
+        contactsList << contact;
     }
+
+    KJob *job = Nepomuk2::removeProperty(QList<QUrl>() << personUri,
+                                         Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
+                                         QVariantList() << contactsList);
+    connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
 }
 
 void PersonsModel::removePerson(const QUrl &uri)

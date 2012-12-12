@@ -140,9 +140,9 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource &
                                                       const QVariantList &added, const QVariantList &removed)
 {
     kDebug() << "person changed:" /*<< res.uri() */<< property.name() << removed << added << " // " << res.property(property.uri());
-    if (removed.isEmpty()) {
-        //if the removed() is empty, it means the property was added, not really changed
-        //in which case it is handled by the propertyAdded
+    if (removed.isEmpty() || added.isEmpty()) {
+        //if the removed or added is empty, it means the property was either added or removed, not really changed
+        //in which case it is handled by the propertyAdded and/or propertyRemoved slots
         return;
     }
     Q_D(ResourceWatcherService);
@@ -182,9 +182,11 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
 {
     kDebug() << "contact changed:" /*<< res.uri() */<< property.name() << removed << added;
     
-    if (removed.isEmpty()) {
-        //if the removed() is empty, it means the property was added, not really changed
-        //in which case it is handled by the propertyAdded
+    kDebug() << "contact changed:" << res.uri() << property.name() << removed << added;
+
+    if (removed.isEmpty() || added.isEmpty()) {
+        //if the removed or added is empty, it means the property was added or removed, not really changed
+        //in which case it is handled by the propertyAdded and/or propertyRemoved
         return;
     }
 

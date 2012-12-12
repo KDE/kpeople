@@ -111,17 +111,16 @@ void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource &res
 
 void ResourceWatcherService::onPersonPropertyRemoved(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &_value)
 {
-    QVariantList value = _value.toList();
-    kDebug() << "person property removed:" /*<< res.uri() */<< property.name() << value;
+    kDebug() << "person property removed:" /*<< res.uri() */<< property.name() << _value;
 
-    if (property.name()=="groundingOccurrence") {
-        if (value.isEmpty()) {
-            personRemoved(res.uri());
-        } else {
-            Q_D(ResourceWatcherService);
-            PersonsModelItem *item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
-            if (item) {
-                item->setContacts(res.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList());
+    if (property.name() == "groundingOccurrence") {
+        Q_D(ResourceWatcherService);
+        PersonsModelItem *item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+        if (item) {
+            if (_value.canConvert<QUrl>()) {    //one contact was removed from groundingOccurrence
+                item->removeContacts(QList<QUrl>() << _value.toUrl());
+            } else if (_value.canConvert<QList<QUrl> >()) {
+                item->removeContacts(_value.value<QList<QUrl> >());
             }
         }
     }

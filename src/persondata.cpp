@@ -20,6 +20,7 @@
 #include "persondata.h"
 #include "persons-model.h"
 #include "persons-model-item.h"
+
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Query/Query>
 #include <Nepomuk2/ResourceManager>
@@ -29,6 +30,8 @@
 #include <Nepomuk2/Variant>
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
+
+#include <KDebug>
 
 struct PersonDataPrivate {
     PersonDataPrivate() : model(0) {}

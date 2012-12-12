@@ -43,7 +43,7 @@ public:
 
     void removeContacts(const QList<QUrl> &contacts);
     void addContacts(const QList<QUrl> &contacts);
-    void setContacts(const QList< QUrl > &contacts);
+    void setContacts(const QList<QUrl> &contacts);
 
 private:
     QVariant queryChildrenForRole(int role) const;

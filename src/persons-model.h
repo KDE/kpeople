@@ -93,6 +93,12 @@ public:
     /** Creates a pimo:person with contacts as groundingOccurances */
     void createPersonFromContacts(const QList<QUrl> &contacts);
 
+    /**
+     * Creates a pimo:person from indexes, checking if one of them isn't person already and
+     * adding the contacts to it if it is
+     */
+    void createPersonFromIndexes(const QList<QModelIndex> &indexes);
+
     /** Adds contacts to existing PIMO:Person */
     void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
 

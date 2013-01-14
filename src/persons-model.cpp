@@ -290,6 +290,7 @@ QModelIndex PersonsModel::indexForUri(const QUrl &uri) const
     return findRecursively(PersonsModel::UriRole, uri);
 }
 
+//FIXME: rename this to addPerson
 void PersonsModel::createPerson(const Nepomuk2::Resource &res)
 {
     Q_ASSERT(!indexForUri(res.uri()).isValid());
@@ -305,6 +306,7 @@ void PersonsModel::createPerson(const Nepomuk2::Resource &res)
     appendRow(new PersonsModelItem(res.uri()));
 }
 
+//FIXME: rename this to addContact
 void PersonsModel::createContact(const Nepomuk2::Resource &res)
 {
     appendRow(new PersonsModelContactItem(res.uri()));
@@ -331,6 +333,31 @@ void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
     KJob *job = Nepomuk2::storeResources( graph, Nepomuk2::IdentifyNew, Nepomuk2::OverwriteProperties );
     connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
     //the new person will be added to the model by the resourceCreated and propertyAdded Nepomuk signals
+}
+
+void PersonsModel::createPersonFromIndexes(const QList<QModelIndex> &indexes)
+{
+    QList<QUrl> personUris;
+    QList<QUrl> contactUris;
+
+
+    Q_FOREACH(const QModelIndex &index, indexes) {
+        if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
+            personUris.append(index.data(PersonsModel::UriRole).toUrl());
+        } else {
+            contactUris.append(index.data(PersonsModel::UriRole).toUrl());
+        }
+    }
+
+    if (personUris.isEmpty()) {
+        kDebug() << "Got only contacts, creating pimo:person";
+        createPersonFromContacts(contactUris);
+    } else if (personUris.size() == 1) {
+        kDebug() << "Got one pimo:person, adding contacts to it";
+        addContactsToPerson(personUris.first(), contactUris);
+    } else {
+        kDebug() << "Got two pimo:persons, unsupported for now";
+    }
 }
 
 void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts)

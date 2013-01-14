@@ -52,6 +52,8 @@ class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
         virtual QVariant data(const QModelIndex &index, int role) const;
         virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
+        QList<QAction*> actionForContactId(const QString &contactId);
+
     private slots:
         void emailTriggered();
         void imTriggered();

@@ -270,3 +270,18 @@ PersonData* PersonActions::person() const
     Q_D(const PersonActions);
     return d->person;
 }
+
+QList<QAction*> PersonActions::actionForContactId(const QString &contactId)
+{
+    Q_D(PersonActions);
+
+    QList<QAction*> actionList;
+
+    Q_FOREACH(QAction *action, d->actions) {
+        if (action->property("contactId").toString() == contactId) {
+            actionList.append(action);
+        }
+    }
+
+    return actionList;
+}

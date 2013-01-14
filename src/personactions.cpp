@@ -53,7 +53,7 @@ struct PersonActionsPrivate {
     QAction* createEmailAction(PersonActions *pactions, const QIcon &icon, const QString &name, const QString &email)
     {
         QAction *action = new QAction(icon, i18n("Send e-mail to '%1'", name), pactions);
-        action->setProperty("email", email);
+        action->setProperty("contactId", email);
         QObject::connect(action, SIGNAL(triggered(bool)), pactions, SLOT(emailTriggered()));
         return action;
     }
@@ -73,7 +73,7 @@ struct PersonActionsPrivate {
 
             QAction *action = new QAction(pactions);
             action->setProperty("uri", contactUri);
-            action->setProperty("imrole", imrole);
+            action->setProperty("contactId", imrole);
             action->setProperty("capability", ss);
 
             if (ss == QLatin1String("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#imCapabilityText")) {
@@ -202,7 +202,7 @@ void PersonActions::initialize(const QModelIndex &idx)
 void PersonActions::emailTriggered()
 {
     QAction *action = qobject_cast<QAction*>(sender());
-    KToolInvocation::invokeMailer(action->property("email").toString(), QString());
+    KToolInvocation::invokeMailer(action->property("contactId").toString(), QString());
 }
 
 void PersonActions::imTriggered()
@@ -225,7 +225,7 @@ void PersonActions::imTriggered()
     if (!account.isEmpty()) {
         Q_D(const PersonActions);
         qobject_cast<const PersonsModel*>(d->model)->tpChannelDelegate()->startIM(account,
-                                                                                  action->property("imrole").toString(),
+                                                                                  action->property("contactId").toString(),
                                                                                   action->property("capability").toString());
     }
 }

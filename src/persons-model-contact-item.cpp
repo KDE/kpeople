@@ -166,7 +166,7 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::PhotoRole: return d->data.value(Nepomuk2::Vocabulary::NIE::url());
         case PersonsModel::IMAccountUriRole: return d->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount());
         case PersonsModel::IMAccountTypeRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imAccountType());
-        case PersonsModel::StatusRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imStatus());
+        case PersonsModel::StatusRole: return QLatin1String("unknown"); //return unknown presence, for real presence use PersonsPresenceModel
         case PersonsModel::ContactsCountRole: return 1;
         case PersonsModel::ContactIdRole: {
             int role = -1;

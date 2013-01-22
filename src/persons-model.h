@@ -26,6 +26,7 @@
 
 #include <QStandardItemModel>
 
+class PersonsPresenceModel;
 class NepomukTpChannelDelegate;
 class PersonsModelContactItem;
 class KJob;
@@ -127,6 +128,8 @@ signals:
 
 private:
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
+
+    friend class PersonsPresenceModel;
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);

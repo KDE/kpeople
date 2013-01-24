@@ -27,6 +27,7 @@
 #include <TelepathyQt/PendingReady>
 
 #include <KTp/contact-factory.h>
+#include <KTp/global-contact-manager.h>
 #include <KDebug>
 
 PersonsPresenceModel::PersonsPresenceModel(QObject *parent)
@@ -76,42 +77,40 @@ void PersonsPresenceModel::onAccountManagerReady(Tp::PendingOperation *op)
 
     kDebug() << "Account manager ready";
 
-    Q_FOREACH (const Tp::AccountPtr &account, m_accountManager->allAccounts()) {
-        onNewAccountAdded(account);
-    }
+    m_contactManager = new KTp::GlobalContactManager(m_accountManager, this);
+    connect(m_contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
+            this, SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 
+    onAllKnownContactsChanged(m_contactManager->allKnownContacts(), Tp::Contacts());
 }
 
-void PersonsPresenceModel::onNewAccountAdded(const Tp::AccountPtr &account)
+void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
 {
-    connect(account.data(), SIGNAL(connectionChanged(Tp::ConnectionPtr)),
-            this, SLOT(onAccountConnectionChanged(Tp::ConnectionPtr)));
-
-    onAccountConnectionChanged(account->connection());
-}
-
-void PersonsPresenceModel::onAccountConnectionChanged(const Tp::ConnectionPtr &connection)
-{
-    if (!connection.isNull()) {
-        kDebug() << "Got" << connection->contactManager()->allKnownContacts().size() << "contacts, inserting presences...";
-        Q_FOREACH (const Tp::ContactPtr &contact, connection->contactManager()->allKnownContacts()) {
-            m_presences.insert(contact->id(), contact->presence());
-
-            connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
-                    this, SLOT(onContactPresenceChanged(Tp::Presence)));
-
-            QModelIndex index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
-            Q_EMIT dataChanged(index, index);
+    if (!m_presences.isEmpty()) {
+        Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
+            m_presences.remove(contact->id());
         }
     }
 
+    Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
+        m_presences.insert(contact->id(), contact);
 
+        connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
+                this, SLOT(onContactChanged()));
+
+        connect(contact.data(), SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+                this, SLOT(onContactChanged()));
+
+        //TODO: add other stuff here etc
+
+        QModelIndex index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
+        Q_EMIT dataChanged(index, index);
+    }
 }
 
-void PersonsPresenceModel::onContactPresenceChanged(const Tp::Presence &presence)
+void PersonsPresenceModel::onContactChanged()
 {
     QString id = qobject_cast<Tp::Contact*>(sender())->id();
-    m_presences.insert(id, presence);
 
     QModelIndex index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, id);
     Q_EMIT dataChanged(index, index);
@@ -124,12 +123,22 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
     }
 
     if (role == PersonsModel::StatusRole) {
-        QString contactId = index.data(PersonsModel::IMRole).toString();
-
-        if (m_presences.keys().contains(contactId)) {
-            return m_presences.value(contactId).status();
-        } else {
-            return QLatin1String("unknown");
+        if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
+            QString contactId = index.data(PersonsModel::IMRole).toString();
+            if (m_presences.keys().contains(contactId)) {
+                return m_presences.value(contactId)->presence().status();
+            } else {
+                return QLatin1String("unknown");
+            }
+        } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
+            QVariantList ret;
+            for (int i = 0; i < rowCount(); i++) {
+                QVariant value = index.child(i, 0).data(role);
+                if (!value.isNull()) {
+                    ret += value;
+                }
+            }
+            return ret;
         }
     }
 

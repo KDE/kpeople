@@ -27,6 +27,10 @@
 
 #include "kpeople_export.h"
 
+namespace KTp {
+class GlobalContactManager;
+}
+
 namespace Tp {
 class PendingOperation;
 }
@@ -43,13 +47,13 @@ public:
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
-    void onNewAccountAdded(const Tp::AccountPtr &account);
-    void onAccountConnectionChanged(const Tp::ConnectionPtr &connection);
-    void onContactPresenceChanged(const Tp::Presence &presence);
+    void onContactChanged();
+    void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
 
 private:
+    KTp::GlobalContactManager *m_contactManager;
     Tp::AccountManagerPtr m_accountManager;
-    QHash<QString, Tp::Presence> m_presences;
+    QHash<QString, Tp::ContactPtr> m_presences;
 };
 
 #endif // PERSONS_PRESENCE_MODEL_H

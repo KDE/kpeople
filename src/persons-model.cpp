@@ -72,8 +72,8 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
         if (customQuery.isEmpty()) {
             nco_query = QString::fromUtf8(
             "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount "
-            "?nco_imNickname ?telepathy_accountIdentifier ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
-            "?nie_url ?nao_prefLabel "
+            "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
+            "?nie_url ?nao_prefLabel ?nco_contactGroupName " //?telepathy_accountIdentifier
 
                 "WHERE { "
                     "?uri a nco:PersonContact. "
@@ -87,6 +87,10 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
                         "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
                         "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
                     " } "
+                    "OPTIONAL { "
+                        "?uri nco:belongsToGroup ?nco_belongsToGroup . "
+                        "?nco_belongsToGroup nco:contactGroupName ?nco_contactGroupName . "
+                    " }"
                     "OPTIONAL {"
                         "?uri                       nco:photo                   ?phRes. "
                         "?phRes                     nie:url                     ?nie_url. "
@@ -125,7 +129,8 @@ QHash<QString, QUrl> initUriToBinding()
     << Nepomuk2::Vocabulary::NCO::hasIMAccount()
     << Nepomuk2::Vocabulary::NCO::emailAddress()
     << Nepomuk2::Vocabulary::NCO::phoneNumber()
-    << Nepomuk2::Vocabulary::NIE::url();
+    << Nepomuk2::Vocabulary::NIE::url()
+    << Nepomuk2::Vocabulary::NCO::contactGroupName();
 
     foreach (const QUrl &keyUri, list) {
         QString keyString = keyUri.toString();

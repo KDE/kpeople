@@ -65,7 +65,8 @@ public:
         IMAccountTypeRole,
         StatusRole,
         ResourceTypeRole,
-        ContactActionsRole
+        ContactActionsRole,
+        ContactGroupsRole
     };
 
     enum ResourceType {

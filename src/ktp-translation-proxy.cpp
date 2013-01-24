@@ -60,6 +60,9 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             return ContactsModel::ContactRowType;
         case ContactsModel::AvatarRole:
             return proxyIndex.data(PersonsModel::PhotoRole);
+        case ContactsModel::GroupsRole:
+            kDebug() << proxyIndex.data(PersonsModel::ContactGroupsRole);
+            return proxyIndex.data(PersonsModel::ContactGroupsRole);
     }
 
     return QIdentityProxyModel::data(proxyIndex, role);

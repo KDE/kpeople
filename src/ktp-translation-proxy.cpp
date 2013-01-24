@@ -61,7 +61,6 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
         case ContactsModel::AvatarRole:
             return proxyIndex.data(PersonsModel::PhotoRole);
         case ContactsModel::GroupsRole:
-            kDebug() << proxyIndex.data(PersonsModel::ContactGroupsRole);
             return proxyIndex.data(PersonsModel::ContactGroupsRole);
     }
 

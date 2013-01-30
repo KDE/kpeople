@@ -133,16 +133,25 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
                 return QLatin1String("unknown");
             }
         } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
-            QVariantList ret;
-            for (int i = 0; i < rowCount(); i++) {
-                QVariant value = index.child(i, 0).data(role);
-                if (!value.isNull()) {
-                    ret += value;
-                }
+            return queryChildrenForData(index, role);
+        }
             }
             return ret;
         }
     }
 
     return QIdentityProxyModel::data(index, role);
+}
+
+QVariantList PersonsPresenceModel::queryChildrenForData(const QModelIndex &index, int role) const
+{
+    QVariantList ret;
+    for (int i = 0; i < rowCount(); i++) {
+        QVariant value = index.child(i, 0).data(role);
+        if (!value.isNull()) {
+            ret += value;
+        }
+    }
+
+    return ret;
 }

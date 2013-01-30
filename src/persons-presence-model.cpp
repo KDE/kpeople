@@ -127,7 +127,9 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
             QString contactId = index.data(PersonsModel::IMRole).toString();
             if (m_presences.keys().contains(contactId)) {
                 return m_presences.value(contactId)->presence().status();
-            } else {
+            } else if (!contactId.isEmpty()) {
+                return QLatin1String("offline");
+            } else if (contactId.isEmpty()) {
                 return QLatin1String("unknown");
             }
         } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {

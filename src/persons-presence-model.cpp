@@ -135,8 +135,27 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
         } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
             return queryChildrenForData(index, role);
         }
+    } else if (role == PersonsModel::IMAccountRole) {
+        if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
+            QString contactId = index.data(PersonsModel::IMRole).toString();
+            if (m_presences.keys().contains(contactId)) {
+                return QVariant::fromValue<Tp::AccountPtr>(m_contactManager->accountForContact(m_presences.value(contactId)));
+            } else {
+                return QVariant();
             }
-            return ret;
+        } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
+            return queryChildrenForData(index, role);
+        }
+    } else if (role == PersonsModel::IMContactRole) {
+        if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
+            QString contactId = index.data(PersonsModel::IMRole).toString();
+            if (m_presences.keys().contains(contactId)) {
+                return QVariant::fromValue<Tp::ContactPtr>(m_presences.value(contactId));
+            } else {
+                return QVariant();
+            }
+        } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
+            return queryChildrenForData(index, role);
         }
     }
 

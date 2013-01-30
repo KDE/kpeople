@@ -25,6 +25,8 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/Presence>
 
+#include <KTp/ktp-metatypes.h>
+
 #include "kpeople_export.h"
 
 namespace KTp {
@@ -51,6 +53,8 @@ private Q_SLOTS:
     void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
 
 private:
+    QVariantList queryChildrenForData(const QModelIndex &index, int role) const;
+
     KTp::GlobalContactManager *m_contactManager;
     Tp::AccountManagerPtr m_accountManager;
     QHash<QString, Tp::ContactPtr> m_presences;

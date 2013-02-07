@@ -135,8 +135,9 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
     if (role == PersonsModel::StatusRole) {
         if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
             QString contactId = index.data(PersonsModel::IMRole).toString();
-            if (m_presences.keys().contains(contactId)) {
-                return m_presences.value(contactId)->presence().status();
+            Tp::ContactPtr contact = m_contacts.value(contactId);
+            if (!contact.isNull()) {
+                return contact->presence().status();
             } else if (!contactId.isEmpty()) {
                 return QLatin1String("offline");
             } else if (contactId.isEmpty()) {
@@ -148,8 +149,9 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
     } else if (role == PersonsModel::IMAccountRole) {
         if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
             QString contactId = index.data(PersonsModel::IMRole).toString();
-            if (m_presences.keys().contains(contactId)) {
-                return QVariant::fromValue<Tp::AccountPtr>(m_contactManager->accountForContact(m_presences.value(contactId)));
+            Tp::ContactPtr contact = m_contacts.value(contactId);
+            if (!contact.isNull()) {
+                return QVariant::fromValue<Tp::AccountPtr>(m_contactManager->accountForContact(m_contacts.value(contactId)));
             } else {
                 return QVariant();
             }
@@ -159,8 +161,21 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
     } else if (role == PersonsModel::IMContactRole) {
         if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
             QString contactId = index.data(PersonsModel::IMRole).toString();
-            if (m_presences.keys().contains(contactId)) {
-                return QVariant::fromValue<Tp::ContactPtr>(m_presences.value(contactId));
+            Tp::ContactPtr contact = m_contacts.value(contactId);
+            if (!contact.isNull()) {
+                return QVariant::fromValue<KTp::ContactPtr>(KTp::ContactPtr::qObjectCast(m_contacts.value(contactId)));
+            } else {
+                return QVariant();
+            }
+        } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
+            return queryChildrenForData(index, role);
+        }
+    } else if (role == PersonsModel::BlockedRole) {
+        if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
+            QString contactId = index.data(PersonsModel::IMRole).toString();
+            Tp::ContactPtr contact = m_contacts.value(contactId);
+            if (!contact.isNull()) {
+                return m_contacts.value(contactId)->isBlocked();
             } else {
                 return QVariant();
             }

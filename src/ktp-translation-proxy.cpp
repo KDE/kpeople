@@ -21,7 +21,7 @@
 #include "persons-presence-model.h"
 #include "persons-model.h"
 
-#include <KTp/Models/contacts-model.h>
+#include <KTp/types.h>
 #include <KDebug>
 
 KTpTranslationProxy::KTpTranslationProxy(QObject *parent)
@@ -36,7 +36,7 @@ KTpTranslationProxy::~KTpTranslationProxy()
 QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) const
 {
     switch (role) {
-        case ContactsModel::PresenceTypeRole:
+        case KTp::ContactPresenceTypeRole:
             if (proxyIndex.data(PersonsModel::StatusRole).toString() == "available") {
                 return Tp::ConnectionPresenceTypeAvailable;
             } else if (proxyIndex.data(PersonsModel::StatusRole).toString() == "away") {
@@ -53,23 +53,25 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             break;
 
         case Qt::DisplayRole:
-        case ContactsModel::AliasRole:
+        case KTp::IdRole:
             //this is needed to avoid infinite recursion call (proxyIndex.data(Qt::DisplayRole) would call this method)
             return mapToSource(proxyIndex).data(Qt::DisplayRole);
-        case ContactsModel::TypeRole:
+        case KTp::RowTypeRole:
             if (proxyIndex.data(PersonsModel::ResourceTypeRole) == PersonsModel::Contact) {
-                return ContactsModel::ContactRowType;
+                return KTp::ContactRowType;
             } else {
-                return ContactsModel::GroupRowType;
+                return KTp::PersonRowType;
             }
-        case ContactsModel::AvatarRole:
+        case KTp::ContactAvatarPathRole:
             return proxyIndex.data(PersonsModel::PhotoRole);
-        case ContactsModel::GroupsRole:
+        case KTp::ContactGroupsRole:
             return proxyIndex.data(PersonsModel::ContactGroupsRole);
-        case ContactsModel::AccountRole:
+        case KTp::AccountRole:
             return proxyIndex.data(PersonsModel::IMAccountRole);
-        case ContactsModel::ContactRole:
+        case KTp::ContactRole:
             return proxyIndex.data(PersonsModel::IMContactRole);
+        case KTp::ContactIsBlockedRole:
+            return proxyIndex.data(PersonsModel::BlockedRole);
     }
 
     return QIdentityProxyModel::data(proxyIndex, role);

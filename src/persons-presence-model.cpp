@@ -86,19 +86,23 @@ void PersonsPresenceModel::onAccountManagerReady(Tp::PendingOperation *op)
 
 void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
 {
-    if (!m_presences.isEmpty()) {
+    if (!m_contacts.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
-            m_presences.remove(contact->id());
+            m_contacts.remove(contact->id());
         }
     }
 
     Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
-        m_presences.insert(contact->id(), contact);
+        Tp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
+        m_contacts.insert(contact->id(), ktpContact);
 
-        connect(contact.data(), SIGNAL(presenceChanged(Tp::Presence)),
+        connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 this, SLOT(onContactChanged()));
 
-        connect(contact.data(), SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+        connect(ktpContact.data(), SIGNAL(capabilitiesChanged(Tp::ContactCapabilities)),
+                this, SLOT(onContactChanged()));
+
+        connect(ktpContact.data(), SIGNAL(invalidated()),
                 this, SLOT(onContactChanged()));
 
         //TODO: add other stuff here etc

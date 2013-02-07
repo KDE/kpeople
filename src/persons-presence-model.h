@@ -25,7 +25,7 @@
 #include <TelepathyQt/Types>
 #include <TelepathyQt/Presence>
 
-#include <KTp/ktp-metatypes.h>
+#include <KTp/types.h>
 
 #include "kpeople_export.h"
 
@@ -57,7 +57,7 @@ private:
 
     KTp::GlobalContactManager *m_contactManager;
     Tp::AccountManagerPtr m_accountManager;
-    QHash<QString, Tp::ContactPtr> m_presences;
+    QHash<QString, KTp::ContactPtr> m_contacts;
 };
 
 #endif // PERSONS_PRESENCE_MODEL_H

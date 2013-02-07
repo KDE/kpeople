@@ -89,6 +89,9 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
     if (!m_contacts.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
             m_contacts.remove(contact->id());
+
+            QModelIndex index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
+            Q_EMIT dataChanged(index, index);
         }
     }
 

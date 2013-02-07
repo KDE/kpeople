@@ -109,6 +109,9 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
 
         QModelIndex index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
         Q_EMIT dataChanged(index, index);
+        if (index.parent().isValid()) {
+            Q_EMIT dataChanged(index.parent(), index.parent());
+        }
     }
 }
 

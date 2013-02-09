@@ -81,10 +81,7 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
 
     d->imWatcher = new Nepomuk2::ResourceWatcher(this);
     d->imWatcher->addType(Nepomuk2::Vocabulary::NCO::IMAccount());
-    d->imWatcher->addProperty(Nepomuk2::Vocabulary::NCO::imStatus());
 
-    connect(d->contactWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
-            this, SLOT(updateIMAccount(Nepomuk2::Resource)));
     connect(d->imWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SLOT(onIMAccountPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
 
@@ -202,22 +199,16 @@ void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resourc
 {
     kDebug() << "IM contact changed:" << res.uri() << property.name() << removed << added;
 
-    if (removed.isEmpty()) {
-        //if the removed() is empty, it means the property was added, not really changed
-        //in which case it is handled by the propertyAdded
-        return;
-    }
-
     Q_D(ResourceWatcherService);
     kDebug() << d->m_model->contactForIMAccount(res.uri());
     PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->contactForIMAccount(res.uri()));
     if (!item) {
         return;
     }
-    if (property.name() == QLatin1String("imStatus") || property.name() == QLatin1String("statusType")) {
+
+    //we expect only the imNickname to change here
+    if (property.name() == QLatin1String("imNickname")) {
         item->modifyData(property.uri(), added.first());
-    } else {
-        item->modifyData(property.uri(), added);
     }
 }
 
@@ -261,14 +252,4 @@ void ResourceWatcherService::personRemoved(const QUrl &uri)
         d->m_model->removePersonFromModel(idx);
     }
     kDebug() << "person removed" << uri;
-}
-
-void ResourceWatcherService::updateIMAccount(const Nepomuk2::Resource &res)
-{
-    Q_D(ResourceWatcherService);
-    PersonsModelContactItem *it = d->m_model->contactForIMAccount(res.uri());
-    if (it) {
-        it->addData(Nepomuk2::Vocabulary::NCO::hasIMAccount(), res.uri());
-        it->pullResourceProperties(res);
-    }
 }

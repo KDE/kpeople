@@ -27,6 +27,7 @@
 #include <nepomuk2/resourcewatcher.h>
 #include <Nepomuk2/Vocabulary/PIMO>
 #include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/NIE>
 #include <Nepomuk2/Variant>
 #include <KDebug>
 
@@ -158,7 +159,14 @@ void ResourceWatcherService::onContactPropertyAdded(const Nepomuk2::Resource &re
     Q_D(ResourceWatcherService);
     PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     if (item) {
-        item->addData(property.uri(), value);
+        if (property.uri() == Nepomuk2::Vocabulary::NCO::photo()) {
+            Nepomuk2::Resource photoRes(value.toUrl());
+            item->addData(Nepomuk2::Vocabulary::NIE::url(), photoRes.property(Nepomuk2::Vocabulary::NIE::url()).toUrl());
+        } else if (property.uri() == Nepomuk2::Vocabulary::NCO::hasIMAccount()) {
+            item->pullResourceProperties(Nepomuk2::Resource(value.toUrl()));
+        } else {
+            item->addData(property.uri(), value);
+        }
     }
 }
 

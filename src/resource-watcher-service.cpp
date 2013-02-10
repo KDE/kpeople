@@ -96,7 +96,7 @@ void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource &res
 {
     kDebug() << "person property added:" /*<< res.uri() */<< property.name() << value;
 
-    if (property.uri()==Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
+    if (property.uri() == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
         Q_D(ResourceWatcherService);
         PersonsModelItem *item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
         if (item) {

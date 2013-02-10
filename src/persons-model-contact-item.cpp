@@ -104,8 +104,9 @@ void PersonsModelContactItem::refreshIcon()
 
 void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
 {
-    if(value.isNull())
+    if (value.isNull()) {
         return;
+    }
 
     Q_D(PersonsModelContactItem);
     if (Nepomuk2::Vocabulary::NCO::imID() == key) {

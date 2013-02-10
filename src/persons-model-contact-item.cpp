@@ -50,8 +50,6 @@ PersonsModelContactItem::PersonsModelContactItem(const QUrl &uri)
 //     setData(uri, PersonsModel::UriRole);
     d_ptr->uri = uri;
     d_ptr->actions = 0;
-
-    setType(PersonsModel::MobilePhone);
 }
 
 PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource &contact)

@@ -184,23 +184,16 @@ void ResourceWatcherService::onContactPropertyRemoved(const Nepomuk2::Resource &
 void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
                                                       const QVariantList &added, const QVariantList &removed)
 {
-    kDebug() << "contact changed:" /*<< res.uri() */<< property.name() << removed << added;
-    
     kDebug() << "contact changed:" << res.uri() << property.name() << removed << added;
 
-    if (removed.isEmpty() || added.isEmpty()) {
-        //if the removed or added is empty, it means the property was added or removed, not really changed
-        //in which case it is handled by the propertyAdded and/or propertyRemoved
-        return;
-    }
+    if (!removed.isEmpty() && !added.isEmpty()) {
+        Q_D(ResourceWatcherService);
+        PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
 
-    Q_D(ResourceWatcherService);
-    if (!d->m_model->indexForUri(res.uri()).isValid()) {
-        return;
+        if (item) {
+            item->modifyData(property.uri(), added);
+        }
     }
-
-    PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
-    item->modifyData(property.uri(), added);
 }
 
 void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariantList &added, const QVariantList &removed)

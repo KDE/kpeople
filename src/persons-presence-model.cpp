@@ -96,7 +96,7 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
     }
 
     Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
-        Tp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
+        KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
         m_contacts.insert(contact->id(), ktpContact);
 
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),

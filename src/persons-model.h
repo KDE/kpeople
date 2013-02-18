@@ -65,6 +65,7 @@ public:
         IMAccountRole,
         IMAccountTypeRole,
         IMContactRole,
+        BlockedRole,
         StatusRole,
         ResourceTypeRole,
         ContactActionsRole,

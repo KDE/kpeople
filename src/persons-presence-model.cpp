@@ -89,8 +89,11 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
     if (!m_contacts.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
             m_contacts.remove(contact->id());
-
-            QModelIndex index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
+            QModelIndex index;
+            if (sourceModel()) {
+                index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
+            }
+            kDebug() << "Removing presence for" << index.data(Qt::DisplayRole) << index;
             Q_EMIT dataChanged(index, index);
         }
     }
@@ -110,7 +113,11 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
 
         //TODO: add other stuff here etc
 
-        QModelIndex index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
+        QModelIndex index;
+        if (sourceModel()) {
+            index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
+        }
+//         kDebug() << "Got presence for" << index.data(Qt::DisplayRole) << index;
         Q_EMIT dataChanged(index, index);
         if (index.parent().isValid()) {
             Q_EMIT dataChanged(index.parent(), index.parent());
@@ -122,7 +129,10 @@ void PersonsPresenceModel::onContactChanged()
 {
     QString id = qobject_cast<Tp::Contact*>(sender())->id();
 
-    QModelIndex index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, id);
+    QModelIndex index;
+    if (sourceModel()) {
+        index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, id);
+    }
     Q_EMIT dataChanged(index, index);
 }
 
@@ -135,14 +145,7 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
     if (role == PersonsModel::StatusRole) {
         if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
             QString contactId = index.data(PersonsModel::IMRole).toString();
-            Tp::ContactPtr contact = m_contacts.value(contactId);
-            if (!contact.isNull()) {
-                return contact->presence().status();
-            } else if (!contactId.isEmpty()) {
-                return QLatin1String("offline");
-            } else if (contactId.isEmpty()) {
-                return QLatin1String("unknown");
-            }
+            dataForContactId(contactId, role);
         } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
             return queryChildrenForData(index, role);
         }
@@ -184,6 +187,8 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
         }
     }
 
+
+
     return QIdentityProxyModel::data(index, role);
 }
 
@@ -198,4 +203,20 @@ QVariantList PersonsPresenceModel::queryChildrenForData(const QModelIndex &index
     }
 
     return ret;
+}
+
+QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int role) const
+{
+    if (role == PersonsModel::StatusRole) {
+        Tp::ContactPtr contact = m_contacts.value(contactId);
+        if (!contact.isNull()) {
+            return contact->presence().status();
+        } else if (!contactId.isEmpty()) {
+            return QLatin1String("offline");
+        } else if (contactId.isEmpty()) {
+            return QLatin1String("unknown");
+        }
+    }
+
+    return QVariant();
 }

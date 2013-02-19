@@ -46,6 +46,7 @@ public:
     virtual ~PersonsPresenceModel();
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant dataForContactId(const QString &contactId, int role = Qt::DisplayRole) const;
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);

@@ -145,7 +145,7 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
     if (role == PersonsModel::StatusRole) {
         if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Contact) {
             QString contactId = index.data(PersonsModel::IMRole).toString();
-            dataForContactId(contactId, role);
+            return dataForContactId(contactId, role);
         } else if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
             return queryChildrenForData(index, role);
         }

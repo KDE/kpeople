@@ -1,6 +1,7 @@
 /*
     KPeople
     Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
+    Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -33,18 +34,23 @@ struct PersonDataPrivate;
 class KPEOPLE_EXPORT PersonData : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString contactId READ contactId WRITE setContactId NOTIFY contactChanged)
-    Q_PROPERTY(QUrl uri READ uri NOTIFY contactChanged)
-
+    Q_PROPERTY(QString uri READ uri)
     Q_PROPERTY(QUrl avatar READ avatar NOTIFY dataChanged)
-    Q_PROPERTY(QString imNickname READ imNickname NOTIFY dataChanged)
+    Q_PROPERTY(QString name READ name NOTIFY dataChanged)
     Q_PROPERTY(QString status READ status NOTIFY dataChanged)
-    Q_PROPERTY(QStringList bareContacts READ bareContacts NOTIFY dataChanged)
+    Q_PROPERTY(QStringList emails READ emails NOTIFY dataChanged)
+    Q_PROPERTY(QStringList imAccounts READ imAccounts NOTIFY dataChanged)
+    Q_PROPERTY(QStringList phones READ phones NOTIFY dataChanged)
+    Q_PROPERTY(bool isPerson READ isPerson)
+
     public:
-        explicit PersonData(QObject *parent = 0);
+        PersonData(const QString &uri, QObject *parent = 0);
 
         /** @returns the uri of the current person */
-        QUrl uri() const;
+        QString uri() const;
+
+        /** sets new contact uri, all data are refetched */
+        void setUri(const QString &uri);
 
         /** @p id will specify the person we're offering by finding the pimo:Person related to it */
         void setContactId(const QString &id);
@@ -53,40 +59,34 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** @returns a url pointing to the avatar image */
         QUrl avatar() const;
 
-        QString imNickname() const;
-
+        /** @returns any possible display name (either from IM, email or other label) */
         QString name() const;
 
+        /** @returns most online status (if there are more than 1 contacts, otherwise the current status of a contact */
         QString status() const;
 
-        /** @returns a list of contact id's for the current person */
-        QStringList bareContacts() const;
+        /** @returns list of all emails this contact has */
+        QStringList emails() const;
 
-        /** @returns a model index so that we can query it like it was from PersonsModel */
-        QModelIndex personIndex() const;
+        /** @returns list of all phone contacts this contact has */
+        QStringList phones() const;
 
-        /** @p uri uri of the nepomuk resource (either contact or person) */
-        void setContactUri(const QUrl &uri);
+        /** @returns list of all IM accounts this contact has */
+        QStringList imAccounts() const;
 
+        /** @returns true if this is pimo:Person, false if just nco:PersonContact */
         bool isPerson() const;
 
-    private slots:
-        void personInitialized();
-
     signals:
-        //FIXME: Shouldn't have such a demanding API...
-        /** The data has been initialized, now we can start pulling data. */
-        void dataInitialized();
-
-        /** The person we're pointing to has changed */
-        void contactChanged();
-
         /** Some of the person's data we're offering has changed */
         void dataChanged();
 
     private:
         Q_DECLARE_PRIVATE(PersonData)
         PersonDataPrivate * d_ptr;
+
+        QString findMostOnlinePresence(const QStringList &presences) const;
+
 };
 
 #endif // PERSONDATA_H

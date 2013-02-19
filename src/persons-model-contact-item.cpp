@@ -79,6 +79,7 @@ void PersonsModelContactItem::pullResourceProperties(const Nepomuk2::Resource &r
 {
     QHash<QUrl, Nepomuk2::Variant> props = res.properties();
     for (QHash<QUrl, Nepomuk2::Variant>::const_iterator it = props.constBegin(), itEnd = props.constEnd(); it != itEnd; ++it) {
+        kDebug() << it.key() << it->variant();
         addData(it.key(), it->variant());
     }
 }
@@ -185,13 +186,14 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::ContactActionsRole:
             //FIXME: this probably won't catch changes in person actions
             //FIXME: qpointer
-            if (!d->actions) {
-                d->actions = new PersonActions();
-                d->actions->initialize(index());
-                kDebug() << d->actions->actions();
-            }
-
-            return QVariant::fromValue<QList<QAction *> >(d->actions->actions());
+//             if (!d->actions) {
+//                 d->actions = new PersonActions();
+//                 d->actions->initialize(index());
+//                 kDebug() << d->actions->actions();
+//             }
+//
+//             return QVariant::fromValue<QList<QAction *> >(d->actions->actions());
+            return QVariant();
 
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Contact;

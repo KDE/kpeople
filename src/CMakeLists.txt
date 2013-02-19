@@ -2,9 +2,9 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_subdirectory(examples)
+#add_subdirectory(examples)
 add_subdirectory(tests)
-add_subdirectory(declarative)
+#add_subdirectory(declarative)
 
 kde4_add_library (kpeople SHARED
     persons-model-contact-item.cpp
@@ -12,7 +12,7 @@ kde4_add_library (kpeople SHARED
     persons-model.cpp
     persondata.cpp
     nepomuk-tp-channel-delegate.cpp
-    personactions.cpp
+#     personactions.cpp
     resource-watcher-service.cpp
     persons-presence-model.cpp
     duplicatesfinder.cpp

@@ -11,7 +11,7 @@ kde4_add_library (kpeople SHARED
     persons-model-item.cpp
     persons-model.cpp
     persondata.cpp
-    nepomuk-tp-channel-delegate.cpp
+#     nepomuk-tp-channel-delegate.cpp
 #     personactions.cpp
     resource-watcher-service.cpp
     persons-presence-model.cpp

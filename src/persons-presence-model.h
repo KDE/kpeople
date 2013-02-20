@@ -51,6 +51,7 @@ public:
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onContactChanged();
+    void onContactInvalidated();
     void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
 
 private:

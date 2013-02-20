@@ -109,7 +109,7 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
                 this, SLOT(onContactChanged()));
 
         connect(ktpContact.data(), SIGNAL(invalidated()),
-                this, SLOT(onContactChanged()));
+                this, SLOT(onContactInvalidated()));
 
         //TODO: add other stuff here etc
 
@@ -128,6 +128,19 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
 void PersonsPresenceModel::onContactChanged()
 {
     QString id = qobject_cast<Tp::Contact*>(sender())->id();
+
+    QModelIndex index;
+    if (sourceModel()) {
+        index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, id);
+    }
+    Q_EMIT dataChanged(index, index);
+}
+
+void PersonsPresenceModel::onContactInvalidated()
+{
+    QString id = qobject_cast<Tp::Contact*>(sender())->id();
+
+    m_contacts.remove(id);
 
     QModelIndex index;
     if (sourceModel()) {

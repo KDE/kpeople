@@ -22,7 +22,6 @@
 #include "persons-model-item.h"
 #include "persons-model-contact-item.h"
 #include "resource-watcher-service.h"
-#include "nepomuk-tp-channel-delegate.h"
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
@@ -41,11 +40,6 @@
 #include <KDebug>
 
 struct PersonsModelPrivate {
-    PersonsModelPrivate() : ktpDelegate(0) {}
-
-    void initKTPDelegate() { if(!ktpDelegate) ktpDelegate = new NepomukTpChannelDelegate; }
-
-    NepomukTpChannelDelegate *ktpDelegate;
 };
 
 PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuery)
@@ -224,8 +218,6 @@ void PersonsModel::query(const QString &nco_query)
     //add the remaining contacts to the model as top level items
     invisibleRootItem()->appendRows(toStandardItems(contacts.values()));
     emit peopleAdded();
-    //prepare the telepathy channel delegate to be able to start chats immediately
-    d_ptr->initKTPDelegate();
     kDebug() << "Model ready";
 }
 
@@ -409,9 +401,4 @@ void PersonsModel::removePersonFromModel(const QModelIndex &index)
     }
 
     removeRow(index.row());
-}
-
-NepomukTpChannelDelegate* PersonsModel::tpChannelDelegate() const
-{
-    return d_ptr->ktpDelegate;
 }

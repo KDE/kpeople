@@ -53,7 +53,6 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             break;
 
         case Qt::DisplayRole:
-        case KTp::IdRole:
             //this is needed to avoid infinite recursion call (proxyIndex.data(Qt::DisplayRole) would call this method)
             return mapToSource(proxyIndex).data(Qt::DisplayRole);
         case KTp::RowTypeRole:
@@ -68,6 +67,8 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             return proxyIndex.data(PersonsModel::ContactGroupsRole);
         case KTp::AccountRole:
             return proxyIndex.data(PersonsModel::IMAccountRole);
+        case KTp::IdRole:
+            return proxyIndex.data(PersonsModel::IMRole);
         case KTp::ContactRole:
             return proxyIndex.data(PersonsModel::IMContactRole);
         case KTp::ContactIsBlockedRole:

@@ -39,12 +39,12 @@
 
 #include <KDebug>
 
-struct PersonsModelPrivate {
-};
+// struct PersonsModelPrivate {
+// };
 
 PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuery)
     : QStandardItemModel(parent)
-    , d_ptr(new PersonsModelPrivate)
+//     , d_ptr(new PersonsModelPrivate)
 {
     QHash<int, QByteArray> names = roleNames();
     names.insert(PersonsModel::EmailRole, "email");

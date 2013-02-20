@@ -132,8 +132,8 @@ private:
 
     friend class PersonsPresenceModel;
 
-    PersonsModelPrivate * const d_ptr;
-    Q_DECLARE_PRIVATE(PersonsModel);
+//     PersonsModelPrivate * const d_ptr;
+//     Q_DECLARE_PRIVATE(PersonsModel);
 };
 
 #endif // PERSONS_MODEL_H

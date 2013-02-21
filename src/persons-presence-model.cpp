@@ -145,8 +145,8 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    PersonsModel::ResourceType type = (PersonsModel::ResourceType)mapToSource(index).data(PersonsModel::ResourceTypeRole).toUInt();
-    const QString contactId = mapToSource(index).data(PersonsModel::IMRole).toString();
+    PersonsModel::ResourceType type;
+    QString contactId;
 
     //we need to handle only few roles here, all the rest must go to the source model
     switch (role) {
@@ -154,6 +154,9 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
         case PersonsModel::IMContactRole:
         case PersonsModel::IMAccountRole:
         case PersonsModel::BlockedRole:
+
+            type = (PersonsModel::ResourceType)mapToSource(index).data(PersonsModel::ResourceTypeRole).toUInt();
+            contactId = mapToSource(index).data(PersonsModel::IMRole).toString();
 
             if (type == PersonsModel::Contact) {
                 return dataForContactId(contactId, role);

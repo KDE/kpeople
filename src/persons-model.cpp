@@ -67,7 +67,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
             nco_query = QString::fromUtf8(
             "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount "
             "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
-            "?nie_url ?nao_prefLabel ?nco_contactGroupName " //?telepathy_accountIdentifier
+            "?nie_url ?nao_prefLabel ?nco_contactGroupName "
 
                 "WHERE { "
                     "?uri a nco:PersonContact. "
@@ -78,8 +78,6 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
                     "OPTIONAL { "
                         "?uri                     nco:hasIMAccount            ?nco_hasIMAccount. "
                         "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
-//                         "OPTIONAL { ?nco_hasIMAccount          telepathy:statusType        ?telepathy_statusType. } "
-//                         "OPTIONAL { ?nco_hasIMAccount          nco:imStatus                ?nco_imStatus. } "
 //                         "OPTIONAL { ?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy . } "
 //                         "OPTIONAL { ?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . } "
                         "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
@@ -124,10 +122,7 @@ QHash<QString, QUrl> initUriToBinding()
     << Nepomuk2::Vocabulary::NCO::imAccountType()
     << Nepomuk2::Vocabulary::NCO::imID()
     << Soprano::Vocabulary::NAO::prefLabel()
-//     << Nepomuk2::Vocabulary::Telepathy::statusType()
 //     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#accountIdentifier"))
-//     << Nepomuk2::Vocabulary::NCO::imStatus()
-//     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#statusType"))
     << Nepomuk2::Vocabulary::NCO::hasIMAccount()
     << Nepomuk2::Vocabulary::NCO::emailAddress()
     << Nepomuk2::Vocabulary::NCO::phoneNumber()

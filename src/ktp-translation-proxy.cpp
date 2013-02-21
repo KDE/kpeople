@@ -59,7 +59,6 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             break;
 
         case Qt::DisplayRole:
-            //this is needed to avoid infinite recursion call (proxyIndex.data(Qt::DisplayRole) would call this method)
             return mapToSource(proxyIndex).data(Qt::DisplayRole);
         case KTp::RowTypeRole:
             if (mapToSource(proxyIndex).data(PersonsModel::ResourceTypeRole) == PersonsModel::Contact) {

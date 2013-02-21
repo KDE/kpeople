@@ -92,12 +92,6 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
     if (!m_contacts.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
             m_contacts.remove(contact->id());
-            QModelIndex index;
-            if (sourceModel()) {
-                index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
-            }
-            kDebug() << "Removing presence for" << index.data(Qt::DisplayRole) << index;
-            Q_EMIT dataChanged(index, index);
         }
     }
 
@@ -116,16 +110,9 @@ void PersonsPresenceModel::onAllKnownContactsChanged(const Tp::Contacts &contact
 
         //TODO: add other stuff here etc
 
-        QModelIndex index;
-        if (sourceModel()) {
-            index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, contact->id());
-        }
-
-        Q_EMIT dataChanged(index, index);
-        if (index.parent().isValid()) {
-            Q_EMIT dataChanged(index.parent(), index.parent());
-        }
     }
+
+    reset();
 }
 
 void PersonsPresenceModel::onContactChanged()

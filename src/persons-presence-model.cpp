@@ -29,6 +29,9 @@
 #include <KTp/contact-factory.h>
 #include <KTp/global-contact-manager.h>
 #include <KDebug>
+#include <Soprano/Model>
+#include <Soprano/QueryResultIterator>
+#include <Nepomuk2/ResourceManager>
 
 PersonsPresenceModel::PersonsPresenceModel(QObject *parent)
 : QIdentityProxyModel(parent)
@@ -203,13 +206,20 @@ QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int ro
         }
     }
 
+    if (role == PersonsModel::IMAccountRole) {
+        if (!contact.isNull()) {
+            return QVariant::fromValue<Tp::AccountPtr>(m_contactManager->accountForContact(m_contacts.value(contactId)));
+        } else {
+            QString accountId = queryNepomukForAccountId(contactId);
+            //nepomuk stores account path, which is in form /org/freedesktop/Telepathy/Account/...
+            //while GCM looks for uniqueIdentifier(), which is without this^ prefix, so we need to chop it off first
+            return QVariant::fromValue<Tp::AccountPtr>(m_contactManager->accountForAccountId(accountId.remove(0,35)));
+        }
+    }
+
     if (contact.isNull()) {
         //no point doing any of those below...
         return QVariant();
-    }
-
-    if (role == PersonsModel::IMAccountRole) {
-        return QVariant::fromValue<Tp::AccountPtr>(m_contactManager->accountForContact(m_contacts.value(contactId)));
     }
 
     if (role == PersonsModel::IMContactRole) {
@@ -221,4 +231,27 @@ QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int ro
     }
 
     return QVariant();
+}
+
+QString PersonsPresenceModel::queryNepomukForAccountId(const QString &contactId) const
+{
+    QString query = QString::fromUtf8(
+        "select DISTINCT ?a "
+        "WHERE { "
+            "?x a nco:ContactMedium . "
+            "?x nco:imID \"%1\"^^xsd:string . "
+            "?x nco:isAccessedBy ?c . "
+            "?c telepathy:accountIdentifier ?a . "
+        "}").arg(contactId);
+
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+
+    QString accountPath;
+
+    while (it.next()) {
+        accountPath = it[0].literal().toString();
+    }
+
+    return accountPath;
 }

@@ -56,6 +56,7 @@ private Q_SLOTS:
 
 private:
     QVariantList queryChildrenForData(const QModelIndex &index, int role) const;
+    QString queryNepomukForAccountId(const QString &contactId) const;
 
     KTp::GlobalContactManager *m_contactManager;
     Tp::AccountManagerPtr m_accountManager;

@@ -188,7 +188,7 @@ QVariantList PersonsPresenceModel::queryChildrenForData(const QModelIndex &index
 
 QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int role) const
 {
-    Tp::ContactPtr contact = m_contacts.value(contactId);
+    KTp::ContactPtr contact = m_contacts.value(contactId);
 
     if (role == PersonsModel::StatusRole) {
         if (!contact.isNull()) {
@@ -217,11 +217,13 @@ QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int ro
     }
 
     if (role == PersonsModel::IMContactRole) {
-        return QVariant::fromValue<KTp::ContactPtr>(KTp::ContactPtr::qObjectCast(m_contacts.value(contactId)));
+        return QVariant::fromValue<KTp::ContactPtr>(contact);
     }
 
     if (role == PersonsModel::BlockedRole) {
-        return m_contacts.value(contactId)->isBlocked();
+        return contact->isBlocked();
+    }
+
     if (role == PersonsModel::ContactCanTextChatRole) {
         return true; //FIXME: this is missing in KTp::ContactPtr
     }

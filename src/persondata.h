@@ -24,6 +24,7 @@
 
 #include <QObject>
 #include <QUrl>
+#include <QStringList>
 
 class QModelIndex;
 namespace Nepomuk2 { class Resource; }

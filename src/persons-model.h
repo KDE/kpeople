@@ -68,7 +68,11 @@ public:
         StatusRole,
         ResourceTypeRole,
         ContactActionsRole,
-        ContactGroupsRole
+        ContactGroupsRole,
+        ContactCanTextChatRole,
+        ContactCanAudioCallRole,
+        ContactCanVideoCallRole,
+        ContactCanFileTransferRole
     };
 
     enum ResourceType {

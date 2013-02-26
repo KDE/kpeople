@@ -154,6 +154,10 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
         case PersonsModel::IMContactRole:
         case PersonsModel::IMAccountRole:
         case PersonsModel::BlockedRole:
+        case PersonsModel::ContactCanTextChatRole:
+        case PersonsModel::ContactCanAudioCallRole:
+        case PersonsModel::ContactCanVideoCallRole:
+        case PersonsModel::ContactCanFileTransferRole:
 
             type = (PersonsModel::ResourceType)mapToSource(index).data(PersonsModel::ResourceTypeRole).toUInt();
             contactId = mapToSource(index).data(PersonsModel::IMRole).toString();
@@ -218,6 +222,20 @@ QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int ro
 
     if (role == PersonsModel::BlockedRole) {
         return m_contacts.value(contactId)->isBlocked();
+    if (role == PersonsModel::ContactCanTextChatRole) {
+        return true; //FIXME: this is missing in KTp::ContactPtr
+    }
+
+    if (role == PersonsModel::ContactCanAudioCallRole) {
+        return contact->audioCallCapability();
+    }
+
+    if (role == PersonsModel::ContactCanVideoCallRole) {
+        return contact->videoCallCapability();
+    }
+
+    if (role == PersonsModel::ContactCanFileTransferRole) {
+        return contact->fileTransferCapability();
     }
 
     return QVariant();

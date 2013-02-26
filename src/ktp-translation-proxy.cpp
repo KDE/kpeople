@@ -78,6 +78,14 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             return mapToSource(proxyIndex).data(PersonsModel::IMContactRole);
         case KTp::ContactIsBlockedRole:
             return mapToSource(proxyIndex).data(PersonsModel::BlockedRole);
+        case KTp::ContactCanTextChatRole:
+            return mapToSource(proxyIndex).data(PersonsModel::ContactCanTextChatRole);
+        case KTp::ContactCanAudioCallRole:
+            return mapToSource(proxyIndex).data(PersonsModel::ContactCanAudioCallRole);
+        case KTp::ContactCanVideoCallRole:
+            return mapToSource(proxyIndex).data(PersonsModel::ContactCanVideoCallRole);
+        case KTp::ContactCanFileTransferRole:
+            return mapToSource(proxyIndex).data(PersonsModel::ContactCanFileTransferRole);
     }
 
     return QIdentityProxyModel::data(proxyIndex, role);

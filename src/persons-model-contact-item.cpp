@@ -110,11 +110,6 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     }
 
     Q_D(PersonsModelContactItem);
-    if (Nepomuk2::Vocabulary::NCO::imID() == key) {
-        setType(PersonsModel::IM);
-    } else if (Nepomuk2::Vocabulary::NCO::emailAddress() == key) {
-        setType(PersonsModel::Email);
-    }
 
 //     kDebug() << "Inserting" << "[" << key << "]" << value;
     d->data.insertMulti(key, value);
@@ -131,12 +126,6 @@ QUrl PersonsModelContactItem::uri() const
 {
     Q_D(const PersonsModelContactItem);
     return d->uri;
-}
-
-void PersonsModelContactItem::setType(PersonsModel::ContactType type)
-{
-    setData(type, PersonsModel::ContactTypeRole);
-    refreshIcon();
 }
 
 QVariant PersonsModelContactItem::data(int role) const

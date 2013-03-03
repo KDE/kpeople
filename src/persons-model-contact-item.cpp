@@ -40,7 +40,7 @@
 class PersonsModelContactItemPrivate {
 public:
     QUrl uri;
-    QHash<QUrl, QVariant> data;
+    QMultiHash<QUrl, QVariant> data;
     mutable PersonActions *actions;
 };
 
@@ -117,14 +117,14 @@ void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
     }
 
 //     kDebug() << "Inserting" << "[" << key << "]" << value;
-    d->data.insert(key, value);
+    d->data.insertMulti(key, value);
     emitDataChanged();
 }
 
-QVariant PersonsModelContactItem::dataValue(const QUrl &key)
+QVariantList PersonsModelContactItem::dataValue(const QUrl &key)
 {
     Q_D(PersonsModelContactItem);
-    return d->data.value(key);
+    return d->data.values(key);
 }
 
 QUrl PersonsModelContactItem::uri() const
@@ -160,15 +160,15 @@ QVariant PersonsModelContactItem::data(int role) const
         case PersonsModel::UriRole: return d->uri; break;
         case PersonsModel::NickRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imNickname());
         case PersonsModel::LabelRole: return d->data.value(Soprano::Vocabulary::NAO::prefLabel());
-        case PersonsModel::PhoneRole: return d->data.value(Nepomuk2::Vocabulary::NCO::phoneNumber());
-        case PersonsModel::EmailRole: return d->data.value(Nepomuk2::Vocabulary::NCO::emailAddress());
+        case PersonsModel::PhoneRole: return d->data.values(Nepomuk2::Vocabulary::NCO::phoneNumber());
+        case PersonsModel::EmailRole: return d->data.values(Nepomuk2::Vocabulary::NCO::emailAddress());
         case PersonsModel::IMRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imID());
         case PersonsModel::PhotoRole: return d->data.value(Nepomuk2::Vocabulary::NIE::url());
         case PersonsModel::IMAccountUriRole: return d->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount());
         case PersonsModel::IMAccountTypeRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imAccountType());
         case PersonsModel::StatusRole: return QLatin1String("unknown"); //return unknown presence, for real presence use PersonsPresenceModel
         case PersonsModel::ContactsCountRole: return 1;
-        case PersonsModel::ContactGroupsRole: return d->data.value(Nepomuk2::Vocabulary::NCO::contactGroupName());
+        case PersonsModel::ContactGroupsRole: return d->data.values(Nepomuk2::Vocabulary::NCO::contactGroupName());
         case PersonsModel::ContactIdRole: {
             int role = -1;
             switch((PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt()) {
@@ -204,7 +204,7 @@ QVariant PersonsModelContactItem::data(int role) const
 void PersonsModelContactItem::modifyData(const QUrl &name, const QVariantList &added)
 {
     Q_D(PersonsModelContactItem);
-    d->data[name] = added;
+    d->data.replace(name, added);
 
     //check if the capabilities changed, then we need to recreate the PersonActions
     if (name == QUrl(QLatin1String("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasIMCapability"))) {
@@ -219,9 +219,9 @@ void PersonsModelContactItem::modifyData(const QUrl &name, const QVariantList &a
 void PersonsModelContactItem::modifyData(const QUrl &name, const QVariant &newValue)
 {
     Q_D(PersonsModelContactItem);
-    kDebug() << "Old data:" << d->data[name];
-    d->data[name] = newValue;
-    kDebug() << "New Data:" << d->data[name];
+    kDebug() << "Old data:" << d->data.values(name);
+    d->data.replace(name, newValue);
+    kDebug() << "New Data:" << d->data.values(name);
     emitDataChanged();
 }
 

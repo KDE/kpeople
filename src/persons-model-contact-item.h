@@ -48,7 +48,7 @@ public:
     void modifyData(const QUrl &name, const QVariant &newValue);
     void setType(PersonsModel::ContactType type);
 
-    QVariant dataValue(const QUrl &key);
+    QVariantList dataValue(const QUrl &key);
     virtual QVariant data(int role = Qt::UserRole + 1) const;
     void removeData(const QUrl &uri);
     void pullResourceProperties(const Nepomuk2::Resource &res);

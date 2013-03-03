@@ -26,6 +26,7 @@
 
 #include <QStandardItemModel>
 
+class KJob;
 class PersonsPresenceModel;
 class PersonsModelContactItem;
 class KJob;
@@ -33,6 +34,7 @@ class QUrl;
 struct PersonsModelPrivate;
 
 namespace Nepomuk2 { class Resource; }
+namespace Soprano { namespace Util { class AsyncQuery; } }
 
 class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
 {
@@ -127,6 +129,8 @@ public:
 private slots:
     void jobFinished(KJob *job);
     void query(const QString &queryString);
+    void nextReady(Soprano::Util::AsyncQuery *query);
+    void queryFinished(Soprano::Util::AsyncQuery *query);
 
 signals:
     void peopleAdded();
@@ -136,8 +140,9 @@ private:
 
     friend class PersonsPresenceModel;
 
-//     PersonsModelPrivate * const d_ptr;
-//     Q_DECLARE_PRIVATE(PersonsModel);
+    PersonsModelPrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(PersonsModel);
+
 };
 
 #endif // PERSONS_MODEL_H

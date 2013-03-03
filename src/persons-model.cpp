@@ -26,6 +26,7 @@
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
 #include <Soprano/Model>
+#include <Soprano/Util/AsyncQuery>
 #include <Soprano/Vocabulary/NAO>
 
 #include <Nepomuk2/ResourceManager>
@@ -39,12 +40,17 @@
 
 #include <KDebug>
 
-// struct PersonsModelPrivate {
-// };
+struct PersonsModelPrivate {
+    QHash<QUrl, PersonsModelContactItem*> contacts; //all contacts in the model
+    QHash<QUrl, PersonsModelItem*> persons;         //all persons
+    QList<QUrl> pimoOccurances;                     //contacts that are groundingOccurrences of persons
+    QHash<QString, QUrl> uriToBinding;
+
+};
 
 PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuery)
     : QStandardItemModel(parent)
-//     , d_ptr(new PersonsModelPrivate)
+    , d_ptr(new PersonsModelPrivate)
 {
     QHash<int, QByteArray> names = roleNames();
     names.insert(PersonsModel::EmailRole, "email");
@@ -140,78 +146,94 @@ QHash<QString, QUrl> initUriToBinding()
 
 void PersonsModel::query(const QString &nco_query)
 {
+    Q_D(PersonsModel);
     Q_ASSERT(rowCount() == 0);
-    QHash<QString, QUrl> uriToBinding = initUriToBinding();
+    d->uriToBinding = initUriToBinding();
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = m->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
+    Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, nco_query, Soprano::Query::QueryLanguageSparql);
 
-    QHash<QUrl, PersonsModelContactItem*> contacts; //all contacts in the model
-    QHash<QUrl, PersonsModelItem*> persons;         //all persons
-    QList<QUrl> pimoOccurances;                     //contacts that are groundingOccurrences of persons
+    connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
+            this, SLOT(nextReady(Soprano::Util::AsyncQuery*)));
 
-    while (it.next()) {
-        QUrl currentUri = it[QLatin1String("uri")].uri();
+    connect(query, SIGNAL(finished(Soprano::Util::AsyncQuery*)),
+            this, SLOT(queryFinished(Soprano::Util::AsyncQuery*)));
+}
 
-        //skip nepomuk:/me, we don't want that in the model
-        if (currentUri == QUrl(QLatin1String("nepomuk:/me"))) {
-            continue;
+void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
+{
+    Q_D(PersonsModel);
+    QUrl currentUri = query->binding(QLatin1String("uri")).uri();
+
+    //skip nepomuk:/me, we don't want that in the model
+    if (currentUri == QUrl(QLatin1String("nepomuk:/me"))) {
+        //skip the rest and continue
+        query->next();
+        return;
+    }
+
+    //before any further processing, check if the current contact
+    //is not a groundingOccurrence of a nepomuk:/me person, if yes, don't process it
+    QUrl pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
+    if (pimoPersonUri == QUrl(QLatin1String("nepomuk:/me"))) {
+        query->next();
+        return;
+    }
+
+    //see if we don't have this contact already
+    PersonsModelContactItem *contactNode = d->contacts.value(currentUri);
+
+    bool newContact = !contactNode;
+
+    if (newContact) {
+        contactNode = new PersonsModelContactItem(currentUri);
+        d->contacts.insert(currentUri, contactNode);
+    } else {
+        //FIXME: for some reason we get most of the contacts twice in the resultset,
+        //       disabling duplicate processing for now to speedup loading time;
+        //       also it turns out that the same values are always passed the second time
+        //       so no point processing it again
+        query->next();
+        return;
+    }
+
+    //iterate over the results and add the wanted properties into the contact
+    for(QHash<QString, QUrl>::const_iterator iter = d->uriToBinding.constBegin(), itEnd = d->uriToBinding.constEnd(); iter != itEnd; ++iter) {
+        contactNode->addData(iter.value(), query->binding(iter.key()).toString());
+    }
+
+    if (!pimoPersonUri.isEmpty()) {
+        //look for existing person items
+        QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+        if (pos == d->persons.constEnd()) {
+            //this means no person exists yet, so lets create new one
+            pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
         }
-
-        //before any further processing, check if the current contact
-        //is not a groundingOccurrence of a nepomuk:/me person, if yes, don't process it
-        QUrl pimoPersonUri = it[QLatin1String("pimo_groundingOccurrence")].uri();
-        if (pimoPersonUri == QUrl(QLatin1String("nepomuk:/me"))) {
-            continue;
-        }
-
-        //see if we don't have this contact already
-        PersonsModelContactItem *contactNode = contacts.value(currentUri);
-
-        bool newContact = !contactNode;
-
+        //FIXME: we need to check if the contact is not already present in person's children,
+        //       from testing however it turns out that checking newContact == true
+        //       is enough
         if (newContact) {
-            contactNode = new PersonsModelContactItem(currentUri);
-            contacts.insert(currentUri, contactNode);
-        } else {
-            //FIXME: for some reason we get most of the contacts twice in the resultset,
-            //       disabling duplicate processing for now to speedup loading time;
-            //       also it turns out that the same values are always passed the second time
-            //       so no point processing it again
-            continue;
-        }
-
-        //iterate over the results and add the wanted properties into the contact
-        for(QHash<QString, QUrl>::const_iterator iter = uriToBinding.constBegin(), itEnd = uriToBinding.constEnd(); iter != itEnd; ++iter) {
-            contactNode->addData(iter.value(), it[iter.key()].toString());
-        }
-
-        if (!pimoPersonUri.isEmpty()) {
-            //look for existing person items
-            QHash< QUrl, PersonsModelItem* >::const_iterator pos = persons.constFind(pimoPersonUri);
-            if (pos == persons.constEnd()) {
-                //this means no person exists yet, so lets create new one
-                pos = persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
-            }
-            //FIXME: we need to check if the contact is not already present in person's children,
-            //       from testing however it turns out that checking newContact == true
-            //       is enough
-            if (newContact) {
-                pos.value()->appendRow(contactNode);
-                pimoOccurances.append(currentUri);
-            }
+            pos.value()->appendRow(contactNode);
+            d->pimoOccurances.append(currentUri);
         }
     }
 
-    //add the persons to the model
-    invisibleRootItem()->appendRows(toStandardItems(persons.values()));
+    query->next();
+}
 
-    Q_FOREACH(const QUrl &uri, pimoOccurances) {
+void PersonsModel::queryFinished(Soprano::Util::AsyncQuery *query)
+{
+    Q_UNUSED(query)
+    Q_D(PersonsModel);
+    //add the persons to the model
+    invisibleRootItem()->appendRows(toStandardItems(d->persons.values()));
+
+    Q_FOREACH(const QUrl &uri, d->pimoOccurances) {
         //remove all contacts being groundingOccurrences
-        contacts.remove(uri);
+        d->contacts.remove(uri);
     }
     //add the remaining contacts to the model as top level items
-    invisibleRootItem()->appendRows(toStandardItems(contacts.values()));
+    invisibleRootItem()->appendRows(toStandardItems(d->contacts.values()));
     emit peopleAdded();
     kDebug() << "Model ready";
 }

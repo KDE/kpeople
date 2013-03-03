@@ -36,6 +36,7 @@
 PersonsPresenceModel::PersonsPresenceModel(QObject *parent)
 : QIdentityProxyModel(parent)
 {
+    Tp::registerTypes();
     Tp::AccountFactoryPtr  accountFactory = Tp::AccountFactory::create(QDBusConnection::sessionBus(),
                                                                        Tp::Features() << Tp::Account::FeatureCore
                                                                        << Tp::Account::FeatureCapabilities

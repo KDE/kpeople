@@ -71,36 +71,12 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
         QString nco_query = customQuery;
         if (customQuery.isEmpty()) {
             nco_query = QString::fromUtf8(
-            "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount "
-            "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
-            "?nie_url ?nao_prefLabel ?nco_contactGroupName "
+            "select DISTINCT ?uri ?pimo_groundingOccurrence "
 
                 "WHERE { "
                     "?uri a nco:PersonContact. "
 
                     "OPTIONAL { ?pimo_groundingOccurrence  pimo:groundingOccurrence  ?uri. }"
-                    "OPTIONAL { ?uri  nao:prefLabel  ?nao_prefLabel. }"
-
-                    "OPTIONAL { "
-                        "?uri                     nco:hasIMAccount            ?nco_hasIMAccount. "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
-//                         "OPTIONAL { ?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy . } "
-//                         "OPTIONAL { ?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . } "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
-                    " } "
-                    "OPTIONAL { "
-                        "?uri nco:belongsToGroup ?nco_belongsToGroup . "
-                        "?nco_belongsToGroup nco:contactGroupName ?nco_contactGroupName . "
-                    " }"
-                    "OPTIONAL {"
-                        "?uri                       nco:photo                   ?phRes. "
-                        "?phRes                     nie:url                     ?nie_url. "
-                    " } "
-                    "OPTIONAL { "
-                        "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
-                        "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
-                    " } "
                 "}");
         }
 
@@ -197,11 +173,6 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
         return;
     }
 
-    //iterate over the results and add the wanted properties into the contact
-    for(QHash<QString, QUrl>::const_iterator iter = d->uriToBinding.constBegin(), itEnd = d->uriToBinding.constEnd(); iter != itEnd; ++iter) {
-        contactNode->addData(iter.value(), query->binding(iter.key()).toString());
-    }
-
     if (!pimoPersonUri.isEmpty()) {
         //look for existing person items
         QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
@@ -233,7 +204,53 @@ void PersonsModel::queryFinished(Soprano::Util::AsyncQuery *query)
         d->contacts.remove(uri);
     }
     //add the remaining contacts to the model as top level items
-    invisibleRootItem()->appendRows(toStandardItems(d->contacts.values()));
+    QList<QStandardItem*> contacts = toStandardItems(d->contacts.values());
+    QHashIterator<QUrl, PersonsModelContactItem*> i(d->contacts);
+    while (i.hasNext()) {
+        i.next();
+
+        QString nco_query = QString(
+            "select DISTINCT ?nco_hasIMAccount "
+            "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
+            "?nie_url ?nao_prefLabel ?nco_contactGroupName "
+
+            "where { %1 a nco:PersonContact . "
+
+            "OPTIONAL { %1  nao:prefLabel  ?nao_prefLabel. } "
+
+            "OPTIONAL { "
+            "%1                     nco:hasIMAccount            ?nco_hasIMAccount. "
+            "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
+            //                         "OPTIONAL { ?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy . } "
+            //                         "OPTIONAL { ?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . } "
+            "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
+            "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
+            " } "
+            "OPTIONAL { "
+            "?uri nco:belongsToGroup ?nco_belongsToGroup . "
+            "?nco_belongsToGroup nco:contactGroupName ?nco_contactGroupName . "
+            " }"
+            "OPTIONAL {"
+            "%1                       nco:photo                   ?phRes. "
+            "?phRes                     nie:url                     ?nie_url. "
+            " } "
+            "OPTIONAL { "
+            "%1                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
+            "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
+            " } } ").arg(Soprano::Node::resourceToN3(i.key().toString()));
+
+            Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+            Soprano::QueryResultIterator it = model->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);
+
+            while (it.next()) {
+                for(QHash<QString, QUrl>::const_iterator iter = d->uriToBinding.constBegin(), itEnd = d->uriToBinding.constEnd(); iter != itEnd; ++iter) {
+                    i.value()->addData(iter.value(), it.binding(iter.key()).toString());
+                }
+            }
+
+            invisibleRootItem()->appendRow(i.value());
+    }
+
     emit peopleAdded();
     kDebug() << "Model ready";
 }

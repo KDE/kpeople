@@ -210,34 +210,30 @@ void PersonsModel::queryFinished(Soprano::Util::AsyncQuery *query)
         i.next();
 
         QString nco_query = QString(
-            "select DISTINCT ?nco_hasIMAccount "
-            "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
-            "?nie_url ?nao_prefLabel ?nco_contactGroupName "
-
-            "where { %1 a nco:PersonContact . "
-
-            "OPTIONAL { %1  nao:prefLabel  ?nao_prefLabel. } "
-
-            "OPTIONAL { "
-            "%1                     nco:hasIMAccount            ?nco_hasIMAccount. "
-            "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
-            //                         "OPTIONAL { ?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy . } "
-            //                         "OPTIONAL { ?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . } "
-            "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
-            "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
-            " } "
-            "OPTIONAL { "
-            "?uri nco:belongsToGroup ?nco_belongsToGroup . "
-            "?nco_belongsToGroup nco:contactGroupName ?nco_contactGroupName . "
-            " }"
-            "OPTIONAL {"
-            "%1                       nco:photo                   ?phRes. "
-            "?phRes                     nie:url                     ?nie_url. "
-            " } "
-            "OPTIONAL { "
-            "%1                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
-            "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
-            " } } ").arg(Soprano::Node::resourceToN3(i.key().toString()));
+            "select DISTINCT ?nco_hasIMAccount ?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
+            " ?nie_url ?nao_prefLabel ?nco_contactGroupName "
+            "where { "
+            "    %1 a nco:PersonContact . "
+            "    OPTIONAL { %1 nao:prefLabel ?nao_prefLabel. } "
+            "    OPTIONAL { "
+            "        %1 nco:hasIMAccount ?nco_hasIMAccount. "
+            "        OPTIONAL { ?nco_hasIMAccount nco:imNickname ?nco_imNickname. } "
+            "        OPTIONAL { ?nco_hasIMAccount nco:imID ?nco_imID. } "
+            "        OPTIONAL { ?nco_hasIMAccount nco:imAccountType ?nco_imAccountType. } "
+            "    } "
+            "    OPTIONAL { "
+            "        ?uri nco:belongsToGroup ?nco_belongsToGroup . "
+            "        ?nco_belongsToGroup nco:contactGroupName ?nco_contactGroupName . "
+            "    } "
+            "    OPTIONAL { "
+            "        %1 nco:photo ?phRes. "
+            "        ?phRes nie:url ?nie_url. "
+            "    } "
+            "    OPTIONAL { "
+            "        %1 nco:hasEmailAddress ?nco_hasEmailAddress. "
+            "        ?nco_hasEmailAddress nco:emailAddress ?nco_emailAddress. "
+            "    } "
+            "} ").arg(Soprano::Node::resourceToN3(i.key().toString()));
 
             Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
             Soprano::QueryResultIterator it = model->executeQuery(nco_query, Soprano::Query::QueryLanguageSparql);

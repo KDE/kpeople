@@ -20,7 +20,6 @@
 */
 
 #include "persons-model-contact-item.h"
-#include "personactions.h"
 
 #include <QAction>
 
@@ -41,7 +40,6 @@ class PersonsModelContactItemPrivate {
 public:
     QUrl uri;
     QMultiHash<QUrl, QVariant> data;
-    mutable PersonActions *actions;
 };
 
 PersonsModelContactItem::PersonsModelContactItem(const QUrl &uri)
@@ -49,7 +47,6 @@ PersonsModelContactItem::PersonsModelContactItem(const QUrl &uri)
 {
 //     setData(uri, PersonsModel::UriRole);
     d_ptr->uri = uri;
-    d_ptr->actions = 0;
 }
 
 PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource &contact)
@@ -195,13 +192,6 @@ void PersonsModelContactItem::modifyData(const QUrl &name, const QVariantList &a
     Q_D(PersonsModelContactItem);
     d->data.replace(name, added);
 
-    //check if the capabilities changed, then we need to recreate the PersonActions
-    if (name == QUrl(QLatin1String("http://www.semanticdesktop.org/ontologies/2007/03/22/nco#hasIMCapability"))) {
-        if (d->actions) {
-            delete d->actions;
-            d->actions = 0;
-        }
-    }
     emitDataChanged();
 }
 

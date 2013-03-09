@@ -11,8 +11,6 @@ kde4_add_library (kpeople SHARED
     persons-model-item.cpp
     persons-model.cpp
     persondata.cpp
-#     nepomuk-tp-channel-delegate.cpp
-#     personactions.cpp
     resource-watcher-service.cpp
     persons-presence-model.cpp
     duplicatesfinder.cpp
@@ -44,7 +42,7 @@ install (TARGETS kpeople
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES persons-model.h persondata.h personactions.h kpeople_export.h persons-presence-model.h ktp-translation-proxy.h
+install (FILES persons-model.h persondata.h kpeople_export.h persons-presence-model.h ktp-translation-proxy.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
 )

@@ -22,11 +22,9 @@ kde4_add_library (kpeople SHARED
 target_link_libraries (kpeople
                        ${QT_QTCORE_LIBRARIES}
                        ${KDE4_KIO_LIBS}
-                       ${NEPOMUK_LIBRARIES}
-                       ${NEPOMUK_QUERY_LIBRARIES}
+                       ${NEPOMUK_CORE_LIBRARY}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KTP_LIBRARIES}
-                       nepomukcore
 )
 
 set_target_properties (kpeople PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})

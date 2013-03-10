@@ -169,17 +169,6 @@ QVariant PersonsModelContactItem::data(int role) const
                 return data(role);
             }
         }   break;
-        case PersonsModel::ContactActionsRole:
-            //FIXME: this probably won't catch changes in person actions
-            //FIXME: qpointer
-//             if (!d->actions) {
-//                 d->actions = new PersonActions();
-//                 d->actions->initialize(index());
-//                 kDebug() << d->actions->actions();
-//             }
-//
-//             return QVariant::fromValue<QList<QAction *> >(d->actions->actions());
-            return QVariant();
 
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Contact;

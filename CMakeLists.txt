@@ -28,7 +28,6 @@ include_directories (${KDE4_INCLUDES}
                      ${KTP_INCLUDE_DIR}
 )
 
-add_subdirectory (ontologies)
 add_subdirectory (src)
 
 set(module_install_dir ${DATA_INSTALL_DIR}/cmake/modules )

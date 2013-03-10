@@ -101,6 +101,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
                         "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
                         "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
                     " } "
+                    "FILTER(?uri!=<nepomuk:/me>). "
                 "}");
         }
 
@@ -164,13 +165,6 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 {
     Q_D(PersonsModel);
     QUrl currentUri = query->binding(QLatin1String("uri")).uri();
-
-    //skip nepomuk:/me, we don't want that in the model
-    if (currentUri == QUrl(QLatin1String("nepomuk:/me"))) {
-        //skip the rest and continue
-        query->next();
-        return;
-    }
 
     //before any further processing, check if the current contact
     //is not a groundingOccurrence of a nepomuk:/me person, if yes, don't process it

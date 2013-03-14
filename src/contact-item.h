@@ -33,26 +33,21 @@ class ContactItemPrivate;
 class KPEOPLE_EXPORT ContactItem : public QStandardItem
 {
 public:
-    /**
-     * @param displayName - What will be visible to the user (used as Qt::DisplayRole)
-     * @param type - What kind of contact this is
-     */
     explicit ContactItem(const QUrl &uri);
-    explicit ContactItem(const Nepomuk2::Resource &res);
     virtual ~ContactItem();
 
     QUrl uri() const;
 
-    void addData(const QUrl &key, const QVariant &value);
-    void modifyData(const QUrl &name, const QVariantList &newValue);
-    void modifyData(const QUrl &name, const QVariant &newValue);
-    void setType(PersonsModel::ContactType type);
+    void addData(int role, const QString &value);
+    void removeData(int role);
 
-    QVariantList dataValue(const QUrl &key);
     virtual QVariant data(int role = Qt::UserRole + 1) const;
-    void removeData(const QUrl &uri);
-    void pullResourceProperties(const Nepomuk2::Resource &res);
 
+    /**
+     * Discards all the previous data and reload everything by
+     * querying Nepomuk
+     */
+    void loadData();
 private:
     void refreshIcon();
 

@@ -44,8 +44,7 @@ struct PersonsModelPrivate {
     QHash<QUrl, ContactItem*> contacts; //all contacts in the model
     QHash<QUrl, PersonItem*> persons;         //all persons
     QList<QUrl> pimoOccurances;                     //contacts that are groundingOccurrences of persons
-    QHash<QString, QUrl> uriToBinding;
-
+    QHash<QString, PersonsModel::Role> bindingRoleMap;
 };
 
 PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuery)
@@ -67,9 +66,22 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
     names.insert(PersonsModel::ContactActionsRole, "contactActions");
     setRoleNames(names);
 
+    Q_D(PersonsModel);
+
     if (init) {
         QString nco_query = customQuery;
         if (customQuery.isEmpty()) {
+            //TODO: Fetch Phone number?
+            d->bindingRoleMap.insert("uri", UriRole);
+            d->bindingRoleMap.insert("nco_imNickname", NickRole);
+            d->bindingRoleMap.insert("nao_prefLabel", LabelRole);
+            d->bindingRoleMap.insert("nco_imID", IMRole);
+            d->bindingRoleMap.insert("nco_imImAcountType", IMAccountTypeRole);
+            d->bindingRoleMap.insert("nco_hasIMAccount", IMAccountUriRole);
+            d->bindingRoleMap.insert("nco_contactGroupName", ContactGroupsRole);
+            d->bindingRoleMap.insert("nie_url", PhotoRole);
+            d->bindingRoleMap.insert("nco_emailAddress", EmailRole);
+
             nco_query = QString::fromUtf8(
             "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount "
             "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
@@ -120,36 +132,11 @@ QList<QStandardItem*> toStandardItems(const QList<T*> &items)
     return ret;
 }
 
-QHash<QString, QUrl> initUriToBinding()
-{
-    QHash<QString, QUrl> ret;
-    QList<QUrl> list;
-    list
-    << Nepomuk2::Vocabulary::NCO::imNickname()
-    << Nepomuk2::Vocabulary::NCO::imAccountType()
-    << Nepomuk2::Vocabulary::NCO::imID()
-    << Soprano::Vocabulary::NAO::prefLabel()
-//     << QUrl(QLatin1String("http://nepomuk.kde.org/ontologies/2009/06/20/telepathy#accountIdentifier"))
-    << Nepomuk2::Vocabulary::NCO::hasIMAccount()
-    << Nepomuk2::Vocabulary::NCO::emailAddress()
-    << Nepomuk2::Vocabulary::NCO::phoneNumber()
-    << Nepomuk2::Vocabulary::NIE::url()
-    << Nepomuk2::Vocabulary::NCO::contactGroupName();
-
-    foreach (const QUrl &keyUri, list) {
-        QString keyString = keyUri.toString();
-        //convert every key to correspond to the nepomuk bindings
-        keyString = keyString.mid(keyString.lastIndexOf(QLatin1Char('/')) + 1).replace(QLatin1Char('#'), QLatin1Char('_'));
-        ret[keyString] = keyUri;
-    }
-    return ret;
-}
 
 void PersonsModel::query(const QString &nco_query)
 {
     Q_D(PersonsModel);
     Q_ASSERT(rowCount() == 0);
-    d->uriToBinding = initUriToBinding();
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, nco_query, Soprano::Query::QueryLanguageSparql);
@@ -192,8 +179,16 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
     }
 
     //iterate over the results and add the wanted properties into the contact
-    for(QHash<QString, QUrl>::const_iterator iter = d->uriToBinding.constBegin(), itEnd = d->uriToBinding.constEnd(); iter != itEnd; ++iter) {
-        contactNode->addData(iter.value(), query->binding(iter.key()).toString());
+    foreach (const QString &bName, query->bindingNames()) {
+        if (!d->bindingRoleMap.contains(bName)) {
+            continue;
+        }
+
+        Role role = d->bindingRoleMap.value(bName);
+        QString value = query->binding(bName).toString();
+        if (!value.isEmpty()) {
+            contactNode->addData(role, value);
+        }
     }
 
     if (!pimoPersonUri.isEmpty()) {
@@ -319,7 +314,9 @@ void PersonsModel::createPerson(const Nepomuk2::Resource &res)
 //FIXME: rename this to addContact
 void PersonsModel::createContact(const Nepomuk2::Resource &res)
 {
-    appendRow(new ContactItem(res.uri()));
+    ContactItem *item = new ContactItem(res.uri());
+    item->loadData();
+    appendRow(item);
 }
 
 ContactItem* PersonsModel::contactForIMAccount(const QUrl &uri) const

@@ -61,9 +61,9 @@ PersonItem* createPerson1Contact(PersonsModel::ContactType t, const QVariant& id
         case PersonsModel::Phone: key = Nepomuk2::Vocabulary::NCO::phoneNumber(); break;
         default: Q_ASSERT(false && "dude!");
     }
-    contact->addData(key, id);
-    if(!nick.isEmpty())
-        contact->addData(Nepomuk2::Vocabulary::NCO::imNickname(), nick);
+    //contact->addData(key, id.toString());
+    //if(!nick.isEmpty())
+    //    contact->addData(Nepomuk2::Vocabulary::NCO::imNickname(), nick);
     
     Q_ASSERT(contact->data(PersonsModel::ContactTypeRole).toInt()==t);
     ret->appendRow(contact);

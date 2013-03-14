@@ -153,7 +153,9 @@ void PersonItem::addContacts(const QList<QUrl> &_contacts)
     kDebug() << "add contacts" << contacts;
     QList<ContactItem*> rows;
     foreach (const QUrl &uri, contacts) {
-        appendRow(new ContactItem(Nepomuk2::Resource(uri)));
+        ContactItem *item = new ContactItem(uri);
+        item->loadData();
+        appendRow(item);
     }
     emitDataChanged();
 }

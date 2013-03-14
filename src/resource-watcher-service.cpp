@@ -71,12 +71,8 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
             this, SLOT(contactCreated(Nepomuk2::Resource,QList<QUrl>)));
     connect(d->contactWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
             this, SLOT(contactRemoved(QUrl,QList<QUrl>)));
-    connect(d->contactWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
-            this, SLOT(onContactPropertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
-    connect(d->contactWatcher, SIGNAL(propertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
-            this, SLOT(onContactPropertyRemoved(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)));
     connect(d->contactWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
-            this, SLOT(onContactPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
+            this, SLOT(onContactPropertyModified(Nepomuk2::Resource)));
 
     d->contactWatcher->start();
 
@@ -152,49 +148,18 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource &
     }
 }
 
-void ResourceWatcherService::onContactPropertyAdded(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &value)
+
+void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource &res)
 {
-    kDebug() << "contact property added:" /*<< res.uri() */<< property.name() << value;
+    kDebug() << "contact changed:" << res.uri();
 
     Q_D(ResourceWatcherService);
     ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     if (item) {
-        if (property.uri() == Nepomuk2::Vocabulary::NCO::photo()) {
-            Nepomuk2::Resource photoRes(value.toUrl());
-            item->addData(Nepomuk2::Vocabulary::NIE::url(), photoRes.property(Nepomuk2::Vocabulary::NIE::url()).toUrl());
-        } else if (property.uri() == Nepomuk2::Vocabulary::NCO::hasIMAccount()) {
-            item->pullResourceProperties(Nepomuk2::Resource(value.toUrl()));
-        } else {
-            item->addData(property.uri(), value);
-        }
+        item->loadData();
     }
 }
 
-void ResourceWatcherService::onContactPropertyRemoved(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &value)
-{
-    kDebug() << "contact property removed:" /*<< res.uri() */<< property.name() << value;
-
-    Q_D(ResourceWatcherService);
-    ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
-    if (item) {
-        item->removeData(property.uri());
-    }
-}
-
-void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
-                                                      const QVariantList &added, const QVariantList &removed)
-{
-    kDebug() << "contact changed:" << res.uri() << property.name() << removed << added;
-
-    if (!removed.isEmpty() && !added.isEmpty()) {
-        Q_D(ResourceWatcherService);
-        ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
-
-        if (item) {
-            item->modifyData(property.uri(), added);
-        }
-    }
-}
 
 void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariantList &added, const QVariantList &removed)
 {
@@ -209,7 +174,13 @@ void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resourc
 
     //we expect only the imNickname to change here
     if (property.name() == QLatin1String("imNickname")) {
-        item->modifyData(property.uri(), added.first());
+        if (added.count()) {
+            item->removeData(PersonsModel::NickRole);
+            item->addData(PersonsModel::NickRole, added.first().toString());
+        }
+        else {
+            item->removeData(PersonsModel::NickRole);
+        }
     }
 }
 

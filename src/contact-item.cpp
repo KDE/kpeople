@@ -39,7 +39,7 @@
 class ContactItemPrivate {
 public:
     QUrl uri;
-    QMultiHash<QUrl, QVariant> data;
+    QMultiHash<int, QString> data;
 };
 
 ContactItem::ContactItem(const QUrl &uri)
@@ -49,36 +49,9 @@ ContactItem::ContactItem(const QUrl &uri)
     d_ptr->uri = uri;
 }
 
-ContactItem::ContactItem(const Nepomuk2::Resource &contact)
-    : d_ptr(new ContactItemPrivate)
-{
-//     setData(contact.uri(), PersonsModel::UriRole);
-    d_ptr->uri = contact.uri();
-    pullResourceProperties(contact);
-
-    QUrl val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount()).toUrl();
-    if (val.isValid()) {
-        pullResourceProperties(Nepomuk2::Resource(val));
-    }
-
-    val = d_ptr->data.value(Nepomuk2::Vocabulary::NCO::photo()).toUrl();
-    if (val.isValid()) {
-        pullResourceProperties(Nepomuk2::Resource(val));
-    }
-}
-
 ContactItem::~ContactItem()
 {
     delete d_ptr;
-}
-
-void ContactItem::pullResourceProperties(const Nepomuk2::Resource &res)
-{
-    QHash<QUrl, Nepomuk2::Variant> props = res.properties();
-    for (QHash<QUrl, Nepomuk2::Variant>::const_iterator it = props.constBegin(), itEnd = props.constEnd(); it != itEnd; ++it) {
-        kDebug() << it.key() << it->variant();
-        addData(it.key(), it->variant());
-    }
 }
 
 QMap<PersonsModel::ContactType, QIcon> initializeTypeIcons()
@@ -100,24 +73,25 @@ void ContactItem::refreshIcon()
     setIcon(s_contactTypeMap[type]);
 }
 
-void ContactItem::addData(const QUrl &key, const QVariant &value)
+void ContactItem::addData(int role, const QString &value)
 {
-    if (value.isNull()) {
-        return;
+    Q_D(ContactItem);
+
+    // A multi-hash can contain the same (key, value) pairs multiple times
+    if (!d->data.contains(role, value)) {
+        d->data.insert(role, value);
+        emitDataChanged();
     }
-
-    Q_D(ContactItem);
-
-//     kDebug() << "Inserting" << "[" << key << "]" << value;
-    d->data.insertMulti(key, value);
-    emitDataChanged();
 }
 
-QVariantList ContactItem::dataValue(const QUrl &key)
+void ContactItem::removeData(int role)
 {
     Q_D(ContactItem);
-    return d->data.values(key);
+    if (d->data.remove(role)) {
+        emitDataChanged();
+    }
 }
+
 
 QUrl ContactItem::uri() const
 {
@@ -128,6 +102,17 @@ QUrl ContactItem::uri() const
 QVariant ContactItem::data(int role) const
 {
     Q_D(const ContactItem);
+
+    int count = d->data.count(role);
+    if (count) {
+        if (count > 1) {
+            return QVariant(d->data.values(role));
+        }
+        else {
+            return d->data.value(role);
+        }
+    }
+
     switch(role) {
         case Qt::DisplayRole:
             if (!data(PersonsModel::NickRole).toString().isEmpty()) {
@@ -145,19 +130,13 @@ QVariant ContactItem::data(int role) const
             if (!data(PersonsModel::PhoneRole).toString().isEmpty()) {
                 return data(PersonsModel::PhoneRole);
             }
+
             return QString("Unknown person"); //FIXME: temporary
         case PersonsModel::UriRole: return d->uri; break;
-        case PersonsModel::NickRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imNickname());
-        case PersonsModel::LabelRole: return d->data.value(Soprano::Vocabulary::NAO::prefLabel());
-        case PersonsModel::PhoneRole: return d->data.values(Nepomuk2::Vocabulary::NCO::phoneNumber());
-        case PersonsModel::EmailRole: return d->data.values(Nepomuk2::Vocabulary::NCO::emailAddress());
-        case PersonsModel::IMRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imID());
-        case PersonsModel::PhotoRole: return d->data.value(Nepomuk2::Vocabulary::NIE::url());
-        case PersonsModel::IMAccountUriRole: return d->data.value(Nepomuk2::Vocabulary::NCO::hasIMAccount());
-        case PersonsModel::IMAccountTypeRole: return d->data.value(Nepomuk2::Vocabulary::NCO::imAccountType());
         case PersonsModel::StatusRole: return QLatin1String("unknown"); //return unknown presence, for real presence use PersonsPresenceModel
         case PersonsModel::ContactsCountRole: return 1;
-        case PersonsModel::ContactGroupsRole: return d->data.values(Nepomuk2::Vocabulary::NCO::contactGroupName());
+
+        // FIXME: Should this be thrown away?
         case PersonsModel::ContactIdRole: {
             int role = -1;
             switch((PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt()) {
@@ -179,27 +158,66 @@ QVariant ContactItem::data(int role) const
     return QStandardItem::data(role);
 }
 
-void ContactItem::modifyData(const QUrl &name, const QVariantList &added)
+void ContactItem::loadData()
 {
     Q_D(ContactItem);
-    d->data.replace(name, added);
 
-    emitDataChanged();
-}
+    QHash<QString, PersonsModel::Role> bindingRoleMap;
+    bindingRoleMap.insert("nco_imNickname", PersonsModel::NickRole);
+    bindingRoleMap.insert("nao_prefLabel", PersonsModel::LabelRole);
+    bindingRoleMap.insert("nco_imID", PersonsModel::IMRole);
+    bindingRoleMap.insert("nco_imImAcountType", PersonsModel::IMAccountTypeRole);
+    bindingRoleMap.insert("nco_hasIMAccount", PersonsModel::IMAccountUriRole);
+    bindingRoleMap.insert("nco_contactGroupName", PersonsModel::ContactGroupsRole);
+    bindingRoleMap.insert("nie_url", PersonsModel::PhotoRole);
+    bindingRoleMap.insert("nco_emailAddress", PersonsModel::EmailRole);
 
-void ContactItem::modifyData(const QUrl &name, const QVariant &newValue)
-{
-    Q_D(ContactItem);
-    kDebug() << "Old data:" << d->data.values(name);
-    d->data.replace(name, newValue);
-    kDebug() << "New Data:" << d->data.values(name);
-    emitDataChanged();
-}
+    QString query = QString::fromUtf8(
+            "select DISTINCT ?nco_hasIMAccount "
+            "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
+            "?nie_url ?nao_prefLabel ?nco_contactGroupName "
 
+                "WHERE { "
+                    "OPTIONAL { %1  nao:prefLabel  ?nao_prefLabel. }"
 
-void ContactItem::removeData(const QUrl &uri)
-{
-    Q_D(ContactItem);
-    d->data.remove(uri);
-    emitDataChanged();
+//                    "OPTIONAL { "
+                        "%1                                    nco:hasIMAccount            ?nco_hasIMAccount. "
+                        "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
+                        "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
+                        "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
+//                    " } "
+                    "OPTIONAL { "
+                        "%1 nco:belongsToGroup ?nco_belongsToGroup . "
+                        "?nco_belongsToGroup nco:contactGroupName ?nco_contactGroupName . "
+                    " }"
+                    "OPTIONAL {"
+                        "%1                         nco:photo                   ?phRes. "
+                        "?phRes                     nie:url                     ?nie_url. "
+                    " } "
+                    "OPTIONAL { "
+                        "%1                         nco:hasEmailAddress         ?nco_hasEmailAddress. "
+                        "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
+                    " } "
+                "}")
+            .arg(Soprano::Node::resourceToN3(d->uri));
+
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
+    // FIXME: The result might come multiple times
+    d->data.clear();
+    if( it.next() ) {
+
+        //iterate over the results and add the wanted properties into the contact
+        foreach (const QString& bName, it.bindingNames()) {
+            if (!bindingRoleMap.contains(bName))
+                continue;
+
+            PersonsModel::Role role = bindingRoleMap.value(bName);
+            QString value = it.binding(bName).toString();
+            if (!value.isEmpty() && !d->data.contains(role, value)) {
+                d->data.insert(role, value);
+            }
+        }
+        emitDataChanged();
+    }
 }

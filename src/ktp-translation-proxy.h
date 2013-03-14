@@ -1,6 +1,5 @@
 /*
-    KPeople - Duplicates
-    Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
+    Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -17,19 +16,24 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef MATCH_H
-#define MATCH_H
 
-#include <QList>
+#ifndef KTP_TRANSLATION_PROXY_H
+#define KTP_TRANSLATION_PROXY_H
 
-struct Match
+#include <QIdentityProxyModel>
+
+#include "kpeople_export.h"
+
+class KPEOPLE_EXPORT KTpTranslationProxy : public QIdentityProxyModel
 {
-    Match(const QList<int>& r, int a, int b);
-    bool operator==(const Match &m) const;
-    bool operator<(const Match &m) const;
+    Q_OBJECT
 
-    QList<int> role;
-    int rowA, rowB;
+public:
+    KTpTranslationProxy(QObject *parent = 0);
+    virtual ~KTpTranslationProxy();
+
+    virtual QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
+
 };
 
-#endif // MATCH_H
+#endif // KTP_TRANSLATION_PROXY_H

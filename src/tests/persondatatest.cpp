@@ -20,7 +20,6 @@
 #include "persondatatest.h"
 #include <persons-model.h>
 #include <persondata.h>
-#include <personactions.h>
 
 #include <qtest_kde.h>
 
@@ -43,9 +42,5 @@ void PersonDataTest::testLocalPeople()
         PersonData d;
         d.setContactId(id);
         QTest::kWaitForSignal(&d, SIGNAL(dataInitialized()));
-        
-        PersonActions actions;
-        actions.setPerson(&d);
-        QVERIFY(actions.rowCount()>0);
     }
 }

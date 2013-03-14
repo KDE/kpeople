@@ -20,16 +20,16 @@
 #include "duplicatestest.h"
 #include <duplicatesfinder.h>
 #include <persons-model.h>
-#include <persons-model-item.h>
-#include <persons-model-contact-item.h>
+#include <person-item.h>
+#include <contact-item.h>
 
 #include <qtest_kde.h>
 #include <Nepomuk2/Vocabulary/NCO>
 #include <QStandardItemModel>
 
 QTEST_KDEMAIN_CORE( DuplicatesTest )
-Q_DECLARE_METATYPE(QList<PersonsModelItem*>);
-Q_DECLARE_METATYPE(QList<PersonsModelContactItem*>);
+Q_DECLARE_METATYPE(QList<PersonItem*>);
+Q_DECLARE_METATYPE(QList<ContactItem*>);
 Q_DECLARE_METATYPE(QList<Match>);
 
 
@@ -39,10 +39,10 @@ DuplicatesTest::DuplicatesTest(QObject* parent): QObject(parent)
 
 void DuplicatesTest::testDuplicates()
 {
-    QFETCH(QList<PersonsModelItem*>, people);
+    QFETCH(QList<PersonItem*>, people);
     QFETCH(int, matches);
     PersonsModel m(0, false);
-    foreach(PersonsModelItem* item, people) m.appendRow(item);
+    foreach(PersonItem* item, people) m.appendRow(item);
     
     QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
     f->start();
@@ -50,10 +50,10 @@ void DuplicatesTest::testDuplicates()
     QCOMPARE(f->results().size(), matches);
 }
 
-PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVariant& id, const QString& nick=QString())
+PersonItem* createPerson1Contact(PersonsModel::ContactType t, const QVariant& id, const QString& nick=QString())
 {
-    PersonsModelItem* ret = new PersonsModelItem(QString("test:/%1").arg(qrand()));
-    PersonsModelContactItem* contact = new PersonsModelContactItem(QUrl("test:/"+id.toString()+QString::number(qrand())));
+    PersonItem* ret = new PersonItem(QString("test:/%1").arg(qrand()));
+    ContactItem* contact = new ContactItem(QUrl("test:/"+id.toString()+QString::number(qrand())));
     QUrl key;
     switch(t) {
         case PersonsModel::IM: key = Nepomuk2::Vocabulary::NCO::imID(); break;
@@ -72,15 +72,15 @@ PersonsModelItem* createPerson1Contact(PersonsModel::ContactType t, const QVaria
 
 void DuplicatesTest::testDuplicates_data()
 {
-    QTest::addColumn<QList<PersonsModelItem*> >("people");
+    QTest::addColumn<QList<PersonItem*> >("people");
     QTest::addColumn<int>("matches");
 
-    QList<PersonsModelContactItem*> emptyContacts;
-    QTest::newRow("empty") << QList<PersonsModelItem*>() << 0;
-    QTest::newRow("diffemails") << (QList<PersonsModelItem*>()
+    QList<ContactItem*> emptyContacts;
+    QTest::newRow("empty") << QList<PersonItem*>() << 0;
+    QTest::newRow("diffemails") << (QList<PersonItem*>()
             << createPerson1Contact(PersonsModel::Email, "a@a.es") << createPerson1Contact(PersonsModel::Email, "a@a.com")
         ) << 0;
-    QTest::newRow("emails") << (QList<PersonsModelItem*>()
+    QTest::newRow("emails") << (QList<PersonItem*>()
             << createPerson1Contact(PersonsModel::Email, "a@a.com") << createPerson1Contact(PersonsModel::Email, "a@a.com")
         ) << 1;
 }

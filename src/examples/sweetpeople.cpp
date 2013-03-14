@@ -18,6 +18,7 @@
 */
 #include <KApplication>
 #include <KCmdLineArgs>
+#include <KDebug>
 #include <QDeclarativeView>
 #include <qdeclarativeerror.h>
 
@@ -26,9 +27,9 @@
 int main(int argc, char** argv)
 {
     KCmdLineArgs::init(argc, argv, QByteArray("sweetpeople"), "", ki18n("SweetPeople - KPeople Example"), "0.1");
-    
+
     KApplication app;
-    
+
     QDeclarativeView view;
     KDeclarative decl;
     decl.setDeclarativeEngine(view.engine());
@@ -36,8 +37,8 @@ int main(int argc, char** argv)
     decl.setupBindings();
     view.setSource(QUrl("qrc:/qml/Main.qml"));
     view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    Q_ASSERT(view.errors().isEmpty());
+    kDebug() << view.errors();
     view.show();
-    
+
     app.exec();
 }

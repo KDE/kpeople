@@ -27,37 +27,40 @@
 #include <QStandardItem>
 #include "persons-model.h"
 
-class PersonsModelContactItemPrivate;
+class QAction;
+class ContactItemPrivate;
 
-class KPEOPLE_EXPORT PersonsModelContactItem : public QStandardItem
+class KPEOPLE_EXPORT ContactItem : public QStandardItem
 {
 public:
     /**
      * @param displayName - What will be visible to the user (used as Qt::DisplayRole)
      * @param type - What kind of contact this is
      */
-    explicit PersonsModelContactItem(const QUrl& uri);
-    explicit PersonsModelContactItem(const Nepomuk2::Resource& res);
-    virtual ~PersonsModelContactItem();
+    explicit ContactItem(const QUrl &uri);
+    explicit ContactItem(const Nepomuk2::Resource &res);
+    virtual ~ContactItem();
 
     QUrl uri() const;
 
     void addData(const QUrl &key, const QVariant &value);
-    void modifyData(const QUrl& name, const QVariantList& newValue);
+    void modifyData(const QUrl &name, const QVariantList &newValue);
+    void modifyData(const QUrl &name, const QVariant &newValue);
     void setType(PersonsModel::ContactType type);
 
-    QVariant dataValue(const QUrl& key);
+    QVariantList dataValue(const QUrl &key);
     virtual QVariant data(int role = Qt::UserRole + 1) const;
-    void removeData(const QUrl& uri);
-    void pullResourceProperties(const Nepomuk2::Resource& res);
+    void removeData(const QUrl &uri);
+    void pullResourceProperties(const Nepomuk2::Resource &res);
 
 private:
     void refreshIcon();
 
-    PersonsModelContactItemPrivate * const d_ptr;
-    Q_DECLARE_PRIVATE(PersonsModelContactItem)
+    ContactItemPrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(ContactItem)
 };
 
-Q_DECLARE_METATYPE(PersonsModelContactItem*);
+Q_DECLARE_METATYPE(ContactItem*);
+Q_DECLARE_METATYPE(QList<QAction *>);
 
 #endif // PERSONS_MODEL_CONTACT_ITEM_H

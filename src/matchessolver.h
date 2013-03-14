@@ -1,5 +1,4 @@
 /*
-    Persons Model
     Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
 
     This library is free software; you can redistribute it and/or
@@ -33,19 +32,19 @@ class KPEOPLE_EXPORT MatchesSolver : public KJob
 {
     Q_OBJECT
     public:
-        explicit MatchesSolver(const QList<Match>& matches, PersonsModel* model, QObject* parent = 0);
+        explicit MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent = 0);
         virtual void start();
 
     public slots:
         void startMatching();
-        void jobDone(KJob* job=0);
+        void jobDone(KJob *job=0);
 
     private:
-        QList<QUrl> contactUris(const QModelIndex& idxOrigin);
-        
+        QList<QUrl> contactUris(const QModelIndex &idxOrigin);
+
         QList<Match> m_matches;
         QSet<KJob*> m_pending;
-        PersonsModel* m_model;
+        PersonsModel *m_model;
 };
 
 #endif // MATCHESSOLVER_H

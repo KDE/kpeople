@@ -29,7 +29,7 @@ class ContactDelegate : public QStyledItemDelegate
         QStyledItemDelegate::paint(painter, option, index);
         QRect infoRect(QPoint(option.rect.center().x(), option.rect.top()), option.rect.bottomRight());
         if(index.parent().isValid()) {
-            painter->drawText(infoRect, index.data(PersonsModel::IMRole).toString());
+            painter->drawText(infoRect, index.data(PersonsModel::StatusRole).toString());
         } else {
             painter->drawText(infoRect, QString::number(index.model()->rowCount(index)));
         }
@@ -39,12 +39,12 @@ class ContactDelegate : public QStyledItemDelegate
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
-    
+
     QTreeView view;
     view.setItemDelegate(new ContactDelegate);
     view.setModel(new PersonsModel(&view));
     view.setSortingEnabled(true);
     view.show();
-    
+
     app.exec();
 }

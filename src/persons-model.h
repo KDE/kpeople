@@ -28,7 +28,7 @@
 
 class KJob;
 class PersonsPresenceModel;
-class PersonsModelContactItem;
+class ContactItem;
 class KJob;
 class QUrl;
 struct PersonsModelPrivate;
@@ -124,7 +124,7 @@ public:
 
     void createPerson(const Nepomuk2::Resource &res);
     void createContact(const Nepomuk2::Resource &res);
-    PersonsModelContactItem* contactForIMAccount(const QUrl &uri) const;
+    ContactItem* contactForIMAccount(const QUrl &uri) const;
 
 private slots:
     void jobFinished(KJob *job);

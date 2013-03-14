@@ -19,7 +19,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "persons-model-contact-item.h"
+#include "contact-item.h"
 
 #include <QAction>
 
@@ -36,21 +36,21 @@
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 
-class PersonsModelContactItemPrivate {
+class ContactItemPrivate {
 public:
     QUrl uri;
     QMultiHash<QUrl, QVariant> data;
 };
 
-PersonsModelContactItem::PersonsModelContactItem(const QUrl &uri)
-    : d_ptr(new PersonsModelContactItemPrivate)
+ContactItem::ContactItem(const QUrl &uri)
+    : d_ptr(new ContactItemPrivate)
 {
 //     setData(uri, PersonsModel::UriRole);
     d_ptr->uri = uri;
 }
 
-PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource &contact)
-    : d_ptr(new PersonsModelContactItemPrivate)
+ContactItem::ContactItem(const Nepomuk2::Resource &contact)
+    : d_ptr(new ContactItemPrivate)
 {
 //     setData(contact.uri(), PersonsModel::UriRole);
     d_ptr->uri = contact.uri();
@@ -67,12 +67,12 @@ PersonsModelContactItem::PersonsModelContactItem(const Nepomuk2::Resource &conta
     }
 }
 
-PersonsModelContactItem::~PersonsModelContactItem()
+ContactItem::~ContactItem()
 {
     delete d_ptr;
 }
 
-void PersonsModelContactItem::pullResourceProperties(const Nepomuk2::Resource &res)
+void ContactItem::pullResourceProperties(const Nepomuk2::Resource &res)
 {
     QHash<QUrl, Nepomuk2::Variant> props = res.properties();
     for (QHash<QUrl, Nepomuk2::Variant>::const_iterator it = props.constBegin(), itEnd = props.constEnd(); it != itEnd; ++it) {
@@ -94,40 +94,40 @@ QMap<PersonsModel::ContactType, QIcon> initializeTypeIcons()
 
 static QMap<PersonsModel::ContactType, QIcon> s_contactTypeMap = initializeTypeIcons();
 
-void PersonsModelContactItem::refreshIcon()
+void ContactItem::refreshIcon()
 {
     PersonsModel::ContactType type = (PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt();
     setIcon(s_contactTypeMap[type]);
 }
 
-void PersonsModelContactItem::addData(const QUrl &key, const QVariant &value)
+void ContactItem::addData(const QUrl &key, const QVariant &value)
 {
     if (value.isNull()) {
         return;
     }
 
-    Q_D(PersonsModelContactItem);
+    Q_D(ContactItem);
 
 //     kDebug() << "Inserting" << "[" << key << "]" << value;
     d->data.insertMulti(key, value);
     emitDataChanged();
 }
 
-QVariantList PersonsModelContactItem::dataValue(const QUrl &key)
+QVariantList ContactItem::dataValue(const QUrl &key)
 {
-    Q_D(PersonsModelContactItem);
+    Q_D(ContactItem);
     return d->data.values(key);
 }
 
-QUrl PersonsModelContactItem::uri() const
+QUrl ContactItem::uri() const
 {
-    Q_D(const PersonsModelContactItem);
+    Q_D(const ContactItem);
     return d->uri;
 }
 
-QVariant PersonsModelContactItem::data(int role) const
+QVariant ContactItem::data(int role) const
 {
-    Q_D(const PersonsModelContactItem);
+    Q_D(const ContactItem);
     switch(role) {
         case Qt::DisplayRole:
             if (!data(PersonsModel::NickRole).toString().isEmpty()) {
@@ -176,17 +176,17 @@ QVariant PersonsModelContactItem::data(int role) const
     return QStandardItem::data(role);
 }
 
-void PersonsModelContactItem::modifyData(const QUrl &name, const QVariantList &added)
+void ContactItem::modifyData(const QUrl &name, const QVariantList &added)
 {
-    Q_D(PersonsModelContactItem);
+    Q_D(ContactItem);
     d->data.replace(name, added);
 
     emitDataChanged();
 }
 
-void PersonsModelContactItem::modifyData(const QUrl &name, const QVariant &newValue)
+void ContactItem::modifyData(const QUrl &name, const QVariant &newValue)
 {
-    Q_D(PersonsModelContactItem);
+    Q_D(ContactItem);
     kDebug() << "Old data:" << d->data.values(name);
     d->data.replace(name, newValue);
     kDebug() << "New Data:" << d->data.values(name);
@@ -194,9 +194,9 @@ void PersonsModelContactItem::modifyData(const QUrl &name, const QVariant &newVa
 }
 
 
-void PersonsModelContactItem::removeData(const QUrl &uri)
+void ContactItem::removeData(const QUrl &uri)
 {
-    Q_D(PersonsModelContactItem);
+    Q_D(ContactItem);
     d->data.remove(uri);
     emitDataChanged();
 }

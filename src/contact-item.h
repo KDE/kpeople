@@ -28,18 +28,18 @@
 #include "persons-model.h"
 
 class QAction;
-class PersonsModelContactItemPrivate;
+class ContactItemPrivate;
 
-class KPEOPLE_EXPORT PersonsModelContactItem : public QStandardItem
+class KPEOPLE_EXPORT ContactItem : public QStandardItem
 {
 public:
     /**
      * @param displayName - What will be visible to the user (used as Qt::DisplayRole)
      * @param type - What kind of contact this is
      */
-    explicit PersonsModelContactItem(const QUrl &uri);
-    explicit PersonsModelContactItem(const Nepomuk2::Resource &res);
-    virtual ~PersonsModelContactItem();
+    explicit ContactItem(const QUrl &uri);
+    explicit ContactItem(const Nepomuk2::Resource &res);
+    virtual ~ContactItem();
 
     QUrl uri() const;
 
@@ -56,11 +56,11 @@ public:
 private:
     void refreshIcon();
 
-    PersonsModelContactItemPrivate * const d_ptr;
-    Q_DECLARE_PRIVATE(PersonsModelContactItem)
+    ContactItemPrivate * const d_ptr;
+    Q_DECLARE_PRIVATE(ContactItem)
 };
 
-Q_DECLARE_METATYPE(PersonsModelContactItem*);
+Q_DECLARE_METATYPE(ContactItem*);
 Q_DECLARE_METATYPE(QList<QAction *>);
 
 #endif // PERSONS_MODEL_CONTACT_ITEM_H

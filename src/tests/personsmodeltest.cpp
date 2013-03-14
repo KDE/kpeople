@@ -19,8 +19,8 @@
 
 #include "personsmodeltest.h"
 #include <persons-model.h>
-#include <persons-model-item.h>
-#include <persons-model-contact-item.h>
+#include <person-item.h>
+#include <contact-item.h>
 
 #include <qtest_kde.h>
 #include <Nepomuk2/Vocabulary/NCO>

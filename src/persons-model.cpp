@@ -19,8 +19,8 @@
 */
 
 #include "persons-model.h"
-#include "persons-model-item.h"
-#include "persons-model-contact-item.h"
+#include "person-item.h"
+#include "contact-item.h"
 #include "resource-watcher-service.h"
 
 #include <Soprano/Query/QueryLanguage>
@@ -41,8 +41,8 @@
 #include <KDebug>
 
 struct PersonsModelPrivate {
-    QHash<QUrl, PersonsModelContactItem*> contacts; //all contacts in the model
-    QHash<QUrl, PersonsModelItem*> persons;         //all persons
+    QHash<QUrl, ContactItem*> contacts; //all contacts in the model
+    QHash<QUrl, PersonItem*> persons;         //all persons
     QList<QUrl> pimoOccurances;                     //contacts that are groundingOccurrences of persons
     QHash<QString, QUrl> uriToBinding;
 
@@ -175,12 +175,12 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
     }
 
     //see if we don't have this contact already
-    PersonsModelContactItem *contactNode = d->contacts.value(currentUri);
+    ContactItem *contactNode = d->contacts.value(currentUri);
 
     bool newContact = !contactNode;
 
     if (newContact) {
-        contactNode = new PersonsModelContactItem(currentUri);
+        contactNode = new ContactItem(currentUri);
         d->contacts.insert(currentUri, contactNode);
     } else {
         //FIXME: for some reason we get most of the contacts twice in the resultset,
@@ -198,10 +198,10 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 
     if (!pimoPersonUri.isEmpty()) {
         //look for existing person items
-        QHash< QUrl, PersonsModelItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+        QHash< QUrl, PersonItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
         if (pos == d->persons.constEnd()) {
             //this means no person exists yet, so lets create new one
-            pos = d->persons.insert(pimoPersonUri, new PersonsModelItem(pimoPersonUri));
+            pos = d->persons.insert(pimoPersonUri, new PersonItem(pimoPersonUri));
         }
         //FIXME: we need to check if the contact is not already present in person's children,
         //       from testing however it turns out that checking newContact == true
@@ -313,19 +313,19 @@ void PersonsModel::createPerson(const Nepomuk2::Resource &res)
     //           Furthermore this slot is used only when new pimo:Person is created
     //           in Nepomuk and in that case Nepomuk *always* signals propertyAdded
     //           with "groundingOccurrence", so we get the contacts either way.
-    appendRow(new PersonsModelItem(res.uri()));
+    appendRow(new PersonItem(res.uri()));
 }
 
 //FIXME: rename this to addContact
 void PersonsModel::createContact(const Nepomuk2::Resource &res)
 {
-    appendRow(new PersonsModelContactItem(res.uri()));
+    appendRow(new ContactItem(res.uri()));
 }
 
-PersonsModelContactItem* PersonsModel::contactForIMAccount(const QUrl &uri) const
+ContactItem* PersonsModel::contactForIMAccount(const QUrl &uri) const
 {
     QStandardItem *it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
-    return dynamic_cast<PersonsModelContactItem*>(it);
+    return dynamic_cast<ContactItem*>(it);
 }
 
 void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
@@ -405,7 +405,7 @@ void PersonsModel::removePerson(const QUrl &uri)
 
 void PersonsModel::removePersonFromModel(const QModelIndex &index)
 {
-    PersonsModelItem *person = dynamic_cast<PersonsModelItem*>(itemFromIndex(index));
+    PersonItem *person = dynamic_cast<PersonItem*>(itemFromIndex(index));
     for (int i = 0; i < person->rowCount(); ) {
         //reparent the contacts to toplevel
         invisibleRootItem()->appendRow(person->takeRow(i));

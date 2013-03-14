@@ -20,7 +20,7 @@
 
 #include "persondata.h"
 #include "persons-model.h"
-#include "persons-model-item.h"
+#include "person-item.h"
 #include "persons-presence-model.h"
 
 #include <Nepomuk2/Resource>

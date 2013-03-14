@@ -33,11 +33,11 @@ class QUrl;
 class PersonsModelItemPrivate;
 class PersonCacheItem;
 
-class KPEOPLE_EXPORT PersonsModelItem : public QStandardItem
+class KPEOPLE_EXPORT PersonItem : public QStandardItem
 {
 public:
-    PersonsModelItem(const QUrl &personUri);
-    PersonsModelItem(const Nepomuk2::Resource &person);
+    PersonItem(const QUrl &personUri);
+    PersonItem(const Nepomuk2::Resource &person);
 
     virtual QVariant data(int role) const;
 
@@ -50,6 +50,6 @@ private:
     QVariantList queryChildrenForRoleList(int role) const;
 };
 
-Q_DECLARE_METATYPE(PersonsModelItem*);
+Q_DECLARE_METATYPE(PersonItem*);
 
 #endif // PERSONS_MODEL_ITEM_H

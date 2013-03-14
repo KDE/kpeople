@@ -20,8 +20,8 @@
 
 #include "resource-watcher-service.h"
 #include "persons-model.h"
-#include "persons-model-item.h"
-#include "persons-model-contact-item.h"
+#include "person-item.h"
+#include "contact-item.h"
 
 #include <Nepomuk2/Resource>
 #include <nepomuk2/resourcewatcher.h>
@@ -98,7 +98,7 @@ void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource &res
 
     if (property.uri() == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
         Q_D(ResourceWatcherService);
-        PersonsModelItem *item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+        PersonItem *item = static_cast<PersonItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
         if (item) {
             item->addContacts(QList<QUrl>() << value.toUrl());
         } else {
@@ -113,7 +113,7 @@ void ResourceWatcherService::onPersonPropertyRemoved(const Nepomuk2::Resource &r
 
     if (property.name() == "groundingOccurrence") {
         Q_D(ResourceWatcherService);
-        PersonsModelItem *item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+        PersonItem *item = static_cast<PersonItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
         if (item) {
             if (_value.canConvert<QUrl>()) {    //one contact was removed from groundingOccurrence
                 item->removeContacts(QList<QUrl>() << _value.toUrl());
@@ -144,7 +144,7 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource &
     }
     Q_D(ResourceWatcherService);
     if (property == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
-        PersonsModelItem *item = static_cast<PersonsModelItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+        PersonItem *item = static_cast<PersonItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
         if (item) {
             item->removeContacts(qvariantlist_cast<QUrl>(removed));
             item->addContacts(qvariantlist_cast<QUrl>(added));
@@ -157,7 +157,7 @@ void ResourceWatcherService::onContactPropertyAdded(const Nepomuk2::Resource &re
     kDebug() << "contact property added:" /*<< res.uri() */<< property.name() << value;
 
     Q_D(ResourceWatcherService);
-    PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+    ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     if (item) {
         if (property.uri() == Nepomuk2::Vocabulary::NCO::photo()) {
             Nepomuk2::Resource photoRes(value.toUrl());
@@ -175,7 +175,7 @@ void ResourceWatcherService::onContactPropertyRemoved(const Nepomuk2::Resource &
     kDebug() << "contact property removed:" /*<< res.uri() */<< property.name() << value;
 
     Q_D(ResourceWatcherService);
-    PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+    ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     if (item) {
         item->removeData(property.uri());
     }
@@ -188,7 +188,7 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
 
     if (!removed.isEmpty() && !added.isEmpty()) {
         Q_D(ResourceWatcherService);
-        PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+        ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
 
         if (item) {
             item->modifyData(property.uri(), added);
@@ -202,7 +202,7 @@ void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resourc
 
     Q_D(ResourceWatcherService);
     kDebug() << d->m_model->contactForIMAccount(res.uri());
-    PersonsModelContactItem *item = static_cast<PersonsModelContactItem*>(d->m_model->contactForIMAccount(res.uri()));
+    ContactItem *item = static_cast<ContactItem*>(d->m_model->contactForIMAccount(res.uri()));
     if (!item) {
         return;
     }

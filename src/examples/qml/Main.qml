@@ -14,7 +14,10 @@ Rectangle {
         id: filteredPeople
         sortRole: "display"
         sortCaseSensitivity: Qt.CaseInsensitive
-        sourceModel: PersonsModel { id: people }
+        sourceModel: PersonsPresenceModel {
+            id: people
+            sourceModel: PersonsModel {}
+        }
         filterRegExp: searchField.text
     }
     
@@ -93,7 +96,7 @@ Rectangle {
                         width: view.cellWidth-5
                         Image {
                             id: avatar
-                            source: photo[0] || ""
+                            source: photo || ""
                             fillMode: Image.PreserveAspectCrop
                             anchors.fill: parent
                         }
@@ -107,6 +110,7 @@ Rectangle {
                         enabled: true
                         onClicked: {
                             contactItem.contactData = model
+                            personActions.setPerson(filteredPeople, model.index)
                             if(areWeMerging.checked)
                                 toMergeItems.addUri(model.uri, model.name)
                         }
@@ -170,14 +174,12 @@ Rectangle {
                     anchors.fill: parent
                     Repeater {
                         model: PersonActions {
-                            id: actionsModel
-                            row: contactItem.contactData!=null ? filteredPeople.mapRowToSource(contactItem.contactData.index) : -1
-                            peopleModel: people
+                            id: personActions
                         }
                         delegate: Button {
                             text: model.display
                             iconSource: model.decoration
-                            onClicked: actionsModel.trigger(model.index)
+                            onClicked: personActions.triggerAction(model.index)
                         }
                     }
                 }

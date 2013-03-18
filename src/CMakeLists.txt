@@ -17,6 +17,7 @@ kde4_add_library (kpeople SHARED
     matchessolver.cpp
     match.cpp
     ktp-translation-proxy.cpp
+    person-actions.cpp
 )
 
 target_link_libraries (kpeople
@@ -40,7 +41,12 @@ install (TARGETS kpeople
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES persons-model.h persondata.h kpeople_export.h persons-presence-model.h ktp-translation-proxy.h
+install (FILES persons-model.h
+               persondata.h
+               kpeople_export.h
+               persons-presence-model.h
+               ktp-translation-proxy.h
+               person-actions.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
 )

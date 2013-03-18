@@ -2,9 +2,9 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-#add_subdirectory(examples)
+add_subdirectory(examples)
 add_subdirectory(tests)
-#add_subdirectory(declarative)
+add_subdirectory(declarative)
 
 kde4_add_library (kpeople SHARED
     contact-item.cpp

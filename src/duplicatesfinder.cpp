@@ -48,8 +48,8 @@ void DuplicatesFinder::doSearch()
 
         //we gather the values
         QVariantList values;
-        for (int role = 0; role < m_compareRoles.size(); role++) {
-            values += idx.data(m_compareRoles[role]);
+        foreach(int role, m_compareRoles) {
+            values += idx.data(role);
         }
         Q_ASSERT(values.size() == m_compareRoles.size());
 
@@ -75,13 +75,14 @@ QList<int> DuplicatesFinder::matchAt(const QVariantList &value, const QVariantLi
     Q_ASSERT(value.size() == toCompare.size());
     for (int i = 0; i<toCompare.size(); i++) {
         const QVariant &v = value[i];
+        bool add = false;
         if (v.type() == QVariant::List) {
-            QList<QVariant> listA = v.toList(), listB=toCompare[i].toList();
-            if (!listA.isEmpty()) {
+            QVariantList listA = v.toList(), listB=toCompare[i].toList();
+            if (!listA.isEmpty() && !listB.isEmpty()) {
                 foreach (const QVariant &v, listB) {
                     if (listA.contains(v)) {
                         Q_ASSERT(!ret.contains(m_compareRoles[i]) && "B");
-                        ret += m_compareRoles[i];
+                        add = true;
                         break;
                     }
                 }
@@ -90,6 +91,9 @@ QList<int> DuplicatesFinder::matchAt(const QVariantList &value, const QVariantLi
             && (v.type() != QVariant::String || !v.toString().isEmpty()))
         {
             Q_ASSERT(!ret.contains(m_compareRoles[i]) && "A");
+            add = true;
+        }
+        if(add) {
             ret += m_compareRoles[i];
         }
     }

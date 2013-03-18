@@ -42,28 +42,32 @@ void DuplicatesTest::testDuplicates()
     QFETCH(QList<PersonItem*>, people);
     QFETCH(int, matches);
     PersonsModel m(0, false);
-    foreach(PersonItem* item, people) m.appendRow(item);
-    
+    foreach(PersonItem* item, people)
+        m.appendRow(item);
+
     QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
     f->start();
     QTest::kWaitForSignal(f.data(), SIGNAL(finished(KJob*)));
     QCOMPARE(f->results().size(), matches);
 }
 
-PersonItem* createPerson1Contact(PersonsModel::ContactType t, const QVariant& id, const QString& nick=QString())
+PersonItem* createPerson1Contact(PersonsModel::ContactType t, const QString& id, const QString& nick=QString())
 {
     PersonItem* ret = new PersonItem(QString("test:/%1").arg(qrand()));
-    ContactItem* contact = new ContactItem(QUrl("test:/"+id.toString()+QString::number(qrand())));
-    QUrl key;
+    ContactItem* contact = new ContactItem(QUrl("test:/"+id+QString::number(qrand())));
+    int role;
     switch(t) {
-        case PersonsModel::IM: key = Nepomuk2::Vocabulary::NCO::imID(); break;
-        case PersonsModel::Email: key = Nepomuk2::Vocabulary::NCO::emailAddress(); break;
-        case PersonsModel::Phone: key = Nepomuk2::Vocabulary::NCO::phoneNumber(); break;
+        case PersonsModel::IM: role = PersonsModel::IMAccountRole; break;
+        case PersonsModel::Email: role = PersonsModel::EmailRole; break;
+        case PersonsModel::Phone: role = PersonsModel::PhoneRole; break;
         default: Q_ASSERT(false && "dude!");
     }
-    //contact->addData(key, id.toString());
-    //if(!nick.isEmpty())
-    //    contact->addData(Nepomuk2::Vocabulary::NCO::imNickname(), nick);
+    
+    contact->addData(role, id);
+    if(!nick.isEmpty())
+        contact->addData(PersonsModel::NickRole, nick);
+    else
+        contact->addData(PersonsModel::NickRole, id);
     
     Q_ASSERT(contact->data(PersonsModel::ContactTypeRole).toInt()==t);
     ret->appendRow(contact);

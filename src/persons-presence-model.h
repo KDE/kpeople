@@ -21,12 +21,6 @@
 #define PERSONS_PRESENCE_MODEL_H
 
 #include <QIdentityProxyModel>
-
-#include <TelepathyQt/Types>
-#include <TelepathyQt/Presence>
-
-#include <KTp/types.h>
-
 #include "kpeople_export.h"
 
 namespace KTp {
@@ -40,6 +34,7 @@ class PendingOperation;
 class KPEOPLE_EXPORT PersonsPresenceModel : public QIdentityProxyModel
 {
     Q_OBJECT
+    Q_PROPERTY(QAbstractItemModel* sourceModel READ sourceModel WRITE setSourceModel)
 
 public:
     PersonsPresenceModel(QObject *parent = 0);
@@ -52,15 +47,15 @@ private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);
     void onContactChanged();
     void onContactInvalidated();
-    void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
 
 private:
+    Q_PRIVATE_SLOT(d, void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved) )
+
     QVariantList queryChildrenForData(const QModelIndex &index, int role) const;
     QString queryNepomukForAccountId(const QString &contactId) const;
 
-    KTp::GlobalContactManager *m_contactManager;
-    Tp::AccountManagerPtr m_accountManager;
-    QHash<QString, KTp::ContactPtr> m_contacts;
+    class Private;
+    Private* d;
 };
 
 #endif // PERSONS_PRESENCE_MODEL_H

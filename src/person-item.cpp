@@ -43,13 +43,15 @@ PersonItem::PersonItem(const Nepomuk2::Resource &person)
 
 QVariant PersonItem::queryChildrenForRole(int role) const
 {
+    QVariant ret;
     for (int i = 0; i < rowCount(); i++) {
         QVariant value = child(i)->data(role);
         if (!value.isNull()) {
-            return value;
+            ret = value;
+            break;
         }
     }
-    return QVariant();
+    return ret;
 }
 
 QVariantList PersonItem::queryChildrenForRoleList(int role) const
@@ -57,7 +59,9 @@ QVariantList PersonItem::queryChildrenForRoleList(int role) const
     QVariantList ret;
     for (int i = 0; i < rowCount(); i++) {
         QVariant value = child(i)->data(role);
-        if (!value.isNull()) {
+        if (value.type() == QVariant::List) {
+            ret += value.toList();
+        } else if (!value.isNull()) {
             ret += value;
         }
     }

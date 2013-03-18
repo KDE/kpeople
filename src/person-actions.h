@@ -24,17 +24,25 @@
 
 #include "kpeople_export.h"
 
+class QAction;
+class PersonActionsPrivate;
+
 class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
 {
     Q_OBJECT
+    Q_PROPERTY(int count READ rowCount NOTIFY personChanged)
 public:
-    PersonActions(const QPersistentModelIndex &index, QObject *parent = 0);
+    PersonActions(QObject *parent = 0);
     virtual ~PersonActions();
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    Q_INVOKABLE void triggerAction(const QModelIndex &index);
+    Q_INVOKABLE void setPerson(QAbstractItemModel *model, int row);
+    void setPerson(const QPersistentModelIndex &index);
+    QList<QAction*> actions() const;
+
+    Q_INVOKABLE void triggerAction(int row) const;
 
 private Q_SLOTS:
     void imChatTriggered() const;
@@ -42,9 +50,12 @@ private Q_SLOTS:
     void imVideoCallTriggered() const;
     void emailTriggered() const;
 
+Q_SIGNALS:
+    void personChanged();
+
 private:
-    PersonActionsPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonActions);
+    PersonActionsPrivate * const d_ptr;
 };
 
 #endif // PERSON_ACTIONS_H

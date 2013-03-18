@@ -28,6 +28,7 @@
 
 #include <KTp/contact.h>
 #include <KTp/actions.h>
+#include <KTp/types.h>
 #include <TelepathyQt/Account>
 
 struct PersonActionsPrivate {
@@ -36,14 +37,28 @@ struct PersonActionsPrivate {
     QPersistentModelIndex index;
 };
 
-//-------------------------------------------------------------------
-
-PersonActions::PersonActions(const QPersistentModelIndex &index, QObject *parent)
+PersonActions::PersonActions(QObject *parent)
     : QAbstractListModel(parent),
     d_ptr(new PersonActionsPrivate)
 {
-    Q_D(PersonActions);
+}
 
+PersonActions::~PersonActions()
+{
+    qDeleteAll(d_ptr->actions);
+    delete d_ptr;
+}
+
+void PersonActions::setPerson(QAbstractItemModel* model, int row)
+{
+    setPerson(model->index(row, 0));
+}
+
+void PersonActions::setPerson(const QPersistentModelIndex& index)
+{
+    Q_D(PersonActions);
+    beginResetModel();
+    d->actions.clear();
     d->index = index;
 
     if (index.data(PersonsModel::ContactCanTextChatRole).toBool()) {
@@ -86,12 +101,8 @@ PersonActions::PersonActions(const QPersistentModelIndex &index, QObject *parent
 
         d->actions.append(emailAction);
     }
-}
-
-PersonActions::~PersonActions()
-{
-    qDeleteAll(d_ptr->actions);
-    delete d_ptr;
+    endResetModel();
+    emit personChanged();
 }
 
 QVariant PersonActions::data(const QModelIndex &index, int role) const
@@ -99,7 +110,7 @@ QVariant PersonActions::data(const QModelIndex &index, int role) const
     Q_D(const PersonActions);
 
     if (!index.isValid()) {
-        return;
+        return QVariant();
     }
 
     switch (role) {
@@ -114,13 +125,11 @@ QVariant PersonActions::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-int PersonActions::rowCount(const QModelIndex &parent) const
+int PersonActions::rowCount(const QModelIndex& parent) const
 {
     Q_D(const PersonActions);
 
-    if (parent.isValid()) {
-        return d->actions.size();
-    }
+    return parent.isValid() ? 0 : d->actions.size();
 }
 
 void PersonActions::imChatTriggered() const
@@ -148,11 +157,17 @@ void PersonActions::imVideoCallTriggered() const
 void PersonActions::emailTriggered() const
 {
     Q_D(const PersonActions);
-    KToolInvocation::invokeMailer(d->index.data(PersonsModel::EmailRole).toString());
+    KToolInvocation::invokeMailer(d->index.data(PersonsModel::EmailRole).toString(), QString());
 }
 
-void PersonActions::triggerAction(const QModelIndex &index) const
+void PersonActions::triggerAction(int row) const
 {
     Q_D(const PersonActions);
-    d->actions[index.row()]->trigger();
+    d->actions[row]->trigger();
+}
+
+QList< QAction* > PersonActions::actions() const
+{
+    Q_D(const PersonActions);
+    return d->actions;
 }

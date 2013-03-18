@@ -69,7 +69,6 @@ public:
         BlockedRole,
         StatusRole,
         ResourceTypeRole,
-        ContactActionsRole,
         ContactGroupsRole,
         ContactCanTextChatRole,
         ContactCanAudioCallRole,

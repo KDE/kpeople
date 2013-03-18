@@ -34,7 +34,7 @@ struct PersonDataPrivate;
 class KPEOPLE_EXPORT PersonData : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString uri READ uri)
+    Q_PROPERTY(QString uri READ uri WRITE setUri NOTIFY uriChanged)
     Q_PROPERTY(QUrl avatar READ avatar NOTIFY dataChanged)
     Q_PROPERTY(QString name READ name NOTIFY dataChanged)
     Q_PROPERTY(QString status READ status NOTIFY dataChanged)
@@ -44,6 +44,8 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_PROPERTY(bool isPerson READ isPerson)
 
     public:
+        PersonData(QObject *parent = 0);
+        
         PersonData(const QString &uri, QObject *parent = 0);
 
         /** @returns the uri of the current person */
@@ -78,6 +80,9 @@ class KPEOPLE_EXPORT PersonData : public QObject
         bool isPerson() const;
 
     signals:
+        /** the person has changed */
+        void uriChanged();
+
         /** Some of the person's data we're offering has changed */
         void dataChanged();
 

@@ -44,30 +44,21 @@ public:
     QString uri;
     QString id;
     Nepomuk2::Resource res;
-    PersonsPresenceModel *presenceModel;
 };
 
 K_GLOBAL_STATIC(PersonsPresenceModel, s_presenceModel)
+
+PersonData::PersonData(QObject* parent): QObject(parent)
+{
+    connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SIGNAL(dataChanged()));
+}
 
 PersonData::PersonData(const QString &uri, QObject *parent)
     : QObject(parent),
       d_ptr(new PersonDataPrivate)
 {
-    Q_D(PersonData);
-    d->uri = uri;
-    d->res = Nepomuk2::Resource(uri);
-
-    d->res.setWatchEnabled(true);
-    d->presenceModel = s_presenceModel;
-
-    connect(d->presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-            this, SIGNAL(dataChanged()));
-
-    Nepomuk2::ResourceWatcher *watcher = new Nepomuk2::ResourceWatcher(this);
-    watcher->addResource(d->res);
-
-    connect(watcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
-            this, SIGNAL(dataChanged()));
+    connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SIGNAL(dataChanged()));
+    setUri(uri);
 }
 
 void PersonData::setContactId(const QString &id)
@@ -120,6 +111,14 @@ void PersonData::setUri(const QString &uri)
     d->uri = uri;
     d->res = Nepomuk2::Resource(uri);
     d->res.setWatchEnabled(true);
+
+    Nepomuk2::ResourceWatcher *watcher = new Nepomuk2::ResourceWatcher(this);
+    watcher->addResource(d->res);
+
+    connect(watcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
+            this, SIGNAL(dataChanged()));
+    emit uriChanged();
+    emit dataChanged();
 }
 
 
@@ -133,14 +132,14 @@ QString PersonData::status() const
         Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
             if (resource.hasProperty(NCO::hasIMAccount())) {
                 QString imID = resource.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-                presenceList << d->presenceModel->dataForContactId(imID, PersonsModel::StatusRole).toString();
+                presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusRole).toString();
             }
         }
 
         return findMostOnlinePresence(presenceList);
     } else {
         QString imID = d->res.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-        return d->presenceModel->dataForContactId(imID, PersonsModel::StatusRole).toString();
+        return s_presenceModel->dataForContactId(imID, PersonsModel::StatusRole).toString();
     }
 }
 

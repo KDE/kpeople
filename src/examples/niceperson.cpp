@@ -24,15 +24,17 @@
 #include <QToolButton>
 #include <QMenu>
 #include <persondata.h>
-#include <personactions.h>
+#include <person-actions.h>
+#include <kpeople/persondata.h>
 
 class PersonWidget : public QWidget
 {
     Q_OBJECT
     public:
         explicit PersonWidget(const QString& contactId, QWidget* parent = 0, Qt::WindowFlags f = 0)
+            : QWidget(parent)
+            , m_person(contactId)
         {
-            m_person.setContactUri(QUrl(contactId));
             connect(&m_person, SIGNAL(dataInitialized()), SLOT(initGUI()));
         }
 
@@ -40,8 +42,8 @@ class PersonWidget : public QWidget
         void initGUI() {
             QFormLayout* l = new QFormLayout(this);
             l->addRow("contactId:", new QLabel(m_person.contactId()));
-            l->addRow("All Contacts:", new QLabel(m_person.bareContacts().join(", ")));
-            l->addRow("nickname:", new QLabel(m_person.imNickname()));
+//             l->addRow("All Contacts:", new QLabel(m_person.bareContacts().join(", ")));
+            l->addRow("nickname:", new QLabel(m_person.name()));
             l->addRow("status:", new QLabel(m_person.status()));
 
             QLabel* avatar = new QLabel;
@@ -49,7 +51,7 @@ class PersonWidget : public QWidget
             l->addRow("avatar:", avatar);
 
             PersonActions* actions = new PersonActions(&m_person);
-            actions->setPerson(&m_person);
+//             actions->setPerson(); //TODO: figure out API to set a person
             QToolButton* b = new QToolButton;
             b->setText("Actions");
             QMenu* m = new QMenu(b);

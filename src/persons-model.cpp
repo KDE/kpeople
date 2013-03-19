@@ -214,14 +214,18 @@ void PersonsModel::queryFinished(Soprano::Util::AsyncQuery *query)
     Q_UNUSED(query)
     Q_D(PersonsModel);
     //add the persons to the model
-    invisibleRootItem()->appendRows(toStandardItems(d->persons.values()));
+    if (!d->persons.values().isEmpty()) {
+        invisibleRootItem()->appendRows(toStandardItems(d->persons.values()));
+    }
 
     Q_FOREACH(const QUrl &uri, d->pimoOccurances) {
         //remove all contacts being groundingOccurrences
         d->contacts.remove(uri);
     }
     //add the remaining contacts to the model as top level items
-    invisibleRootItem()->appendRows(toStandardItems(d->contacts.values()));
+    if (!d->contacts.values().isEmpty()) {
+        invisibleRootItem()->appendRows(toStandardItems(d->contacts.values()));
+    }
     emit peopleAdded();
     kDebug() << "Model ready";
 }

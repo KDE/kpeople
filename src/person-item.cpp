@@ -103,6 +103,7 @@ QVariant PersonItem::data(int role) const
                 return val;
             }
         }
+        case Qt::DecorationRole:
         case PersonsModel::PhotoRole:
             return queryChildrenForRole(role);
         case PersonsModel::ContactsCountRole:

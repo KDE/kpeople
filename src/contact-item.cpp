@@ -154,6 +154,10 @@ QVariant ContactItem::data(int role) const
 
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Contact;
+        case Qt::DecorationRole: {
+            QList<QString> photos = d->data.values(PersonsModel::PhotoRole);
+            return photos.isEmpty() ? KIcon("im-user") : KIcon(QUrl(photos.first()).toLocalFile());
+        }
     }
     return QStandardItem::data(role);
 }

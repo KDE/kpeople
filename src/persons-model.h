@@ -73,7 +73,8 @@ public:
         ContactCanTextChatRole,
         ContactCanAudioCallRole,
         ContactCanVideoCallRole,
-        ContactCanFileTransferRole
+        ContactCanFileTransferRole,
+        LastRole ///< in case it's needed to extend, use this one to start from
     };
 
     enum ResourceType {

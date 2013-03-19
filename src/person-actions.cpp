@@ -45,7 +45,6 @@ PersonActions::PersonActions(QObject *parent)
 
 PersonActions::~PersonActions()
 {
-    qDeleteAll(d_ptr->actions);
     delete d_ptr;
 }
 

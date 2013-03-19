@@ -23,7 +23,7 @@
 #include <QDebug>
 #include <QToolButton>
 #include <QMenu>
-#include <person-data.h>
+#include <persondata.h>
 #include <person-actions.h>
 #include <kpeople/persondata.h>
 

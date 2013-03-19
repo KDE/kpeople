@@ -139,7 +139,7 @@ void PersonsPresenceModel::onContactChanged()
 
     QModelIndex index;
     if (sourceModel()) {
-        index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, id);
+        index = mapFromSource(qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, id));
     }
     Q_EMIT dataChanged(index, index);
 }
@@ -152,7 +152,7 @@ void PersonsPresenceModel::onContactInvalidated()
 
     QModelIndex index;
     if (sourceModel()) {
-        index = qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, id);
+        index = mapFromSource(qobject_cast<PersonsModel*>(sourceModel())->findRecursively(PersonsModel::IMRole, id));
     }
     Q_EMIT dataChanged(index, index);
 }

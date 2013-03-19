@@ -134,7 +134,6 @@ QList<QStandardItem*> toStandardItems(const QList<T*> &items)
 
 void PersonsModel::query(const QString &nco_query)
 {
-    Q_D(PersonsModel);
     Q_ASSERT(rowCount() == 0);
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();

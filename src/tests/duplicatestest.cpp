@@ -63,11 +63,11 @@ PersonItem* createPerson1Contact(PersonsModel::ContactType t, const QString& id,
         default: Q_ASSERT(false && "dude!");
     }
     
-    contact->addData(role, id);
+    contact->setContactData(role, id);
     if(!nick.isEmpty())
-        contact->addData(PersonsModel::NickRole, nick);
+        contact->setContactData(PersonsModel::NickRole, nick);
     else
-        contact->addData(PersonsModel::NickRole, id);
+        contact->setContactData(PersonsModel::NickRole, id);
     
     Q_ASSERT(contact->data(PersonsModel::ContactTypeRole).toInt()==t);
     ret->appendRow(contact);

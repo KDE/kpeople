@@ -39,7 +39,19 @@
 class ContactItemPrivate {
 public:
     QUrl uri;
-    QMultiHash<int, QString> data;
+    QHash<int, QVariant> data;
+
+    ///@returns a list of the roles that we'll expect to be a QVariantList
+    static QSet<int> listRoles() {
+        static QSet<int> s_listRoles;
+        if(s_listRoles.isEmpty()) {
+            //TODO: document this in persons-model.h
+            s_listRoles.insert(PersonsModel::PhotoRole);
+            s_listRoles.insert(PersonsModel::EmailRole);
+            s_listRoles.insert(PersonsModel::PhoneRole);
+        }
+        return s_listRoles;
+    }
 };
 
 ContactItem::ContactItem(const QUrl &uri)
@@ -67,20 +79,39 @@ QMap<PersonsModel::ContactType, QIcon> initializeTypeIcons()
 
 static QMap<PersonsModel::ContactType, QIcon> s_contactTypeMap = initializeTypeIcons();
 
-void ContactItem::refreshIcon()
-{
-    PersonsModel::ContactType type = (PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt();
-    setIcon(s_contactTypeMap[type]);
-}
-
-void ContactItem::addData(int role, const QString &value)
+void ContactItem::setContactData(int role, const QVariant &v)
 {
     Q_D(ContactItem);
-
-    // A multi-hash can contain the same (key, value) pairs multiple times
-    if (!d->data.contains(role, value)) {
+    QHash< int, QVariant >::iterator it = d->data.find(role);
+    QVariant value = d->listRoles().contains(role) ? (QVariantList() << v) : v;
+    if (it == d->data.end()) {
         d->data.insert(role, value);
         emitDataChanged();
+    } else if (*it != value) {
+        Q_ASSERT(value.type() == it->type());
+        *it = value;
+        emitDataChanged();
+    }
+}
+
+void ContactItem::addContactData(int role, const QVariant &value)
+{
+    Q_D(ContactItem);
+    QHash<int, QVariant>::iterator it = d->data.find(role);
+    if (!d->listRoles().contains(role)) {
+        setContactData(role, value);
+    } else {
+        if (it == d->data.end()) {
+            d->data.insert(role, QVariantList() << value);
+            emitDataChanged();
+        } else if (*it != value) {
+            Q_ASSERT(it->type() == QVariant::List);
+            QVariantList current = it->toList();
+            Q_ASSERT(current.isEmpty() || current.first().type()==value.type());
+            current.append(value);
+            *it = current;
+            emitDataChanged();
+        }
     }
 }
 
@@ -103,14 +134,9 @@ QVariant ContactItem::data(int role) const
 {
     Q_D(const ContactItem);
 
-    int count = d->data.count(role);
-    if (count) {
-        if (count > 1) {
-            return QVariant(d->data.values(role));
-        }
-        else {
-            return d->data.value(role);
-        }
+    QHash<int, QVariant>::const_iterator it = d->data.constFind(role);
+    if (it!=d->data.constEnd()) {
+        return *it;
     }
 
     switch(role) {
@@ -144,7 +170,7 @@ QVariant ContactItem::data(int role) const
                 case PersonsModel::Phone: role = PersonsModel::PhoneRole; break;
                 case PersonsModel::Email: role = PersonsModel::EmailRole; break;
                 case PersonsModel::MobilePhone: role = PersonsModel::PhoneRole; break;
-                case PersonsModel::Postal: role = -1; break;
+                case PersonsModel::Postal: role = -1; break; //FIXME: just add the role!
             }
 
             if (role >= 0) {
@@ -155,8 +181,8 @@ QVariant ContactItem::data(int role) const
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Contact;
         case Qt::DecorationRole: {
-            QList<QString> photos = d->data.values(PersonsModel::PhotoRole);
-            return photos.isEmpty() ? KIcon("im-user") : KIcon(QUrl(photos.first()).toLocalFile());
+            QVariantList photos = d->data.value(PersonsModel::PhotoRole).toList();
+            return photos.isEmpty() ? KIcon("im-user") : KIcon(photos.first().toUrl().toLocalFile());
         }
     }
     return QStandardItem::data(role);
@@ -218,8 +244,8 @@ void ContactItem::loadData()
 
             PersonsModel::Role role = bindingRoleMap.value(bName);
             QString value = it.binding(bName).toString();
-            if (!value.isEmpty() && !d->data.contains(role, value)) {
-                d->data.insert(role, value);
+            if (!value.isEmpty()) {
+                addContactData(role, value);
             }
         }
         emitDataChanged();

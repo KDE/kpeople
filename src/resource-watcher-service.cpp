@@ -175,10 +175,8 @@ void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resourc
     //we expect only the imNickname to change here
     if (property.name() == QLatin1String("imNickname")) {
         if (added.count()) {
-            item->removeData(PersonsModel::NickRole);
-            item->addData(PersonsModel::NickRole, added.first().toString());
-        }
-        else {
+            item->setContactData(PersonsModel::NickRole, added.first());
+        } else {
             item->removeData(PersonsModel::NickRole);
         }
     }

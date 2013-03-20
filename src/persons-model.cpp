@@ -58,6 +58,7 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
     names.insert(PersonsModel::ContactTypeRole, "contactType");
     names.insert(PersonsModel::IMRole, "im");
     names.insert(PersonsModel::NickRole, "nick");
+    names.insert(PersonsModel::LabelRole, "label");
     names.insert(PersonsModel::UriRole, "uri");
     names.insert(PersonsModel::NameRole, "name");
     names.insert(PersonsModel::PhotoRole, "photo");
@@ -178,14 +179,14 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 
     //iterate over the results and add the wanted properties into the contact
     foreach (const QString &bName, query->bindingNames()) {
-        if (!d->bindingRoleMap.contains(bName)) {
+        QHash<QString, Role>::const_iterator it = d->bindingRoleMap.constFind(bName);
+        if (it == d->bindingRoleMap.constEnd()) {
             continue;
         }
 
-        Role role = d->bindingRoleMap.value(bName);
-        QString value = query->binding(bName).toString();
-        if (!value.isEmpty()) {
-            contactNode->addData(role, value);
+        Soprano::Node node = query->binding(bName);
+        if (!node.isEmpty()) {
+            contactNode->addContactData(*it, node.toString());
         }
     }
 

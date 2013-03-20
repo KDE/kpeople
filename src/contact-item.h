@@ -38,7 +38,14 @@ public:
 
     QUrl uri() const;
 
-    void addData(int role, const QString &value);
+    /** sets the @p value as the role */
+    void setContactData(int role, const QVariant &value);
+
+    /**
+     * such the data to the role, with special treatment to list roles.
+     * In such cases the data will be added to the list 
+     */
+    void addContactData(int role, const QVariant &value);
     void removeData(int role);
 
     virtual QVariant data(int role = Qt::UserRole + 1) const;
@@ -49,8 +56,6 @@ public:
      */
     void loadData();
 private:
-    void refreshIcon();
-
     ContactItemPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(ContactItem)
 };

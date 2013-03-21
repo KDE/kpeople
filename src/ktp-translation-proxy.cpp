@@ -79,6 +79,8 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             return mapToSource(proxyIndex).data(PersonsModel::ContactCanVideoCallRole);
         case KTp::ContactCanFileTransferRole:
             return mapToSource(proxyIndex).data(PersonsModel::ContactCanFileTransferRole);
+        case KTp::ContactClientTypesRole:
+            return mapToSource(proxyIndex).data(PersonsModel::ContactClientTypesRole);
     }
 
     return QIdentityProxyModel::data(proxyIndex, role);

@@ -176,6 +176,7 @@ QVariant PersonsPresenceModel::data(const QModelIndex &index, int role) const
         case PersonsModel::ContactCanAudioCallRole:
         case PersonsModel::ContactCanVideoCallRole:
         case PersonsModel::ContactCanFileTransferRole:
+        case PersonsModel::ContactClientTypesRole:
 
             type = (PersonsModel::ResourceType)mapToSource(index).data(PersonsModel::ResourceTypeRole).toUInt();
             contactId = mapToSource(index).data(PersonsModel::IMRole).toString();
@@ -256,6 +257,10 @@ QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int ro
 
     if (role == PersonsModel::ContactCanFileTransferRole) {
         return contact->fileTransferCapability();
+    }
+
+    if (role == PersonsModel::ContactClientTypesRole) {
+        return contact->clientTypes();
     }
 
     return QVariant();

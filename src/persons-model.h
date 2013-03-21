@@ -74,6 +74,7 @@ public:
         ContactCanAudioCallRole,
         ContactCanVideoCallRole,
         ContactCanFileTransferRole,
+        ContactClientTypesRole,
         LastRole ///< in case it's needed to extend, use this one to start from
     };
 

@@ -25,7 +25,6 @@
 #include <QMenu>
 #include <persondata.h>
 #include <person-actions.h>
-#include <kpeople/persondata.h>
 
 class PersonWidget : public QWidget
 {

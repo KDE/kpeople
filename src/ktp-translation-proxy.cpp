@@ -44,17 +44,10 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
 
     switch (role) {
         case KTp::ContactPresenceTypeRole:
-            status = mapToSource(proxyIndex).data(PersonsModel::StatusRole).toString();
-            if (status == "available") {
-                return Tp::ConnectionPresenceTypeAvailable;
-            } else if (status == "away") {
-                return Tp::ConnectionPresenceTypeAway;
-            } else if (status == "busy" || status == "dnd") {
-                return Tp::ConnectionPresenceTypeBusy;
-            } else if (status == "xa") {
-                return Tp::ConnectionPresenceTypeExtendedAway;
+            if (mapToSource(proxyIndex).data(PersonsModel::ResourceTypeRole).toInt() == PersonsModel::Person) {
+                return mostOnlinePresence(mapToSource(proxyIndex).data(PersonsModel::StatusRole).toList());
             } else {
-                return Tp::ConnectionPresenceTypeOffline;
+                return mapToSource(proxyIndex).data(PersonsModel::StatusRole).toUInt();
             }
             break;
 
@@ -89,4 +82,17 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
     }
 
     return QIdentityProxyModel::data(proxyIndex, role);
+}
+
+Tp::ConnectionPresenceType KTpTranslationProxy::mostOnlinePresence(const QVariantList &presenceList) const
+{
+    Tp::ConnectionPresenceType returnPresence = Tp::ConnectionPresenceTypeOffline;
+
+    Q_FOREACH(const QVariant &presence, presenceList) {
+        if (KTp::Presence::sortPriority((Tp::ConnectionPresenceType)presence.toUInt()) < KTp::Presence::sortPriority(returnPresence)) {
+            returnPresence = (Tp::ConnectionPresenceType)presence.toUInt();
+        }
+    }
+
+    return returnPresence;
 }

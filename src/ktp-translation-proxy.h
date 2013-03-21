@@ -22,6 +22,8 @@
 
 #include <QIdentityProxyModel>
 
+#include <TelepathyQt/Presence>
+
 #include "kpeople_export.h"
 
 class KPEOPLE_EXPORT KTpTranslationProxy : public QIdentityProxyModel
@@ -33,6 +35,9 @@ public:
     virtual ~KTpTranslationProxy();
 
     virtual QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
+
+private:
+    Tp::ConnectionPresenceType mostOnlinePresence(const QVariantList &presenceList) const;
 
 };
 

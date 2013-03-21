@@ -210,11 +210,11 @@ QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int ro
 
     if (role == PersonsModel::StatusRole) {
         if (!contact.isNull()) {
-            return contact->presence().status();
+            return contact->presence().type();
         } else if (!contactId.isEmpty()) {
-            return QLatin1String("offline");
+            return Tp::ConnectionPresenceTypeOffline;
         } else if (contactId.isEmpty()) {
-            return QLatin1String("unknown");
+            return Tp::ConnectionPresenceTypeUnknown;
         }
     }
 

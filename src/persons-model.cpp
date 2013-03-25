@@ -394,7 +394,21 @@ void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<Q
     KJob *job = Nepomuk2::removeProperty(QList<QUrl>() << personUri,
                                          Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
                                          QVariantList() << contactsList);
-    connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+    job->exec();
+    if (job->error()) {
+        kWarning() << "Removing contacts from person failed:" << job->errorString();
+        return;
+    }
+
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+
+    QString query = QString::fromLatin1("select distinct ?go where { %1 pimo:groundingOccurrence ?go . }")
+        .arg(Soprano::Node::resourceToN3(personUri));
+
+    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+    if (it.allBindings().count() == 1) {
+        removePerson(personUri);
+    }
 }
 
 void PersonsModel::removePerson(const QUrl &uri)
@@ -405,10 +419,15 @@ void PersonsModel::removePerson(const QUrl &uri)
 
 void PersonsModel::removePersonFromModel(const QModelIndex &index)
 {
+    kDebug() << "Removing person from model";
     PersonItem *person = dynamic_cast<PersonItem*>(itemFromIndex(index));
-    for (int i = 0; i < person->rowCount(); ) {
-        //reparent the contacts to toplevel
-        invisibleRootItem()->appendRow(person->takeRow(i));
+    if (!person) {
+        kDebug() << "Invalid person, returning";
+        return;
+    }
+
+    while (person->rowCount()) {
+        invisibleRootItem()->appendRow(person->takeRow(person->rowCount() - 1));
     }
 
     removeRow(index.row());

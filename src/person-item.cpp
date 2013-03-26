@@ -155,7 +155,6 @@ void PersonItem::addContacts(const QList<QUrl> &_contacts)
         contacts.removeOne(contact->uri());
     }
 
-    kDebug() << "add contacts" << contacts;
     QList<ContactItem*> rows;
     foreach (const QUrl &uri, contacts) {
         ContactItem *item = new ContactItem(uri);

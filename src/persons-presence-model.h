@@ -21,6 +21,9 @@
 #define PERSONS_PRESENCE_MODEL_H
 
 #include <QIdentityProxyModel>
+
+#include <TelepathyQt/Types>
+
 #include "kpeople_export.h"
 
 namespace KTp {
@@ -42,6 +45,7 @@ public:
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     QVariant dataForContactId(const QString &contactId, int role = Qt::DisplayRole) const;
+    Tp::AccountManagerPtr accountManager() const;
 
 private Q_SLOTS:
     void onAccountManagerReady(Tp::PendingOperation *op);

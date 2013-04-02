@@ -289,4 +289,9 @@ QString PersonsPresenceModel::queryNepomukForAccountId(const QString &contactId)
     return accountPath;
 }
 
+Tp::AccountManagerPtr PersonsPresenceModel::accountManager() const
+{
+    return d->accountManager;
+}
+
 #include "persons-presence-model.moc"

@@ -63,6 +63,7 @@ PersonsPresenceModel::PersonsPresenceModel(QObject *parent)
     Tp::ConnectionFactoryPtr connectionFactory = Tp::ConnectionFactory::create(QDBusConnection::sessionBus(),
                                                                                Tp::Features() << Tp::Connection::FeatureCore
                                                                                << Tp::Connection::FeatureRoster
+                                                                               << Tp::Connection::FeatureRosterGroups
                                                                                << Tp::Connection::FeatureSelfContact);
 
     Tp::ContactFactoryPtr contactFactory = KTp::ContactFactory::create(Tp::Features()  << Tp::Contact::FeatureAlias

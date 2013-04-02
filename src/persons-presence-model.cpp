@@ -40,9 +40,9 @@
 
 class PersonsPresenceModel::Private {
 public:
-    KTp::GlobalContactManager *m_contactManager;
-    Tp::AccountManagerPtr m_accountManager;
-    QHash<QString, KTp::ContactPtr> m_contacts;
+    KTp::GlobalContactManager *contactManager;
+    Tp::AccountManagerPtr accountManager;
+    QHash<QString, KTp::ContactPtr> contacts;
     PersonsPresenceModel *q;
 
     void onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved);
@@ -72,13 +72,13 @@ PersonsPresenceModel::PersonsPresenceModel(QObject *parent)
 
     Tp::ChannelFactoryPtr channelFactory = Tp::ChannelFactory::create(QDBusConnection::sessionBus());
 
-    d->m_accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
+    d->accountManager = Tp::AccountManager::create(QDBusConnection::sessionBus(),
                                                   accountFactory,
                                                   connectionFactory,
                                                   channelFactory,
                                                   contactFactory);
 
-    connect(d->m_accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
+    connect(d->accountManager->becomeReady(), SIGNAL(finished(Tp::PendingOperation*)),
             this, SLOT(onAccountManagerReady(Tp::PendingOperation*)));
 }
 
@@ -98,24 +98,24 @@ void PersonsPresenceModel::onAccountManagerReady(Tp::PendingOperation *op)
 
     kDebug() << "Account manager ready";
 
-    d->m_contactManager = new KTp::GlobalContactManager(d->m_accountManager, this);
-    connect(d->m_contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
+    d->contactManager = new KTp::GlobalContactManager(d->accountManager, this);
+    connect(d->contactManager, SIGNAL(allKnownContactsChanged(Tp::Contacts,Tp::Contacts)),
             this, SLOT(onAllKnownContactsChanged(Tp::Contacts,Tp::Contacts)));
 
-    d->onAllKnownContactsChanged(d->m_contactManager->allKnownContacts(), Tp::Contacts());
+    d->onAllKnownContactsChanged(d->contactManager->allKnownContacts(), Tp::Contacts());
 }
 
 void PersonsPresenceModel::Private::onAllKnownContactsChanged(const Tp::Contacts &contactsAdded, const Tp::Contacts &contactsRemoved)
 {
-    if (!m_contacts.isEmpty()) {
+    if (!contacts.isEmpty()) {
         Q_FOREACH (const Tp::ContactPtr &contact, contactsRemoved) {
-            m_contacts.remove(contact->id());
+            contacts.remove(contact->id());
         }
     }
 
     Q_FOREACH (const Tp::ContactPtr &contact, contactsAdded) {
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
-        m_contacts.insert(contact->id(), ktpContact);
+        contacts.insert(contact->id(), ktpContact);
 
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 q, SLOT(onContactChanged()));
@@ -148,7 +148,7 @@ void PersonsPresenceModel::onContactInvalidated()
 {
     QString id = qobject_cast<Tp::Contact*>(sender())->id();
 
-    d->m_contacts.remove(id);
+    d->contacts.remove(id);
 
     QModelIndex index;
     if (sourceModel()) {
@@ -207,7 +207,7 @@ QVariantList PersonsPresenceModel::queryChildrenForData(const QModelIndex &index
 
 QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int role) const
 {
-    KTp::ContactPtr contact = d->m_contacts.value(contactId);
+    KTp::ContactPtr contact = d->contacts.value(contactId);
 
     if (role == PersonsModel::StatusRole) {
         if (!contact.isNull()) {
@@ -221,12 +221,12 @@ QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int ro
 
     if (role == PersonsModel::IMAccountRole) {
         if (!contact.isNull()) {
-            return QVariant::fromValue<Tp::AccountPtr>(d->m_contactManager->accountForContact(d->m_contacts.value(contactId)));
+            return QVariant::fromValue<Tp::AccountPtr>(d->contactManager->accountForContact(d->contacts.value(contactId)));
         } else {
             QString accountId = queryNepomukForAccountId(contactId);
             //nepomuk stores account path, which is in form /org/freedesktop/Telepathy/Account/...
             //while GCM looks for uniqueIdentifier(), which is without this^ prefix, so we need to chop it off first
-            return QVariant::fromValue<Tp::AccountPtr>(d->m_contactManager->accountForAccountId(accountId.remove(0,35)));
+            return QVariant::fromValue<Tp::AccountPtr>(d->contactManager->accountForAccountId(accountId.remove(0,35)));
         }
     }
 

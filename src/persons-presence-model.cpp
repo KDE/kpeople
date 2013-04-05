@@ -220,6 +220,16 @@ QVariant PersonsPresenceModel::dataForContactId(const QString &contactId, int ro
         }
     }
 
+    if (role == PersonsModel::StatusStringRole) {
+        if (!contact.isNull()) {
+            return contact->presence().status();
+        } else if (!contactId.isEmpty()) {
+            return QLatin1String("offline");
+        } else if (contactId.isEmpty()) {
+            return QLatin1String("unknown");
+        }
+    }
+
     if (role == PersonsModel::IMAccountRole) {
         if (!contact.isNull()) {
             return QVariant::fromValue<Tp::AccountPtr>(d->contactManager->accountForContact(d->contacts.value(contactId)));

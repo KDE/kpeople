@@ -77,6 +77,7 @@ public:
         IMContactRole,
         BlockedRole,
         StatusRole,
+        StatusStringRole,
         ResourceTypeRole,
         ContactGroupsRole,
         ContactCanTextChatRole,

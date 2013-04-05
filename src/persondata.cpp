@@ -177,7 +177,7 @@ QString PersonData::name() const
         r = d->res;
     }
 
-    label = r.property(NCO::hasEmailAddress()).toResource().property(NCO::fullname()).toString();
+    label = r.property(NCO::fullname()).toString();
 
     if (!label.isEmpty()) {
         return label;

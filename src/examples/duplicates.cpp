@@ -26,7 +26,7 @@
 #include <cstdio>
 #include <iostream>
 
-PersonsModel model;
+PersonsModel model(0, PersonsModel::FeatureEmails | PersonsModel::FeatureIM);
 
 class ResultPrinter : public QObject
 {
@@ -100,6 +100,7 @@ int main(int argc, char** argv)
     r.m_action = app.arguments().contains("--apply") ? ResultPrinter::Apply
                : app.arguments().contains("--ask") ? ResultPrinter::Ask
                : ResultPrinter::NotApply;
+
     DuplicatesFinder* f = new DuplicatesFinder(&model);
     QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
     f->start();

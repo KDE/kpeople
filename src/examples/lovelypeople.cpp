@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 
     QTreeView view;
     view.setItemDelegate(new ContactDelegate);
-    view.setModel(new PersonsModel(&view));
+    view.setModel(new PersonsModel(0, PersonsModel::FeatureEmails | PersonsModel::FeatureIM | PersonsModel::FeatureAvatars, &view));
     view.setSortingEnabled(true);
     view.show();
 

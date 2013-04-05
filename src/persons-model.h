@@ -26,7 +26,7 @@
 
 #include <QStandardItemModel>
 
-class KJob;
+class PersonsModelFeature;
 class PersonsPresenceModel;
 class ContactItem;
 class KJob;
@@ -42,13 +42,22 @@ class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
     Q_DISABLE_COPY(PersonsModel)
 
 public:
-    enum ContactType {
-        Email,
-        IM,
-        Phone,
-        MobilePhone,
-        Postal
+    enum Feature {
+        FeatureNone       = 0x0000,
+        FeatureIM         = 0x0001,
+        FeatureGroups     = 0x0002,
+        FeatureAvatars    = 0x0004,
+        FeatureEmails     = 0x0008,
+        FeatureFullName   = 0x0010,
+        FeatureContactUID = 0x0020,
+        FeatureBirthday   = 0x0040,
+        FeatureAll = FeatureIM |
+                     FeatureGroups |
+                     FeatureAvatars |
+                     FeatureEmails |
+                     FeatureFullName
     };
+    Q_DECLARE_FLAGS(Features, Feature)
 
     enum Role {
         ContactTypeRole = Qt::UserRole,
@@ -84,10 +93,17 @@ public:
     };
 
     /**
-     * @p initialize set it to false if you don't want it to use nepomuk values
-     *               useful for unit testing.
+     * @p mandatoryFeatures features we want to be sure the contact has
+     * @p optionalFeatures optional contact features we'd like to have
      */
-    PersonsModel(QObject *parent = 0, bool init = true, const QString &customQuery = QString());
+    PersonsModel(PersonsModel::Features mandatoryFeatures = 0, PersonsModel::Features optionalFeatures = 0, QObject *parent = 0);
+
+    /**
+     * Sets the features we want to construct a query for; this starts populating the model
+     * @p mandatoryFeatures features we want to be sure the contact has
+     * @p optionalFeatures optional contact features we'd like to have
+     */
+    void setQueryFlags(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
 
     /**
      * The @p contactUri will be removed from @p personUri and it will be added to a new
@@ -138,6 +154,7 @@ signals:
 
 private:
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
+    QList<PersonsModelFeature> init(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
 
     friend class PersonsPresenceModel;
 
@@ -145,5 +162,7 @@ private:
     Q_DECLARE_PRIVATE(PersonsModel);
 
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(PersonsModel::Features)
 
 #endif // PERSONS_MODEL_H

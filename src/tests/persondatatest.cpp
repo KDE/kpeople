@@ -28,7 +28,7 @@ QTEST_KDEMAIN_CORE( PersonDataTest )
 PersonDataTest::PersonDataTest(QObject* parent)
     : QObject(parent)
 {
-    PersonsModel m;
+    PersonsModel m(0, PersonsModel::FeatureIM);
     QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
     
     for(int i=0; i<m.rowCount(); i++) {

@@ -41,7 +41,7 @@ void DuplicatesTest::testDuplicates()
 {
     QFETCH(QList<PersonItem*>, people);
     QFETCH(int, matches);
-    PersonsModel m(0, false);
+    PersonsModel m(0, 0);
     foreach(PersonItem* item, people)
         m.appendRow(item);
 
@@ -51,25 +51,17 @@ void DuplicatesTest::testDuplicates()
     QCOMPARE(f->results().size(), matches);
 }
 
-PersonItem* createPerson1Contact(PersonsModel::ContactType t, const QString& id, const QString& nick=QString())
+PersonItem* createPerson1Contact(PersonsModel::Role role, const QString& id, const QString& nick=QString())
 {
     PersonItem* ret = new PersonItem(QString("test:/%1").arg(qrand()));
     ContactItem* contact = new ContactItem(QUrl("test:/"+id+QString::number(qrand())));
-    int role;
-    switch(t) {
-        case PersonsModel::IM: role = PersonsModel::IMAccountRole; break;
-        case PersonsModel::Email: role = PersonsModel::EmailRole; break;
-        case PersonsModel::Phone: role = PersonsModel::PhoneRole; break;
-        default: Q_ASSERT(false && "dude!");
-    }
-    
+
     contact->setContactData(role, id);
     if(!nick.isEmpty())
         contact->setContactData(PersonsModel::NickRole, nick);
     else
         contact->setContactData(PersonsModel::NickRole, id);
     
-    Q_ASSERT(contact->data(PersonsModel::ContactTypeRole).toInt()==t);
     ret->appendRow(contact);
     return ret;
 }
@@ -82,9 +74,9 @@ void DuplicatesTest::testDuplicates_data()
     QList<ContactItem*> emptyContacts;
     QTest::newRow("empty") << QList<PersonItem*>() << 0;
     QTest::newRow("diffemails") << (QList<PersonItem*>()
-            << createPerson1Contact(PersonsModel::Email, "a@a.es") << createPerson1Contact(PersonsModel::Email, "a@a.com")
+            << createPerson1Contact(PersonsModel::EmailRole, "a@a.es") << createPerson1Contact(PersonsModel::EmailRole, "a@a.com")
         ) << 0;
     QTest::newRow("emails") << (QList<PersonItem*>()
-            << createPerson1Contact(PersonsModel::Email, "a@a.com") << createPerson1Contact(PersonsModel::Email, "a@a.com")
+            << createPerson1Contact(PersonsModel::EmailRole, "a@a.com") << createPerson1Contact(PersonsModel::EmailRole, "a@a.com")
         ) << 1;
 }

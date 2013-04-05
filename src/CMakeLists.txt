@@ -7,6 +7,7 @@ add_subdirectory(tests)
 add_subdirectory(declarative)
 
 kde4_add_library (kpeople SHARED
+    persons-model-feature.cpp
     contact-item.cpp
     person-item.cpp
     persons-model.cpp

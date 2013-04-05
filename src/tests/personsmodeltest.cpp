@@ -21,6 +21,7 @@
 #include <persons-model.h>
 #include <person-item.h>
 #include <contact-item.h>
+#include <person-actions.h>
 
 #include <qtest_kde.h>
 #include <Nepomuk2/Vocabulary/NCO>
@@ -34,41 +35,37 @@ PersonsModelTest::PersonsModelTest(QObject* parent): QObject(parent)
 void PersonsModelTest::testInit()
 {
     QBENCHMARK {
-        PersonsModel m;
+        PersonsModel m(0, PersonsModel::FeatureIM);
         QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
     }
 }
 
 void PersonsModelTest::testPhotos()
 {
-    /*
-    PersonsModel m;
+    PersonsModel m(PersonsModel::FeatureAvatars, 0);
     QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
     int count = 0;
-//     QBENCHMARK {
+    QBENCHMARK {
         for(int i=0; i<m.rowCount(); ++i) {
             QModelIndex idx = m.index(i, 0);
             QVariant ret = idx.data(PersonsModel::PhotoRole);
             count += ret.toList().size();
         }
-//     }
+    }
     QVERIFY(count>0); //there should be someone with photos...
-    */
 }
 
 void PersonsModelTest::testActions()
 {
-    /*
-    PersonsModel m;
+    PersonsModel m(PersonsModel::FeatureEmails, 0);
     QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
     for(int i=0; i<m.rowCount(); ++i) {
         PersonActions a;
-        a.setModel(&m);
-        a.setRow(i);
-        
-        if(a.rowCount(QModelIndex())==0)
+        a.setPerson(&m, i);
+
+        if (a.rowCount(QModelIndex()) == 0) {
             qDebug() << "error: " << i << m.index(i, 0).data();
+        }
         QVERIFY(a.rowCount(QModelIndex())>0);
     }
-    */
 }

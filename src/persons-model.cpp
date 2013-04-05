@@ -22,6 +22,7 @@
 #include "person-item.h"
 #include "contact-item.h"
 #include "resource-watcher-service.h"
+#include "persons-model-feature.h"
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
@@ -42,12 +43,16 @@
 
 struct PersonsModelPrivate {
     QHash<QUrl, ContactItem*> contacts; //all contacts in the model
-    QHash<QUrl, PersonItem*> persons;         //all persons
-    QList<QUrl> pimoOccurances;                     //contacts that are groundingOccurrences of persons
+    QHash<QUrl, PersonItem*> persons;   //all persons
+    QList<QUrl> pimoOccurances;         //contacts that are groundingOccurrences of persons
     QHash<QString, PersonsModel::Role> bindingRoleMap;
 };
 
-PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuery)
+//-----------------------------------------------------------------------------
+
+PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
+                           PersonsModel::Features optionalFeatures,
+                           QObject *parent)
     : QStandardItemModel(parent)
     , d_ptr(new PersonsModelPrivate)
 {
@@ -66,60 +71,12 @@ PersonsModel::PersonsModel(QObject *parent, bool init, const QString &customQuer
     names.insert(PersonsModel::ResourceTypeRole, "resourceType");
     setRoleNames(names);
 
-    Q_D(PersonsModel);
-
-    if (init) {
-        QString nco_query = customQuery;
-        if (customQuery.isEmpty()) {
-            //TODO: Fetch Phone number?
-            d->bindingRoleMap.insert("uri", UriRole);
-            d->bindingRoleMap.insert("nco_imNickname", NickRole);
-            d->bindingRoleMap.insert("nao_prefLabel", LabelRole);
-            d->bindingRoleMap.insert("nco_imID", IMRole);
-            d->bindingRoleMap.insert("nco_imImAcountType", IMAccountTypeRole);
-            d->bindingRoleMap.insert("nco_hasIMAccount", IMAccountUriRole);
-            d->bindingRoleMap.insert("nco_contactGroupName", ContactGroupsRole);
-            d->bindingRoleMap.insert("nie_url", PhotoRole);
-            d->bindingRoleMap.insert("nco_emailAddress", EmailRole);
-
-            nco_query = QString::fromUtf8(
-            "select DISTINCT ?uri ?pimo_groundingOccurrence ?nco_hasIMAccount "
-            "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
-            "?nie_url ?nao_prefLabel ?nco_contactGroupName "
-
-                "WHERE { "
-                    "?uri a nco:PersonContact. "
-
-                    "OPTIONAL { ?pimo_groundingOccurrence  pimo:groundingOccurrence  ?uri. }"
-                    "OPTIONAL { ?uri  nao:prefLabel  ?nao_prefLabel. }"
-
-//                    "OPTIONAL { "
-                        "?uri                     nco:hasIMAccount            ?nco_hasIMAccount. "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
-//                         "OPTIONAL { ?nco_hasIMAccount          nco:isAccessedBy            ?nco_isAccessedBy . } "
-//                         "OPTIONAL { ?nco_isAccessedBy          telepathy:accountIdentifier ?telepathy_accountIdentifier . } "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
-//                    " } "
-                    "OPTIONAL { "
-                        "?uri nco:belongsToGroup ?nco_belongsToGroup . "
-                        "?nco_belongsToGroup nco:contactGroupName ?nco_contactGroupName . "
-                    " }"
-                    "OPTIONAL {"
-                        "?uri                       nco:photo                   ?phRes. "
-                        "?phRes                     nie:url                     ?nie_url. "
-                    " } "
-                    "OPTIONAL { "
-                        "?uri                       nco:hasEmailAddress         ?nco_hasEmailAddress. "
-                        "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
-                    " } "
-                    "FILTER(?uri!=<nepomuk:/me>). "
-                "}");
-        }
-
-        QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, nco_query));
-        new ResourceWatcherService(this);
+    if (mandatoryFeatures != 0 || optionalFeatures != 0) {
+        //this starts the query and populates the model
+        setQueryFlags(mandatoryFeatures, optionalFeatures);
     }
+
+    new ResourceWatcherService(this);
 }
 
 template <class T>
@@ -132,13 +89,163 @@ QList<QStandardItem*> toStandardItems(const QList<T*> &items)
     return ret;
 }
 
+QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures)
+{
+    QList<PersonsModelFeature> features;
 
-void PersonsModel::query(const QString &nco_query)
+    //do nothing if empty flags are passed
+    if (mandatoryFeatures == 0 && optionalFeatures == 0) {
+        kWarning() << "null query flags passed!";
+        return features;
+    }
+
+    PersonsModelFeature imFeature;
+    imFeature.setQueryPart(QString::fromUtf8(
+        "?uri                 nco:hasIMAccount     ?nco_hasIMAccount. "
+        "?nco_hasIMAccount    nco:imNickname       ?nco_imNickname. "
+        "?nco_hasIMAccount    nco:imID             ?nco_imID. "
+        "?nco_hasIMAccount    nco:imAccountType    ?nco_imAccountType. "));
+    QHash<QString, PersonsModel::Role> b;
+    b.insert("nco_imNickname", NickRole);
+    b.insert("nco_imID", IMRole);
+    b.insert("nco_imImAcountType", IMAccountTypeRole);
+    imFeature.setBindingsMap(b);
+    imFeature.setOptional(false);
+
+    PersonsModelFeature groupsFeature;
+    groupsFeature.setQueryPart(QString::fromUtf8(
+        "?uri                   nco:belongsToGroup      ?nco_belongsToGroup . "
+        "?nco_belongsToGroup    nco:contactGroupName    ?nco_contactGroupName . "));
+    QHash<QString, PersonsModel::Role> gb;
+    gb.insert("nco_contactGroupName", ContactGroupsRole);
+    groupsFeature.setBindingsMap(gb);
+    groupsFeature.setOptional(false);
+
+    PersonsModelFeature avatarsFeature;
+    avatarsFeature.setQueryPart(QString::fromUtf8(
+        "?uri      nco:photo    ?phRes. "
+        "?phRes    nie:url      ?nie_url. "));
+    QHash<QString, PersonsModel::Role> pb;
+    pb.insert("nie_url", PhotoRole);
+    avatarsFeature.setBindingsMap(pb);
+    avatarsFeature.setOptional(false);
+
+    PersonsModelFeature emailsFeature;
+    emailsFeature.setQueryPart(QString::fromUtf8(
+        "?uri                    nco:hasEmailAddress    ?nco_hasEmailAddress. "
+        "?nco_hasEmailAddress    nco:emailAddress       ?nco_emailAddress. "));
+    QHash<QString, PersonsModel::Role> eb;
+    eb.insert("nco_emailAddress", EmailRole);
+    emailsFeature.setBindingsMap(eb);
+    emailsFeature.setOptional(false);
+
+    PersonsModelFeature fullNameFeature;
+    fullNameFeature.setQueryPart(QString::fromUtf8(
+        "?uri                    nco:fullname    ?nco_fullname. "));
+    QHash<QString, PersonsModel::Role> fnb;
+    fnb.insert("nco_fullname", NameRole);
+    fullNameFeature.setBindingsMap(fnb);
+    fullNameFeature.setOptional(false);
+
+    if (mandatoryFeatures & PersonsModel::FeatureIM) {
+        kDebug() << "Adding mandatory IM";
+        features << imFeature;
+    }
+
+    if (mandatoryFeatures & PersonsModel::FeatureAvatars) {
+        kDebug() << "Adding mandatory Avatars";
+        features << avatarsFeature;
+    }
+
+    if (mandatoryFeatures & PersonsModel::FeatureGroups) {
+        kDebug() << "Adding mandatory Groups";
+        features << groupsFeature;
+    }
+
+    if (mandatoryFeatures & PersonsModel::FeatureEmails) {
+        kDebug() << "Adding mandatory Emails";
+        features << emailsFeature;
+    }
+
+    if (mandatoryFeatures & PersonsModel::FeatureFullName) {
+        kDebug() << "Adding mandatory FullName";
+        features << fullNameFeature;
+    }
+
+    if (optionalFeatures & PersonsModel::FeatureIM) {
+        kDebug() << "Adding optional IM";
+        imFeature.setOptional(true);
+        features << imFeature;
+    }
+
+    if (optionalFeatures & PersonsModel::FeatureAvatars) {
+        kDebug() << "Adding optional Avatars";
+        avatarsFeature.setOptional(true);
+        features << avatarsFeature;
+    }
+
+    if (optionalFeatures & PersonsModel::FeatureGroups) {
+        kDebug() << "Adding optional Groups";
+        groupsFeature.setOptional(true);
+        features << groupsFeature;
+    }
+
+    if (optionalFeatures & PersonsModel::FeatureEmails) {
+        kDebug() << "Adding optional Emails";
+        emailsFeature.setOptional(true);
+        features << emailsFeature;
+    }
+
+    if (optionalFeatures & PersonsModel::FeatureFullName) {
+        kDebug() << "Adding optional FullName";
+        fullNameFeature.setOptional(true);
+        features << fullNameFeature;
+    }
+
+    return features;
+}
+
+void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures)
+{
+    Q_D(PersonsModel);
+
+    if (rowCount() > 0) {
+        kWarning() << "Model is already populated";
+        return;
+    }
+
+    QList<PersonsModelFeature> featuresList = init(mandatoryFeatures, optionalFeatures);
+
+    QString selectPart(QLatin1String("select DISTINCT ?uri ?pimo_groundingOccurrence "));
+    QString queryPart(QLatin1String("WHERE { ?uri a nco:PersonContact. "
+            "OPTIONAL { ?pimo_groundingOccurrence pimo:groundingOccurrence ?uri. } "
+            "OPTIONAL { ?uri nao:prefLabel ?nao_prefLabel. } "));
+
+    d->bindingRoleMap.insert("nao_prefLabel", LabelRole);
+    Q_FOREACH(PersonsModelFeature feature, featuresList) {
+        queryPart.append(feature.queryPart());
+        queryPart.append(" ");
+
+        d->bindingRoleMap.unite(feature.bindingsMap());
+    }
+
+    Q_FOREACH(const QString &queryVariable, d->bindingRoleMap.keys()) {
+        selectPart.append(QString("?%1 ").arg(queryVariable));
+    }
+
+    queryPart.append("FILTER(?uri!=<nepomuk:/me>). }");
+
+    selectPart.append(queryPart);
+
+    QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, selectPart));
+}
+
+void PersonsModel::query(const QString &queryString)
 {
     Q_ASSERT(rowCount() == 0);
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, nco_query, Soprano::Query::QueryLanguageSparql);
+    Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, queryString, Soprano::Query::QueryLanguageSparql);
 
     connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
             this, SLOT(nextReady(Soprano::Util::AsyncQuery*)));

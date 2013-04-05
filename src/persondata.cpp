@@ -132,14 +132,14 @@ QString PersonData::status() const
         Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
             if (resource.hasProperty(NCO::hasIMAccount())) {
                 QString imID = resource.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-                presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusRole).toString();
+                presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
             }
         }
 
         return findMostOnlinePresence(presenceList);
     } else {
         QString imID = d->res.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-        return s_presenceModel->dataForContactId(imID, PersonsModel::StatusRole).toString();
+        return s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
     }
 }
 

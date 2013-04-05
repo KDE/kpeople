@@ -48,7 +48,9 @@ public:
 
 K_GLOBAL_STATIC(PersonsPresenceModel, s_presenceModel)
 
-PersonData::PersonData(QObject* parent): QObject(parent)
+PersonData::PersonData(QObject *parent)
+    : QObject(parent),
+    d_ptr(new PersonDataPrivate)
 {
     connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SIGNAL(dataChanged()));
 }

@@ -124,7 +124,7 @@ QVariant PersonActions::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-int PersonActions::rowCount(const QModelIndex& parent) const
+int PersonActions::rowCount(const QModelIndex &parent) const
 {
     Q_D(const PersonActions);
 

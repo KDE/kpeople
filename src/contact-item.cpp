@@ -66,19 +66,6 @@ ContactItem::~ContactItem()
     delete d_ptr;
 }
 
-QMap<PersonsModel::ContactType, QIcon> initializeTypeIcons()
-{
-    QMap<PersonsModel::ContactType, QIcon> ret;
-    ret.insert(PersonsModel::Email, QIcon::fromTheme(QLatin1String("mail-mark-unread")));
-    ret.insert(PersonsModel::IM, QIcon::fromTheme(QLatin1String("im-user")));
-    ret.insert(PersonsModel::Phone, QIcon::fromTheme(QLatin1String("phone")));
-    ret.insert(PersonsModel::MobilePhone, QIcon::fromTheme(QLatin1String("phone")));
-    ret.insert(PersonsModel::Postal, QIcon::fromTheme(QLatin1String("mail-message")));
-    return ret;
-}
-
-static QMap<PersonsModel::ContactType, QIcon> s_contactTypeMap = initializeTypeIcons();
-
 void ContactItem::setContactData(int role, const QVariant &v)
 {
     Q_D(ContactItem);
@@ -161,23 +148,6 @@ QVariant ContactItem::data(int role) const
         case PersonsModel::UriRole: return d->uri; break;
         case PersonsModel::StatusRole: return QLatin1String("unknown"); //return unknown presence, for real presence use PersonsPresenceModel
         case PersonsModel::ContactsCountRole: return 1;
-
-        // FIXME: Should this be thrown away?
-        case PersonsModel::ContactIdRole: {
-            int role = -1;
-            switch((PersonsModel::ContactType) data(PersonsModel::ContactTypeRole).toInt()) {
-                case PersonsModel::IM: role = PersonsModel::IMRole; break;
-                case PersonsModel::Phone: role = PersonsModel::PhoneRole; break;
-                case PersonsModel::Email: role = PersonsModel::EmailRole; break;
-                case PersonsModel::MobilePhone: role = PersonsModel::PhoneRole; break;
-                case PersonsModel::Postal: role = -1; break; //FIXME: just add the role!
-            }
-
-            if (role >= 0) {
-                return data(role);
-            }
-        }   break;
-
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Contact;
         case Qt::DecorationRole: {

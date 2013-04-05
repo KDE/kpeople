@@ -134,6 +134,9 @@ QVariant ContactItem::data(int role) const
             if (!data(PersonsModel::LabelRole).toString().isEmpty()) {
                 return data(PersonsModel::LabelRole);
             }
+            if (!data(PersonsModel::NameRole).toString().isEmpty()) {
+                return data(PersonsModel::NameRole);
+            }
             if (!data(PersonsModel::IMRole).toString().isEmpty()) {
                 return data(PersonsModel::IMRole);
             }

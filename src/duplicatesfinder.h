@@ -36,7 +36,7 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
         virtual void start();
         QList<Match> results() const;
 
-    private slots:
+    private Q_SLOTS:
         void doSearch();
 
     private:

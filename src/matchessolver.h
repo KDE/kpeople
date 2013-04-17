@@ -35,7 +35,7 @@ class KPEOPLE_EXPORT MatchesSolver : public KJob
         explicit MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent = 0);
         virtual void start();
 
-    public slots:
+    public Q_SLOTS:
         void startMatching();
         void jobDone(KJob *job=0);
 

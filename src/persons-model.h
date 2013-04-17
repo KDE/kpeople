@@ -144,13 +144,13 @@ public:
     void createContact(const Nepomuk2::Resource &res);
     ContactItem* contactForIMAccount(const QUrl &uri) const;
 
-private slots:
+private Q_SLOTS:
     void jobFinished(KJob *job);
     void query(const QString &queryString);
     void nextReady(Soprano::Util::AsyncQuery *query);
     void queryFinished(Soprano::Util::AsyncQuery *query);
 
-signals:
+Q_SIGNALS:
     void peopleAdded();
 
 private:

@@ -79,7 +79,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** @returns true if this is pimo:Person, false if just nco:PersonContact */
         bool isPerson() const;
 
-    signals:
+    Q_SIGNALS:
         /** the person has changed */
         void uriChanged();
 

@@ -337,44 +337,6 @@ void PersonsModel::queryFinished(Soprano::Util::AsyncQuery *query)
     kDebug() << "Model ready";
 }
 
-void PersonsModel::unmerge(const QUrl &contactUri, const QUrl &personUri)
-{
-    Nepomuk2::Resource oldPerson(personUri);
-    Q_ASSERT(oldPerson.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList().size() >= 2 && "there's nothing to unmerge...");
-    oldPerson.removeProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
-    if (!oldPerson.hasProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence())) {
-        oldPerson.remove();
-    }
-
-//     Nepomuk2::SimpleResource newPerson;
-//     newPerson.addType( Nepomuk2::Vocabulary::PIMO::Person() );
-//     newPerson.setProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contactUri);
-//
-//     Nepomuk2::SimpleResourceGraph graph;
-//     graph << newPerson;
-//
-//     KJob * job = Nepomuk2::storeResources( graph );
-//     job->setProperty("uri", contactUri);
-//     job->setObjectName("Unmerge");
-//     connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
-//     job->start();
-}
-
-void PersonsModel::merge(const QList<QUrl> &persons)
-{
-    KJob *job = Nepomuk2::mergeResources(persons);
-    job->setObjectName("Merge");
-    connect(job, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
-}
-
-void PersonsModel::merge(const QVariantList &persons)
-{
-    QList<QUrl> conv;
-    foreach (const QVariant &p, persons)
-        conv += p.toUrl();
-    merge(conv);
-}
-
 void PersonsModel::jobFinished(KJob *job)
 {
     if (job->error()!=0) {

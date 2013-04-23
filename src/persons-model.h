@@ -106,17 +106,6 @@ public:
      */
     void setQueryFlags(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
 
-    /**
-     * The @p contactUri will be removed from @p personUri and it will be added to a new
-     * empty pimo:Person instance.
-     */
-    Q_SCRIPTABLE void unmerge(const QUrl &contactUri, const QUrl &personUri);
-
-    /** Merge all the contacts inside the @p persons */
-    void merge(const QList<QUrl> &persons);
-
-    /** this one is because QML is not smart enough to understand what's going on */
-    Q_SCRIPTABLE void merge(const QVariantList &persons);
 
     /** Creates a pimo:person with contacts as groundingOccurances */
     void createPersonFromContacts(const QList<QUrl> &contacts);

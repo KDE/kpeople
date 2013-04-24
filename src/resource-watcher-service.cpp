@@ -22,6 +22,7 @@
 #include "persons-model.h"
 #include "person-item.h"
 #include "contact-item.h"
+#include "persons-model-feature.h"
 
 #include <Nepomuk2/Resource>
 #include <nepomuk2/resourcewatcher.h>
@@ -67,12 +68,10 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     d->contactWatcher = new Nepomuk2::ResourceWatcher(this);
     d->contactWatcher->addType(Nepomuk2::Vocabulary::NCO::PersonContact());
 
-    connect(d->contactWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
-            this, SLOT(contactCreated(Nepomuk2::Resource,QList<QUrl>)));
     connect(d->contactWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
             this, SLOT(contactRemoved(QUrl,QList<QUrl>)));
     connect(d->contactWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
-            this, SLOT(onContactPropertyModified(Nepomuk2::Resource)));
+            this, SLOT(onContactPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
 
     d->contactWatcher->start();
 
@@ -149,7 +148,8 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource &
 }
 
 
-void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource &res)
+void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
+                                                       const QVariantList &added, const QVariantList &removed)
 {
     kDebug() << "contact changed:" << res.uri();
 
@@ -157,9 +157,20 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
     ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     if (item) {
         item->loadData();
+    } else if (!item && removed.isEmpty()) {
+
+        //go through all model features and check mandatory features,
+        //only create contacts that have the mandatory property
+        Q_FOREACH (const PersonsModelFeature &feature, d->m_model->modelFeatures()) {
+            if (!feature.isOptional()) {
+                if (feature.watcherProperty() == property) {
+                    d->m_model->createContact(res);
+                    return;
+                }
+            }
+        }
     }
 }
-
 
 void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariantList &added, const QVariantList &removed)
 {
@@ -179,17 +190,6 @@ void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resourc
         } else {
             item->removeData(PersonsModel::NickRole);
         }
-    }
-}
-
-void ResourceWatcherService::contactCreated(const Nepomuk2::Resource &res, const QList< QUrl > &types)
-{
-    kDebug() << "new contact" /*<< res.uri() */<< types;
-    Q_D(ResourceWatcherService);
-
-    QModelIndex idx = d->m_model->indexForUri(res.uri());
-    if (!idx.isValid()) {
-        d->m_model->createContact(res);
     }
 }
 

@@ -52,3 +52,13 @@ void PersonsModelFeature::setOptional(bool optional)
 {
     m_isOptional = optional;
 }
+
+QUrl PersonsModelFeature::watcherProperty() const
+{
+    return m_watcherProperty;
+}
+
+void PersonsModelFeature::setWatcherProperty(const QUrl &property)
+{
+    m_watcherProperty = property;
+}

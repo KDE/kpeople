@@ -22,6 +22,7 @@
 
 #include <QHash>
 #include <QString>
+#include <QUrl>
 
 #include "persons-model.h"
 
@@ -37,10 +38,14 @@ public:
     bool isOptional() const;
     void setOptional(bool optional);
 
+    QUrl watcherProperty() const;
+    void setWatcherProperty(const QUrl &property);
+
 private:
     QHash<QString, PersonsModel::Role> m_bindingsMap;
     QString m_queryPart;
     bool m_isOptional;
+    QUrl m_watcherProperty;
 };
 
 #endif // PERSONS_MODEL_FEATURE_H

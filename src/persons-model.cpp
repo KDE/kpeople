@@ -47,6 +47,11 @@ struct PersonsModelPrivate {
     QHash<QUrl, PersonItem*> persons;   //all persons
     QList<QUrl> pimoOccurances;         //contacts that are groundingOccurrences of persons
     QHash<QString, PersonsModel::Role> bindingRoleMap;
+
+    PersonsModel::Features mandatoryFeatures;
+    PersonsModel::Features optionalFeatures;
+
+    QList<PersonsModelFeature> modelFeatures;
 };
 
 //-----------------------------------------------------------------------------
@@ -112,6 +117,7 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
     b.insert("nco_imImAcountType", IMAccountTypeRole);
     imFeature.setBindingsMap(b);
     imFeature.setOptional(false);
+    imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount());
 
     PersonsModelFeature groupsFeature;
     groupsFeature.setQueryPart(QString::fromUtf8(
@@ -121,6 +127,7 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
     gb.insert("nco_contactGroupName", ContactGroupsRole);
     groupsFeature.setBindingsMap(gb);
     groupsFeature.setOptional(false);
+    groupsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::belongsToGroup());
 
     PersonsModelFeature avatarsFeature;
     avatarsFeature.setQueryPart(QString::fromUtf8(
@@ -130,6 +137,7 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
     pb.insert("nie_url", PhotoRole);
     avatarsFeature.setBindingsMap(pb);
     avatarsFeature.setOptional(false);
+    avatarsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::photo());
 
     PersonsModelFeature emailsFeature;
     emailsFeature.setQueryPart(QString::fromUtf8(
@@ -139,6 +147,7 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
     eb.insert("nco_emailAddress", EmailRole);
     emailsFeature.setBindingsMap(eb);
     emailsFeature.setOptional(false);
+    emailsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasEmailAddress());
 
     PersonsModelFeature fullNameFeature;
     fullNameFeature.setQueryPart(QString::fromUtf8(
@@ -215,7 +224,10 @@ void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, Perso
         return;
     }
 
-    QList<PersonsModelFeature> featuresList = init(mandatoryFeatures, optionalFeatures);
+    d->mandatoryFeatures = mandatoryFeatures;
+    d->optionalFeatures = optionalFeatures;
+
+    d->modelFeatures = init(mandatoryFeatures, optionalFeatures);
 
     QString selectPart(QLatin1String("select DISTINCT ?uri ?pimo_groundingOccurrence "));
     QString queryPart(QLatin1String("WHERE { ?uri a nco:PersonContact. "
@@ -223,7 +235,8 @@ void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, Perso
             "OPTIONAL { ?uri nao:prefLabel ?nao_prefLabel. } "));
 
     d->bindingRoleMap.insert("nao_prefLabel", LabelRole);
-    Q_FOREACH(PersonsModelFeature feature, featuresList) {
+
+    Q_FOREACH(PersonsModelFeature feature, d->modelFeatures) {
         queryPart.append(feature.queryPart());
         queryPart.append(" ");
 
@@ -361,6 +374,18 @@ QModelIndex PersonsModel::findRecursively(int role, const QVariant &value, const
     }
 
     return QModelIndex();
+}
+
+QPair<PersonsModel::Features, PersonsModel::Features> PersonsModel::queryFlags() const
+{
+    Q_D(const PersonsModel);
+    return qMakePair(d->mandatoryFeatures, d->optionalFeatures);
+}
+
+QList<PersonsModelFeature> PersonsModel::modelFeatures() const
+{
+    Q_D(const PersonsModel);
+    return d->modelFeatures;
 }
 
 QModelIndex PersonsModel::indexForUri(const QUrl &uri) const

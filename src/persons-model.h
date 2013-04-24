@@ -106,6 +106,15 @@ public:
      */
     void setQueryFlags(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
 
+    /**
+     * @return QPair of query flags used to populate the model, first is mandatory, second is optional
+     */
+    QPair<PersonsModel::Features, PersonsModel::Features> queryFlags() const;
+
+    /**
+     * @return actual features used to populate the model
+     */
+    QList<PersonsModelFeature> modelFeatures() const;
 
     /** Creates a pimo:person with contacts as groundingOccurances */
     void createPersonFromContacts(const QList<QUrl> &contacts);

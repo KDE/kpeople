@@ -21,15 +21,16 @@
 #define MATCH_H
 
 #include <QList>
+#include <QPersistentModelIndex>
 
 struct Match
 {
-    Match(const QList<int>& r, int a, int b);
+    Match(const QList<int>& roles, QPersistentModelIndex a, QPersistentModelIndex b);
     bool operator==(const Match &m) const;
     bool operator<(const Match &m) const;
 
     QList<int> role;
-    int rowA, rowB;
+    QPersistentModelIndex indexA, indexB;
 };
 
 #endif // MATCH_H

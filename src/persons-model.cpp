@@ -23,6 +23,7 @@
 #include "contact-item.h"
 #include "resource-watcher-service.h"
 #include "persons-model-feature.h"
+#include "duplicatesfinder.h"
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
@@ -500,4 +501,31 @@ void PersonsModel::removePersonFromModel(const QModelIndex &index)
     }
 
     removeRow(index.row());
+}
+
+void PersonsModel::findDuplicates()
+{
+    DuplicatesFinder *df = new DuplicatesFinder(this, this);
+    connect(df, SIGNAL(finished(KJob*)), this, SLOT(findDuplicatesFinished(KJob*)));
+    df->start();
+}
+
+void PersonsModel::findDuplicatesFinished(KJob *finder)
+{
+    QList<Match> results = ((DuplicatesFinder*)finder)->results();
+
+    QHash<QString, QSet<QPersistentModelIndex> > matches;
+    Q_FOREACH(const Match &m, results) {
+
+        QHash<QString, QSet<QPersistentModelIndex> >::iterator it = matches.find(m.indexA.data().toString());
+        if (it == matches.end()) {
+            matches.insert(m.indexA.data().toString(), QSet<QPersistentModelIndex>() << m.indexA << m.indexB);
+        } else {
+            *it->insert(m.indexA);
+            *it->insert(m.indexB);
+        }
+    }
+
+    Q_EMIT duplicatesFound(matches);
+
 }

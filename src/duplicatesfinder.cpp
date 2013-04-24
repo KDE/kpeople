@@ -25,7 +25,10 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)
     : KJob(parent)
     , m_model(model)
 {
-    m_compareRoles << PersonsModel::NameRole << PersonsModel::ContactIdRole << PersonsModel::NickRole << PersonsModel::PhoneRole;
+    m_compareRoles << PersonsModel::NameRole
+                   << PersonsModel::NickRole
+                   << PersonsModel::EmailRole
+                   << PersonsModel::PhoneRole;
 }
 
 void DuplicatesFinder::start()
@@ -39,26 +42,29 @@ void DuplicatesFinder::doSearch()
     //NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment
     //maybe using nepomuk for the matching would help?
 
-    QVector< QVariantList > collectedValues;
+    QVector<QVariantList> collectedValues;
     m_matches.clear();
 
-    int count = m_model->rowCount();
-    for (int i=0; i < count; i++) {
+    for (int i = 0; i < m_model->rowCount(); i++) {
         QModelIndex idx = m_model->index(i, 0);
 
         //we gather the values
         QVariantList values;
-        foreach(int role, m_compareRoles) {
+        Q_FOREACH (int role, m_compareRoles) {
             values += idx.data(role);
         }
         Q_ASSERT(values.size() == m_compareRoles.size());
 
         //we check if it matches
         int j = 0;
-        foreach (const QVariantList &valueToCompare, collectedValues) {
-            QList< int > matchedRoles = matchAt(values, valueToCompare);
+        Q_FOREACH (const QVariantList &valueToCompare, collectedValues) {
+            QList<int> matchedRoles = matchAt(values, valueToCompare);
+
             if (!matchedRoles.isEmpty()) {
-                m_matches.append(Match(matchedRoles, i, j));
+                QPersistentModelIndex i1(m_model->index(i, 0));
+                QPersistentModelIndex i2(m_model->index(j, 0));
+
+                m_matches.append(Match(matchedRoles, i1, i2));
             }
             j++;
         }
@@ -71,15 +77,19 @@ void DuplicatesFinder::doSearch()
 
 QList<int> DuplicatesFinder::matchAt(const QVariantList &value, const QVariantList &toCompare) const
 {
-    QList<int> ret;
     Q_ASSERT(value.size() == toCompare.size());
-    for (int i = 0; i<toCompare.size(); i++) {
+
+    QList<int> ret;
+    for (int i = 0; i < toCompare.size(); i++) {
         const QVariant &v = value[i];
         bool add = false;
+
         if (v.type() == QVariant::List) {
-            QVariantList listA = v.toList(), listB=toCompare[i].toList();
+            QVariantList listA = v.toList();
+            QVariantList listB = toCompare[i].toList();
+
             if (!listA.isEmpty() && !listB.isEmpty()) {
-                foreach (const QVariant &v, listB) {
+                Q_FOREACH (const QVariant &v, listB) {
                     if (listA.contains(v)) {
                         Q_ASSERT(!ret.contains(m_compareRoles[i]) && "B");
                         add = true;
@@ -93,14 +103,15 @@ QList<int> DuplicatesFinder::matchAt(const QVariantList &value, const QVariantLi
             Q_ASSERT(!ret.contains(m_compareRoles[i]) && "A");
             add = true;
         }
-        if(add) {
+
+        if (add) {
             ret += m_compareRoles[i];
         }
     }
     return ret;
 }
 
-QList< Match > DuplicatesFinder::results() const
+QList<Match> DuplicatesFinder::results() const
 {
     return m_matches;
 }

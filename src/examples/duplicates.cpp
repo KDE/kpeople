@@ -40,10 +40,10 @@ class ResultPrinter : public QObject
                 QStringList rA, rB;
                 foreach(int i, it->role) {
                     roles += model.roleNames()[i];
-                    rA += variantToString(model.index(it->rowA, 0).data(it->role.first()));
-                    rB += variantToString(model.index(it->rowB, 0).data(it->role.first()));
+                    rA += variantToString(it->indexA.data(it->role.first()));
+                    rB += variantToString(it->indexB.data(it->role.first()));
                 }
-                std::cout << "\t- " << qPrintable(roles.join(", ")) << ": " << it->rowA << " " << it->rowB
+                std::cout << "\t- " << qPrintable(roles.join(", ")) << ": " << it->indexA.row() << " " << it->indexB.row()
                           << " because: " << qPrintable(rA.join(", ")) << " // " << qPrintable(rB.join(", ")) << '.' << std::endl;
                 bool remove = false;
                 if(m_action==Ask) {

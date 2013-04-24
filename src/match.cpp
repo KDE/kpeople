@@ -19,19 +19,19 @@
 
 #include "match.h"
 
-Match::Match(const QList< int > &r, int a, int b)
-    : role(r), rowA(a), rowB(b)
+Match::Match(const QList< int > &roles, QPersistentModelIndex a, QPersistentModelIndex b)
+    : role(roles), indexA(a), indexB(b)
 {}
 
 bool Match::operator==(const Match &m) const
 {
     return role == m.role
-           && rowA == m.rowA
-           && rowB == m.rowB;
+           && indexA == m.indexA
+           && indexB == m.indexB;
 }
 
 bool Match::operator<(const Match &m) const
 {
-    return rowA < m.rowA
-           || (rowA == m.rowA && rowB < m.rowB);
+    return indexA < m.indexA
+           || (indexA == m.indexA && indexB < m.indexB);
 }

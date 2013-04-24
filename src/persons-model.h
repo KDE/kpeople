@@ -129,6 +129,8 @@ public:
 
     QModelIndex indexForUri(const QUrl &uri) const;
 
+    void findDuplicates();
+
     void createPerson(const Nepomuk2::Resource &res);
     void createContact(const Nepomuk2::Resource &res);
     ContactItem* contactForIMAccount(const QUrl &uri) const;
@@ -138,9 +140,11 @@ private Q_SLOTS:
     void query(const QString &queryString);
     void nextReady(Soprano::Util::AsyncQuery *query);
     void queryFinished(Soprano::Util::AsyncQuery *query);
+    void findDuplicatesFinished(KJob *finder);
 
 Q_SIGNALS:
     void peopleAdded();
+    void duplicatesFound(QHash<QString, QSet<QPersistentModelIndex> > duplicates);
 
 private:
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;

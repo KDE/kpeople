@@ -37,9 +37,9 @@ void MatchesSolver::start()
 
 void MatchesSolver::startMatching()
 {
-    foreach(const Match &m, m_matches) {
-        QModelIndex idxDestination = m_model->index(m.rowA, 0);
-        QModelIndex idxOrigin = m_model->index(m.rowB, 0);
+    Q_FOREACH(const Match &m, m_matches) {
+        QPersistentModelIndex idxDestination = m.indexA;
+        QPersistentModelIndex idxOrigin = m.indexB;
 
         QList<QUrl> persons;
         persons << idxDestination.data(PersonsModel::UriRole).toUrl();

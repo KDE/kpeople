@@ -52,14 +52,12 @@ PersonData::PersonData(QObject *parent)
     : QObject(parent),
     d_ptr(new PersonDataPrivate)
 {
-    connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SIGNAL(dataChanged()));
 }
 
 PersonData::PersonData(const QString &uri, QObject *parent)
     : QObject(parent),
       d_ptr(new PersonDataPrivate)
 {
-    connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)), this, SIGNAL(dataChanged()));
     setUri(uri);
 }
 
@@ -119,6 +117,10 @@ void PersonData::setUri(const QString &uri)
 
     connect(watcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SIGNAL(dataChanged()));
+
+    connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+            this, SLOT(presenceModelChange(QModelIndex,QModelIndex)));
+
     emit uriChanged();
     emit dataChanged();
 }
@@ -339,4 +341,17 @@ QString PersonData::findMostOnlinePresence(const QStringList &presences) const
     }
 
     return "offline";
+}
+
+void PersonData::presenceModelChange(const QModelIndex &topLeft, const QModelIndex &bottomRight)
+{
+    Q_D(PersonData);
+
+    if (topLeft != bottomRight) {
+        return;
+    }
+
+    if (topLeft.data(PersonsModel::UriRole).toString() == d->uri) {
+        emit dataChanged();
+    }
 }

@@ -26,6 +26,7 @@
 #include <QObject>
 #include <QUrl>
 #include <QStringList>
+#include <KDateTime>
 
 class QModelIndex;
 namespace Nepomuk2 { class Resource; }
@@ -78,6 +79,8 @@ class KPEOPLE_EXPORT PersonData : public QObject
 
         /** @returns true if this is pimo:Person, false if just nco:PersonContact */
         bool isPerson() const;
+        /** @returns contact's birthday */
+        KDateTime birthday() const;
 
     Q_SIGNALS:
         /** the person has changed */

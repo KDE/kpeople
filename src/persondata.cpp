@@ -273,6 +273,34 @@ QStringList PersonData::imAccounts() const
     return ims;
 }
 
+KDateTime PersonData::birthday() const
+{
+    Q_D(const PersonData);
+
+    if (d->res.type() == PIMO::Person()) {
+        //we'll go through all the dates we have and from every date we
+        //get msecs from epoch and then we'll check whichever is greater
+        //If the date has only month and a year, it will be counted
+        //to 1st day of that month. If the real date is actually 15th day,
+        //it means the more complete date will have more msecs from the epoch
+        KDateTime bd;
+
+        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
+            if (resource.hasProperty(NCO::birthDate())) {
+
+                KDateTime bdTemp(d->res.property(NCO::birthDate()).toDateTime());
+                if (bdTemp.isValid() && bdTemp.dateTime().toMSecsSinceEpoch() > bd.dateTime().toMSecsSinceEpoch()) {
+                    bd = bdTemp;
+                }
+            }
+        }
+
+        return bd;
+    } else {
+        return KDateTime(d->res.property(NCO::birthDate()).toDateTime());
+    }
+}
+
 
 // QStringList PersonData::bareContacts() const
 // {

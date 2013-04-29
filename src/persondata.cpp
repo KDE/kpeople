@@ -303,6 +303,35 @@ KDateTime PersonData::birthday() const
     }
 }
 
+QStringList PersonData::groups() const
+{
+    Q_D(const PersonData);
+
+    QStringList groups;
+
+    if (d->res.type() == PIMO::Person()) {
+
+        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
+            Nepomuk2::Variant groupProperties = resource.property(NCO::belongsToGroup());
+            if (!groupProperties.isValid()) {
+                continue;
+            }
+
+            Q_FOREACH (const Nepomuk2::Resource &groupResource, groupProperties.toResourceList()) {
+                groups << groupResource.property(NCO::contactGroupName()).toString();
+            }
+        }
+
+    } else {
+        Nepomuk2::Variant groupProperties = d->res.property(NCO::belongsToGroup());
+
+        Q_FOREACH (const Nepomuk2::Resource &groupResource, groupProperties.toResourceList()) {
+            groups << groupResource.property(NCO::contactGroupName()).toString();
+        }
+    }
+
+    return groups;
+}
 
 // QStringList PersonData::bareContacts() const
 // {

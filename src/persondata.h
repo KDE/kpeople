@@ -82,6 +82,9 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** @returns contact's birthday */
         KDateTime birthday() const;
 
+        /** @returns list of groups the contact is part of */
+        QStringList groups() const;
+
     Q_SIGNALS:
         /** the person has changed */
         void uriChanged();

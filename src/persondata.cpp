@@ -43,7 +43,9 @@ class PersonDataPrivate {
 public:
     QString uri;
     QString id;
-    Nepomuk2::Resource res;
+    QPointer<Nepomuk2::ResourceWatcher> watcher;
+    Nepomuk2::Resource personResource;
+    QList<Nepomuk2::Resource> contactResources;
 };
 
 K_GLOBAL_STATIC(PersonsPresenceModel, s_presenceModel)
@@ -86,9 +88,7 @@ void PersonData::setContactId(const QString &id)
     }
 
     if (d->uri != uri) {
-        d->uri = uri;
-        d->res = Nepomuk2::Resource(uri);
-        d->res.setWatchEnabled(true);
+        setUri(uri);
     }
 }
 
@@ -109,13 +109,33 @@ void PersonData::setUri(const QString &uri)
     Q_D(PersonData);
 
     d->uri = uri;
-    d->res = Nepomuk2::Resource(uri);
-    d->res.setWatchEnabled(true);
+    d->contactResources.clear();
+    d->personResource = Nepomuk2::Resource();
 
-    Nepomuk2::ResourceWatcher *watcher = new Nepomuk2::ResourceWatcher(this);
-    watcher->addResource(d->res);
+    Nepomuk2::Resource r(uri);
 
-    connect(watcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
+    if (!d->watcher.isNull()) {
+        delete d->watcher;
+    }
+
+    d->watcher = new Nepomuk2::ResourceWatcher(this);
+
+    if (r.type() == PIMO::Person()) {
+        d->personResource = r;
+        d->contactResources = r.property(PIMO::groundingOccurrence()).toResourceList();
+
+        Q_FOREACH (Nepomuk2::Resource res, d->contactResources) { //cannot use const here as we're modifying the resource
+            d->watcher->addResource(res);
+            res.setWatchEnabled(true);
+        }
+    } else {
+        d->contactResources = QList<Nepomuk2::Resource>() << r;
+    }
+
+    r.setWatchEnabled(true);
+    d->watcher->addResource(r);
+
+    connect(d->watcher.data(), SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SIGNAL(dataChanged()));
 
     connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
@@ -132,39 +152,27 @@ QString PersonData::status() const
 
     QStringList presenceList;
 
-    if (d->res.type() == PIMO::Person()) {
-        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
-            if (resource.hasProperty(NCO::hasIMAccount())) {
-                QString imID = resource.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-                presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
-            }
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        if (resource.hasProperty(NCO::hasIMAccount())) {
+            QString imID = resource.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
+            presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
         }
-
-        return findMostOnlinePresence(presenceList);
-    } else {
-        QString imID = d->res.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-        return s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
     }
+
+    return findMostOnlinePresence(presenceList);
 }
 
 QUrl PersonData::avatar() const
 {
     Q_D(const PersonData);
 
-    Nepomuk2::Resource r;
-
-    if (d->res.type() == PIMO::Person()) {
-        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
-            if (resource.hasProperty(NCO::photo())) {
-                r = resource;
-                break;
-            }
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        if (resource.hasProperty(NCO::photo())) {
+            return resource.property(NCO::photo()).toResource().property(NIE::url()).toUrl();
         }
-    } else {
-        r = d->res;
     }
 
-    return r.property(NCO::photo()).toResource().property(NIE::url()).toUrl();
+    return QUrl();
 }
 
 QString PersonData::name() const
@@ -172,14 +180,8 @@ QString PersonData::name() const
     Q_D(const PersonData);
 
     QString label;
-    Nepomuk2::Resource r;
-
-    if (d->res.type() == PIMO::Person()) {
-        //simply pick the first GO for now
-        r = d->res.property(PIMO::groundingOccurrence()).toResource();
-    } else {
-        r = d->res;
-    }
+    //simply pick the first for now
+    Nepomuk2::Resource r = d->contactResources.first();
 
     label = r.property(NCO::fullname()).toString();
 
@@ -193,7 +195,7 @@ QString PersonData::name() const
         return label;
     }
 
-    return d->res.property(NCO::hasContactMedium()).toResource().genericLabel();
+    return r.property(NCO::hasContactMedium()).toResource().genericLabel();
 }
 
 QStringList PersonData::emails() const
@@ -202,17 +204,9 @@ QStringList PersonData::emails() const
 
     QStringList emails;
 
-    if (d->res.type() == PIMO::Person()) {
-        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
-            if (resource.hasProperty(NCO::hasEmailAddress())) {
-                Q_FOREACH (const Nepomuk2::Resource &email, resource.property(NCO::hasEmailAddress()).toResourceList()) {
-                    emails << email.property(NCO::emailAddress()).toString();
-                }
-            }
-        }
-    } else {
-        if (d->res.hasProperty(NCO::hasEmailAddress())) {
-            Q_FOREACH (const Nepomuk2::Resource &email, d->res.property(NCO::hasEmailAddress()).toResourceList()) {
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        if (resource.hasProperty(NCO::hasEmailAddress())) {
+            Q_FOREACH (const Nepomuk2::Resource &email, resource.property(NCO::hasEmailAddress()).toResourceList()) {
                 emails << email.property(NCO::emailAddress()).toString();
             }
         }
@@ -227,17 +221,9 @@ QStringList PersonData::phones() const
 
     QStringList phones;
 
-    if (d->res.type() == PIMO::Person()) {
-        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
-            if (resource.hasProperty(NCO::hasPhoneNumber())) {
-                Q_FOREACH (const Nepomuk2::Resource &phone, resource.property(NCO::hasPhoneNumber()).toResourceList()) {
-                    phones << phone.property(NCO::phoneNumber()).toString();
-                }
-            }
-        }
-    } else {
-        if (d->res.hasProperty(NCO::hasPhoneNumber())) {
-            Q_FOREACH (const Nepomuk2::Resource &phone, d->res.property(NCO::hasPhoneNumber()).toResourceList()) {
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        if (resource.hasProperty(NCO::hasPhoneNumber())) {
+            Q_FOREACH (const Nepomuk2::Resource &phone, resource.property(NCO::hasPhoneNumber()).toResourceList()) {
                 phones << phone.property(NCO::phoneNumber()).toString();
             }
         }
@@ -252,19 +238,9 @@ QStringList PersonData::imAccounts() const
 
     QStringList ims;
 
-    if (d->res.type() == PIMO::Person()) {
-        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
-            if (resource.hasProperty(NCO::hasIMAccount())) {
-                Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
-                    ims << im.property(NCO::imAccountType()).toString();
-                    ims << im.property(NCO::imNickname()).toString();
-                    ims << im.property(NCO::imID()).toString();
-                }
-            }
-        }
-    } else {
-        if (d->res.hasProperty(NCO::hasIMAccount())) {
-            Q_FOREACH (const Nepomuk2::Resource &im, d->res.property(NCO::hasIMAccount()).toResourceList()) {
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        if (resource.hasProperty(NCO::hasIMAccount())) {
+            Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
                 ims << im.property(NCO::imAccountType()).toString();
                 ims << im.property(NCO::imNickname()).toString();
                 ims << im.property(NCO::imID()).toString();
@@ -279,28 +255,24 @@ KDateTime PersonData::birthday() const
 {
     Q_D(const PersonData);
 
-    if (d->res.type() == PIMO::Person()) {
-        //we'll go through all the dates we have and from every date we
-        //get msecs from epoch and then we'll check whichever is greater
-        //If the date has only month and a year, it will be counted
-        //to 1st day of that month. If the real date is actually 15th day,
-        //it means the more complete date will have more msecs from the epoch
-        KDateTime bd;
+    //we'll go through all the dates we have and from every date we
+    //get msecs from epoch and then we'll check whichever is greater
+    //If the date has only month and a year, it will be counted
+    //to 1st day of that month. If the real date is actually 15th day,
+    //it means the more complete date will have more msecs from the epoch
+    KDateTime bd;
 
-        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
-            if (resource.hasProperty(NCO::birthDate())) {
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        if (resource.hasProperty(NCO::birthDate())) {
 
-                KDateTime bdTemp(d->res.property(NCO::birthDate()).toDateTime());
-                if (bdTemp.isValid() && bdTemp.dateTime().toMSecsSinceEpoch() > bd.dateTime().toMSecsSinceEpoch()) {
-                    bd = bdTemp;
-                }
+            KDateTime bdTemp(resource.property(NCO::birthDate()).toDateTime());
+            if (bdTemp.isValid() && bdTemp.dateTime().toMSecsSinceEpoch() > bd.dateTime().toMSecsSinceEpoch()) {
+                bd = bdTemp;
             }
         }
-
-        return bd;
-    } else {
-        return KDateTime(d->res.property(NCO::birthDate()).toDateTime());
     }
+
+    return bd;
 }
 
 QStringList PersonData::groups() const
@@ -309,21 +281,11 @@ QStringList PersonData::groups() const
 
     QStringList groups;
 
-    if (d->res.type() == PIMO::Person()) {
-
-        Q_FOREACH (const Nepomuk2::Resource &resource, d->res.property(PIMO::groundingOccurrence()).toResourceList()) {
-            Nepomuk2::Variant groupProperties = resource.property(NCO::belongsToGroup());
-            if (!groupProperties.isValid()) {
-                continue;
-            }
-
-            Q_FOREACH (const Nepomuk2::Resource &groupResource, groupProperties.toResourceList()) {
-                groups << groupResource.property(NCO::contactGroupName()).toString();
-            }
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        Nepomuk2::Variant groupProperties = resource.property(NCO::belongsToGroup());
+        if (!groupProperties.isValid()) {
+            continue;
         }
-
-    } else {
-        Nepomuk2::Variant groupProperties = d->res.property(NCO::belongsToGroup());
 
         Q_FOREACH (const Nepomuk2::Resource &groupResource, groupProperties.toResourceList()) {
             groups << groupResource.property(NCO::contactGroupName()).toString();
@@ -351,7 +313,7 @@ QStringList PersonData::groups() const
 bool PersonData::isPerson() const
 {
     Q_D(const PersonData);
-    return d->res.type() == PIMO::Person();
+    return d->personResource.isValid();
 }
 
 QString PersonData::findMostOnlinePresence(const QStringList &presences) const

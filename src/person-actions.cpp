@@ -35,6 +35,10 @@
 #include "persondata.h"
 
 struct PersonActionsPrivate {
+    PersonActionsPrivate():
+        manager(0),
+        person(0)
+        {}
     QList<QAction*> actions;
     PersonPluginManager *manager;
 

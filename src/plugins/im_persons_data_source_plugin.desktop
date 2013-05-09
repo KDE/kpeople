@@ -1,0 +1,12 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Person Data Source Provider
+Type=Service
+ServiceTypes=KPeople/ModelPlugin
+X-KDE-Library=im_persons_data_source_plugin
+X-KDE-PluginInfo-Author=Martin Klapetek
+X-KDE-PluginInfo-Email=mklapetek@kde.org
+X-KDE-PluginInfo-Name=IMProvider
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true

@@ -162,7 +162,7 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
         //go through all model features and check mandatory features,
         //only create contacts that have the mandatory property
         Q_FOREACH (const PersonsModelFeature &feature, d->m_model->modelFeatures()) {
-            if (!feature.isOptional()) {
+            if (!feature.isOptional() || d->m_model->queryFlags().first.testFlag(PersonsModel::FeatureNone)) {
                 if (feature.watcherProperty() == property) {
                     d->m_model->createContact(res);
                     return;
@@ -186,9 +186,9 @@ void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resourc
     //we expect only the imNickname to change here
     if (property.name() == QLatin1String("imNickname")) {
         if (added.count()) {
-            item->setContactData(PersonsModel::NickRole, added.first());
+            item->setContactData(PersonsModel::NicknamesRole, added.first());
         } else {
-            item->removeData(PersonsModel::NickRole);
+            item->removeData(PersonsModel::NicknamesRole);
         }
     }
 }

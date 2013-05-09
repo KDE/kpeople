@@ -27,7 +27,7 @@
 #include <QStandardItemModel>
 
 class PersonsModelFeature;
-class PersonsPresenceModel;
+// class PersonsPresenceModel;
 class ContactItem;
 class KJob;
 class QUrl;
@@ -49,8 +49,6 @@ public:
         FeatureAvatars    = 0x0004,
         FeatureEmails     = 0x0008,
         FeatureFullName   = 0x0010,
-        FeatureContactUID = 0x0020,
-        FeatureBirthday   = 0x0040,
         FeatureAll = FeatureIM |
                      FeatureGroups |
                      FeatureAvatars |
@@ -60,37 +58,23 @@ public:
     Q_DECLARE_FLAGS(Features, Feature)
 
     enum Role {
-        ContactTypeRole = Qt::UserRole,
-        ContactIdRole,
-        ContactsCountRole,
-        UriRole,
-        NameRole,
-        LabelRole,
-        EmailRole,
-        NickRole,
-        PhoneRole,
-        IMRole,
-        PhotoRole,
-        IMAccountUriRole,
-        IMAccountRole,
-        IMAccountTypeRole,
-        IMContactRole,
-        BlockedRole,
-        StatusRole,
-        StatusStringRole,
-        ResourceTypeRole,
-        ContactGroupsRole,
-        ContactCanTextChatRole,
-        ContactCanAudioCallRole,
-        ContactCanVideoCallRole,
-        ContactCanFileTransferRole,
-        ContactClientTypesRole,
-        LastRole ///< in case it's needed to extend, use this one to start from
-    };
+        ContactIdRole = Qt::UserRole, ///uniqueID of contact STRING
+        UriRole, //nepomuk URI STRING
+        FullNamesRole, //nco:fullname //STRINGLIST
+        EmailsRole, //nco:email //STRINGLIST
+        NicknamesRole, //nco:   //STRINGLIST
+        PhonesRole, //nco:phones //STRINGLIST
+        IMsRole, //STRINGLIST
+        PhotosRole,
 
-    enum ResourceType {
-        Person,
-        Contact
+        //move these to presence model
+        PresenceTypeRole, //ENUM (NEW)
+        PresenceDisplayRole, //  most online presence
+        PresenceDecorationRole,
+
+        GroupsRole, //groups STRINGLIST
+
+        UserRole ///< in case it's needed to extend, use this one to start from
     };
 
     /**
@@ -151,19 +135,23 @@ private Q_SLOTS:
     void queryFinished(Soprano::Util::AsyncQuery *query);
     void findDuplicatesFinished(KJob *finder);
 
+    void updateContactNextReady(Soprano::Util::AsyncQuery *query);
+    void updateContactFinished(Soprano::Util::AsyncQuery *query);
+    void updateContact(ContactItem *contact);
+
 Q_SIGNALS:
     void peopleAdded();
-    void duplicatesFound(QHash<QString, QSet<QPersistentModelIndex> > duplicates);
+//     void duplicatesFound(QHash<QString, QSet<QPersistentModelIndex> > duplicates);
 
 private:
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
     QList<PersonsModelFeature> init(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
 
-    friend class PersonsPresenceModel;
+//     friend class PersonsPresenceModel;
+    friend class ContactItem;
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);
-
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(PersonsModel::Features)

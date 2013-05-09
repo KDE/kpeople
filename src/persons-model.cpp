@@ -24,6 +24,7 @@
 #include "resource-watcher-service.h"
 #include "persons-model-feature.h"
 #include "duplicatesfinder.h"
+#include "base-persons-data-source.h"
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
@@ -41,8 +42,13 @@
 #include <Nepomuk2/StoreResourcesJob>
 
 #include <KDebug>
+#include <KServiceTypeTrader>
+
+static int s_personId = 0;
 
 struct PersonsModelPrivate {
+    QString prepareQuery(const QUrl &uri = QUrl());
+
     QHash<QUrl, ContactItem*> contacts; //all contacts in the model
     QHash<QUrl, PersonItem*> persons;   //all persons
     QList<QUrl> pimoOccurances;         //contacts that are groundingOccurrences of persons
@@ -52,7 +58,37 @@ struct PersonsModelPrivate {
     PersonsModel::Features optionalFeatures;
 
     QList<PersonsModelFeature> modelFeatures;
+
+    BasePersonsDataSource imPlugin;
+
 };
+
+QString PersonsModelPrivate::prepareQuery(const QUrl &uri)
+{
+    QString selectPart(QLatin1String("select DISTINCT ?uri ?pimo_groundingOccurrence "));
+    QString queryPart(QLatin1String("WHERE { ?uri a nco:PersonContact. "
+    "OPTIONAL { ?pimo_groundingOccurrence pimo:groundingOccurrence ?uri. } "
+    "OPTIONAL { ?uri nao:prefLabel ?nao_prefLabel. } "));
+
+    Q_FOREACH(PersonsModelFeature feature, modelFeatures) {
+        queryPart.append(feature.queryPart());
+        queryPart.append(" ");
+    }
+
+    Q_FOREACH(const QString &queryVariable, bindingRoleMap.keys()) {
+        selectPart.append(QString("?%1 ").arg(queryVariable));
+    }
+
+    if (!uri.isEmpty()) {
+        queryPart.replace("?uri", Soprano::Node::resourceToN3(uri));
+    } else {
+        queryPart.append("FILTER(?uri!=<nepomuk:/me>).");
+    }
+
+    selectPart.append(queryPart.append("}"));
+
+    return selectPart;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -63,18 +99,14 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
     , d_ptr(new PersonsModelPrivate)
 {
     QHash<int, QByteArray> names = roleNames();
-    names.insert(PersonsModel::EmailRole, "email");
-    names.insert(PersonsModel::PhoneRole, "phone");
+    names.insert(PersonsModel::EmailsRole, "emails");
+    names.insert(PersonsModel::PhonesRole, "phones");
     names.insert(PersonsModel::ContactIdRole, "contactId");
-    names.insert(PersonsModel::ContactTypeRole, "contactType");
-    names.insert(PersonsModel::IMRole, "im");
-    names.insert(PersonsModel::NickRole, "nick");
-    names.insert(PersonsModel::LabelRole, "label");
+    names.insert(PersonsModel::IMsRole, "ims");
+    names.insert(PersonsModel::NicknamesRole, "nicks");
     names.insert(PersonsModel::UriRole, "uri");
-    names.insert(PersonsModel::NameRole, "name");
-    names.insert(PersonsModel::PhotoRole, "photo");
-    names.insert(PersonsModel::ContactsCountRole, "contactsCount");
-    names.insert(PersonsModel::ResourceTypeRole, "resourceType");
+    names.insert(PersonsModel::FullNamesRole, "names");
+    names.insert(PersonsModel::PhotosRole, "photos");
     setRoleNames(names);
 
     if (mandatoryFeatures != 0 || optionalFeatures != 0) {
@@ -112,9 +144,9 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
         "?nco_hasIMAccount    nco:imID             ?nco_imID. "
         "?nco_hasIMAccount    nco:imAccountType    ?nco_imAccountType. "));
     QHash<QString, PersonsModel::Role> b;
-    b.insert("nco_imNickname", NickRole);
-    b.insert("nco_imID", IMRole);
-    b.insert("nco_imImAcountType", IMAccountTypeRole);
+    b.insert("nco_imNickname", NicknamesRole);
+    b.insert("nco_imID", IMsRole);
+//     b.insert("nco_imImAcountType", IMAccountTypeRole);
     imFeature.setBindingsMap(b);
     imFeature.setOptional(false);
     imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount());
@@ -124,7 +156,7 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
         "?uri                   nco:belongsToGroup      ?nco_belongsToGroup . "
         "?nco_belongsToGroup    nco:contactGroupName    ?nco_contactGroupName . "));
     QHash<QString, PersonsModel::Role> gb;
-    gb.insert("nco_contactGroupName", ContactGroupsRole);
+    gb.insert("nco_contactGroupName", GroupsRole);
     groupsFeature.setBindingsMap(gb);
     groupsFeature.setOptional(false);
     groupsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::belongsToGroup());
@@ -134,7 +166,7 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
         "?uri      nco:photo    ?phRes. "
         "?phRes    nie:url      ?nie_url. "));
     QHash<QString, PersonsModel::Role> pb;
-    pb.insert("nie_url", PhotoRole);
+    pb.insert("nie_url", PhotosRole);
     avatarsFeature.setBindingsMap(pb);
     avatarsFeature.setOptional(false);
     avatarsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::photo());
@@ -144,7 +176,7 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
         "?uri                    nco:hasEmailAddress    ?nco_hasEmailAddress. "
         "?nco_hasEmailAddress    nco:emailAddress       ?nco_emailAddress. "));
     QHash<QString, PersonsModel::Role> eb;
-    eb.insert("nco_emailAddress", EmailRole);
+    eb.insert("nco_emailAddress", EmailsRole);
     emailsFeature.setBindingsMap(eb);
     emailsFeature.setOptional(false);
     emailsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasEmailAddress());
@@ -153,7 +185,7 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
     fullNameFeature.setQueryPart(QString::fromUtf8(
         "?uri                    nco:fullname    ?nco_fullname. "));
     QHash<QString, PersonsModel::Role> fnb;
-    fnb.insert("nco_fullname", NameRole);
+    fnb.insert("nco_fullname", FullNamesRole);
     fullNameFeature.setBindingsMap(fnb);
     fullNameFeature.setOptional(false);
 
@@ -224,34 +256,22 @@ void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, Perso
         return;
     }
 
-    d->mandatoryFeatures = mandatoryFeatures;
-    d->optionalFeatures = optionalFeatures;
+    if (d->mandatoryFeatures != mandatoryFeatures || d->optionalFeatures != optionalFeatures) {
+        d->mandatoryFeatures = mandatoryFeatures;
+        d->optionalFeatures = optionalFeatures;
 
-    d->modelFeatures = init(mandatoryFeatures, optionalFeatures);
+        d->modelFeatures = init(mandatoryFeatures, optionalFeatures);
 
-    QString selectPart(QLatin1String("select DISTINCT ?uri ?pimo_groundingOccurrence "));
-    QString queryPart(QLatin1String("WHERE { ?uri a nco:PersonContact. "
-            "OPTIONAL { ?pimo_groundingOccurrence pimo:groundingOccurrence ?uri. } "
-            "OPTIONAL { ?uri nao:prefLabel ?nao_prefLabel. } "));
+//         d->bindingRoleMap.insert("nao_prefLabel", LabelRole);
 
-    d->bindingRoleMap.insert("nao_prefLabel", LabelRole);
-
-    Q_FOREACH(PersonsModelFeature feature, d->modelFeatures) {
-        queryPart.append(feature.queryPart());
-        queryPart.append(" ");
-
-        d->bindingRoleMap.unite(feature.bindingsMap());
+        Q_FOREACH(PersonsModelFeature feature, d->modelFeatures) {
+            d->bindingRoleMap.unite(feature.bindingsMap());
+        }
     }
 
-    Q_FOREACH(const QString &queryVariable, d->bindingRoleMap.keys()) {
-        selectPart.append(QString("?%1 ").arg(queryVariable));
-    }
+    QString queryString = d->prepareQuery();
 
-    queryPart.append("FILTER(?uri!=<nepomuk:/me>). }");
-
-    selectPart.append(queryPart);
-
-    QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, selectPart));
+    QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, queryString));
 }
 
 void PersonsModel::query(const QString &queryString)
@@ -279,6 +299,9 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
     if (pimoPersonUri == QUrl(QLatin1String("nepomuk:/me"))) {
         query->next();
         return;
+    } else if (pimoPersonUri.isEmpty()) {
+        //if the person uri is empty, we need to fake one
+        pimoPersonUri = QUrl("fakeperson:/" + QString::number(s_personId++));
     }
 
     //see if we don't have this contact already
@@ -412,15 +435,72 @@ void PersonsModel::createPerson(const Nepomuk2::Resource &res)
 //FIXME: rename this to addContact
 void PersonsModel::createContact(const Nepomuk2::Resource &res)
 {
+    kDebug();
     ContactItem *item = new ContactItem(res.uri());
-    item->loadData();
     appendRow(item);
+    item->loadData();
+}
+
+void PersonsModel::updateContact(ContactItem *contact)
+{
+    Q_D(PersonsModel);
+
+    kDebug() << "Updating contact" << contact->uri();
+
+    QString queryString = d->prepareQuery(contact->uri());
+
+    Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, queryString, Soprano::Query::QueryLanguageSparql);
+    query->setProperty("contactItem", QVariant::fromValue<ContactItem*>(contact));
+
+    connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
+            this, SLOT(updateContactNextReady(Soprano::Util::AsyncQuery*)));
+
+    connect(query, SIGNAL(finished(Soprano::Util::AsyncQuery*)),
+            this, SLOT(updateContactFinished(Soprano::Util::AsyncQuery*)));
+}
+
+void PersonsModel::updateContactNextReady(Soprano::Util::AsyncQuery *query)
+{
+    Q_D(PersonsModel);
+
+    ContactItem *contact = query->property("contactItem").value<ContactItem*>();
+
+    if (!contact) {
+        query->next();
+        return;
+    }
+
+    foreach (const QString &bName, query->bindingNames()) {
+        if (!d->bindingRoleMap.contains(bName))
+            continue;
+
+        PersonsModel::Role role = d->bindingRoleMap.value(bName);
+        QString value = query->binding(bName).toString();
+        if (!value.isEmpty()) {
+            contact->addContactData(role, value);
+        }
+    }
+
+    query->next();
+}
+
+void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
+{
+    ContactItem *contact = query->property("contactItem").value<ContactItem*>();
+
+    if (!contact) {
+        return;
+    }
+
+    contact->finishLoadingData();
 }
 
 ContactItem* PersonsModel::contactForIMAccount(const QUrl &uri) const
 {
-    QStandardItem *it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
-    return dynamic_cast<ContactItem*>(it);
+//     QStandardItem *it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
+//     return dynamic_cast<ContactItem*>(it);
+    return 0;
 }
 
 void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
@@ -446,23 +526,23 @@ void PersonsModel::createPersonFromIndexes(const QList<QModelIndex> &indexes)
     QList<QUrl> contactUris;
 
 
-    Q_FOREACH(const QModelIndex &index, indexes) {
-        if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
-            personUris.append(index.data(PersonsModel::UriRole).toUrl());
-        } else {
-            contactUris.append(index.data(PersonsModel::UriRole).toUrl());
-        }
-    }
-
-    if (personUris.isEmpty()) {
-        kDebug() << "Got only contacts, creating pimo:person";
-        createPersonFromContacts(contactUris);
-    } else if (personUris.size() == 1) {
-        kDebug() << "Got one pimo:person, adding contacts to it";
-        addContactsToPerson(personUris.first(), contactUris);
-    } else {
-        kDebug() << "Got two pimo:persons, unsupported for now";
-    }
+//     Q_FOREACH(const QModelIndex &index, indexes) {
+//         if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
+//             personUris.append(index.data(PersonsModel::UriRole).toUrl());
+//         } else {
+//             contactUris.append(index.data(PersonsModel::UriRole).toUrl());
+//         }
+//     }
+//
+//     if (personUris.isEmpty()) {
+//         kDebug() << "Got only contacts, creating pimo:person";
+//         createPersonFromContacts(contactUris);
+//     } else if (personUris.size() == 1) {
+//         kDebug() << "Got one pimo:person, adding contacts to it";
+//         addContactsToPerson(personUris.first(), contactUris);
+//     } else {
+//         kDebug() << "Got two pimo:persons, unsupported for now";
+//     }
 }
 
 void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts)
@@ -530,27 +610,27 @@ void PersonsModel::removePersonFromModel(const QModelIndex &index)
 
 void PersonsModel::findDuplicates()
 {
-    DuplicatesFinder *df = new DuplicatesFinder(this, this);
-    connect(df, SIGNAL(finished(KJob*)), this, SLOT(findDuplicatesFinished(KJob*)));
-    df->start();
+//     DuplicatesFinder *df = new DuplicatesFinder(this, this);
+//     connect(df, SIGNAL(finished(KJob*)), this, SLOT(findDuplicatesFinished(KJob*)));
+//     df->start();
 }
 
 void PersonsModel::findDuplicatesFinished(KJob *finder)
 {
-    QList<Match> results = ((DuplicatesFinder*)finder)->results();
-
-    QHash<QString, QSet<QPersistentModelIndex> > matches;
-    Q_FOREACH(const Match &m, results) {
-
-        QHash<QString, QSet<QPersistentModelIndex> >::iterator it = matches.find(m.indexA.data().toString());
-        if (it == matches.end()) {
-            matches.insert(m.indexA.data().toString(), QSet<QPersistentModelIndex>() << m.indexA << m.indexB);
-        } else {
-            *it->insert(m.indexA);
-            *it->insert(m.indexB);
-        }
-    }
-
-    Q_EMIT duplicatesFound(matches);
+//     QList<Match> results = ((DuplicatesFinder*)finder)->results();
+//
+//     QHash<QString, QSet<QPersistentModelIndex> > matches;
+//     Q_FOREACH(const Match &m, results) {
+//
+//         QHash<QString, QSet<QPersistentModelIndex> >::iterator it = matches.find(m.indexA.data().toString());
+//         if (it == matches.end()) {
+//             matches.insert(m.indexA.data().toString(), QSet<QPersistentModelIndex>() << m.indexA << m.indexB);
+//         } else {
+//             *it->insert(m.indexA);
+//             *it->insert(m.indexB);
+//         }
+//     }
+//
+//     Q_EMIT duplicatesFound(matches);
 
 }

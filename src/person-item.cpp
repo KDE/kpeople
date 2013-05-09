@@ -70,49 +70,27 @@ QVariantList PersonItem::queryChildrenForRoleList(int role) const
 
 QVariant PersonItem::data(int role) const
 {
-    switch(role) {
-        case PersonsModel::NameRole:
-        case Qt::DisplayRole: {
-            QVariant value = queryChildrenForRole(Qt::DisplayRole);
-            if (value.isNull()) {
-                value = queryChildrenForRole(PersonsModel::ContactIdRole);
-            }
-            if (value.isNull()) {
-                return QString("PIMO:Person - %1").arg(data(PersonsModel::UriRole).toString());
-            } else {
-                return value;
-            }
-        }
-        case PersonsModel::StatusRole: //TODO: use a better algorithm for finding the actual status
-        case PersonsModel::NickRole:
-        case PersonsModel::LabelRole:
-        case PersonsModel::IMRole:
-        case PersonsModel::IMAccountTypeRole:
-        case PersonsModel::PhoneRole:
-        case PersonsModel::EmailRole:
-        case PersonsModel::ContactIdRole:
-        case PersonsModel::ContactTypeRole:
-        case PersonsModel::ContactGroupsRole: {
-            //we need to return empty qvariant here, otherwise we'd get a qvariant
-            //with empty qvariantlist, which would get parsed as non-empty qvariant
-
-            QVariantList val = queryChildrenForRoleList(role);
-            if (val.isEmpty()) {
-                return QVariant();
-            } else {
-                return val;
-            }
-        }
-        case Qt::DecorationRole:
-        case PersonsModel::PhotoRole:
-            return queryChildrenForRole(role);
-        case PersonsModel::ContactsCountRole:
-            return rowCount();
-        case PersonsModel::ResourceTypeRole:
-            return PersonsModel::Person;
+    if (role == PersonsModel::PresenceTypeRole) {
+        //TODO: return most online presence
     }
 
-    return QStandardItem::data(role);
+    QVariantList ret;
+    for (int i = 0; i < rowCount(); i++) {
+        QVariant value = child(i)->data(role);
+        if (value.type() == QVariant::List) {
+            ret += value.toList();
+        } else if (!value.isNull()) {
+            ret += value;
+        }
+    }
+
+    if (ret.isEmpty()) {
+        //we need to return empty qvariant here, otherwise we'd get a qvariant
+        //with empty qvariantlist, which would get parsed as non-empty qvariant
+        return QVariant();
+    }
+
+    return ret;
 }
 
 void PersonItem::removeContacts(const QList<QUrl> &contacts)
@@ -150,6 +128,7 @@ void PersonItem::addContacts(const QList<QUrl> &_contacts)
     //append the moved contacts to this person and remove them from 'contacts'
     //so they are not added twice
     foreach (QStandardItem *contactItem, toplevelContacts) {
+        //FIXME: we need to remove the fake person item here
         ContactItem *contact = dynamic_cast<ContactItem*>(contactItem);
         appendRow(contact);
         contacts.removeOne(contact->uri());

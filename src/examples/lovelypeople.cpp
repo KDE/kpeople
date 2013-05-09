@@ -28,11 +28,11 @@ class ContactDelegate : public QStyledItemDelegate
     virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
         QStyledItemDelegate::paint(painter, option, index);
         QRect infoRect(QPoint(option.rect.center().x(), option.rect.top()), option.rect.bottomRight());
-        if(index.parent().isValid()) {
-            painter->drawText(infoRect, index.data(PersonsModel::StatusRole).toString());
-        } else {
-            painter->drawText(infoRect, QString::number(index.model()->rowCount(index)));
-        }
+//         if(index.parent().isValid()) {
+            painter->drawText(infoRect, index.data(PersonsModel::PresenceTypeRole).toString());
+//         } else {
+//             painter->drawText(infoRect, QString::number(index.model()->rowCount(index)));
+//         }
     }
 };
 
@@ -42,7 +42,12 @@ int main(int argc, char** argv)
 
     QTreeView view;
     view.setItemDelegate(new ContactDelegate);
-    view.setModel(new PersonsModel(0, PersonsModel::FeatureEmails | PersonsModel::FeatureIM | PersonsModel::FeatureAvatars, &view));
+    view.setModel(new PersonsModel(0,
+                                   PersonsModel::FeatureEmails
+                                   | PersonsModel::FeatureIM
+                                   | PersonsModel::FeatureAvatars
+                                   | PersonsModel::FeatureFullName,
+                                   &view));
     view.setSortingEnabled(true);
     view.show();
 

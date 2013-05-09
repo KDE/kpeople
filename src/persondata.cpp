@@ -155,7 +155,7 @@ QString PersonData::status() const
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
         if (resource.hasProperty(NCO::hasIMAccount())) {
             QString imID = resource.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-            presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
+//             presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
         }
     }
 

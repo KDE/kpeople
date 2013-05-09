@@ -21,10 +21,14 @@
 
 #include "contact-item.h"
 
+#include "base-persons-data-source.h"
+
 #include <QAction>
 
 #include <KIcon>
 #include <KDebug>
+#include <KServiceTypeTrader>
+#include <kdemacros.h>
 
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Variant>
@@ -41,24 +45,29 @@ public:
     QUrl uri;
     QHash<int, QVariant> data;
 
+    bool isBeingUpdated;
+
     ///@returns a list of the roles that we'll expect to be a QVariantList
     static QSet<int> listRoles() {
         static QSet<int> s_listRoles;
         if(s_listRoles.isEmpty()) {
             //TODO: document this in persons-model.h
-            s_listRoles.insert(PersonsModel::PhotoRole);
-            s_listRoles.insert(PersonsModel::EmailRole);
-            s_listRoles.insert(PersonsModel::PhoneRole);
+            s_listRoles.insert(PersonsModel::PhotosRole);
+            s_listRoles.insert(PersonsModel::EmailsRole);
+            s_listRoles.insert(PersonsModel::PhonesRole);
         }
         return s_listRoles;
     }
 };
+
+static BasePersonsDataSource *s_imPlugin = 0;
 
 ContactItem::ContactItem(const QUrl &uri)
     : d_ptr(new ContactItemPrivate)
 {
 //     setData(uri, PersonsModel::UriRole);
     d_ptr->uri = uri;
+    d_ptr->isBeingUpdated = false;
 }
 
 ContactItem::~ContactItem()
@@ -128,35 +137,33 @@ QVariant ContactItem::data(int role) const
 
     switch(role) {
         case Qt::DisplayRole:
-            if (!data(PersonsModel::NickRole).toString().isEmpty()) {
-                return data(PersonsModel::NickRole);
+            if (!data(PersonsModel::NicknamesRole).isNull()) {
+                return data(PersonsModel::NicknamesRole);
             }
-            if (!data(PersonsModel::LabelRole).toString().isEmpty()) {
-                return data(PersonsModel::LabelRole);
+            if (!data(PersonsModel::FullNamesRole).isNull()) {
+                return data(PersonsModel::FullNamesRole);
             }
-            if (!data(PersonsModel::NameRole).toString().isEmpty()) {
-                return data(PersonsModel::NameRole);
+            if (!data(PersonsModel::EmailsRole).isNull()) {
+                return data(PersonsModel::EmailsRole);
             }
-            if (!data(PersonsModel::IMRole).toString().isEmpty()) {
-                return data(PersonsModel::IMRole);
+            if (!data(PersonsModel::IMsRole).isNull()) {
+                return data(PersonsModel::IMsRole);
             }
-            if (!data(PersonsModel::EmailRole).toString().isEmpty()) {
-                return data(PersonsModel::EmailRole);
-            }
-            if (!data(PersonsModel::PhoneRole).toString().isEmpty()) {
-                return data(PersonsModel::PhoneRole);
+            if (!data(PersonsModel::PhonesRole).isNull()) {
+                return data(PersonsModel::PhonesRole);
             }
 
-            return QString("Unknown person"); //FIXME: temporary
-        case PersonsModel::UriRole: return d->uri; break;
-        case PersonsModel::StatusRole: return QLatin1String("unknown"); //return unknown presence, for real presence use PersonsPresenceModel
-        case PersonsModel::ContactsCountRole: return 1;
-        case PersonsModel::ResourceTypeRole:
-            return PersonsModel::Contact;
+            return QString("Unknown person");
         case Qt::DecorationRole: {
-            QVariantList photos = d->data.value(PersonsModel::PhotoRole).toList();
+            QVariantList photos = d->data.value(PersonsModel::PhotosRole).toList();
             return photos.isEmpty() ? KIcon("im-user") : KIcon(photos.first().toUrl().toLocalFile());
         }
+        case PersonsModel::UriRole: return d->uri; break;
+
+        case PersonsModel::PresenceDisplayRole:
+        case PersonsModel::PresenceDecorationRole:
+        case PersonsModel::PresenceTypeRole:
+            return ContactItem::imPlugin()->dataForContact(data(PersonsModel::IMsRole).toString(), PersonsModel::PresenceTypeRole);
     }
     return QStandardItem::data(role);
 }
@@ -165,62 +172,38 @@ void ContactItem::loadData()
 {
     Q_D(ContactItem);
 
-    QHash<QString, PersonsModel::Role> bindingRoleMap;
-    bindingRoleMap.insert("nco_imNickname", PersonsModel::NickRole);
-    bindingRoleMap.insert("nao_prefLabel", PersonsModel::LabelRole);
-    bindingRoleMap.insert("nco_imID", PersonsModel::IMRole);
-    bindingRoleMap.insert("nco_imImAcountType", PersonsModel::IMAccountTypeRole);
-    bindingRoleMap.insert("nco_hasIMAccount", PersonsModel::IMAccountUriRole);
-    bindingRoleMap.insert("nco_contactGroupName", PersonsModel::ContactGroupsRole);
-    bindingRoleMap.insert("nie_url", PersonsModel::PhotoRole);
-    bindingRoleMap.insert("nco_emailAddress", PersonsModel::EmailRole);
-
-    QString query = QString::fromUtf8(
-            "select DISTINCT ?nco_hasIMAccount "
-            "?nco_imNickname ?nco_imID ?nco_imAccountType ?nco_hasEmailAddress "
-            "?nie_url ?nao_prefLabel ?nco_contactGroupName "
-
-                "WHERE { "
-                    "OPTIONAL { %1  nao:prefLabel  ?nao_prefLabel. }"
-
-//                    "OPTIONAL { "
-                        "%1                                    nco:hasIMAccount            ?nco_hasIMAccount. "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imNickname              ?nco_imNickname. } "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imID                    ?nco_imID. } "
-                        "OPTIONAL { ?nco_hasIMAccount          nco:imAccountType           ?nco_imAccountType. } "
-//                    " } "
-                    "OPTIONAL { "
-                        "%1 nco:belongsToGroup ?nco_belongsToGroup . "
-                        "?nco_belongsToGroup nco:contactGroupName ?nco_contactGroupName . "
-                    " }"
-                    "OPTIONAL {"
-                        "%1                         nco:photo                   ?phRes. "
-                        "?phRes                     nie:url                     ?nie_url. "
-                    " } "
-                    "OPTIONAL { "
-                        "%1                         nco:hasEmailAddress         ?nco_hasEmailAddress. "
-                        "?nco_hasEmailAddress       nco:emailAddress            ?nco_emailAddress. "
-                    " } "
-                "}")
-            .arg(Soprano::Node::resourceToN3(d->uri));
-
-    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = model->executeQuery( query, Soprano::Query::QueryLanguageSparql );
-    // FIXME: The result might come multiple times
-    d->data.clear();
-    if( it.next() ) {
-
-        //iterate over the results and add the wanted properties into the contact
-        foreach (const QString& bName, it.bindingNames()) {
-            if (!bindingRoleMap.contains(bName))
-                continue;
-
-            PersonsModel::Role role = bindingRoleMap.value(bName);
-            QString value = it.binding(bName).toString();
-            if (!value.isEmpty()) {
-                addContactData(role, value);
-            }
-        }
-        emitDataChanged();
+    if (d->isBeingUpdated) {
+        kDebug() << "Contact already being updated";
+        return;
     }
+
+    d->data.clear();
+
+    PersonsModel *m = qobject_cast<PersonsModel*>(model());
+
+    if (m) {
+        d->isBeingUpdated = true;
+        m->updateContact(this);
+    }
+}
+
+void ContactItem::finishLoadingData()
+{
+    Q_D(ContactItem);
+    d->isBeingUpdated = false;
+    emitDataChanged();
+}
+
+BasePersonsDataSource* ContactItem::imPlugin()
+{
+    if (!s_imPlugin) {
+        KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/ModelPlugin");
+        if (imService.isNull()) {
+            s_imPlugin = new BasePersonsDataSource();
+        } else {
+            s_imPlugin = imService->createInstance<BasePersonsDataSource>(0, QVariantList(), 0);
+        }
+    }
+
+    return s_imPlugin;
 }

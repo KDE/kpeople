@@ -26,8 +26,9 @@
 class IMPlugin : public AbstractPersonPlugin
 {
     Q_OBJECT
+public:
     IMPlugin(QObject *parent);
-    QList<QAction*> actionsForPerson(PersonData *personData, QObject *parent);
+    virtual QList<QAction*> actionsForPerson(PersonData *personData, QObject *parent);
 
 private Q_SLOTS:
     void onActionTriggered();

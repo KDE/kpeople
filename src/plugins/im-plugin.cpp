@@ -28,6 +28,7 @@
 #include <KTp/actions.h>
 
 #include <TelepathyQt/Account>
+#include <TelepathyQt/ContactManager>
 
 enum IMActionType {
     TextChannel,
@@ -82,6 +83,12 @@ QList<QAction*> IMPlugin::actionsForPerson(PersonData* personData, QObject* pare
 
     const KTp::ContactPtr contact;
     const Tp::AccountPtr account;
+
+    //TODO get the contact + account :D
+
+    if (! (contact && account && contact->manager())) {
+        return actions;
+    }
 
     if (true) { //no such query for text chat capability, added an "if true" because makes the code look consistent
         QAction *action = new IMAction(i18n("Start Chat"),

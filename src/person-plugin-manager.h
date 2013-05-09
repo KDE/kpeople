@@ -23,6 +23,8 @@
 #include <QObject>
 
 class QAction;
+class PersonData;
+class AbstractPersonPlugin;
 
 class PersonPluginManager : public QObject
 {

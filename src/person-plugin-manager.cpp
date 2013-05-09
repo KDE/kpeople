@@ -38,7 +38,7 @@ QList<QAction*> PersonPluginManager::actionsForPerson(PersonData* person, QObjec
 {
     QList<QAction*> actions;
     Q_FOREACH(AbstractPersonPlugin *plugin, m_plugins) {
-        actions << plugin->actionsForPerson(plugin, parent);
+        actions << plugin->actionsForPerson(person, parent);
     }
     return actions;
 }

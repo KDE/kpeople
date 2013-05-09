@@ -31,16 +31,23 @@
 #include <KTp/types.h>
 #include <TelepathyQt/Account>
 
+#include "person-plugin-manager.h"
+#include "persondata.h"
+
 struct PersonActionsPrivate {
     QList<QAction*> actions;
+    PersonPluginManager *manager;
 
     QPersistentModelIndex index;
+    PersonData *person;
 };
 
 PersonActions::PersonActions(QObject *parent)
     : QAbstractListModel(parent),
     d_ptr(new PersonActionsPrivate)
 {
+    Q_D(PersonActions);
+    d->manager = new PersonPluginManager(this);
 }
 
 PersonActions::~PersonActions()
@@ -59,47 +66,14 @@ void PersonActions::setPerson(const QPersistentModelIndex& index)
     beginResetModel();
     d->actions.clear();
     d->index = index;
-
-    if (index.data(PersonsModel::ContactCanTextChatRole).toBool()) {
-        QAction *textChatAction = new QAction(i18n("Start Chat"), this);
-        textChatAction->setIcon(KIcon("text-x-generic"));
-
-        connect(textChatAction, SIGNAL(triggered(bool)),
-                this, SLOT(imChatTriggered()));
-
-        d->actions.append(textChatAction);
+    if (d->person) {
+        d->person->deleteLater();
     }
+    d->person = new PersonData(this);
+    d->person->setUri(index.data(PersonsModel::UriRole).toString());
 
-    if (index.data(PersonsModel::ContactCanAudioCallRole).toBool()) {
-        QAction *audioCallAction = new QAction(i18n("Start Audio Call"), this);
-        audioCallAction->setIcon(KIcon("audio-headset"));
+    d->actions.append(d->manager->actionsForPerson(d->person, this));
 
-        connect(audioCallAction, SIGNAL(triggered(bool)),
-                this, SLOT(imAudioCallTriggered()));
-
-        d->actions.append(audioCallAction);
-    }
-
-    if (index.data(PersonsModel::ContactCanVideoCallRole).toBool()) {
-        QAction *videoCallAction = new QAction(i18n("Start Video Call"), this);
-        videoCallAction->setIcon(KIcon("camera-web"));
-
-        connect(videoCallAction, SIGNAL(triggered(bool)),
-                this, SLOT(imVideoCallTriggered()));
-
-        d->actions.append(videoCallAction);
-    }
-
-    if (!index.data(PersonsModel::EmailRole).isNull()) {
-        QString email = index.data(PersonsModel::EmailRole).toString();
-        QAction *emailAction = new QAction(i18n("Send Email to %1", email), this);
-        emailAction->setIcon(KIcon(""));
-
-        connect(emailAction, SIGNAL(triggered(bool)),
-                this, SLOT(emailTriggered()));
-
-        d->actions.append(emailAction);
-    }
     endResetModel();
     emit personChanged();
 }
@@ -129,34 +103,6 @@ int PersonActions::rowCount(const QModelIndex &parent) const
     Q_D(const PersonActions);
 
     return parent.isValid() ? 0 : d->actions.size();
-}
-
-void PersonActions::imChatTriggered() const
-{
-    Q_D(const PersonActions);
-
-    KTp::Actions::startChat(d->index.data(PersonsModel::IMAccountRole).value<Tp::AccountPtr>(),
-                            d->index.data(PersonsModel::IMContactRole).value<KTp::ContactPtr>());
-}
-
-void PersonActions::imAudioCallTriggered() const
-{
-    Q_D(const PersonActions);
-    KTp::Actions::startAudioCall(d->index.data(PersonsModel::IMAccountRole).value<Tp::AccountPtr>(),
-                                 d->index.data(PersonsModel::IMContactRole).value<KTp::ContactPtr>());
-}
-
-void PersonActions::imVideoCallTriggered() const
-{
-    Q_D(const PersonActions);
-    KTp::Actions::startAudioVideoCall(d->index.data(PersonsModel::IMAccountRole).value<Tp::AccountPtr>(),
-                                      d->index.data(PersonsModel::IMContactRole).value<KTp::ContactPtr>());
-}
-
-void PersonActions::emailTriggered() const
-{
-    Q_D(const PersonActions);
-    KToolInvocation::invokeMailer(d->index.data(PersonsModel::EmailRole).toString(), QString());
 }
 
 void PersonActions::triggerAction(int row) const

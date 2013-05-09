@@ -44,12 +44,6 @@ public:
 
     Q_INVOKABLE void triggerAction(int row) const;
 
-private Q_SLOTS:
-    void imChatTriggered() const;
-    void imAudioCallTriggered() const;
-    void imVideoCallTriggered() const;
-    void emailTriggered() const;
-
 Q_SIGNALS:
     void personChanged();
 

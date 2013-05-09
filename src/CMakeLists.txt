@@ -18,11 +18,13 @@ kde4_add_library (kpeople SHARED
     duplicatesfinder.cpp
     matchessolver.cpp
     match.cpp
+    person-actions.cpp
+    person-plugin-manager.cpp
 
     ktp-translation-proxy.cpp
-    person-actions.cpp
 
     plugins/im-plugin.cpp
+    plugins/email-plugin.cpp
 )
 
 target_link_libraries (kpeople

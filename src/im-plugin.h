@@ -25,6 +25,7 @@
 
 class IMPlugin : public AbstractPersonPlugin
 {
+    Q_OBJECT
     IMPlugin(QObject *parent);
     QList<QAction*> actionsForPerson(PersonData *personData, QObject *parent);
 

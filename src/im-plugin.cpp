@@ -136,5 +136,6 @@ void IMPlugin::onActionTriggered()
     }
 }
 
-#include "moc_IMAction.cpp"
+#include "im-plugin.moc"
+#include "moc_im-plugin.cpp"
 

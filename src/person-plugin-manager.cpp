@@ -23,9 +23,13 @@
 
 #include "abstract-person-plugin.h"
 
+#include "plugins/im-plugin.h"
+#include "plugins/email-plugin.h"
+
 PersonPluginManager::PersonPluginManager(QObject* parent): QObject(parent)
 {
-    
+    m_plugins << new IMPlugin(this);
+    m_plugins << new EmailPlugin(this);
 }
 
 PersonPluginManager::~PersonPluginManager()

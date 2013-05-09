@@ -21,7 +21,8 @@ kde4_add_library (kpeople SHARED
 
     ktp-translation-proxy.cpp
     person-actions.cpp
-    im-plugin.cpp
+
+    plugins/im-plugin.cpp
 )
 
 target_link_libraries (kpeople

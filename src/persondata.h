@@ -85,6 +85,8 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** @returns list of groups the contact is part of */
         QStringList groups() const;
 
+        QList<Nepomuk2::Resource> contactResources() const;
+
     Q_SIGNALS:
         /** the person has changed */
         void uriChanged();

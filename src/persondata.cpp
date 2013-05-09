@@ -310,6 +310,13 @@ QStringList PersonData::groups() const
 // }
 //
 
+QList< Nepomuk2::Resource > PersonData::contactResources() const
+{
+    Q_D(const PersonData);
+    return d->contactResources;
+}
+
+
 bool PersonData::isPerson() const
 {
     Q_D(const PersonData);

@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef ABSTRACT_PERSON_PLUGIN_H
+#define ABSTRACT_PERSON_PLUGIN_H
+
 class PersonData;
 
 #include <QObject>
@@ -39,3 +42,4 @@ public:
 //     virtual QList<AbstractPersonDetailsWidget*> detailWidgets(PersonData * const personData, QWidget *parent);
 };
 
+#endif

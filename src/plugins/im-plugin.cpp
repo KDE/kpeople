@@ -115,7 +115,7 @@ QList<QAction*> IMPlugin::actionsForPerson(PersonData* personData, QObject* pare
                               KIcon("camera-web"),
                               contact,
                               account,
-                              AudioChannel,
+                              VideoChannel,
                               parent);
         connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
         actions << action;

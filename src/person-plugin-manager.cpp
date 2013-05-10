@@ -22,12 +22,13 @@
 #include <QAction>
 #include <KService>
 #include <KServiceTypeTrader>
+#include <KPluginInfo>
+#include <KDebug>
+
 #include <kdemacros.h>
 
 #include "abstract-person-plugin.h"
 
-#include "plugins/im-plugin.h"
-#include "plugins/email-plugin.h"
 #include "base-persons-data-source.h"
 
 class PersonPluginManagerPrivate
@@ -43,10 +44,13 @@ K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 {
-    plugins << new IMPlugin(0);
-    plugins << new EmailPlugin(0);
+    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
+    Q_FOREACH(const KService::Ptr &service, pluginList) {
+        qDebug() << "found plugin";
+        plugins << service->createInstance<AbstractPersonPlugin>(0);
+    }
 
-    KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/ModelPlugin");
+    KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/DataSource");
     if (imService.isNull()) {
         presencePlugin = new BasePersonsDataSource(0);
     } else {

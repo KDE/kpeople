@@ -23,6 +23,8 @@
 
 #include <KIcon>
 #include <KLocalizedString>
+#include <KPluginFactory>
+#include <kdemacros.h>
 
 #include <KTp/contact.h>
 #include <KTp/actions.h>
@@ -75,7 +77,8 @@ IMActionType IMAction::type() const
     return m_type;
 }
 
-IMPlugin::IMPlugin(QObject* parent): AbstractPersonPlugin(parent)
+IMPlugin::IMPlugin(QObject* parent, const QVariantList &args):
+AbstractPersonPlugin(parent)
 {
 }
 
@@ -176,3 +179,6 @@ void IMPlugin::onActionTriggered()
 #include "im-plugin.moc"
 #include "moc_im-plugin.cpp"
 
+
+K_PLUGIN_FACTORY( IMPluginFactory, registerPlugin<IMPlugin>(); )
+K_EXPORT_PLUGIN( IMPluginFactory("ktp_kpeople_plugin") )

@@ -1,6 +1,6 @@
 /*
     <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
+    Copyright (C) 2013  David Edmundson <D.Edmundson@lboro.ac.uk>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,21 +17,21 @@
 */
 
 
-#ifndef IM_PLUGIN_H
-#define IM_PLUGIN_H
+#ifndef EMAIL_PLUGIN_H
+#define EMAIL_PLUGIN_H
 
 #include "abstract-person-plugin.h"
-#include "persondata.h"
 
-class IMPlugin : public AbstractPersonPlugin
+class EmailPlugin : public AbstractPersonPlugin
 {
     Q_OBJECT
 public:
-    IMPlugin(QObject *parent);
+    EmailPlugin(QObject* parent, const QVariantList &args);
+
     virtual QList<QAction*> actionsForPerson(PersonData *personData, QObject *parent);
 
 private Q_SLOTS:
-    void onActionTriggered();
+    void onEmailTriggered();
 };
 
-#endif // IM_PLUGIN_H
+#endif // EMAIL_PLUGIN_H

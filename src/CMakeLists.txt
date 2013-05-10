@@ -5,7 +5,8 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 add_subdirectory(examples)
 add_subdirectory(tests)
 add_subdirectory(declarative)
-add_subdirectory(plugins/presence_plugin)
+add_subdirectory(plugins)
+
 
 kde4_add_library (kpeople SHARED
     abstract-person-plugin.cpp
@@ -24,9 +25,6 @@ kde4_add_library (kpeople SHARED
     base-persons-data-source.cpp
 
     ktp-translation-proxy.cpp
-
-    plugins/im-plugin.cpp
-    plugins/email-plugin.cpp
 )
 
 target_link_libraries (kpeople

@@ -24,9 +24,11 @@ class PersonData;
 #include <QObject>
 #include <QAction>
 
-class AbstractPersonPlugin : public QObject
-{
+#include "kpeople_export.h"
 
+class KPEOPLE_EXPORT AbstractPersonPlugin : public QObject
+{
+    Q_OBJECT
 public:
     AbstractPersonPlugin(QObject *parent);
     /** A list of actions that can be executed for a contact

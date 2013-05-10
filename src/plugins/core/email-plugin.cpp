@@ -24,8 +24,10 @@
 #include <KIcon>
 #include <KToolInvocation>
 #include <KDebug>
+#include <KPluginFactory>
 
-EmailPlugin::EmailPlugin(QObject* parent): AbstractPersonPlugin(parent)
+EmailPlugin::EmailPlugin(QObject* parent, const QVariantList &args):
+    AbstractPersonPlugin(parent)
 {
 
 }
@@ -49,3 +51,5 @@ void EmailPlugin::onEmailTriggered()
     KToolInvocation::invokeMailer(email, QString());
 }
 
+K_PLUGIN_FACTORY( EmailPluginFactory, registerPlugin<EmailPlugin>(); )
+K_EXPORT_PLUGIN( EmailPluginFactory("email_kpeople_plugin") )

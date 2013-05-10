@@ -33,7 +33,9 @@
 enum IMActionType {
     TextChannel,
     AudioChannel,
-    VideoChannel
+    VideoChannel,
+    FileTransfer,
+    LogViewer
 };
 
 class IMAction : public QAction {
@@ -115,11 +117,33 @@ QList<QAction*> IMPlugin::actionsForPerson(PersonData* personData, QObject* pare
                               KIcon("camera-web"),
                               contact,
                               account,
-                              AudioChannel,
+                              VideoChannel,
                               parent);
         connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
         actions << action;
     }
+
+    if (contact->fileTransferCapability()) {
+        QAction *action = new IMAction(i18n("Send a file"),
+                                       KIcon("mail-attachment"),
+                                       contact,
+                                       account,
+                                       FileTransfer,
+                                       parent);
+        action->setDisabled(true); //FIXME: we need to prompt for file
+        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+        actions << action;
+    }
+
+    QAction *action = new IMAction(i18n("Open Log Viewer"),
+                                   KIcon("documentation"),
+                                   contact,
+                                   account,
+                                   LogViewer,
+                                   parent);
+    connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+    actions << action;
+
     return actions;
 }
 
@@ -139,6 +163,12 @@ void IMPlugin::onActionTriggered()
             break;
         case VideoChannel:
             KTp::Actions::startAudioVideoCall(account, contact);
+            break;
+        case FileTransfer:
+            //TODO: add filetransfer
+            break;
+        case LogViewer:
+            KTp::Actions::openLogViewer(account, contact);
             break;
     }
 }

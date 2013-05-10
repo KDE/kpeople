@@ -22,6 +22,7 @@
 #include <QAction>
 #include <KService>
 #include <KServiceTypeTrader>
+#include <kdemacros.h>
 
 #include "abstract-person-plugin.h"
 
@@ -29,29 +30,40 @@
 #include "plugins/email-plugin.h"
 #include "base-persons-data-source.h"
 
-PersonPluginManager::PersonPluginManager(QObject* parent): QObject(parent)
+class PersonPluginManagerPrivate
 {
-    m_plugins << new IMPlugin(this);
-    m_plugins << new EmailPlugin(this);
+public:
+    PersonPluginManagerPrivate();
+    ~PersonPluginManagerPrivate();
+    QList<AbstractPersonPlugin*> plugins;
+    BasePersonsDataSource* presencePlugin;
+};
+
+K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
+
+PersonPluginManagerPrivate::PersonPluginManagerPrivate()
+{
+    plugins << new IMPlugin(0);
+    plugins << new EmailPlugin(0);
 
     KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/ModelPlugin");
     if (imService.isNull()) {
-        m_presencePlugin = new BasePersonsDataSource(this);
+        presencePlugin = new BasePersonsDataSource(0);
     } else {
-        m_presencePlugin = imService->createInstance<BasePersonsDataSource>(this);
+        presencePlugin = imService->createInstance<BasePersonsDataSource>(0);
     }
 }
 
-PersonPluginManager::~PersonPluginManager()
+PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 {
-    qDeleteAll(m_plugins);
+    qDeleteAll(plugins);
+    presencePlugin->deleteLater();
 }
-
 
 QList<QAction*> PersonPluginManager::actionsForPerson(PersonData* person, QObject* parent)
 {
     QList<QAction*> actions;
-    Q_FOREACH(AbstractPersonPlugin *plugin, m_plugins) {
+    Q_FOREACH(AbstractPersonPlugin *plugin, s_instance->plugins) {
         actions << plugin->actionsForPerson(person, parent);
     }
     return actions;
@@ -59,5 +71,5 @@ QList<QAction*> PersonPluginManager::actionsForPerson(PersonData* person, QObjec
 
 BasePersonsDataSource* PersonPluginManager::presencePlugin()
 {
-    return m_presencePlugin;
+    return s_instance->presencePlugin;
 }

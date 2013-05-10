@@ -27,24 +27,12 @@ class QAction;
 class PersonData;
 class AbstractPersonPlugin;
 
-class PersonPluginManager : public QObject
+class PersonPluginManager
 {
-    Q_OBJECT
 public:
-    explicit PersonPluginManager(QObject* parent = 0);
-    virtual ~PersonPluginManager();
+    static QList<QAction*> actionsForPerson(PersonData *person, QObject *parent);
 
-    QList<QAction*> actionsForPerson(PersonData *person, QObject *parent);
-
-    BasePersonsDataSource* presencePlugin();
-
-    //QList
-
-private:
-    //FIXME
-    QList<AbstractPersonPlugin*> m_plugins;
-    BasePersonsDataSource *m_presencePlugin;
-
+    static BasePersonsDataSource* presencePlugin();
 };
 
 #endif // PERSON_PLUGIN_MANAGER_H

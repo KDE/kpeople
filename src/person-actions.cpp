@@ -36,11 +36,9 @@
 
 struct PersonActionsPrivate {
     PersonActionsPrivate():
-        manager(0),
         person(0)
         {}
     QList<QAction*> actions;
-    PersonPluginManager *manager;
 
     QPersistentModelIndex index;
     PersonData *person;
@@ -51,7 +49,6 @@ PersonActions::PersonActions(QObject *parent)
     d_ptr(new PersonActionsPrivate)
 {
     Q_D(PersonActions);
-    d->manager = new PersonPluginManager(this);
 }
 
 PersonActions::~PersonActions()
@@ -76,7 +73,7 @@ void PersonActions::setPerson(const QPersistentModelIndex& index)
     d->person = new PersonData(this);
     d->person->setUri(index.data(PersonsModel::UriRole).toString());
 
-    d->actions.append(d->manager->actionsForPerson(d->person, this));
+    d->actions.append(PersonPluginManager::actionsForPerson(d->person, this));
 
     endResetModel();
     emit personChanged();

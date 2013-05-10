@@ -41,8 +41,9 @@ public:
     IMPersonsDataSource(QObject *parent, const QVariantList &data);
     virtual ~IMPersonsDataSource();
 
-    QVariant dataForContact(const QString &contactId, int role);
-    KTp::ContactPtr contactForContactId(const QString &contactId);
+    QVariant dataForContact(const QString &contactId, int role) const;
+    KTp::ContactPtr contactForContactId(const QString &contactId) const;
+    Tp::AccountPtr accountForContact(const KTp::ContactPtr &contact) const;
 
     Tp::AccountManagerPtr accountManager() const;
 

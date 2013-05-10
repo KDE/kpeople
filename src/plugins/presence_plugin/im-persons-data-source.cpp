@@ -114,7 +114,7 @@ IMPersonsDataSource::~IMPersonsDataSource()
 {
 }
 
-QVariant IMPersonsDataSource::dataForContact(const QString &contactId, int role)
+QVariant IMPersonsDataSource::dataForContact(const QString &contactId, int role) const
 {
     KTp::ContactPtr contact = d->contacts.value(contactId);
 
@@ -188,9 +188,14 @@ void IMPersonsDataSource::onContactInvalidated()
     Q_EMIT contactChanged(id);
 }
 
-KTp::ContactPtr IMPersonsDataSource::contactForContactId(const QString &contactId)
+KTp::ContactPtr IMPersonsDataSource::contactForContactId(const QString &contactId) const
 {
     return d->contacts.value(contactId);
+}
+
+Tp::AccountPtr IMPersonsDataSource::accountForContact(const KTp::ContactPtr& contact) const
+{
+    return d->contactManager->accountForContact(contact);
 }
 
 Tp::AccountManagerPtr IMPersonsDataSource::accountManager() const

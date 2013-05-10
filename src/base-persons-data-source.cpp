@@ -27,7 +27,7 @@ BasePersonsDataSource::~BasePersonsDataSource()
 {
 }
 
-QVariant BasePersonsDataSource::dataForContact(const QString &contactId, int role)
+QVariant BasePersonsDataSource::dataForContact(const QString &contactId, int role) const
 {
     return QVariant();
 }

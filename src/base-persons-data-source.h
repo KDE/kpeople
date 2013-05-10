@@ -32,7 +32,7 @@ public:
     BasePersonsDataSource(QObject *parent = 0);
     virtual ~BasePersonsDataSource();
 
-    virtual QVariant dataForContact(const QString &contactId, int role);
+    virtual QVariant dataForContact(const QString &contactId, int role) const;
 
 Q_SIGNALS:
     void contactChanged(const QString &contactId);

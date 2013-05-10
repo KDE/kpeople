@@ -5,6 +5,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 add_subdirectory(examples)
 add_subdirectory(tests)
 add_subdirectory(declarative)
+add_subdirectory(plugins/presence_plugin)
 
 kde4_add_library (kpeople SHARED
     abstract-person-plugin.cpp
@@ -20,6 +21,7 @@ kde4_add_library (kpeople SHARED
     match.cpp
     person-actions.cpp
     person-plugin-manager.cpp
+    base-persons-data-source.cpp
 
     ktp-translation-proxy.cpp
 
@@ -56,4 +58,10 @@ install (FILES persons-model.h
                person-actions.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
+)
+
+install (FILES
+         kpeople_data_source.desktop
+         DESTINATION
+         ${SERVICETYPES_INSTALL_DIR}
 )

@@ -20,16 +20,26 @@
 #include "person-plugin-manager.h"
 
 #include <QAction>
+#include <KService>
+#include <KServiceTypeTrader>
 
 #include "abstract-person-plugin.h"
 
 #include "plugins/im-plugin.h"
 #include "plugins/email-plugin.h"
+#include "base-persons-data-source.h"
 
 PersonPluginManager::PersonPluginManager(QObject* parent): QObject(parent)
 {
     m_plugins << new IMPlugin(this);
     m_plugins << new EmailPlugin(this);
+
+    KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/ModelPlugin");
+    if (imService.isNull()) {
+        m_presencePlugin = new BasePersonsDataSource(this);
+    } else {
+        m_presencePlugin = imService->createInstance<BasePersonsDataSource>(this);
+    }
 }
 
 PersonPluginManager::~PersonPluginManager()
@@ -45,4 +55,9 @@ QList<QAction*> PersonPluginManager::actionsForPerson(PersonData* person, QObjec
         actions << plugin->actionsForPerson(person, parent);
     }
     return actions;
+}
+
+BasePersonsDataSource* PersonPluginManager::presencePlugin()
+{
+    return m_presencePlugin;
 }

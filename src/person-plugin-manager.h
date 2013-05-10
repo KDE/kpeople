@@ -22,6 +22,7 @@
 
 #include <QObject>
 
+class BasePersonsDataSource;
 class QAction;
 class PersonData;
 class AbstractPersonPlugin;
@@ -35,11 +36,14 @@ public:
 
     QList<QAction*> actionsForPerson(PersonData *person, QObject *parent);
 
+    BasePersonsDataSource* presencePlugin();
+
     //QList
 
 private:
     //FIXME
     QList<AbstractPersonPlugin*> m_plugins;
+    BasePersonsDataSource *m_presencePlugin;
 
 };
 

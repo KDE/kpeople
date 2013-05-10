@@ -85,6 +85,12 @@ public:
         ContactCanVideoCallRole,
         ContactCanFileTransferRole,
         ContactClientTypesRole,
+
+        //move these to presence model
+        PresenceTypeRole, //ENUM (NEW)
+        PresenceDisplayRole, //  most online presence
+        PresenceDecorationRole,
+
         LastRole ///< in case it's needed to extend, use this one to start from
     };
 

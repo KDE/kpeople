@@ -1,4 +1,5 @@
 set (im_persons_data_source_SRCS
+     im-persons-data-source-plugin.cpp
      im-persons-data-source.cpp
 )
 
@@ -27,6 +28,7 @@ install (FILES im_persons_data_source_plugin.desktop
 
 
 set (ktp_kpeople_plugin_SRCS
+     im-persons-data-source.cpp
      im-plugin.cpp
 )
 

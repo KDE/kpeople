@@ -32,6 +32,10 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ContactManager>
 
+#include "im-persons-data-source.h"
+
+#include "person-plugin-manager.h"
+
 enum IMActionType {
     TextChannel,
     AudioChannel,
@@ -86,67 +90,77 @@ QList<QAction*> IMPlugin::actionsForPerson(PersonData* personData, QObject* pare
 {
     QList<QAction*> actions;
 
-    const KTp::ContactPtr contact;
-    const Tp::AccountPtr account;
-
-    //TODO get the contact + account :D
-
-    if (! (contact && account && contact->manager())) {
+    IMPersonsDataSource *dataSource = dynamic_cast<IMPersonsDataSource*>(PersonPluginManager::presencePlugin());
+    if (!dataSource) {
         return actions;
     }
 
-    if (true) { //no such query for text chat capability, added an "if true" because makes the code look consistent
-        QAction *action = new IMAction(i18n("Start Chat"),
-                            KIcon("text-x-generic"),
-                            contact,
-                            account,
-                            TextChannel,
-                            parent);
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
-    }
-    if (contact->audioCallCapability()) {
-        QAction *action = new IMAction(i18n("Start Audio Call"),
-                              KIcon("audio-headset"),
-                              contact,
-                              account,
-                              AudioChannel,
-                              parent);
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
-    }
-    if (contact->videoCallCapability()) {
-        QAction *action = new IMAction(i18n("Start Video Call"),
-                              KIcon("camera-web"),
-                              contact,
-                              account,
-                              VideoChannel,
-                              parent);
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-        actions << action;
-    }
+    QStringList imContactsIds = personData->imAccounts();
 
-    if (contact->fileTransferCapability()) {
-        QAction *action = new IMAction(i18n("Send a file"),
-                                       KIcon("mail-attachment"),
-                                       contact,
-                                       account,
-                                       FileTransfer,
-                                       parent);
-        action->setDisabled(true); //FIXME: we need to prompt for file
-        connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+    for (int i=0;i<imContactsIds.size();i+=3) { //FIXME imAccounts() returns a silly datatype
+        const QString contactId = imContactsIds[i+2];
+        const KTp::ContactPtr contact = dataSource->contactForContactId(contactId);
+        if (!contact || !contact->manager()) {
+            continue;
+        }
+        const Tp::AccountPtr account = dataSource->accountForContact(contact);
+
+        if (!account) {
+            continue;
+        }
+
+        if (true) { //no such query for text chat capability, added an "if true" because makes the code look consistent
+            QAction *action = new IMAction(i18n("Start Chat"),
+                                KIcon("text-x-generic"),
+                                contact,
+                                account,
+                                TextChannel,
+                                parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
+        if (contact->audioCallCapability()) {
+            QAction *action = new IMAction(i18n("Start Audio Call"),
+                                KIcon("audio-headset"),
+                                contact,
+                                account,
+                                AudioChannel,
+                                parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
+        if (contact->videoCallCapability()) {
+            QAction *action = new IMAction(i18n("Start Video Call"),
+                                KIcon("camera-web"),
+                                contact,
+                                account,
+                                VideoChannel,
+                                parent);
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
+
+        if (contact->fileTransferCapability()) {
+            QAction *action = new IMAction(i18n("Send a file"),
+                                        KIcon("mail-attachment"),
+                                        contact,
+                                        account,
+                                        FileTransfer,
+                                        parent);
+            action->setDisabled(true); //FIXME: we need to prompt for file
+            connect (action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
+            actions << action;
+        }
+
+        QAction *action = new IMAction(i18n("Open Log Viewer"),
+                                    KIcon("documentation"),
+                                    contact,
+                                    account,
+                                    LogViewer,
+                                    parent);
+        connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
         actions << action;
     }
-
-    QAction *action = new IMAction(i18n("Open Log Viewer"),
-                                   KIcon("documentation"),
-                                   contact,
-                                   account,
-                                   LogViewer,
-                                   parent);
-    connect(action, SIGNAL(triggered(bool)), SLOT(onActionTriggered()));
-    actions << action;
-
     return actions;
 }
 

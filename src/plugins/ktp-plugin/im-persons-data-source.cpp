@@ -203,7 +203,5 @@ Tp::AccountManagerPtr IMPersonsDataSource::accountManager() const
     return d->accountManager;
 }
 
-K_PLUGIN_FACTORY( IMPersonsDataSourceFactory, registerPlugin<IMPersonsDataSource>(); )
-K_EXPORT_PLUGIN( IMPersonsDataSourceFactory("im_persons_data_source_plugin") )
 
 #include "im-persons-data-source.moc"

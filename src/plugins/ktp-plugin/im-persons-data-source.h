@@ -25,8 +25,7 @@
 #include <TelepathyQt/Types>
 #include <KTp/contact.h>
 
-#include <KPluginFactory>
-#include <KPluginLoader>
+
 
 #include <kdemacros.h>
 // #include "kpeople_export.h"

@@ -22,12 +22,14 @@
 
 #include <QObject>
 
+#include "kpeople_export.h"
+
 class BasePersonsDataSource;
 class QAction;
 class PersonData;
 class AbstractPersonPlugin;
 
-class PersonPluginManager
+class KPEOPLE_EXPORT PersonPluginManager
 {
 public:
     static QList<QAction*> actionsForPerson(PersonData *person, QObject *parent);

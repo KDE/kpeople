@@ -63,7 +63,7 @@ PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
     presencePlugin->deleteLater();
 }
 
-QList<QAction*> PersonPluginManager::actionsForPerson(PersonData* person, QObject* parent)
+QList<QAction*> PersonPluginManager::actionsForPerson(PersonData *person, QObject *parent)
 {
     QList<QAction*> actions;
     Q_FOREACH(AbstractPersonPlugin *plugin, s_instance->plugins) {

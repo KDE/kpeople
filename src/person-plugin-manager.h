@@ -27,7 +27,6 @@
 class BasePersonsDataSource;
 class QAction;
 class PersonData;
-class AbstractPersonPlugin;
 
 class KPEOPLE_EXPORT PersonPluginManager
 {

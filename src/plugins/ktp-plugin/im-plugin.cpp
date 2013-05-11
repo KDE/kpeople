@@ -1,5 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This program is free software: you can redistribute it and/or modify
@@ -33,8 +32,8 @@
 #include <TelepathyQt/ContactManager>
 
 #include "im-persons-data-source.h"
-
 #include "person-plugin-manager.h"
+#include "persondata.h"
 
 enum IMActionType {
     TextChannel,
@@ -47,7 +46,8 @@ enum IMActionType {
 class IMAction : public QAction {
     Q_OBJECT
 public:
-    IMAction(const QString &text, const KIcon &icon, const KTp::ContactPtr &contact, const Tp::AccountPtr &account, IMActionType type, QObject *parent);
+    IMAction(const QString &text, const KIcon &icon, const KTp::ContactPtr &contact,
+             const Tp::AccountPtr &account, IMActionType type, QObject *parent);
     KTp::ContactPtr contact() const;
     Tp::AccountPtr account() const;
     IMActionType type() const;
@@ -57,7 +57,8 @@ private:
     IMActionType m_type;
 };
 
-IMAction::IMAction(const QString& text, const KIcon& icon, const KTp::ContactPtr& contact, const Tp::AccountPtr& account, IMActionType type, QObject* parent):
+IMAction::IMAction(const QString &text, const KIcon &icon, const KTp::ContactPtr &contact,
+                   const Tp::AccountPtr &account, IMActionType type, QObject *parent):
     QAction(icon, text, parent),
     m_contact(contact),
     m_account(account),
@@ -86,7 +87,7 @@ AbstractPersonPlugin(parent)
 {
 }
 
-QList<QAction*> IMPlugin::actionsForPerson(PersonData* personData, QObject* parent)
+QList<QAction*> IMPlugin::actionsForPerson(PersonData *personData, QObject *parent)
 {
     QList<QAction*> actions;
 

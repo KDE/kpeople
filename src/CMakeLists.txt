@@ -60,6 +60,7 @@ install (FILES persons-model.h
 
 install (FILES
          kpeople_data_source.desktop
+         kpeople_plugin.desktop
          DESTINATION
          ${SERVICETYPES_INSTALL_DIR}
 )

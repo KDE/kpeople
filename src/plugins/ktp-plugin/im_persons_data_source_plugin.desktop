@@ -1,6 +1,11 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Person Data Source Provider
+Name[nl]=Leverancier van gegevensbron met personen
+Name[pt]=Fornecedor da Fonte de Dados Pessoais
+Name[pt_BR]=Fornecedor de Fonte de Dados Pessoais
+Name[uk]=Надавач даних щодо особи
+Name[x-test]=xxPerson Data Source Providerxx
 Type=Service
 ServiceTypes=KPeople/DataSource
 X-KDE-Library=im_persons_data_source_plugin

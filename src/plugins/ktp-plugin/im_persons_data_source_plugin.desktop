@@ -4,6 +4,7 @@ Name=Person Data Source Provider
 Name[nl]=Leverancier van gegevensbron met personen
 Name[pt]=Fornecedor da Fonte de Dados Pessoais
 Name[pt_BR]=Fornecedor de Fonte de Dados Pessoais
+Name[sk]=Poskytovateľ dátových zdrojov osôb
 Name[uk]=Надавач даних щодо особи
 Name[x-test]=xxPerson Data Source Providerxx
 Type=Service

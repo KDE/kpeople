@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KPeople KTp Plugin
+Name[pt]='Plugin' do KPeople para o KTp
+Name[sk]=KPeople KTp Plugin
+Name[uk]=Додаток KTp KPeople
+Name[x-test]=xxKPeople KTp Pluginxx
 Type=Service
 ServiceTypes=KPeople/Plugin
 X-KDE-Library=ktp_kpeople_plugin

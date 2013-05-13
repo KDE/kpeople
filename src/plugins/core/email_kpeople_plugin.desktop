@@ -1,6 +1,10 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KPeople Email Plugin
+Name[pt]='Plugin' de E-Mail do KPeople
+Name[sk]=KPeople Email Plugin
+Name[uk]=Додаток електронної пошти KPeople
+Name[x-test]=xxKPeople Email Pluginxx
 Type=Service
 ServiceTypes=KPeople/Plugin
 X-KDE-Library=email_kpeople_plugin

@@ -72,17 +72,6 @@ QVariant PersonItem::data(int role) const
 {
     switch(role) {
         case PersonsModel::NameRole:
-        case Qt::DisplayRole: {
-            QVariant value = queryChildrenForRole(Qt::DisplayRole);
-            if (value.isNull()) {
-                value = queryChildrenForRole(PersonsModel::ContactIdRole);
-            }
-            if (value.isNull()) {
-                return QString("PIMO:Person - %1").arg(data(PersonsModel::UriRole).toString());
-            } else {
-                return value;
-            }
-        }
         case PersonsModel::StatusRole: //TODO: use a better algorithm for finding the actual status
         case PersonsModel::NickRole:
         case PersonsModel::LabelRole:
@@ -90,6 +79,9 @@ QVariant PersonItem::data(int role) const
         case PersonsModel::IMAccountTypeRole:
         case PersonsModel::PhoneRole:
         case PersonsModel::EmailRole:
+        case PersonsModel::PresenceTypeRole:
+        case PersonsModel::PresenceDisplayRole:
+        case PersonsModel::PresenceDecorationRole:
         case PersonsModel::ContactIdRole:
         case PersonsModel::ContactTypeRole:
         case PersonsModel::ContactGroupsRole: {
@@ -103,6 +95,7 @@ QVariant PersonItem::data(int role) const
                 return val;
             }
         }
+        case Qt::DisplayRole:
         case Qt::DecorationRole:
         case PersonsModel::PhotoRole:
             return queryChildrenForRole(role);

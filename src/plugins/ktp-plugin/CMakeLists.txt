@@ -25,6 +25,10 @@ install (FILES im_persons_data_source_plugin.desktop
 )
 
 
+install (FILES im-persons-data-source.h
+         DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
+         COMPONENT Devel
+)
 
 
 set (ktp_kpeople_plugin_SRCS

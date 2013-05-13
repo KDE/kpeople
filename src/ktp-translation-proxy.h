@@ -38,7 +38,7 @@ public:
 
 private:
     Tp::ConnectionPresenceType mostOnlinePresence(const QVariantList &presenceList) const;
-
+    QVariantList translatePresence(const QVariant &presenceList) const;
 };
 
 #endif // KTP_TRANSLATION_PROXY_H

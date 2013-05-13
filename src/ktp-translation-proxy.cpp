@@ -20,6 +20,8 @@
 #include "ktp-translation-proxy.h"
 #include "persons-presence-model.h"
 #include "persons-model.h"
+#include "person-plugin-manager.h"
+#include "plugins/ktp-plugin/im-persons-data-source.h"
 
 #include <KTp/types.h>
 #include <KDebug>
@@ -42,45 +44,64 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
     //cache the status from our sourceModel
     QString status;
 
+    IMPersonsDataSource *imPlugin = qobject_cast<IMPersonsDataSource*>(PersonPluginManager::presencePlugin());
+
+    if (!imPlugin) {
+        kWarning() << "No imPlugin";
+        return QVariant();
+    }
+
     switch (role) {
         case KTp::ContactPresenceTypeRole:
-            if (mapToSource(proxyIndex).data(PersonsModel::ResourceTypeRole).toInt() == PersonsModel::Person) {
-                return mostOnlinePresence(mapToSource(proxyIndex).data(PersonsModel::StatusRole).toList());
-            } else {
-                return mapToSource(proxyIndex).data(PersonsModel::StatusRole).toUInt();
-            }
-            break;
-
+            return mostOnlinePresence(translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole)));
         case Qt::DisplayRole:
             return mapToSource(proxyIndex).data(Qt::DisplayRole);
         case KTp::RowTypeRole:
-            if (mapToSource(proxyIndex).data(PersonsModel::ResourceTypeRole) == PersonsModel::Contact) {
+            if (sourceModel()->rowCount(mapToSource(proxyIndex)) <= 1) {
                 return KTp::ContactRowType;
             } else {
                 return KTp::PersonRowType;
             }
         case KTp::ContactAvatarPathRole:
             return mapToSource(proxyIndex).data(PersonsModel::PhotoRole);
-        case KTp::ContactGroupsRole:
-            return mapToSource(proxyIndex).data(PersonsModel::ContactGroupsRole);
-        case KTp::AccountRole:
-            return mapToSource(proxyIndex).data(PersonsModel::IMAccountRole);
         case KTp::IdRole:
             return mapToSource(proxyIndex).data(PersonsModel::IMRole);
-        case KTp::ContactRole:
-            return mapToSource(proxyIndex).data(PersonsModel::IMContactRole);
-        case KTp::ContactIsBlockedRole:
-            return mapToSource(proxyIndex).data(PersonsModel::BlockedRole);
-        case KTp::ContactCanTextChatRole:
-            return mapToSource(proxyIndex).data(PersonsModel::ContactCanTextChatRole);
-        case KTp::ContactCanAudioCallRole:
-            return mapToSource(proxyIndex).data(PersonsModel::ContactCanAudioCallRole);
-        case KTp::ContactCanVideoCallRole:
-            return mapToSource(proxyIndex).data(PersonsModel::ContactCanVideoCallRole);
-        case KTp::ContactCanFileTransferRole:
-            return mapToSource(proxyIndex).data(PersonsModel::ContactCanFileTransferRole);
-        case KTp::ContactClientTypesRole:
-            return mapToSource(proxyIndex).data(PersonsModel::ContactClientTypesRole);
+        case KTp::HeaderTotalUsersRole:
+            return mapToSource(proxyIndex).data(PersonsModel::ContactsCountRole);
+    }
+
+    const QString contactId = mapToSource(proxyIndex).data(PersonsModel::IMRole).toString();
+    const KTp::ContactPtr contact = imPlugin->contactForContactId(contactId);
+
+    if (!contact.isNull()) {
+        switch (role) {
+            case KTp::ContactRole:
+                return QVariant::fromValue<KTp::ContactPtr>(contact);
+            case KTp::ContactGroupsRole:
+                return contact->groups();
+            case KTp::AccountRole:
+//                 if (!contact.isNull()) {
+                    return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
+                    /*} else {
+                    QString accountId = queryNepomukForAccountId(contactId);
+                    //nepomuk stores account path, which is in form /org/freedesktop/Telepathy/Account/...
+                    //while GCM looks for uniqueIdentifier(), which is without this^ prefix, so we need to chop it off first
+                    return QVariant::fromValue<Tp::AccountPtr>(d->contactManager->accountForAccountId(accountId.remove(0,35)));
+                }*/
+                break;
+            case KTp::ContactIsBlockedRole:
+                return contact->isBlocked();
+            case KTp::ContactCanTextChatRole:
+                return true;
+            case KTp::ContactCanAudioCallRole:
+                return contact->audioCallCapability();
+            case KTp::ContactCanVideoCallRole:
+                return contact->videoCallCapability();
+            case KTp::ContactCanFileTransferRole:
+                return contact->fileTransferCapability();
+            case KTp::ContactClientTypesRole:
+                return contact->clientTypes();
+        }
     }
 
     return QIdentityProxyModel::data(proxyIndex, role);
@@ -97,4 +118,34 @@ Tp::ConnectionPresenceType KTpTranslationProxy::mostOnlinePresence(const QVarian
     }
 
     return returnPresence;
+}
+
+QVariantList KTpTranslationProxy::translatePresence(const QVariant &presenceList) const
+{
+    QVariantList presences;
+    Q_FOREACH (const QString &presenceName, presenceList.toStringList()) {
+        if (presenceName == QLatin1String("available")) {
+            presences << Tp::ConnectionPresenceTypeAvailable;
+        }
+
+        if (presenceName == QLatin1String("away")) {
+            presences << Tp::ConnectionPresenceTypeAway;
+        }
+
+        if (presenceName == QLatin1String("busy") || presenceName == QLatin1String("dnd")) {
+            presences << Tp::ConnectionPresenceTypeBusy;
+        }
+
+        if (presenceName == QLatin1String("xa")) {
+            presences << Tp::ConnectionPresenceTypeExtendedAway;
+        }
+
+        if (presenceName == QLatin1String("hidden")) {
+            presences << Tp::ConnectionPresenceTypeHidden;
+        }
+
+        presences << Tp::ConnectionPresenceTypeOffline;
+    }
+
+    return presences;
 }

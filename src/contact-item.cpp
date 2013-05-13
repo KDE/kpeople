@@ -20,6 +20,8 @@
 */
 
 #include "contact-item.h"
+#include "person-plugin-manager.h"
+#include "base-persons-data-source.h"
 
 #include <QAction>
 
@@ -149,7 +151,10 @@ QVariant ContactItem::data(int role) const
 
             return QString("Unknown person"); //FIXME: temporary
         case PersonsModel::UriRole: return d->uri; break;
-        case PersonsModel::StatusRole: return QLatin1String("unknown"); //return unknown presence, for real presence use PersonsPresenceModel
+        case PersonsModel::PresenceTypeRole:
+        case PersonsModel::PresenceDisplayRole:
+        case PersonsModel::PresenceDecorationRole:
+            return PersonPluginManager::presencePlugin()->dataForContact(data(PersonsModel::IMRole).toString(), role);
         case PersonsModel::ContactsCountRole: return 1;
         case PersonsModel::ResourceTypeRole:
             return PersonsModel::Contact;

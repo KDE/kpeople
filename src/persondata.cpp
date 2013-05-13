@@ -21,7 +21,8 @@
 #include "persondata.h"
 #include "persons-model.h"
 #include "person-item.h"
-#include "persons-presence-model.h"
+#include "person-plugin-manager.h"
+#include "base-persons-data-source.h"
 
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Query/Query>
@@ -36,6 +37,7 @@
 #include <Soprano/QueryResultIterator>
 
 #include <KDebug>
+#include <QPointer>
 
 using namespace Nepomuk2::Vocabulary;
 
@@ -47,8 +49,6 @@ public:
     Nepomuk2::Resource personResource;
     QList<Nepomuk2::Resource> contactResources;
 };
-
-K_GLOBAL_STATIC(PersonsPresenceModel, s_presenceModel)
 
 PersonData::PersonData(QObject *parent)
     : QObject(parent),
@@ -138,8 +138,8 @@ void PersonData::setUri(const QString &uri)
     connect(d->watcher.data(), SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SIGNAL(dataChanged()));
 
-    connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-            this, SLOT(presenceModelChange(QModelIndex,QModelIndex)));
+//     connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
+//             this, SLOT(presenceModelChange(QModelIndex,QModelIndex)));
 
     emit uriChanged();
     emit dataChanged();
@@ -155,7 +155,7 @@ QString PersonData::status() const
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
         if (resource.hasProperty(NCO::hasIMAccount())) {
             QString imID = resource.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-            presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
+            presenceList << PersonPluginManager::presencePlugin()->dataForContact(imID, PersonsModel::PresenceTypeRole).toString();
         }
     }
 

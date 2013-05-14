@@ -24,6 +24,7 @@
 #include "resource-watcher-service.h"
 #include "persons-model-feature.h"
 #include "duplicatesfinder.h"
+#include "base-persons-data-source.h"
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>

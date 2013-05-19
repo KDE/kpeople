@@ -34,10 +34,10 @@ class PersonWidget : public QWidget
             : QWidget(parent)
             , m_person(contactId)
         {
-            connect(&m_person, SIGNAL(dataInitialized()), SLOT(initGUI()));
+            initGUI();
         }
 
-    private slots:
+    private:
         void initGUI() {
             QFormLayout* l = new QFormLayout(this);
             l->addRow("contactId:", new QLabel(m_person.contactId()));

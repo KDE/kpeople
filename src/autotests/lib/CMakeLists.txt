@@ -40,7 +40,7 @@ target_link_libraries (nepomuktestlib
                        ${QT_QTCORE_LIBRARY}
                        ${QT_QTDBUS_LIBRARY}
                        ${QT_QTTEST_LIBRARY}
-                       nepomukcore
+                       ${NEPOMUK_CORE_LIBRARY}
 )
 
 set_target_properties (nepomuktestlib PROPERTIES

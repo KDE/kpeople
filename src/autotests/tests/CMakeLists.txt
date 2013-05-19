@@ -13,7 +13,7 @@ target_link_libraries(persondatatest
   ${QT_QTTEST_LIBRARY}
   ${SOPRANO_LIBRARIES}
   ${KDE4_KDECORE_LIBS}
-  nepomukcore
+  ${NEPOMUK_CORE_LIBRARY}
   nepomuktestlib
   kpeople
 )

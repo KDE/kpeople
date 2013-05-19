@@ -46,7 +46,7 @@ waitForNepomukService () {
     echo "Waiting for $1 service to be initialized."
 
     serviceready="false"
-    while [ $serviceready != "true" ]
+    while [ "$serviceready" != "true" ]
     do
         serviceready=`qdbus $1 /servicecontrol org.kde.nepomuk.ServiceControl.isInitialized 2> /dev/null`
         sleep 1

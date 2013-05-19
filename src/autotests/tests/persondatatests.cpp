@@ -1,6 +1,6 @@
 /*
     <one line to give the library's name and an idea of what it does.>
-    Copyright (C) 2012  Vishesh Handa <me@vhanda.in>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -61,18 +61,15 @@ void PersonDataTests::contactProperties()
     job->exec();
 
     const QUrl contactUri = job->mappings()[contact.uri()];
-    qDebug() << contactUri;
 
-
-    PersonData *personData = new PersonData;
-
+    QScopedPointer<PersonData> personData(new PersonData);
     personData->setUri(contactUri.toString());
 
     QCOMPARE(personData->name(), QLatin1String("Contact One"));
     QCOMPARE(personData->emails(), QStringList() << QLatin1String("contact1@example.com"));
 
-    personData->deleteLater();
 }
+
 
 
 

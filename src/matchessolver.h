@@ -37,6 +37,7 @@ class KPEOPLE_EXPORT MatchesSolver : public KJob
 
     public Q_SLOTS:
         void startMatching();
+    private Q_SLOTS:
         void jobDone(KJob *job=0);
 
     private:

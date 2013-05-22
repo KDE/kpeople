@@ -18,10 +18,10 @@
 */
 
 #include "personsmodeltest.h"
-#include <persons-model.h>
-#include <person-item.h>
-#include <contact-item.h>
-#include <person-actions.h>
+#include <personsmodel.h>
+#include <personitem.h>
+#include <contactitem.h>
+#include <personactionsmodel.h>
 
 #include <qtest_kde.h>
 #include <Nepomuk2/Vocabulary/NCO>

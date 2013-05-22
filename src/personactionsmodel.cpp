@@ -17,7 +17,7 @@
 */
 
 
-#include "personactions.h"
+#include "personactionsmodel.h"
 #include "personsmodel.h"
 
 #include <QPersistentModelIndex>

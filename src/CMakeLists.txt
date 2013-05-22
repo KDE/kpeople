@@ -20,7 +20,7 @@ kde4_add_library (kpeople SHARED
     duplicatesfinder.cpp
     matchessolver.cpp
     match.cpp
-    personactions.cpp
+    personactionsmodel.cpp
     personpluginmanager.cpp
     basepersonsdatasource.cpp
     plugins/ktp-plugin/impersonsdatasource.cpp
@@ -53,7 +53,7 @@ install (FILES personsmodel.h
                persondata.h
                kpeople_export.h
                ktptranslationproxy.h
-               personactions.h
+               personactionsmodel.h
                basepersonsdatasource.h
                personpluginmanager.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople

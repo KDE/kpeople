@@ -20,7 +20,7 @@
 #include "peopleqmlplugin.h"
 
 #include <personsmodel.h>
-#include <personactions.h>
+#include <personactionsmodel.h>
 #include <persondata.h>
 
 #include <QtDeclarative/QDeclarativeItem>

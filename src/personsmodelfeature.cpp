@@ -17,7 +17,7 @@
 */
 
 
-#include "persons-model-feature.h"
+#include "personsmodelfeature.h"
 
 QHash<QString, PersonsModel::Role> PersonsModelFeature::bindingsMap() const
 {

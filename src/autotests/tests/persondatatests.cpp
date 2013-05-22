@@ -71,6 +71,4 @@ void PersonDataTests::contactProperties()
 }
 
 
-
-
 QTEST_KDEMAIN(PersonDataTests, NoGUI)

@@ -24,7 +24,7 @@
 #include <QString>
 #include <QUrl>
 
-#include "persons-model.h"
+#include "personsmodel.h"
 
 class PersonsModelFeature
 {

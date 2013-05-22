@@ -17,8 +17,8 @@
 */
 
 
-#include "person-actions.h"
-#include "persons-model.h"
+#include "personactions.h"
+#include "personsmodel.h"
 
 #include <QPersistentModelIndex>
 #include <QAction>
@@ -31,7 +31,7 @@
 #include <KTp/types.h>
 #include <TelepathyQt/Account>
 
-#include "person-plugin-manager.h"
+#include "personpluginmanager.h"
 #include "persondata.h"
 
 struct PersonActionsPrivate {

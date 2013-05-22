@@ -19,7 +19,7 @@
 #ifndef IM_PLUGIN_H
 #define IM_PLUGIN_H
 
-#include "abstract-person-plugin.h"
+#include "abstractpersonplugin.h"
 
 class PersonData;
 

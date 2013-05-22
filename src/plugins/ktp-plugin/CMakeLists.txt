@@ -1,6 +1,6 @@
 set (im_persons_data_source_SRCS
-     im-persons-data-source-plugin.cpp
-     im-persons-data-source.cpp
+     impersonsdatasourceplugin.cpp
+     impersonsdatasource.cpp
 )
 
 kde4_add_plugin (im_persons_data_source_plugin
@@ -32,8 +32,8 @@ install (FILES im-persons-data-source.h
 
 
 set (ktp_kpeople_plugin_SRCS
-     im-persons-data-source.cpp
-     im-plugin.cpp
+     impersonsdatasource.cpp
+     implugin.cpp
 )
 
 kde4_add_plugin (ktp_kpeople_plugin

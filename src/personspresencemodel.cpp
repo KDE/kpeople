@@ -18,7 +18,7 @@
 
 
 #include "persons-presence-model.h"
-#include "persons-model.h"
+#include "personsmodel.h"
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountFactory>

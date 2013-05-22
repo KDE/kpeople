@@ -10,22 +10,22 @@ add_subdirectory(plugins)
 
 
 kde4_add_library (kpeople SHARED
-    abstract-person-plugin.cpp
-    persons-model-feature.cpp
-    contact-item.cpp
-    person-item.cpp
-    persons-model.cpp
+    abstractpersonplugin.cpp
+    personsmodelfeature.cpp
+    contactitem.cpp
+    personitem.cpp
+    personsmodel.cpp
     persondata.cpp
-    resource-watcher-service.cpp
+    resourcewatcherservice.cpp
     duplicatesfinder.cpp
     matchessolver.cpp
     match.cpp
-    person-actions.cpp
-    person-plugin-manager.cpp
-    base-persons-data-source.cpp
-    plugins/ktp-plugin/im-persons-data-source.cpp
+    personactions.cpp
+    personpluginmanager.cpp
+    basepersonsdatasource.cpp
+    plugins/ktp-plugin/impersonsdatasource.cpp
 
-    ktp-translation-proxy.cpp
+    ktptranslationproxy.cpp
 )
 
 target_link_libraries (kpeople
@@ -49,13 +49,13 @@ install (TARGETS kpeople
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES persons-model.h
+install (FILES personsmodel.h
                persondata.h
                kpeople_export.h
-               ktp-translation-proxy.h
-               person-actions.h
-               base-persons-data-source.h
-               person-plugin-manager.h
+               ktptranslationproxy.h
+               personactions.h
+               basepersonsdatasource.h
+               personpluginmanager.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
 )

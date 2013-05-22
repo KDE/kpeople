@@ -17,7 +17,7 @@
 */
 
 
-#include "base-persons-data-source.h"
+#include "basepersonsdatasource.h"
 
 BasePersonsDataSource::BasePersonsDataSource(QObject *parent)
 {

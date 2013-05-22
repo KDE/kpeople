@@ -17,8 +17,8 @@
 */
 
 
-#include "im-persons-data-source.h"
-#include "persons-model.h"
+#include "impersonsdatasource.h"
+#include "personsmodel.h"
 
 #include <TelepathyQt/AccountManager>
 #include <TelepathyQt/AccountFactory>
@@ -204,4 +204,4 @@ Tp::AccountManagerPtr IMPersonsDataSource::accountManager() const
 }
 
 
-#include "im-persons-data-source.moc"
+#include "impersonsdatasource.moc"

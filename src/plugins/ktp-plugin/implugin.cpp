@@ -16,7 +16,7 @@
 */
 
 
-#include "im-plugin.h"
+#include "implugin.h"
 
 #include <QAction>
 
@@ -31,8 +31,8 @@
 #include <TelepathyQt/Account>
 #include <TelepathyQt/ContactManager>
 
-#include "im-persons-data-source.h"
-#include "person-plugin-manager.h"
+#include "impersonsdatasource.h"
+#include "personpluginmanager.h"
 #include "persondata.h"
 
 enum IMActionType {
@@ -191,8 +191,8 @@ void IMPlugin::onActionTriggered()
     }
 }
 
-#include "im-plugin.moc"
-#include "moc_im-plugin.cpp"
+#include "implugin.moc"
+#include "moc_implugin.cpp"
 
 
 K_PLUGIN_FACTORY( IMPluginFactory, registerPlugin<IMPlugin>(); )

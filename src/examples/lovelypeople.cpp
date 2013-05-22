@@ -21,7 +21,8 @@
 #include <QHeaderView>
 #include <QStyledItemDelegate>
 #include <qpainter.h>
-#include <persons-model.h>
+
+#include <personsmodel.h>
 
 class ContactDelegate : public QStyledItemDelegate
 {

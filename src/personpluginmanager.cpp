@@ -17,7 +17,7 @@
 */
 
 
-#include "person-plugin-manager.h"
+#include "personpluginmanager.h"
 
 #include <QAction>
 #include <KService>
@@ -27,9 +27,9 @@
 
 #include <kdemacros.h>
 
-#include "abstract-person-plugin.h"
+#include "abstractpersonplugin.h"
 
-#include "base-persons-data-source.h"
+#include "basepersonsdatasource.h"
 
 class PersonPluginManagerPrivate
 {

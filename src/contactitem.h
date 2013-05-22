@@ -25,7 +25,7 @@
 
 #include "kpeople_export.h"
 #include <QStandardItem>
-#include "persons-model.h"
+#include "personsmodel.h"
 
 class QAction;
 class ContactItemPrivate;

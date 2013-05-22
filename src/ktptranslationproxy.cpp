@@ -17,11 +17,10 @@
 */
 
 
-#include "ktp-translation-proxy.h"
-#include "persons-presence-model.h"
-#include "persons-model.h"
-#include "person-plugin-manager.h"
-#include "plugins/ktp-plugin/im-persons-data-source.h"
+#include "ktptranslationproxy.h"
+#include "personsmodel.h"
+#include "personpluginmanager.h"
+#include "plugins/ktp-plugin/impersonsdatasource.h"
 
 #include <KTp/types.h>
 #include <KDebug>

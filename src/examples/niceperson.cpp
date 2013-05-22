@@ -24,7 +24,7 @@
 #include <QToolButton>
 #include <QMenu>
 #include <persondata.h>
-#include <person-actions.h>
+#include <personactions.h>
 
 class PersonWidget : public QWidget
 {

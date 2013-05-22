@@ -20,7 +20,7 @@
 #ifndef IM_PERSONS_DATA_SOURCE_H
 #define IM_PERSONS_DATA_SOURCE_H
 
-#include "base-persons-data-source.h"
+#include "basepersonsdatasource.h"
 
 #include <TelepathyQt/Types>
 #include <KTp/contact.h>

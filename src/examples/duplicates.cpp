@@ -20,9 +20,11 @@
 #include <QTreeView>
 #include <QDebug>
 #include <QTextStream>
-#include <persons-model.h>
+
+#include <personsmodel.h>
 #include <duplicatesfinder.h>
 #include <matchessolver.h>
+
 #include <cstdio>
 #include <iostream>
 

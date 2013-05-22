@@ -18,9 +18,11 @@
 */
 
 #include "peopleqmlplugin.h"
-#include <persons-model.h>
-#include <person-actions.h>
+
+#include <personsmodel.h>
+#include <personactions.h>
 #include <persondata.h>
+
 #include <QtDeclarative/QDeclarativeItem>
 
 void PeopleQMLPlugin::registerTypes(const char* uri)

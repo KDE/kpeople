@@ -1,5 +1,5 @@
 set (email_kpeople_plugin_SRCS
-     email-plugin.cpp
+     emailplugin.cpp
 )
 
 kde4_add_plugin (email_kpeople_plugin

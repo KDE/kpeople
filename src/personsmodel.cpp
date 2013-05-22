@@ -18,13 +18,13 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "persons-model.h"
-#include "person-item.h"
-#include "contact-item.h"
-#include "resource-watcher-service.h"
-#include "persons-model-feature.h"
+#include "personsmodel.h"
+#include "personitem.h"
+#include "contactitem.h"
+#include "resourcewatcherservice.h"
+#include "personsmodelfeature.h"
 #include "duplicatesfinder.h"
-#include "base-persons-data-source.h"
+#include "basepersonsdatasource.h"
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>

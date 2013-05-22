@@ -19,9 +19,9 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "contact-item.h"
-#include "person-plugin-manager.h"
-#include "base-persons-data-source.h"
+#include "contactitem.h"
+#include "personpluginmanager.h"
+#include "basepersonsdatasource.h"
 
 #include <QAction>
 
@@ -47,7 +47,7 @@ public:
     static QSet<int> listRoles() {
         static QSet<int> s_listRoles;
         if(s_listRoles.isEmpty()) {
-            //TODO: document this in persons-model.h
+            //TODO: document this in personsmodel.h
             s_listRoles.insert(PersonsModel::PhotoRole);
             s_listRoles.insert(PersonsModel::EmailRole);
             s_listRoles.insert(PersonsModel::PhoneRole);

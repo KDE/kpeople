@@ -17,7 +17,8 @@
 */
 
 
-#include "email-plugin.h"
+#include "emailplugin.h"
+
 #include "persondata.h"
 
 #include <KLocalizedString>

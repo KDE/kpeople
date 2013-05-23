@@ -40,8 +40,7 @@ private Q_SLOTS:
 //     void personProperties();
 
     //this tests loading a contact from an ID not URI i.e foo@example.com
-    //FIXME - not complete
-//     void contactFromContactID();
+    void contactFromContactID();
 
     //tests the contact updated signal is correctly emitted
     //FIXME - not complete

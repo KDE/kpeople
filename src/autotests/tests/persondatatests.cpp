@@ -71,8 +71,15 @@ void PersonDataTests::contactProperties()
 
     QCOMPARE(personData->name(), QLatin1String("Contact One"));
     QCOMPARE(personData->emails(), QStringList() << QLatin1String("contact1@example.com"));
-
 }
+
+void PersonDataTests::contactFromContactID()
+{
+    PersonData personData;
+    personData.setContactId(QLatin1String("contact1@example.com"));
+    QCOMPARE(personData.uri(), m_contact1Uri.toString());
+}
+
 
 
 QTEST_KDEMAIN(PersonDataTests, NoGUI)

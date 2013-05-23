@@ -38,10 +38,8 @@ using namespace Nepomuk2;
 using namespace Nepomuk2::Vocabulary;
 using namespace Soprano::Vocabulary;
 
-
-void PersonDataTests::contactProperties()
+void PersonDataTests::initContact1()
 {
-    //create a simple contact with name + email
     Nepomuk2::SimpleResourceGraph graph;
 
     Nepomuk2::SimpleResource contact;
@@ -60,10 +58,16 @@ void PersonDataTests::contactProperties()
     Nepomuk2::StoreResourcesJob *job = graph.save();
     job->exec();
 
-    const QUrl contactUri = job->mappings()[contact.uri()];
+    m_contact1Uri = job->mappings()[contact.uri()];
+}
+
+void PersonDataTests::contactProperties()
+{
+    //create a simple contact with name + email
+
 
     QScopedPointer<PersonData> personData(new PersonData);
-    personData->setUri(contactUri.toString());
+    personData->setUri(m_contact1Uri.toString());
 
     QCOMPARE(personData->name(), QLatin1String("Contact One"));
     QCOMPARE(personData->emails(), QStringList() << QLatin1String("contact1@example.com"));

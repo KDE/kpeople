@@ -23,6 +23,8 @@
 #include <persondata.h>
 
 #include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Vocabulary/PIMO>
+
 #include <Nepomuk2/StoreResourcesJob>
 #include <Nepomuk2/SimpleResource>
 #include <Nepomuk2/SimpleResourceGraph>
@@ -60,6 +62,55 @@ void PersonDataTests::initContact1()
 
     m_contact1Uri = job->mappings()[contact.uri()];
 }
+
+void PersonDataTests::initPersonA()
+{
+    //create contact 2 and contact 3
+    //both have a ground truth to person1
+
+    Nepomuk2::SimpleResourceGraph graph;
+
+    Nepomuk2::SimpleResource contact2;
+    {
+        contact2.addType(NCO::PersonContact());
+        contact2.addProperty(NAO::prefLabel(), "Person A");
+        contact2.addProperty(NCO::fullname(), "Person A");
+
+        Nepomuk2::SimpleResource email;
+        email.addType(NCO::EmailAddress());
+        email.addProperty(NCO::emailAddress(), "contact2@example.com");
+        contact2.addProperty(NCO::hasEmailAddress(), email);
+
+        graph << contact2 << email;
+    }
+
+    Nepomuk2::SimpleResource contact3;
+    {
+        contact3.addType(NCO::PersonContact());
+        contact3.addProperty(NAO::prefLabel(), "Person A");
+        contact3.addProperty(NCO::fullname(), "Person A");
+
+        Nepomuk2::SimpleResource email;
+        email.addType(NCO::EmailAddress());
+        email.addProperty(NCO::emailAddress(), "contact3@example.com");
+        contact3.addProperty(NCO::hasEmailAddress(), email);
+        graph << contact3 << email;
+    }
+
+    Nepomuk2::SimpleResource personA;
+    personA.addType(PIMO::Person());
+    personA.addProperty(PIMO::GroundingClosure(), contact2);
+    personA.addProperty(PIMO::GroundingClosure(), contact3);
+
+    Nepomuk2::StoreResourcesJob *job = graph.save();
+    job->exec();
+
+    m_contact2Uri = job->mappings()[contact2.uri()];
+    m_contact3Uri = job->mappings()[contact3.uri()];
+    m_personAUri = job->mappings()[personA.uri()];
+
+}
+
 
 void PersonDataTests::contactProperties()
 {

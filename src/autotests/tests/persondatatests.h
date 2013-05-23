@@ -38,7 +38,7 @@ private Q_SLOTS:
 
     //this tests loading all the properties on a person made up of several contacts
     //FIXME - not complete
-//     void personProperties();
+    void personProperties();
 
     //this tests loading a contact from an ID not URI i.e foo@example.com
     void contactFromContactID();

@@ -124,6 +124,14 @@ void PersonDataTests::contactProperties()
     QCOMPARE(personData->emails(), QStringList() << QLatin1String("contact1@example.com"));
 }
 
+void PersonDataTests::personProperties()
+{
+    PersonData personData;
+    personData.setUri(m_personAUri.toString());
+    QCOMPARE(personData.name(), QLatin1String("Person A"));
+    QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact2@example.com") << QLatin1String("contact3@example.com"));
+}
+
 void PersonDataTests::contactFromContactID()
 {
     PersonData personData;

@@ -11,23 +11,23 @@ set (kpeople_widgets_SRCS
 
 kde4_add_library (kpeoplewidgets SHARED ${kpeople_widgets_SRCS} )
 
-target_link_libraries (kpeople_widgets
+target_link_libraries (kpeoplewidgets
                        ${QT_QTCORE_LIBRARIES}
                        ${QT_QTGUI_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        kpeople
 )
 
-set_target_properties (kpeople_widgets PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+set_target_properties (kpeoplewidgets PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
 
 if (MSVC)
-    set_target_properties (kpeople_widgets PROPERTIES
+    set_target_properties (kpeoplewidgets PROPERTIES
                            OUTPUT_NAME libkpeoplewidgets
     )
 endif (MSVC)
 
 # Install:
-install (TARGETS kpeople_widgets
+install (TARGETS kpeoplewidgets
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 

@@ -23,12 +23,14 @@
 #include <QWidget>
 #include <QVariantList>
 
+#include "kpeople_export.h"
+
 class QLabel;
 class PersonData;
 class QVBoxLayout;
 class AbstractPersonDetailsWidget;
 
-class PersonDetailsView : public QWidget
+class KPEOPLE_EXPORT PersonDetailsView : public QWidget
 {
     Q_OBJECT
 public:

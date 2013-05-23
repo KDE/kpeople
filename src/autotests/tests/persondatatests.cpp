@@ -99,8 +99,8 @@ void PersonDataTests::initPersonA()
 
     Nepomuk2::SimpleResource personA;
     personA.addType(PIMO::Person());
-    personA.addProperty(PIMO::GroundingClosure(), contact2);
-    personA.addProperty(PIMO::GroundingClosure(), contact3);
+    personA.addProperty(PIMO::groundingOccurrence(), contact2);
+    personA.addProperty(PIMO::groundingOccurrence(), contact3);
 
     graph << personA;
 
@@ -111,6 +111,12 @@ void PersonDataTests::initPersonA()
     m_contact3Uri = job->mappings()[contact3.uri()];
     m_personAUri = job->mappings()[personA.uri()];
 
+}
+
+void PersonDataTests::init()
+{
+    initContact1();
+    initPersonA();
 }
 
 
@@ -166,7 +172,6 @@ void PersonDataTests::miscTests()
     test2.setContactId(QLatin1String("IDThatDoesNotExist"));
     test2.name();
 }
-
 
 
 QTEST_KDEMAIN(PersonDataTests, NoGUI)

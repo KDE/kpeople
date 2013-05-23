@@ -29,8 +29,7 @@ class PersonDataTests : public Nepomuk2::TestBase
 {
     Q_OBJECT
 private Q_SLOTS:
-    void initContact1();
-    void initPersonA();
+    void init();
 
     //This tests all properties on a contact
     //FIXME - not complete!
@@ -54,6 +53,9 @@ private Q_SLOTS:
 //     void changed();
 
 private:
+    void initContact1();
+    void initPersonA();
+
     QUrl m_contact1Uri;
     QUrl m_contact2Uri;
     QUrl m_contact3Uri;

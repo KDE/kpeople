@@ -81,7 +81,7 @@ void PersonData::setContactId(const QString &id)
         "}").arg(id);
 
     Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparqlNoInference);
+    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
     QString uri;
     while (it.next()) {
         uri = it[0].uri().toString();

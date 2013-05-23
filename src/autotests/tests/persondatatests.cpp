@@ -102,6 +102,8 @@ void PersonDataTests::initPersonA()
     personA.addProperty(PIMO::GroundingClosure(), contact2);
     personA.addProperty(PIMO::GroundingClosure(), contact3);
 
+    graph << personA;
+
     Nepomuk2::StoreResourcesJob *job = graph.save();
     job->exec();
 

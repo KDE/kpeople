@@ -117,13 +117,11 @@ void PersonDataTests::initPersonA()
 void PersonDataTests::contactProperties()
 {
     //create a simple contact with name + email
+    PersonData personData;
+    personData.setUri(m_contact1Uri.toString());
 
-
-    QScopedPointer<PersonData> personData(new PersonData);
-    personData->setUri(m_contact1Uri.toString());
-
-    QCOMPARE(personData->name(), QLatin1String("Contact One"));
-    QCOMPARE(personData->emails(), QStringList() << QLatin1String("contact1@example.com"));
+    QCOMPARE(personData.name(), QLatin1String("Contact One"));
+    QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact1@example.com"));
 }
 
 void PersonDataTests::personProperties()

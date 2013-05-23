@@ -4,7 +4,6 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 add_subdirectory(examples)
 add_subdirectory(autotests)
-add_subdirectory(tests)
 add_subdirectory(declarative)
 add_subdirectory(plugins)
 

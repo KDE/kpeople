@@ -28,7 +28,7 @@
 #include <Nepomuk2/StoreResourcesJob>
 #include <Nepomuk2/SimpleResource>
 #include <Nepomuk2/SimpleResourceGraph>
-
+#include <Nepomuk2/Resource>
 
 #include <Soprano/Vocabulary/NAO>
 
@@ -145,6 +145,26 @@ void PersonDataTests::contactFromContactID()
     PersonData personData;
     personData.setContactId(QLatin1String("contact1@example.com"));
     QCOMPARE(personData.uri(), m_contact1Uri.toString());
+}
+
+void PersonDataTests::miscTests()
+{
+    return;
+    PersonData personData;
+    personData.uri();
+    personData.name();
+    personData.avatar();
+    personData.birthday();
+    personData.contactResources();
+    personData.emails();
+    personData.groups();
+    personData.imAccounts();
+    personData.isPerson();
+    personData.phones();
+
+    PersonData test2;
+    test2.setContactId(QLatin1String("IDThatDoesNotExist"));
+    test2.name();
 }
 
 

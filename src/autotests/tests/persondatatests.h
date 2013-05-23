@@ -46,6 +46,9 @@ private Q_SLOTS:
     //this tests that we can load a PIMO::Person from a given ID
     void personFromContactID();
 
+    //this test tries to make the PersonData crash
+    void miscTests();
+
     //tests the contact updated signal is correctly emitted
     //FIXME - not complete
 //     void changed();

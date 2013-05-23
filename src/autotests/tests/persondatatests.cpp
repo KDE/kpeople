@@ -132,6 +132,14 @@ void PersonDataTests::personProperties()
     QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact2@example.com") << QLatin1String("contact3@example.com"));
 }
 
+void PersonDataTests::personFromContactID()
+{
+    PersonData personData;
+    personData.setContactId(QLatin1String("contact2@example.com"));
+    //This should load PersonA NOT Contact2
+    QCOMPARE(personData.uri(), m_personAUri.toString());
+}
+
 void PersonDataTests::contactFromContactID()
 {
     PersonData personData;

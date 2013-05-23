@@ -43,6 +43,9 @@ private Q_SLOTS:
     //this tests loading a contact from an ID not URI i.e foo@example.com
     void contactFromContactID();
 
+    //this tests that we can load a PIMO::Person from a given ID
+    void personFromContactID();
+
     //tests the contact updated signal is correctly emitted
     //FIXME - not complete
 //     void changed();

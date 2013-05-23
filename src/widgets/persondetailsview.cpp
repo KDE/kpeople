@@ -38,6 +38,9 @@
 #include "personsmodel.h"
 #include "abstractpersondetailswidget.h"
 
+#include "plugins/emaildetailswidget.h"
+#include "plugins/phonedetailswidget.h"
+
 
 using namespace Nepomuk::Vocabulary;
 
@@ -104,9 +107,9 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     m_mainLayout->addWidget(m_contactsListWidget);
 
 
-//     m_detailWidgets << new EmailDetailsWidget(this);
+    m_detailWidgets << new EmailDetailsWidget(this);
 //     m_detailWidgets << new IMDetailsWidget(this);
-//     m_detailWidgets <<  new PhoneDetailsWidget(this);
+    m_detailWidgets <<  new PhoneDetailsWidget(this);
 //     m_detailWidgets << new FacebookConnector(this);
 //     m_detailWidgets <<  new RecentEmailsDetailsWidget(this);
 

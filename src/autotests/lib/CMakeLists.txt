@@ -53,3 +53,4 @@ set( nepomuk_testlib_HEADERS
      nepomuktest_export.h
 )
 
+add_subdirectory(tools)

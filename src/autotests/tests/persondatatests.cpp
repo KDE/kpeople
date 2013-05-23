@@ -60,6 +60,11 @@ void PersonDataTests::initContact1()
     Nepomuk2::StoreResourcesJob *job = graph.save();
     job->exec();
 
+    if( job->error() ) {
+        qWarning() << job->errorString();
+        QVERIFY(!job->error());
+    }
+
     m_contact1Uri = job->mappings()[contact.uri()];
 }
 
@@ -106,6 +111,11 @@ void PersonDataTests::initPersonA()
 
     Nepomuk2::StoreResourcesJob *job = graph.save();
     job->exec();
+
+    if( job->error() ) {
+        qWarning() << job->errorString();
+        QVERIFY(!job->error());
+    }
 
     m_contact2Uri = job->mappings()[contact2.uri()];
     m_contact3Uri = job->mappings()[contact3.uri()];

@@ -138,9 +138,6 @@ void PersonData::setUri(const QString &uri)
     connect(d->watcher.data(), SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SIGNAL(dataChanged()));
 
-//     connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-//             this, SLOT(presenceModelChange(QModelIndex,QModelIndex)));
-
     emit uriChanged();
     emit dataChanged();
 }
@@ -294,21 +291,6 @@ QStringList PersonData::groups() const
 
     return groups;
 }
-
-// QStringList PersonData::bareContacts() const
-// {
-//     return personIndex().data(PersonsModel::ContactIdRole).toStringList();
-// }
-//
-// QModelIndex PersonData::personIndex() const
-// {
-//     Q_D(const PersonData);
-//     Q_ASSERT(d->model->rowCount()>0);
-//     QModelIndex idx = d->model->index(0,0);
-//     Q_ASSERT(idx.isValid());
-//     return idx;
-// }
-//
 
 QList< Nepomuk2::Resource > PersonData::contactResources() const
 {

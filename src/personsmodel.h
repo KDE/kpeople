@@ -117,11 +117,6 @@ public:
      */
     QPair<PersonsModel::Features, PersonsModel::Features> queryFlags() const;
 
-    /**
-     * @return actual features used to populate the model
-     */
-    QList<PersonsModelFeature> modelFeatures() const;
-
     /** Creates a pimo:person with contacts as groundingOccurances */
     void createPersonFromContacts(const QList<QUrl> &contacts);
 
@@ -146,10 +141,6 @@ public:
 
     void findDuplicates();
 
-    void addPerson(const Nepomuk2::Resource &res);
-    void addContact(const Nepomuk2::Resource &res);
-    ContactItem* contactForIMAccount(const QUrl &uri) const;
-
 Q_SIGNALS:
     void peopleAdded();
     void duplicatesFound(QHash<QString, QSet<QPersistentModelIndex> > duplicates);
@@ -162,8 +153,19 @@ private Q_SLOTS:
     void findDuplicatesFinished(KJob *finder);
 
 private:
+    /**
+     * @return actual features used to populate the model
+     */
+    QList<PersonsModelFeature> modelFeatures() const;
+
+    void addPerson(const Nepomuk2::Resource &res);
+    void addContact(const Nepomuk2::Resource &res);
+    ContactItem* contactForIMAccount(const QUrl &uri) const;
+
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
     QList<PersonsModelFeature> init(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
+
+    friend class ResourceWatcherService;
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);

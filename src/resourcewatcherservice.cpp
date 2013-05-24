@@ -164,7 +164,7 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
         Q_FOREACH (const PersonsModelFeature &feature, d->m_model->modelFeatures()) {
             if (!feature.isOptional()) {
                 if (feature.watcherProperty() == property) {
-                    d->m_model->createContact(res);
+                    d->m_model->addContact(res);
                     return;
                 }
             }
@@ -200,7 +200,7 @@ void ResourceWatcherService::personCreated(const Nepomuk2::Resource &res, const 
     Q_ASSERT(res.hasProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()));
     QModelIndex idx = d->m_model->indexForUri(res.uri());
     if (!idx.isValid()) {
-        d->m_model->createPerson(res);
+        d->m_model->addPerson(res);
     }
 }
 

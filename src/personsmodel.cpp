@@ -394,8 +394,7 @@ QModelIndex PersonsModel::indexForUri(const QUrl &uri) const
     return findRecursively(PersonsModel::UriRole, uri);
 }
 
-//FIXME: rename this to addPerson
-void PersonsModel::createPerson(const Nepomuk2::Resource &res)
+void PersonsModel::addPerson(const Nepomuk2::Resource &res)
 {
     Q_ASSERT(!indexForUri(res.uri()).isValid());
     //pass only the uri as that will not add the contacts from groundingOccurrence
@@ -410,8 +409,7 @@ void PersonsModel::createPerson(const Nepomuk2::Resource &res)
     appendRow(new PersonItem(res.uri()));
 }
 
-//FIXME: rename this to addContact
-void PersonsModel::createContact(const Nepomuk2::Resource &res)
+void PersonsModel::addContact(const Nepomuk2::Resource &res)
 {
     ContactItem *item = new ContactItem(res.uri());
     item->loadData();

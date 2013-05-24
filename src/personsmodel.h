@@ -146,8 +146,8 @@ public:
 
     void findDuplicates();
 
-    void createPerson(const Nepomuk2::Resource &res);
-    void createContact(const Nepomuk2::Resource &res);
+    void addPerson(const Nepomuk2::Resource &res);
+    void addContact(const Nepomuk2::Resource &res);
     ContactItem* contactForIMAccount(const QUrl &uri) const;
 
 private Q_SLOTS:

@@ -27,13 +27,13 @@
 class QAction;
 class PersonActionsPrivate;
 
-class KPEOPLE_EXPORT PersonActions : public QAbstractListModel
+class KPEOPLE_EXPORT PersonActionsModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY personChanged)
 public:
-    PersonActions(QObject *parent = 0);
-    virtual ~PersonActions();
+    PersonActionsModel(QObject *parent = 0);
+    virtual ~PersonActionsModel();
 
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;

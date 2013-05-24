@@ -49,7 +49,7 @@ class PersonWidget : public QWidget
             avatar->setPixmap(QPixmap(m_person.avatar().toLocalFile()));
             l->addRow("avatar:", avatar);
 
-            PersonActions* actions = new PersonActions(&m_person);
+            PersonActionsModel* actions = new PersonActionsModel(&m_person);
 //             actions->setPerson(); //TODO: figure out API to set a person
             QToolButton* b = new QToolButton;
             b->setText("Actions");

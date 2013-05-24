@@ -60,7 +60,7 @@ void PersonsModelTest::testActions()
     PersonsModel m(PersonsModel::FeatureEmails, 0);
     QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
     for(int i=0; i<m.rowCount(); ++i) {
-        PersonActions a;
+        PersonActionsModel a;
         a.setPerson(&m, i);
 
         if (a.rowCount(QModelIndex()) == 0) {

@@ -28,7 +28,7 @@
 void PeopleQMLPlugin::registerTypes(const char* uri)
 {
     qmlRegisterType<PersonsModel>(uri, 0, 1, "PersonsModel");
-    qmlRegisterType<PersonActions>(uri, 0, 1, "PersonActions");
+    qmlRegisterType<PersonActionsModel>(uri, 0, 1, "PersonActions");
     qmlRegisterType<PersonData>(uri, 0, 1, "PersonData");
     qmlRegisterType<QAbstractItemModel>();
 }

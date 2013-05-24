@@ -44,24 +44,24 @@ struct PersonActionsPrivate {
     PersonData *person;
 };
 
-PersonActions::PersonActions(QObject *parent)
+PersonActionsModel::PersonActionsModel(QObject *parent)
     : QAbstractListModel(parent),
     d_ptr(new PersonActionsPrivate)
 {
     Q_D(PersonActions);
 }
 
-PersonActions::~PersonActions()
+PersonActionsModel::~PersonActionsModel()
 {
     delete d_ptr;
 }
 
-void PersonActions::setPerson(QAbstractItemModel* model, int row)
+void PersonActionsModel::setPerson(QAbstractItemModel* model, int row)
 {
     setPerson(model->index(row, 0));
 }
 
-void PersonActions::setPerson(const QPersistentModelIndex& index)
+void PersonActionsModel::setPerson(const QPersistentModelIndex& index)
 {
     Q_D(PersonActions);
     beginResetModel();
@@ -79,7 +79,7 @@ void PersonActions::setPerson(const QPersistentModelIndex& index)
     emit personChanged();
 }
 
-QVariant PersonActions::data(const QModelIndex &index, int role) const
+QVariant PersonActionsModel::data(const QModelIndex &index, int role) const
 {
     Q_D(const PersonActions);
 
@@ -99,20 +99,20 @@ QVariant PersonActions::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-int PersonActions::rowCount(const QModelIndex &parent) const
+int PersonActionsModel::rowCount(const QModelIndex &parent) const
 {
     Q_D(const PersonActions);
 
     return parent.isValid() ? 0 : d->actions.size();
 }
 
-void PersonActions::triggerAction(int row) const
+void PersonActionsModel::triggerAction(int row) const
 {
     Q_D(const PersonActions);
     d->actions[row]->trigger();
 }
 
-QList< QAction* > PersonActions::actions() const
+QList< QAction* > PersonActionsModel::actions() const
 {
     Q_D(const PersonActions);
     return d->actions;

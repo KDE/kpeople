@@ -25,7 +25,7 @@ install (FILES im_persons_data_source_plugin.desktop
 )
 
 
-install (FILES im-persons-data-source.h
+install (FILES impersonsdatasource.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
 )

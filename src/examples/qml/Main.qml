@@ -14,9 +14,11 @@ Rectangle {
         id: filteredPeople
         sortRole: "display"
         sortCaseSensitivity: Qt.CaseInsensitive
-        sourceModel: PersonsPresenceModel {
+        sourceModel: PersonsModel {
             id: people
-            sourceModel: PersonsModel {}
+            Component.onCompleted: {
+                people.setQueryFlags(PersonsModel.FeatureNone, PersonsModel.FeatureAll);
+            }
         }
         filterRegExp: searchField.text
     }

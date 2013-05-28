@@ -58,6 +58,7 @@ public:
                      FeatureFullName
     };
     Q_DECLARE_FLAGS(Features, Feature)
+    Q_FLAGS(Features)
 
     enum Role {
         ContactTypeRole = Qt::UserRole,
@@ -103,14 +104,14 @@ public:
      * @p mandatoryFeatures features we want to be sure the contact has
      * @p optionalFeatures optional contact features we'd like to have
      */
-    PersonsModel(PersonsModel::Features mandatoryFeatures = 0, PersonsModel::Features optionalFeatures = 0, QObject *parent = 0);
+    PersonsModel(Features mandatoryFeatures = 0, Features optionalFeatures = 0, QObject *parent = 0);
 
     /**
      * Sets the features we want to construct a query for; this starts populating the model
      * @p mandatoryFeatures features we want to be sure the contact has
      * @p optionalFeatures optional contact features we'd like to have
      */
-    void setQueryFlags(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
+    Q_SCRIPTABLE void setQueryFlags(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
 
     /**
      * @return QPair of query flags used to populate the model, first is mandatory, second is optional

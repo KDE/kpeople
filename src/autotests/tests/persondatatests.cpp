@@ -136,6 +136,10 @@ void PersonDataTests::contactProperties()
     PersonData personData;
     personData.setUri(m_contact1Uri.toString());
 
+    QCOMPARE(personData.uri(), m_contact1Uri.toString());
+    QCOMPARE(personData.isPerson(), false);
+    QCOMPARE(personData.contactResources().size(), 1);
+
     QCOMPARE(personData.name(), QLatin1String("Contact One"));
     QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact1@example.com"));
 }
@@ -144,6 +148,8 @@ void PersonDataTests::personProperties()
 {
     PersonData personData;
     personData.setUri(m_personAUri.toString());
+    QCOMPARE(personData.isPerson(), true);
+    QCOMPARE(personData.contactResources().size(), 2);
     QCOMPARE(personData.name(), QLatin1String("Person A"));
     QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact2@example.com") << QLatin1String("contact3@example.com"));
 }

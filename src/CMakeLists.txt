@@ -6,6 +6,7 @@ add_subdirectory(examples)
 add_subdirectory(autotests)
 add_subdirectory(declarative)
 add_subdirectory(plugins)
+add_subdirectory(widgets)
 
 
 kde4_add_library (kpeople SHARED

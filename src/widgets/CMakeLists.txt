@@ -36,8 +36,4 @@ install (FILES
          COMPONENT Devel
 )
 
-install (FILES
-         kpeople_widgets_data_source.desktop
-         DESTINATION
-         ${SERVICETYPES_INSTALL_DIR}
-)
+

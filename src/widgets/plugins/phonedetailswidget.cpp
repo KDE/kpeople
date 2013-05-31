@@ -19,13 +19,12 @@
 #include "phonedetailswidget.h"
 
 #include <QGridLayout>
-
-#include <kpeople/persondata.h>
-
 #include <QVBoxLayout>
 #include <QLabel>
 
 #include <KLocalizedString>
+
+#include "persondata.h"
 
 PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent):
     AbstractPersonDetailsWidget(parent)

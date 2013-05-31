@@ -20,7 +20,7 @@
 
 #include <QGridLayout>
 
-#include <kpeople/persondata.h>
+#include "persondata.h"
 
 #include <QVBoxLayout>
 #include <QLabel>

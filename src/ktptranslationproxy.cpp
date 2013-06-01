@@ -67,6 +67,8 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             return mapToSource(proxyIndex).data(PersonsModel::IMRole);
         case KTp::HeaderTotalUsersRole:
             return mapToSource(proxyIndex).data(PersonsModel::ContactsCountRole);
+        case KTp::ContactGroupsRole:
+            return mapToSource(proxyIndex).data(PersonsModel::ContactGroupsRole);
     }
 
     const QString contactId = mapToSource(proxyIndex).data(PersonsModel::IMRole).toString();
@@ -76,8 +78,6 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
         switch (role) {
             case KTp::ContactRole:
                 return QVariant::fromValue<KTp::ContactPtr>(contact);
-            case KTp::ContactGroupsRole:
-                return contact->groups();
             case KTp::AccountRole:
 //                 if (!contact.isNull()) {
                     return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));

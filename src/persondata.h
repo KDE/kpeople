@@ -28,7 +28,6 @@
 #include <QStringList>
 #include <KDateTime>
 
-class QModelIndex;
 namespace Nepomuk2 { class Resource; }
 struct PersonDataPrivate;
 
@@ -46,7 +45,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
 
     public:
         PersonData(QObject *parent = 0);
-        
+
         PersonData(const QString &uri, QObject *parent = 0);
 
         /** @returns the uri of the current person */

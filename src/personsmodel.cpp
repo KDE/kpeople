@@ -391,7 +391,20 @@ QList<PersonsModelFeature> PersonsModel::modelFeatures() const
 
 QModelIndex PersonsModel::indexForUri(const QUrl &uri) const
 {
-    return findRecursively(PersonsModel::UriRole, uri);
+    Q_D(const PersonsModel);
+
+    QStandardItem *item = 0;
+    //The URI could be either a URI for a person, or a URI for a contact
+    //therefore we search both hashes and return the index if it exists
+    item = d->contacts[uri];
+    if (item) {
+        return item->index();
+    }
+    item = d->persons[uri];
+    if (item) {
+        return item->index();
+    }
+    return QModelIndex();
 }
 
 void PersonsModel::addPerson(const Nepomuk2::Resource &res)

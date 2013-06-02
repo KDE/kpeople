@@ -94,9 +94,6 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** Some of the person's data we're offering has changed */
         void dataChanged();
 
-    private Q_SLOTS:
-        void presenceModelChange(const QModelIndex &topLeft, const QModelIndex &bottomRight);
-
     private:
         Q_DECLARE_PRIVATE(PersonData)
         PersonDataPrivate * d_ptr;

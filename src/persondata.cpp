@@ -323,15 +323,4 @@ QString PersonData::findMostOnlinePresence(const QStringList &presences) const
     return "offline";
 }
 
-void PersonData::presenceModelChange(const QModelIndex &topLeft, const QModelIndex &bottomRight)
-{
-    Q_D(PersonData);
 
-    if (topLeft != bottomRight) {
-        return;
-    }
-
-    if (topLeft.data(PersonsModel::UriRole).toString() == d->uri) {
-        emit dataChanged();
-    }
-}

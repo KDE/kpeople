@@ -83,6 +83,8 @@ void ContactItem::setContactData(int role, const QVariant &v)
     }
 }
 
+//TODO update so value can be a list. This will then concat onto any existing list.
+
 void ContactItem::addContactData(int role, const QVariant &value)
 {
     Q_D(ContactItem);

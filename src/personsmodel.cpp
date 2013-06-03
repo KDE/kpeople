@@ -245,7 +245,12 @@ void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, Perso
     }
 
     Q_FOREACH(const QString &queryVariable, d->bindingRoleMap.keys()) {
-        selectPart.append(QString("?%1 ").arg(queryVariable));
+        //Normally a contact with multiple email addresses (for example) will appear as multiple rows in the query
+        //By using the sql group_digest function we group all values into a single list on the server rather than multiple rows. Values are separated by ";;;"
+
+        //arg 2 is the seperator, 3 is the max length and 4 is a flag 1 meaning remove duplicates
+        //5000 is an abitrary big number
+        selectPart.append(QString("(sql:group_digest(?%1,';;;',5000,1) as ?%1) ").arg(queryVariable)) ;
     }
 
     queryPart.append("FILTER(?uri!=<nepomuk:/me>). }");
@@ -291,10 +296,9 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
         contactNode = new ContactItem(currentUri);
         d->contacts.insert(currentUri, contactNode);
     } else {
-        //FIXME: for some reason we get most of the contacts twice in the resultset,
-        //       disabling duplicate processing for now to speedup loading time;
-        //       also it turns out that the same values are always passed the second time
-        //       so no point processing it again
+        //TODO see if this actually happens. If not, we can remove the lookup above and optimise.
+        //If it still does occur, with a good reason, remove this TODO
+        kWarning() << "the same contact has appeared twice in results. Ignoring";
         query->next();
         return;
     }
@@ -308,7 +312,11 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 
         Soprano::Node node = query->binding(bName);
         if (!node.isEmpty()) {
-            contactNode->addContactData(*it, node.toString());
+            //contact info fields are stored as lists seperated by ;;;
+            //contact item can only take single values in addContactData so looping is done here
+            foreach (const QString &data, node.toString().split(";;;")) {
+                contactNode->addContactData(*it, data);
+            }
         }
     }
 

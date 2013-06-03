@@ -36,14 +36,14 @@ void PersonsModelTest::testInit()
 {
     QBENCHMARK {
         PersonsModel m(0, PersonsModel::FeatureIM);
-        QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+        QTest::kWaitForSignal(&m, SIGNAL(modelInitialized()));
     }
 }
 
 void PersonsModelTest::testPhotos()
 {
     PersonsModel m(PersonsModel::FeatureAvatars, 0);
-    QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+    QTest::kWaitForSignal(&m, SIGNAL(modelInitialized()));
     int count = 0;
     QBENCHMARK {
         for(int i=0; i<m.rowCount(); ++i) {
@@ -58,7 +58,7 @@ void PersonsModelTest::testPhotos()
 void PersonsModelTest::testActions()
 {
     PersonsModel m(PersonsModel::FeatureEmails, 0);
-    QTest::kWaitForSignal(&m, SIGNAL(peopleAdded()));
+    QTest::kWaitForSignal(&m, SIGNAL(modelInitialized()));
     for(int i=0; i<m.rowCount(); ++i) {
         PersonActionsModel a;
         a.setPerson(&m, i);

@@ -202,10 +202,8 @@ QStringList PersonData::emails() const
     QStringList emails;
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
-        if (resource.hasProperty(NCO::hasEmailAddress())) {
-            Q_FOREACH (const Nepomuk2::Resource &email, resource.property(NCO::hasEmailAddress()).toResourceList()) {
-                emails << email.property(NCO::emailAddress()).toString();
-            }
+        Q_FOREACH (const Nepomuk2::Resource &email, resource.property(NCO::hasEmailAddress()).toResourceList()) {
+            emails << email.property(NCO::emailAddress()).toString();
         }
     }
 
@@ -219,10 +217,8 @@ QStringList PersonData::phones() const
     QStringList phones;
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
-        if (resource.hasProperty(NCO::hasPhoneNumber())) {
-            Q_FOREACH (const Nepomuk2::Resource &phone, resource.property(NCO::hasPhoneNumber()).toResourceList()) {
-                phones << phone.property(NCO::phoneNumber()).toString();
-            }
+        Q_FOREACH (const Nepomuk2::Resource &phone, resource.property(NCO::hasPhoneNumber()).toResourceList()) {
+            phones << phone.property(NCO::phoneNumber()).toString();
         }
     }
 
@@ -236,12 +232,10 @@ QStringList PersonData::imAccounts() const
     QStringList ims;
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
-        if (resource.hasProperty(NCO::hasIMAccount())) {
-            Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
-                ims << im.property(NCO::imAccountType()).toString();
-                ims << im.property(NCO::imNickname()).toString();
-                ims << im.property(NCO::imID()).toString();
-            }
+        Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
+            ims << im.property(NCO::imAccountType()).toString();
+            ims << im.property(NCO::imNickname()).toString();
+            ims << im.property(NCO::imID()).toString();
         }
     }
 
@@ -260,12 +254,9 @@ KDateTime PersonData::birthday() const
     KDateTime bd;
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
-        if (resource.hasProperty(NCO::birthDate())) {
-
-            KDateTime bdTemp(resource.property(NCO::birthDate()).toDateTime());
-            if (bdTemp.isValid() && bdTemp.dateTime().toMSecsSinceEpoch() > bd.dateTime().toMSecsSinceEpoch()) {
-                bd = bdTemp;
-            }
+        KDateTime bdTemp(resource.property(NCO::birthDate()).toDateTime());
+        if (bdTemp.isValid() && bdTemp.dateTime().toMSecsSinceEpoch() > bd.dateTime().toMSecsSinceEpoch()) {
+            bd = bdTemp;
         }
     }
 

@@ -143,7 +143,7 @@ public:
     void findDuplicates();
 
 Q_SIGNALS:
-    void peopleAdded();
+    void modelInitialized();
     void duplicatesFound(QHash<QString, QSet<QPersistentModelIndex> > duplicates);
 
 private Q_SLOTS:

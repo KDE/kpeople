@@ -348,7 +348,7 @@ void PersonsModel::queryFinished(Soprano::Util::AsyncQuery *query)
     if (!d->contacts.values().isEmpty()) {
         invisibleRootItem()->appendRows(toStandardItems(d->contacts.values()));
     }
-    emit peopleAdded();
+    emit modelInitialized();
     kDebug() << "Model ready";
 }
 

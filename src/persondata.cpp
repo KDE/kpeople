@@ -34,12 +34,14 @@
 #include <Nepomuk2/Variant>
 
 #include <Soprano/Model>
+#include <Soprano/Vocabulary/NAO>
 #include <Soprano/QueryResultIterator>
 
 #include <KDebug>
 #include <QPointer>
 
 using namespace Nepomuk2::Vocabulary;
+using namespace Soprano::Vocabulary;
 
 class PersonDataPrivate {
 public:
@@ -180,13 +182,19 @@ QString PersonData::name() const
     //simply pick the first for now
     Nepomuk2::Resource r = d->contactResources.first();
 
-    label = r.property(NCO::fullname()).toString();
-
-    if (!label.isEmpty()) {
-        return label;
+    if (r.hasProperty(NCO::nickname())) {
+        label = r.property(NCO::nickname()).toString();
+    } else if (r.hasProperty(NAO::prefLabel())) {
+        label = r.property(NAO::prefLabel()).toString();
+    } else if (r.hasProperty(NCO::fullname())) {
+        label = r.property(NCO::fullname()).toString();
+    } else if (r.hasProperty(NCO::hasIMAccount())) {
+        label = r.property(NCO::hasIMAccount()).toResource().property(NCO::imNickname()).toString();
+    } else if (r.hasProperty(NCO::hasEmailAddress())) {
+        label = r.property(NCO::hasEmailAddress()).toResource().property(NCO::emailAddress()).toString();
+    } else if (r.hasProperty(NCO::hasPhoneNumber())) {
+        label = r.property(NCO::hasPhoneNumber()).toResource().property(NCO::phoneNumber()).toString();
     }
-
-    label = r.property(NCO::hasIMAccount()).toResource().property(NCO::imNickname()).toString();
 
     if (!label.isEmpty()) {
         return label;

@@ -23,6 +23,7 @@
 #include "personitem.h"
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"
+#include "datasourcewatcher.h"
 
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Query/Query>
@@ -48,6 +49,7 @@ public:
     QString uri;
     QString id;
     QPointer<Nepomuk2::ResourceWatcher> watcher;
+    DataSourceWatcher *dataSourceWatcher;
     Nepomuk2::Resource personResource;
     QList<Nepomuk2::Resource> contactResources;
 };
@@ -56,6 +58,9 @@ PersonData::PersonData(QObject *parent)
     : QObject(parent),
     d_ptr(new PersonDataPrivate)
 {
+    Q_D(PersonData);
+    d->dataSourceWatcher = new DataSourceWatcher(this);
+    connect(d->dataSourceWatcher, SIGNAL(contactChanged(QUrl)), SIGNAL(dataChanged()));
 }
 
 PersonData::PersonData(const QString &uri, QObject *parent)
@@ -118,6 +123,7 @@ void PersonData::setUri(const QString &uri)
     d->uri = uri;
     d->contactResources.clear();
     d->personResource = Nepomuk2::Resource();
+    d->dataSourceWatcher->clearWatchedContacts();
 
     Nepomuk2::Resource r(uri);
 
@@ -144,6 +150,14 @@ void PersonData::setUri(const QString &uri)
 
     connect(d->watcher.data(), SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SIGNAL(dataChanged()));
+
+
+    //watch for IM changes
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
+            d->dataSourceWatcher->watchContact(im.property(NCO::imID()).toString(), resource.uri());
+        }
+    }
 
     emit uriChanged();
     emit dataChanged();

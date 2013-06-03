@@ -152,6 +152,7 @@ private Q_SLOTS:
     void nextReady(Soprano::Util::AsyncQuery *query);
     void queryFinished(Soprano::Util::AsyncQuery *query);
     void findDuplicatesFinished(KJob *finder);
+    void contactChanged(const QUrl &uri);
 
 private:
     /**

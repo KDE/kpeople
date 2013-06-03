@@ -13,6 +13,7 @@ kde4_add_library (kpeople SHARED
     abstractpersonplugin.cpp
     personsmodelfeature.cpp
     contactitem.cpp
+    datasourcewatcher.cpp
     personitem.cpp
     personsmodel.cpp
     persondata.cpp

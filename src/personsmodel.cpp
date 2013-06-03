@@ -25,6 +25,7 @@
 #include "personsmodelfeature.h"
 #include "duplicatesfinder.h"
 #include "basepersonsdatasource.h"
+#include "datasourcewatcher.h"
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>
@@ -48,6 +49,7 @@ struct PersonsModelPrivate {
     QHash<QUrl, PersonItem*> persons;   //all persons
     QList<QUrl> pimoOccurances;         //contacts that are groundingOccurrences of persons
     QHash<QString, PersonsModel::Role> bindingRoleMap;
+    DataSourceWatcher *dataSourceWatcher;
 
     PersonsModel::Features mandatoryFeatures;
     PersonsModel::Features optionalFeatures;
@@ -63,6 +65,10 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
     : QStandardItemModel(parent)
     , d_ptr(new PersonsModelPrivate)
 {
+    Q_D(PersonsModel);
+    d->dataSourceWatcher = new DataSourceWatcher(this);
+    connect(d->dataSourceWatcher, SIGNAL(contactChanged(QUrl)), SLOT(contactChanged(QUrl)));
+
     QHash<int, QByteArray> names = roleNames();
     names.insert(PersonsModel::EmailRole, "email");
     names.insert(PersonsModel::PhoneRole, "phone");
@@ -262,6 +268,7 @@ void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, Perso
 
 void PersonsModel::query(const QString &queryString)
 {
+    qDebug() << queryString;
     Q_ASSERT(rowCount() == 0);
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
@@ -277,11 +284,11 @@ void PersonsModel::query(const QString &queryString)
 void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 {
     Q_D(PersonsModel);
-    QUrl currentUri = query->binding(QLatin1String("uri")).uri();
+    const QUrl &currentUri = query->binding(QLatin1String("uri")).uri();
 
     //before any further processing, check if the current contact
     //is not a groundingOccurrence of a nepomuk:/me person, if yes, don't process it
-    QUrl pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
+    const QUrl &pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
     if (pimoPersonUri == QUrl(QLatin1String("nepomuk:/me"))) {
         query->next();
         return;
@@ -317,6 +324,14 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
             foreach (const QString &data, node.toString().split(";;;")) {
                 contactNode->addContactData(*it, data);
             }
+        }
+    }
+
+    //if we have IM features watch for data changes
+    if ((d->optionalFeatures | d->mandatoryFeatures) & FeatureIM) {
+        const QString &imContactId = query->binding("nco_imID").toString();
+        if (!imContactId.isEmpty())  {
+            d->dataSourceWatcher->watchContact(imContactId, currentUri);
         }
     }
 
@@ -432,8 +447,10 @@ void PersonsModel::addPerson(const Nepomuk2::Resource &res)
 
 void PersonsModel::addContact(const Nepomuk2::Resource &res)
 {
+    Q_D(PersonsModel);
     ContactItem *item = new ContactItem(res.uri());
     item->loadData();
+    d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMRole).toString(), item->data(PersonsModel::UriRole).toString());
     appendRow(item);
 }
 
@@ -553,6 +570,12 @@ void PersonsModel::findDuplicates()
     DuplicatesFinder *df = new DuplicatesFinder(this, this);
     connect(df, SIGNAL(finished(KJob*)), this, SLOT(findDuplicatesFinished(KJob*)));
     df->start();
+}
+
+void PersonsModel::contactChanged(const QUrl& uri)
+{
+    const QModelIndex index = indexForUri(uri);
+    dataChanged(index, index); //FIXME it's normally bad to do this on a QStandardItemModel
 }
 
 void PersonsModel::findDuplicatesFinished(KJob *finder)

@@ -59,6 +59,8 @@ void IMPersonsDataSource::Private::onAllKnownContactsChanged(const Tp::Contacts 
         KTp::ContactPtr ktpContact = KTp::ContactPtr::qObjectCast(contact);
         contacts.insert(contact->id(), ktpContact);
 
+        Q_EMIT q->contactChanged(contact->id());
+
         connect(ktpContact.data(), SIGNAL(presenceChanged(Tp::Presence)),
                 q, SLOT(onContactChanged()));
 
@@ -118,8 +120,6 @@ IMPersonsDataSource::~IMPersonsDataSource()
 QVariant IMPersonsDataSource::dataForContact(const QString &contactId, int role) const
 {
     KTp::ContactPtr contact = d->contacts.value(contactId);
-
-    kDebug() << contactId;
 
     //we need to handle only few roles here, all the rest must go to the source model
     switch (role) {

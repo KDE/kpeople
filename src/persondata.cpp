@@ -65,6 +65,11 @@ PersonData::PersonData(const QString &uri, QObject *parent)
     setUri(uri);
 }
 
+PersonData::~PersonData()
+{
+    delete d_ptr;
+}
+
 void PersonData::setContactId(const QString &id)
 {
     Q_D(PersonData);

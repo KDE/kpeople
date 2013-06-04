@@ -85,7 +85,9 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
 }
 
 ResourceWatcherService::~ResourceWatcherService()
-{}
+{
+    delete d_ptr;
+}
 
 void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &value)
 {

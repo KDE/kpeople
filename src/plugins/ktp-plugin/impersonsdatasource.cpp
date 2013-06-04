@@ -112,6 +112,7 @@ IMPersonsDataSource::IMPersonsDataSource(QObject *parent, const QVariantList &da
 
 IMPersonsDataSource::~IMPersonsDataSource()
 {
+    delete d;
 }
 
 QVariant IMPersonsDataSource::dataForContact(const QString &contactId, int role) const

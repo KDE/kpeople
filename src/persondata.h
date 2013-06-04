@@ -48,6 +48,8 @@ class KPEOPLE_EXPORT PersonData : public QObject
 
         PersonData(const QString &uri, QObject *parent = 0);
 
+        virtual ~PersonData();
+
         /** @returns the uri of the current person */
         QString uri() const;
 

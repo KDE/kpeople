@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 
     DuplicatesFinder* f = new DuplicatesFinder(&model);
     QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
-    f->start();
+    QObject::connect(&model, SIGNAL(modelInitialized()), f, SLOT(start()));
     
     app.exec();
 }

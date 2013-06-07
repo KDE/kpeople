@@ -106,6 +106,8 @@ public:
      */
     PersonsModel(Features mandatoryFeatures = 0, Features optionalFeatures = 0, QObject *parent = 0);
 
+    virtual ~PersonsModel();
+
     /**
      * Sets the features we want to construct a query for; this starts populating the model
      * @p mandatoryFeatures features we want to be sure the contact has

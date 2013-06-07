@@ -92,6 +92,11 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
     new ResourceWatcherService(this);
 }
 
+PersonsModel::~PersonsModel()
+{
+    delete d_ptr;
+}
+
 template <class T>
 QList<QStandardItem*> toStandardItems(const QList<T*> &items)
 {

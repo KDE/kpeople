@@ -19,46 +19,146 @@
 
 #include "personsmodelfeature.h"
 
-QHash<QString, PersonsModel::Role> PersonsModelFeature::bindingsMap() const
+#include <Nepomuk2/Vocabulary/NCO>
+
+class PersonsModelFeaturePrivate : public QSharedData
 {
-    return m_bindingsMap;
+public:
+    QHash<QString, int> bindingsMap;
+    QString queryPart;
+    bool isOptional;
+    QUrl watcherProperty;
+};
+
+PersonsModelFeature::PersonsModelFeature()
+: d (new PersonsModelFeaturePrivate)
+{
 }
 
-void PersonsModelFeature::setBindingsMap(QHash<QString, PersonsModel::Role> bindingsMap)
+PersonsModelFeature::PersonsModelFeature(const PersonsModelFeature &other)
+: d (other.d)
 {
-    m_bindingsMap = bindingsMap;
+}
+
+PersonsModelFeature::~PersonsModelFeature()
+{
+    //note do not need to delete d as it is a QSharedData
+}
+
+
+QHash<QString, int> PersonsModelFeature::bindingsMap() const
+{
+    return d->bindingsMap;
+}
+
+void PersonsModelFeature::setBindingsMap(QHash<QString, int> bindingsMap)
+{
+    d->bindingsMap = bindingsMap;
 }
 
 void PersonsModelFeature::setQueryPart(const QString &part)
 {
-    m_queryPart = part;
+    d->queryPart = part;
 }
 
 QString PersonsModelFeature::queryPart() const
 {
-    if (m_isOptional) {
-        return QString("OPTIONAL { %1 } ").arg(m_queryPart);
+    if (d->isOptional) {
+        return QString("OPTIONAL { %1 } ").arg(d->queryPart);
     } else {
-        return m_queryPart;
+        return d->queryPart;
     }
 }
 
 bool PersonsModelFeature::isOptional() const
 {
-    return m_isOptional;
+    return d->isOptional;
 }
 
 void PersonsModelFeature::setOptional(bool optional)
 {
-    m_isOptional = optional;
+    d->isOptional = optional;
 }
 
 QUrl PersonsModelFeature::watcherProperty() const
 {
-    return m_watcherProperty;
+    return d->watcherProperty;
 }
 
 void PersonsModelFeature::setWatcherProperty(const QUrl &property)
 {
-    m_watcherProperty = property;
+    d->watcherProperty = property;
+}
+
+
+PersonsModelFeature PersonsModelFeature::avatarModelFeature(bool optional)
+{
+    PersonsModelFeature avatarsFeature;
+    avatarsFeature.setQueryPart(QString::fromUtf8(
+        "?uri      nco:photo    ?phRes. "
+        "?phRes    nie:url      ?nie_url. "));
+    QHash<QString, int> pb;
+    pb.insert("nie_url", PersonsModel::PhotoRole);
+    avatarsFeature.setBindingsMap(pb);
+    avatarsFeature.setOptional(optional);
+    avatarsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::photo());
+    return avatarsFeature;
+}
+
+PersonsModelFeature PersonsModelFeature::emailModelFeature(bool optional)
+{
+    PersonsModelFeature emailsFeature;
+    emailsFeature.setQueryPart(QString::fromUtf8(
+        "?uri                    nco:hasEmailAddress    ?nco_hasEmailAddress. "
+        "?nco_hasEmailAddress    nco:emailAddress       ?nco_emailAddress. "));
+    QHash<QString, int> eb;
+    eb.insert("nco_emailAddress", PersonsModel::EmailRole);
+    emailsFeature.setBindingsMap(eb);
+    emailsFeature.setOptional(optional);
+    emailsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasEmailAddress());
+    return emailsFeature;
+}
+
+PersonsModelFeature PersonsModelFeature::fullNameModelFeature(bool optional)
+{
+    PersonsModelFeature fullNameFeature;
+    fullNameFeature.setQueryPart(QString::fromUtf8(
+        "?uri                    nco:fullname    ?nco_fullname. "));
+    QHash<QString, int> fnb;
+    fnb.insert("nco_fullname", PersonsModel::NameRole);
+    fullNameFeature.setBindingsMap(fnb);
+    fullNameFeature.setOptional(optional);
+    return fullNameFeature;
+}
+
+PersonsModelFeature PersonsModelFeature::groupsModelFeature(bool optional)
+{
+    PersonsModelFeature groupsFeature;
+    groupsFeature.setQueryPart(QString::fromUtf8(
+        "?uri                   nco:belongsToGroup      ?nco_belongsToGroup . "
+        "?nco_belongsToGroup    nco:contactGroupName    ?nco_contactGroupName . "));
+    QHash<QString, int> gb;
+    gb.insert("nco_contactGroupName", PersonsModel::ContactGroupsRole);
+    groupsFeature.setBindingsMap(gb);
+    groupsFeature.setOptional(optional);
+    groupsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::belongsToGroup());
+    return groupsFeature;
+}
+
+PersonsModelFeature PersonsModelFeature::imModelFeature(bool optional)
+{
+    PersonsModelFeature imFeature;
+    imFeature.setQueryPart(QString::fromUtf8(
+        "?uri                 nco:hasIMAccount     ?nco_hasIMAccount. "
+        "?nco_hasIMAccount    nco:imNickname       ?nco_imNickname. "
+        "?nco_hasIMAccount    nco:imID             ?nco_imID. "
+        "?nco_hasIMAccount    nco:imAccountType    ?nco_imAccountType. "));
+    QHash<QString, int> b;
+    b.insert("nco_imNickname", PersonsModel::NickRole);
+    b.insert("nco_imID", PersonsModel::IMRole);
+    b.insert("nco_imImAcountType", PersonsModel::IMAccountTypeRole);
+    imFeature.setBindingsMap(b);
+    imFeature.setOptional(optional);
+    imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount());
+    return imFeature;
 }

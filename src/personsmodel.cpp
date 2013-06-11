@@ -467,6 +467,7 @@ ContactItem* PersonsModel::contactForIMAccount(const QUrl &uri) const
 
 void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
 {
+    Q_ASSERT(!contacts.isEmpty());
     Nepomuk2::SimpleResource newPimoPerson;
     newPimoPerson.addType(Nepomuk2::Vocabulary::PIMO::Person());
 
@@ -484,9 +485,9 @@ void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
 
 void PersonsModel::createPersonFromIndexes(const QList<QModelIndex> &indexes)
 {
+    Q_ASSERT(!indexes.isEmpty());
     QList<QUrl> personUris;
     QList<QUrl> contactUris;
-
 
     Q_FOREACH(const QModelIndex &index, indexes) {
         if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {

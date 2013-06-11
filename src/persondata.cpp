@@ -170,7 +170,7 @@ void PersonData::setUri(const QString &uri)
 bool PersonData::isValid() const
 {
     Q_D(const PersonData);
-    return d->contactResources.isEmpty();
+    return !d->contactResources.isEmpty();
 }
 
 QString PersonData::status() const

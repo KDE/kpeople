@@ -1,5 +1,6 @@
 /*
     Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -55,7 +56,7 @@ public:
     virtual ~PersonsModelFeature();
 
     /** Set the relation between the binding in the SopranoQueryResult and the model roles
-    *   Model data is automatically set for any item with
+    *   Model data is automatically set for any item in the map
     */
     void setBindingsMap(QHash<QString, int> bindingsMap);
     QHash<QString, int> bindingsMap() const;
@@ -64,6 +65,7 @@ public:
     *  query should set one or more parameters used in the binding map
     *
     *  ?uri contains the URI for the current contact
+    *  The selected variables are automatically inferred from this part of the query
     *
     *  The query can return multiple values. This will be handled by the model.
     */
@@ -94,8 +96,6 @@ public:
     static PersonsModelFeature avatarModelFeature(bool optional=true);
     static PersonsModelFeature emailModelFeature(bool optional=true);
     static PersonsModelFeature fullNameModelFeature(bool optional=true);
-
-
 
 private:
     QSharedDataPointer<PersonsModelFeaturePrivate> d;

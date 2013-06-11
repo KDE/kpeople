@@ -172,7 +172,6 @@ void PersonDataTests::contactFromContactID()
 
 void PersonDataTests::miscTests()
 {
-    return;
     PersonData personData;
     personData.uri();
     personData.name();
@@ -188,6 +187,8 @@ void PersonDataTests::miscTests()
 
     PersonData test2;
     test2.setContactId(QLatin1String("IDThatDoesNotExist"));
+    QCOMPARE(test2.isValid(), false);
+
     test2.name();
 }
 

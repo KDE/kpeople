@@ -100,6 +100,7 @@ void PersonData::setContactId(const QString &id)
     QString uri;
     while (it.next()) {
         uri = it[0].uri().toString();
+        break;
     }
 
     if (d->uri != uri) {

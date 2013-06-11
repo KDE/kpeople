@@ -119,7 +119,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 
     m_mainLayout->addSpacerItem(new QSpacerItem(32, 32, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
-    m_person = new PersonData(QString(), this);
+    m_person = new PersonData(this);
 
     setLayout(m_mainLayout);
 }

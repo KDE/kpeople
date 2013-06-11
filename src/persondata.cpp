@@ -46,6 +46,12 @@ using namespace Soprano::Vocabulary;
 
 class PersonDataPrivate {
 public:
+    PersonDataPrivate(PersonData* q)
+    {
+        dataSourceWatcher = new DataSourceWatcher(q);
+        q->connect(dataSourceWatcher, SIGNAL(contactChanged(QUrl)), q, SIGNAL(dataChanged()));
+    }
+
     QString uri;
     QString id;
     QPointer<Nepomuk2::ResourceWatcher> watcher;
@@ -56,16 +62,13 @@ public:
 
 PersonData::PersonData(QObject *parent)
     : QObject(parent),
-    d_ptr(new PersonDataPrivate)
+    d_ptr(new PersonDataPrivate(this))
 {
-    Q_D(PersonData);
-    d->dataSourceWatcher = new DataSourceWatcher(this);
-    connect(d->dataSourceWatcher, SIGNAL(contactChanged(QUrl)), SIGNAL(dataChanged()));
 }
 
 PersonData::PersonData(const QString &uri, QObject *parent)
     : QObject(parent),
-      d_ptr(new PersonDataPrivate)
+      d_ptr(new PersonDataPrivate(this))
 {
     setUri(uri);
 }

@@ -142,18 +142,15 @@ public:
 
     QModelIndex indexForUri(const QUrl &uri) const;
 
-    void findDuplicates();
 
 Q_SIGNALS:
     void modelInitialized();
-    void duplicatesFound(QHash<QString, QSet<QPersistentModelIndex> > duplicates);
 
 private Q_SLOTS:
     void jobFinished(KJob *job);
     void query(const QString &queryString);
     void nextReady(Soprano::Util::AsyncQuery *query);
     void queryFinished(Soprano::Util::AsyncQuery *query);
-    void findDuplicatesFinished(KJob *finder);
     void contactChanged(const QUrl &uri);
 
 private:

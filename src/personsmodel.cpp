@@ -435,6 +435,16 @@ QModelIndex PersonsModel::indexForUri(const QUrl &uri) const
     return QModelIndex();
 }
 
+QList<QModelIndex> PersonsModel::indexesForUris(const QVariantList& uris) const
+{
+    Q_ASSERT(!uris.isEmpty());
+    QList<QModelIndex> ret;
+    foreach(const QVariant& uri, uris) {
+        ret += indexForUri(uri.toUrl());
+    }
+    return ret;
+}
+
 void PersonsModel::addPerson(const Nepomuk2::Resource &res)
 {
     Q_ASSERT(!indexForUri(res.uri()).isValid());

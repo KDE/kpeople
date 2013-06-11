@@ -127,7 +127,7 @@ public:
      * Creates a pimo:person from indexes, checking if one of them isn't person already and
      * adding the contacts to it if it is
      */
-    void createPersonFromIndexes(const QList<QModelIndex> &indexes);
+    Q_SCRIPTABLE void createPersonFromIndexes(const QList<QModelIndex> &indexes);
 
     /** Adds contacts to existing PIMO:Person */
     void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
@@ -140,8 +140,9 @@ public:
     //FIXME: maybe merge with ^ ?
     void removePersonFromModel(const QModelIndex &index);
 
-    QModelIndex indexForUri(const QUrl &uri) const;
-
+    Q_SCRIPTABLE QModelIndex indexForUri(const QUrl &uri) const;
+    
+    Q_SCRIPTABLE QList<QModelIndex> indexesForUris(const QVariantList& uris) const;
 
 Q_SIGNALS:
     void modelInitialized();

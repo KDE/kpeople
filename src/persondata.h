@@ -56,6 +56,9 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** sets new contact uri, all data are refetched */
         void setUri(const QString &uri);
 
+        /** Returns if the URI represents a valid person or contact*/
+        bool isValid() const;
+
         /** @p id will specify the person we're offering by finding the pimo:Person related to it */
         void setContactId(const QString &id);
         QString contactId() const;

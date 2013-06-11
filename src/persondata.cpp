@@ -166,6 +166,10 @@ void PersonData::setUri(const QString &uri)
     emit dataChanged();
 }
 
+bool PersonData::isValid() const
+{
+    return d->contactResources.isEmpty();
+}
 
 QString PersonData::status() const
 {

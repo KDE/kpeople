@@ -135,7 +135,7 @@ void PersonDataTests::contactProperties()
     //create a simple contact with name + email
     PersonData personData;
     personData.setUri(m_contact1Uri.toString());
-
+    QCOMPARE(personData.isValid(), true);
     QCOMPARE(personData.uri(), m_contact1Uri.toString());
     QCOMPARE(personData.isPerson(), false);
     QCOMPARE(personData.contactResources().size(), 1);
@@ -148,6 +148,7 @@ void PersonDataTests::personProperties()
 {
     PersonData personData;
     personData.setUri(m_personAUri.toString());
+    QCOMPARE(personData.isValid(), true);
     QCOMPARE(personData.isPerson(), true);
     QCOMPARE(personData.contactResources().size(), 2);
     QCOMPARE(personData.name(), QLatin1String("Person A"));
@@ -183,6 +184,7 @@ void PersonDataTests::miscTests()
     personData.imAccounts();
     personData.isPerson();
     personData.phones();
+    QCOMPARE(personData.isValid(), false);
 
     PersonData test2;
     test2.setContactId(QLatin1String("IDThatDoesNotExist"));

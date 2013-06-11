@@ -205,6 +205,10 @@ QString PersonData::name() const
 {
     Q_D(const PersonData);
 
+    if (d->contactResources.isEmpty()) {
+        return QString();
+    }
+
     QString label;
     //simply pick the first for now
     Nepomuk2::Resource r = d->contactResources.first();

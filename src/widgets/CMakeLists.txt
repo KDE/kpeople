@@ -31,7 +31,7 @@ install (TARGETS kpeoplewidgets
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES
+install (FILES persondetailsview.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets
          COMPONENT Devel
 )

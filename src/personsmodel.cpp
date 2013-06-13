@@ -48,7 +48,7 @@ struct PersonsModelPrivate {
     QHash<QUrl, ContactItem*> contacts; //all contacts in the model
     QHash<QUrl, PersonItem*> persons;   //all persons
     QList<QUrl> pimoOccurances;         //contacts that are groundingOccurrences of persons
-    QHash<QString, PersonsModel::Role> bindingRoleMap;
+    QHash<QString, int> bindingRoleMap;
     DataSourceWatcher *dataSourceWatcher;
 
     PersonsModel::Features mandatoryFeatures;
@@ -117,111 +117,56 @@ QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFe
         return features;
     }
 
-    PersonsModelFeature imFeature;
-    imFeature.setQueryPart(QString::fromUtf8(
-        "?uri                 nco:hasIMAccount     ?nco_hasIMAccount. "
-        "?nco_hasIMAccount    nco:imNickname       ?nco_imNickname. "
-        "?nco_hasIMAccount    nco:imID             ?nco_imID. "
-        "?nco_hasIMAccount    nco:imAccountType    ?nco_imAccountType. "));
-    QHash<QString, PersonsModel::Role> b;
-    b.insert("nco_imNickname", NickRole);
-    b.insert("nco_imID", IMRole);
-    b.insert("nco_imImAcountType", IMAccountTypeRole);
-    imFeature.setBindingsMap(b);
-    imFeature.setOptional(false);
-    imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount());
-
-    PersonsModelFeature groupsFeature;
-    groupsFeature.setQueryPart(QString::fromUtf8(
-        "?uri                   nco:belongsToGroup      ?nco_belongsToGroup . "
-        "?nco_belongsToGroup    nco:contactGroupName    ?nco_contactGroupName . "));
-    QHash<QString, PersonsModel::Role> gb;
-    gb.insert("nco_contactGroupName", ContactGroupsRole);
-    groupsFeature.setBindingsMap(gb);
-    groupsFeature.setOptional(false);
-    groupsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::belongsToGroup());
-
-    PersonsModelFeature avatarsFeature;
-    avatarsFeature.setQueryPart(QString::fromUtf8(
-        "?uri      nco:photo    ?phRes. "
-        "?phRes    nie:url      ?nie_url. "));
-    QHash<QString, PersonsModel::Role> pb;
-    pb.insert("nie_url", PhotoRole);
-    avatarsFeature.setBindingsMap(pb);
-    avatarsFeature.setOptional(false);
-    avatarsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::photo());
-
-    PersonsModelFeature emailsFeature;
-    emailsFeature.setQueryPart(QString::fromUtf8(
-        "?uri                    nco:hasEmailAddress    ?nco_hasEmailAddress. "
-        "?nco_hasEmailAddress    nco:emailAddress       ?nco_emailAddress. "));
-    QHash<QString, PersonsModel::Role> eb;
-    eb.insert("nco_emailAddress", EmailRole);
-    emailsFeature.setBindingsMap(eb);
-    emailsFeature.setOptional(false);
-    emailsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasEmailAddress());
-
-    PersonsModelFeature fullNameFeature;
-    fullNameFeature.setQueryPart(QString::fromUtf8(
-        "?uri                    nco:fullname    ?nco_fullname. "));
-    QHash<QString, PersonsModel::Role> fnb;
-    fnb.insert("nco_fullname", NameRole);
-    fullNameFeature.setBindingsMap(fnb);
-    fullNameFeature.setOptional(false);
+    //FIXME there is a bug in which a feature is in both mandatory and optional it is included twice.
 
     if (mandatoryFeatures & PersonsModel::FeatureIM) {
         kDebug() << "Adding mandatory IM";
-        features << imFeature;
+        features << PersonsModelFeature::imModelFeature(false);
     }
 
     if (mandatoryFeatures & PersonsModel::FeatureAvatars) {
         kDebug() << "Adding mandatory Avatars";
-        features << avatarsFeature;
+        features << PersonsModelFeature::avatarModelFeature(false);
     }
 
     if (mandatoryFeatures & PersonsModel::FeatureGroups) {
         kDebug() << "Adding mandatory Groups";
-        features << groupsFeature;
+        features << PersonsModelFeature::groupsModelFeature(false);
     }
 
     if (mandatoryFeatures & PersonsModel::FeatureEmails) {
         kDebug() << "Adding mandatory Emails";
-        features << emailsFeature;
+        features << PersonsModelFeature::emailModelFeature(false);
     }
 
     if (mandatoryFeatures & PersonsModel::FeatureFullName) {
         kDebug() << "Adding mandatory FullName";
-        features << fullNameFeature;
+        features << PersonsModelFeature::fullNameModelFeature(false);
     }
 
     if (optionalFeatures & PersonsModel::FeatureIM) {
         kDebug() << "Adding optional IM";
-        imFeature.setOptional(true);
-        features << imFeature;
+        features << PersonsModelFeature::imModelFeature(true);
     }
 
     if (optionalFeatures & PersonsModel::FeatureAvatars) {
         kDebug() << "Adding optional Avatars";
-        avatarsFeature.setOptional(true);
-        features << avatarsFeature;
+        features << PersonsModelFeature::avatarModelFeature(true);
     }
 
     if (optionalFeatures & PersonsModel::FeatureGroups) {
         kDebug() << "Adding optional Groups";
-        groupsFeature.setOptional(true);
-        features << groupsFeature;
+        features << PersonsModelFeature::groupsModelFeature(true);
     }
 
     if (optionalFeatures & PersonsModel::FeatureEmails) {
         kDebug() << "Adding optional Emails";
-        emailsFeature.setOptional(true);
-        features << emailsFeature;
+        features << PersonsModelFeature::emailModelFeature(true);
     }
 
     if (optionalFeatures & PersonsModel::FeatureFullName) {
         kDebug() << "Adding optional FullName";
-        fullNameFeature.setOptional(true);
-        features << fullNameFeature;
+        features << PersonsModelFeature::fullNameModelFeature(true);
     }
 
     return features;
@@ -317,7 +262,7 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 
     //iterate over the results and add the wanted properties into the contact
     foreach (const QString &bName, query->bindingNames()) {
-        QHash<QString, Role>::const_iterator it = d->bindingRoleMap.constFind(bName);
+        QHash<QString, int>::const_iterator it = d->bindingRoleMap.constFind(bName);
         if (it == d->bindingRoleMap.constEnd()) {
             continue;
         }

@@ -77,6 +77,7 @@ QVariant PersonItem::data(int role) const
     QVariantList ret;
     for (int i = 0; i < rowCount(); i++) {
         QVariant value = child(i)->data(role);
+        //these roles must return single QVariant
         if ((role == Qt::DisplayRole || role == Qt::DecorationRole || role == PersonsModel::UriRole) && !value.isNull()) {
             return value;
         }

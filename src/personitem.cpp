@@ -71,7 +71,29 @@ QVariantList PersonItem::queryChildrenForRoleList(int role) const
 QVariant PersonItem::data(int role) const
 {
     if (role == PersonsModel::PresenceTypeRole) {
-        //TODO: return most online presence
+        QVariantList presences = queryChildrenForRoleList(PersonsModel::PresenceTypeRole);
+        //FIXME? this is convenient, but in the worst case it has to go through the list 6x and do lots of comparisons
+        //       possible optimization would be to go through it once and find the "most online value", this would need
+        //       helper function with priorities for each string presence
+        if (presences.contains("available")) {
+            return QVariant("available");
+        }
+        if (presences.contains("away")) {
+            return QVariant("away");
+        }
+        if (presences.contains("busy") || presences.contains("dnd")) {
+            return QVariant("busy");
+        }
+        if (presences.contains("xa")) {
+            return QVariant("xa");
+        }
+        if (presences.contains("unknown")) {
+            return QVariant("unknown");
+        }
+
+        return QVariant("offline");
+    }
+
     }
 
     QVariantList ret;

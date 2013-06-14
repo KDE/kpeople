@@ -523,23 +523,24 @@ void PersonsModel::createPersonFromIndexes(const QList<QModelIndex> &indexes)
     QList<QUrl> personUris;
     QList<QUrl> contactUris;
 
-//     Q_FOREACH(const QModelIndex &index, indexes) {
-//         if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
-//             personUris.append(index.data(PersonsModel::UriRole).toUrl());
-//         } else {
-//             contactUris.append(index.data(PersonsModel::UriRole).toUrl());
-//         }
-//     }
-//
-//     if (personUris.isEmpty()) {
-//         kDebug() << "Got only contacts, creating pimo:person";
-//         createPersonFromContacts(contactUris);
-//     } else if (personUris.size() == 1) {
-//         kDebug() << "Got one pimo:person, adding contacts to it";
-//         addContactsToPerson(personUris.first(), contactUris);
-//     } else {
-//         kDebug() << "Got two pimo:persons, unsupported for now";
-//     }
+    Q_FOREACH(const QModelIndex &index, indexes) {
+
+        if (index.data(PersonsModel::UriRole).toString().left(10).compare("fakeperson") == 0) {
+            contactUris.append(index.data(PersonsModel::ChildContactUriRole).toUrl());
+        } else {
+            personUris.append(index.data(PersonsModel::UriRole).toUrl());
+        }
+    }
+
+    if (personUris.isEmpty()) {
+        kDebug() << "Got only contacts, creating pimo:person";
+        createPersonFromContacts(contactUris);
+    } else if (personUris.size() == 1) {
+        kDebug() << "Got one pimo:person, adding contacts to it";
+        addContactsToPerson(personUris.first(), contactUris);
+    } else {
+        kDebug() << "Got two pimo:persons, unsupported for now";
+    }
 }
 
 void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts)

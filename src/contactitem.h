@@ -59,7 +59,6 @@ public:
 
     void finishLoadingData();
 
-    static BasePersonsDataSource* imPlugin();
 private:
     ContactItemPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(ContactItem)

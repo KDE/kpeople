@@ -62,8 +62,6 @@ public:
     }
 };
 
-static BasePersonsDataSource *s_imPlugin = 0;
-
 ContactItem::ContactItem(const QUrl &uri)
     : d_ptr(new ContactItemPrivate)
 {
@@ -157,25 +155,18 @@ QVariant ContactItem::data(int role) const
                 return data(PersonsModel::PhonesRole);
             }
 
-            return QString("Unknown contact"); //FIXME: temporary
+            return QString("Unknown contact");
+        case Qt::DecorationRole: {
+            const QVariantList photos = d->data.value(PersonsModel::PhotosRole).toList();
+            return photos.isEmpty() ? KIcon("im-user") : KIcon(photos.first().toUrl().toLocalFile());
+        }
         case PersonsModel::UriRole: return d->uri; break;
         case PersonsModel::PresenceTypeRole:
         case PersonsModel::PresenceDisplayRole:
         case PersonsModel::PresenceDecorationRole:
             return PersonPluginManager::presencePlugin()->dataForContact(data(PersonsModel::IMsRole).toString(), role);
-//         case PersonsModel::ContactsCountRole: return 1;
-//         case PersonsModel::ResourceTypeRole:
-//             return PersonsModel::Contact;
-
-        case Qt::DecorationRole: {
-            QVariantList photos = d->data.value(PersonsModel::PhotosRole).toList();
-            return photos.isEmpty() ? KIcon("im-user") : KIcon(photos.first().toUrl().toLocalFile());
-        }
-//         case PersonsModel::PresenceDisplayRole:
-//         case PersonsModel::PresenceDecorationRole:
-//         case PersonsModel::PresenceTypeRole:
-//             return ContactItem::imPlugin()->dataForContact(data(PersonsModel::IMsRole).toString(), PersonsModel::PresenceTypeRole);
     }
+
     return QStandardItem::data(role);
 }
 
@@ -203,18 +194,4 @@ void ContactItem::finishLoadingData()
     Q_D(ContactItem);
     d->isBeingUpdated = false;
     emitDataChanged();
-}
-
-BasePersonsDataSource* ContactItem::imPlugin()
-{
-    if (!s_imPlugin) {
-        KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/ModelPlugin");
-        if (imService.isNull()) {
-            s_imPlugin = new BasePersonsDataSource();
-        } else {
-            s_imPlugin = imService->createInstance<BasePersonsDataSource>(0, QVariantList(), 0);
-        }
-    }
-
-    return s_imPlugin;
 }

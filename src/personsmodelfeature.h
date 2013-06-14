@@ -55,6 +55,8 @@ public:
     PersonsModelFeature(const PersonsModelFeature &other);
     virtual ~PersonsModelFeature();
 
+    PersonsModelFeature &operator=(const PersonsModelFeature &other);
+
     /** Set the relation between the binding in the SopranoQueryResult and the model roles
     *   Model data is automatically set for any item in the map
     */

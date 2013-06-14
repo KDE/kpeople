@@ -94,6 +94,9 @@ QVariant PersonItem::data(int role) const
         return QVariant("offline");
     }
 
+    if (role == PersonsModel::UriRole) {
+        //uri for PersonItem is set using setData(...), so we need to query it from there
+        return QStandardItem::data(role);
     }
 
     QVariantList ret;

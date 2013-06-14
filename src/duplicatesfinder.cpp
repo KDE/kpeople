@@ -18,7 +18,7 @@
 */
 
 #include "duplicatesfinder.h"
-#include "persons-model.h"
+#include "personsmodel.h"
 #include <QDebug>
 
 DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)

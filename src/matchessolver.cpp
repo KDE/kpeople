@@ -19,7 +19,7 @@
 
 #include "matchessolver.h"
 #include "match.h"
-#include "persons-model.h"
+#include "personsmodel.h"
 #include <nepomuk2/datamanagement.h>
 #include <QUrl>
 

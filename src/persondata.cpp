@@ -19,9 +19,11 @@
 */
 
 #include "persondata.h"
-#include "persons-model.h"
-#include "person-item.h"
-#include "persons-presence-model.h"
+#include "personsmodel.h"
+#include "personitem.h"
+#include "personpluginmanager.h"
+#include "basepersonsdatasource.h"
+#include "datasourcewatcher.h"
 
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Query/Query>
@@ -33,34 +35,47 @@
 #include <Nepomuk2/Variant>
 
 #include <Soprano/Model>
+#include <Soprano/Vocabulary/NAO>
 #include <Soprano/QueryResultIterator>
 
 #include <KDebug>
+#include <QPointer>
 
 using namespace Nepomuk2::Vocabulary;
+using namespace Soprano::Vocabulary;
 
 class PersonDataPrivate {
 public:
+    PersonDataPrivate(PersonData* q)
+    {
+        dataSourceWatcher = new DataSourceWatcher(q);
+        q->connect(dataSourceWatcher, SIGNAL(contactChanged(QUrl)), q, SIGNAL(dataChanged()));
+    }
+
     QString uri;
     QString id;
     QPointer<Nepomuk2::ResourceWatcher> watcher;
+    DataSourceWatcher *dataSourceWatcher;
     Nepomuk2::Resource personResource;
     QList<Nepomuk2::Resource> contactResources;
 };
 
-K_GLOBAL_STATIC(PersonsPresenceModel, s_presenceModel)
-
 PersonData::PersonData(QObject *parent)
     : QObject(parent),
-    d_ptr(new PersonDataPrivate)
+    d_ptr(new PersonDataPrivate(this))
 {
 }
 
 PersonData::PersonData(const QString &uri, QObject *parent)
     : QObject(parent),
-      d_ptr(new PersonDataPrivate)
+      d_ptr(new PersonDataPrivate(this))
 {
     setUri(uri);
+}
+
+PersonData::~PersonData()
+{
+    delete d_ptr;
 }
 
 void PersonData::setContactId(const QString &id)
@@ -81,10 +96,11 @@ void PersonData::setContactId(const QString &id)
         "}").arg(id);
 
     Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparqlNoInference);
+    Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
     QString uri;
     while (it.next()) {
         uri = it[0].uri().toString();
+        break;
     }
 
     if (d->uri != uri) {
@@ -111,6 +127,7 @@ void PersonData::setUri(const QString &uri)
     d->uri = uri;
     d->contactResources.clear();
     d->personResource = Nepomuk2::Resource();
+    d->dataSourceWatcher->clearWatchedContacts();
 
     Nepomuk2::Resource r(uri);
 
@@ -138,13 +155,23 @@ void PersonData::setUri(const QString &uri)
     connect(d->watcher.data(), SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SIGNAL(dataChanged()));
 
-    connect(s_presenceModel, SIGNAL(dataChanged(QModelIndex,QModelIndex)),
-            this, SLOT(presenceModelChange(QModelIndex,QModelIndex)));
+
+    //watch for IM changes
+    Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
+        Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
+            d->dataSourceWatcher->watchContact(im.property(NCO::imID()).toString(), resource.uri());
+        }
+    }
 
     emit uriChanged();
     emit dataChanged();
 }
 
+bool PersonData::isValid() const
+{
+    Q_D(const PersonData);
+    return !d->contactResources.isEmpty();
+}
 
 QString PersonData::status() const
 {
@@ -155,7 +182,7 @@ QString PersonData::status() const
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
         if (resource.hasProperty(NCO::hasIMAccount())) {
             QString imID = resource.property(NCO::hasIMAccount()).toResource().property(NCO::imID()).toString();
-//             presenceList << s_presenceModel->dataForContactId(imID, PersonsModel::StatusStringRole).toString();
+            presenceList << PersonPluginManager::presencePlugin()->dataForContact(imID, PersonsModel::PresenceTypeRole).toString();
         }
     }
 
@@ -179,17 +206,27 @@ QString PersonData::name() const
 {
     Q_D(const PersonData);
 
+    if (d->contactResources.isEmpty()) {
+        return QString();
+    }
+
     QString label;
     //simply pick the first for now
     Nepomuk2::Resource r = d->contactResources.first();
 
-    label = r.property(NCO::fullname()).toString();
-
-    if (!label.isEmpty()) {
-        return label;
+    if (r.hasProperty(NCO::nickname())) {
+        label = r.property(NCO::nickname()).toString();
+    } else if (r.hasProperty(NAO::prefLabel())) {
+        label = r.property(NAO::prefLabel()).toString();
+    } else if (r.hasProperty(NCO::fullname())) {
+        label = r.property(NCO::fullname()).toString();
+    } else if (r.hasProperty(NCO::hasIMAccount())) {
+        label = r.property(NCO::hasIMAccount()).toResource().property(NCO::imNickname()).toString();
+    } else if (r.hasProperty(NCO::hasEmailAddress())) {
+        label = r.property(NCO::hasEmailAddress()).toResource().property(NCO::emailAddress()).toString();
+    } else if (r.hasProperty(NCO::hasPhoneNumber())) {
+        label = r.property(NCO::hasPhoneNumber()).toResource().property(NCO::phoneNumber()).toString();
     }
-
-    label = r.property(NCO::hasIMAccount()).toResource().property(NCO::imNickname()).toString();
 
     if (!label.isEmpty()) {
         return label;
@@ -205,10 +242,8 @@ QStringList PersonData::emails() const
     QStringList emails;
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
-        if (resource.hasProperty(NCO::hasEmailAddress())) {
-            Q_FOREACH (const Nepomuk2::Resource &email, resource.property(NCO::hasEmailAddress()).toResourceList()) {
-                emails << email.property(NCO::emailAddress()).toString();
-            }
+        Q_FOREACH (const Nepomuk2::Resource &email, resource.property(NCO::hasEmailAddress()).toResourceList()) {
+            emails << email.property(NCO::emailAddress()).toString();
         }
     }
 
@@ -222,10 +257,8 @@ QStringList PersonData::phones() const
     QStringList phones;
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
-        if (resource.hasProperty(NCO::hasPhoneNumber())) {
-            Q_FOREACH (const Nepomuk2::Resource &phone, resource.property(NCO::hasPhoneNumber()).toResourceList()) {
-                phones << phone.property(NCO::phoneNumber()).toString();
-            }
+        Q_FOREACH (const Nepomuk2::Resource &phone, resource.property(NCO::hasPhoneNumber()).toResourceList()) {
+            phones << phone.property(NCO::phoneNumber()).toString();
         }
     }
 
@@ -239,12 +272,10 @@ QStringList PersonData::imAccounts() const
     QStringList ims;
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
-        if (resource.hasProperty(NCO::hasIMAccount())) {
-            Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
-                ims << im.property(NCO::imAccountType()).toString();
-                ims << im.property(NCO::imNickname()).toString();
-                ims << im.property(NCO::imID()).toString();
-            }
+        Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
+            ims << im.property(NCO::imAccountType()).toString();
+            ims << im.property(NCO::imNickname()).toString();
+            ims << im.property(NCO::imID()).toString();
         }
     }
 
@@ -263,12 +294,9 @@ KDateTime PersonData::birthday() const
     KDateTime bd;
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
-        if (resource.hasProperty(NCO::birthDate())) {
-
-            KDateTime bdTemp(resource.property(NCO::birthDate()).toDateTime());
-            if (bdTemp.isValid() && bdTemp.dateTime().toMSecsSinceEpoch() > bd.dateTime().toMSecsSinceEpoch()) {
-                bd = bdTemp;
-            }
+        KDateTime bdTemp(resource.property(NCO::birthDate()).toDateTime());
+        if (bdTemp.isValid() && bdTemp.dateTime().toMSecsSinceEpoch() > bd.dateTime().toMSecsSinceEpoch()) {
+            bd = bdTemp;
         }
     }
 
@@ -295,20 +323,12 @@ QStringList PersonData::groups() const
     return groups;
 }
 
-// QStringList PersonData::bareContacts() const
-// {
-//     return personIndex().data(PersonsModel::ContactIdRole).toStringList();
-// }
-//
-// QModelIndex PersonData::personIndex() const
-// {
-//     Q_D(const PersonData);
-//     Q_ASSERT(d->model->rowCount()>0);
-//     QModelIndex idx = d->model->index(0,0);
-//     Q_ASSERT(idx.isValid());
-//     return idx;
-// }
-//
+QList< Nepomuk2::Resource > PersonData::contactResources() const
+{
+    Q_D(const PersonData);
+    return d->contactResources;
+}
+
 
 bool PersonData::isPerson() const
 {
@@ -332,17 +352,4 @@ QString PersonData::findMostOnlinePresence(const QStringList &presences) const
     }
 
     return "offline";
-}
-
-void PersonData::presenceModelChange(const QModelIndex &topLeft, const QModelIndex &bottomRight)
-{
-    Q_D(PersonData);
-
-    if (topLeft != bottomRight) {
-        return;
-    }
-
-    if (topLeft.data(PersonsModel::UriRole).toString() == d->uri) {
-        emit dataChanged();
-    }
 }

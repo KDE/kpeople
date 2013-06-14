@@ -33,8 +33,10 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
     public:
         explicit DuplicatesFinder(PersonsModel *model, QObject *parent = 0);
 
-        virtual void start();
         QList<Match> results() const;
+
+    public Q_SLOTS:
+        virtual void start();
 
     private Q_SLOTS:
         void doSearch();

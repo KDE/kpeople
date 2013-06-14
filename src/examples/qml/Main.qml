@@ -14,9 +14,11 @@ Rectangle {
         id: filteredPeople
         sortRole: "display"
         sortCaseSensitivity: Qt.CaseInsensitive
-        sourceModel: PersonsPresenceModel {
+        sourceModel: PersonsModel {
             id: people
-            sourceModel: PersonsModel {}
+            Component.onCompleted: {
+                people.setQueryFlags(PersonsModel.FeatureNone, PersonsModel.FeatureAll);
+            }
         }
         filterRegExp: searchField.text
     }
@@ -63,12 +65,12 @@ Rectangle {
                     toMergeItems.append({ "uri": uri, "name": name })
             }
             
-            function uris() {
+            function indexes() {
                 var ret = new Array
                 for(var i=0; i<count; ++i) {
                     ret.push(get(i).uri)
                 }
-                return ret
+                return people.indexesForUris(ret)
             }
             
             function removeUri(uri) {
@@ -140,7 +142,7 @@ Rectangle {
                 Button {
                     text: "Merge!"
                     onClicked: {
-                        people.merge(toMergeItems.uris())
+                        people.createPersonFromIndexes(toMergeItems.indexes())
                         toMergeItems.clear()
                     }
                 }

@@ -28,7 +28,6 @@
 #include <QStringList>
 #include <KDateTime>
 
-class QModelIndex;
 namespace Nepomuk2 { class Resource; }
 struct PersonDataPrivate;
 
@@ -49,11 +48,16 @@ class KPEOPLE_EXPORT PersonData : public QObject
 
         PersonData(const QString &uri, QObject *parent = 0);
 
+        virtual ~PersonData();
+
         /** @returns the uri of the current person */
         QString uri() const;
 
         /** sets new contact uri, all data are refetched */
         void setUri(const QString &uri);
+
+        /** Returns if the URI represents a valid person or contact*/
+        bool isValid() const;
 
         /** @p id will specify the person we're offering by finding the pimo:Person related to it */
         void setContactId(const QString &id);
@@ -85,15 +89,14 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /** @returns list of groups the contact is part of */
         QStringList groups() const;
 
+        QList<Nepomuk2::Resource> contactResources() const;
+
     Q_SIGNALS:
         /** the person has changed */
         void uriChanged();
 
         /** Some of the person's data we're offering has changed */
         void dataChanged();
-
-    private Q_SLOTS:
-        void presenceModelChange(const QModelIndex &topLeft, const QModelIndex &bottomRight);
 
     private:
         Q_DECLARE_PRIVATE(PersonData)

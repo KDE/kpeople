@@ -1,0 +1,20 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=KPeople KTp Plugin
+Name[cs]=Modul KPeople KTp
+Name[nl]=KPeople KTp-plug-in
+Name[pt]='Plugin' do KPeople para o KTp
+Name[pt_BR]=Plugin do KTp para o KPeople
+Name[sk]=KPeople KTp Plugin
+Name[sv]=KPeople KTp-insticksprogram
+Name[uk]=Додаток KTp KPeople
+Name[x-test]=xxKPeople KTp Pluginxx
+Type=Service
+ServiceTypes=KPeople/Plugin
+X-KDE-Library=ktp_kpeople_plugin
+X-KDE-PluginInfo-Author=David Edmundson
+X-KDE-PluginInfo-Email=daivdedmundson@kde.org
+X-KDE-PluginInfo-Name=ktp
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-License=LGPL
+X-KDE-PluginInfo-EnabledByDefault=true

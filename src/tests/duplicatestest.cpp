@@ -19,9 +19,10 @@
 
 #include "duplicatestest.h"
 #include <duplicatesfinder.h>
-#include <persons-model.h>
-#include <person-item.h>
-#include <contact-item.h>
+
+#include <personsmodel.h>
+#include <personitem.h>
+#include <contactitem.h>
 
 #include <qtest_kde.h>
 #include <Nepomuk2/Vocabulary/NCO>
@@ -61,7 +62,7 @@ PersonItem* createPerson1Contact(PersonsModel::Role role, const QString& id, con
         contact->setContactData(PersonsModel::NickRole, nick);
     else
         contact->setContactData(PersonsModel::NickRole, id);
-    
+
     ret->appendRow(contact);
     return ret;
 }

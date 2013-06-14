@@ -20,13 +20,13 @@
 #include <QTreeView>
 #include <QDebug>
 #include <QTextStream>
-#include <persons-model.h>
+
+#include <personsmodel.h>
 #include <duplicatesfinder.h>
 #include <matchessolver.h>
+
 #include <cstdio>
 #include <iostream>
-
-PersonsModel model(0, PersonsModel::FeatureEmails | PersonsModel::FeatureIM);
 
 class ResultPrinter : public QObject
 {
@@ -39,7 +39,7 @@ class ResultPrinter : public QObject
                 QStringList roles;
                 QStringList rA, rB;
                 foreach(int i, it->role) {
-                    roles += model.roleNames()[i];
+                    roles += m_model->roleNames()[i];
                     rA += variantToString(it->indexA.data(it->role.first()));
                     rB += variantToString(it->indexB.data(it->role.first()));
                 }
@@ -60,7 +60,7 @@ class ResultPrinter : public QObject
             }
             
             if((m_action==Apply || m_action==Ask) && !res.isEmpty()) {
-                MatchesSolver* s = new MatchesSolver(res, &model, this);
+                MatchesSolver* s = new MatchesSolver(res, m_model, this);
                 connect(s, SIGNAL(finished(KJob*)), this, SLOT(matchesSolverDone(KJob*)));
                 s->start();
             } else
@@ -90,20 +90,23 @@ class ResultPrinter : public QObject
     public:
         enum MatchAction { Apply, NotApply, Ask };
         MatchAction m_action;
+        PersonsModel* m_model;
 };
 
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
-    
+    PersonsModel model(0, PersonsModel::FeatureEmails | PersonsModel::FeatureIM);
+
     ResultPrinter r;
+    r.m_model = &model;
     r.m_action = app.arguments().contains("--apply") ? ResultPrinter::Apply
                : app.arguments().contains("--ask") ? ResultPrinter::Ask
                : ResultPrinter::NotApply;
 
     DuplicatesFinder* f = new DuplicatesFinder(&model);
     QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
-    f->start();
+    QObject::connect(&model, SIGNAL(modelInitialized()), f, SLOT(start()));
     
     app.exec();
 }

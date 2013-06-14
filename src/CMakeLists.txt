@@ -3,23 +3,30 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 add_subdirectory(examples)
-# add_subdirectory(tests)
-# add_subdirectory(declarative)
+add_subdirectory(autotests)
+add_subdirectory(declarative)
+add_subdirectory(plugins)
+add_subdirectory(widgets)
+
 
 kde4_add_library (kpeople SHARED
-    persons-model-feature.cpp
-    contact-item.cpp
-    person-item.cpp
-    persons-model.cpp
-#     persondata.cpp
-    resource-watcher-service.cpp
-#     persons-presence-model.cpp
+    abstractpersonplugin.cpp
+    personsmodelfeature.cpp
+    contactitem.cpp
+    datasourcewatcher.cpp
+    personitem.cpp
+    personsmodel.cpp
+    persondata.cpp
+    resourcewatcherservice.cpp
 #     duplicatesfinder.cpp
 #     matchessolver.cpp
 #     match.cpp
-#     ktp-translation-proxy.cpp
-#     person-actions.cpp
-    base-persons-data-source.cpp
+    personactionsmodel.cpp
+    personpluginmanager.cpp
+    basepersonsdatasource.cpp
+    plugins/ktp-plugin/impersonsdatasource.cpp
+
+    ktptranslationproxy.cpp
 )
 
 target_link_libraries (kpeople
@@ -43,21 +50,21 @@ install (TARGETS kpeople
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES persons-model.h
+install (FILES personsmodel.h
                persondata.h
                kpeople_export.h
-#                persons-presence-model.h
-               ktp-translation-proxy.h
-               person-actions.h
-               base-persons-data-source.h
+               ktptranslationproxy.h
+               personactionsmodel.h
+               basepersonsdatasource.h
+               personpluginmanager.h
+
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
 )
 
 install (FILES
-         kpeople_model_plugin.desktop
+         kpeople_data_source.desktop
+         kpeople_plugin.desktop
          DESTINATION
          ${SERVICETYPES_INSTALL_DIR}
 )
-
-add_subdirectory(plugins)

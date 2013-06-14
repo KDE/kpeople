@@ -77,6 +77,9 @@ QVariant PersonItem::data(int role) const
     QVariantList ret;
     for (int i = 0; i < rowCount(); i++) {
         QVariant value = child(i)->data(role);
+        if ((role == Qt::DisplayRole || role == Qt::DecorationRole) && !value.isNull()) {
+            return value;
+        }
         if (value.type() == QVariant::List) {
             ret += value.toList();
         } else if (!value.isNull()) {

@@ -157,7 +157,7 @@ QVariant ContactItem::data(int role) const
                 return data(PersonsModel::PhonesRole);
             }
 
-            return QString("Unknown person"); //FIXME: temporary
+            return QString("Unknown contact"); //FIXME: temporary
         case PersonsModel::UriRole: return d->uri; break;
         case PersonsModel::PresenceTypeRole:
         case PersonsModel::PresenceDisplayRole:

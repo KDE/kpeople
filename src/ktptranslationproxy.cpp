@@ -71,35 +71,34 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
             return mapToSource(proxyIndex).data(PersonsModel::GroupsRole);
     }
 
-    const QString contactId = mapToSource(proxyIndex).data(PersonsModel::IMsRole).toString();
-    const KTp::ContactPtr contact = imPlugin->contactForContactId(contactId);
+    if (sourceModel()->rowCount(mapToSource(proxyIndex)) == 1) {
+        const QString contactId = mapToSource(proxyIndex).data(PersonsModel::IMsRole).toList().first().toString();
+        const KTp::ContactPtr contact = imPlugin->contactForContactId(contactId);
 
-    if (!contact.isNull()) {
-        switch (role) {
-            case KTp::ContactRole:
-                return QVariant::fromValue<KTp::ContactPtr>(contact);
-            case KTp::AccountRole:
-//                 if (!contact.isNull()) {
+        if (!contact.isNull()) {
+            switch (role) {
+                case KTp::ContactRole:
+                    return QVariant::fromValue<KTp::ContactPtr>(contact);
+                case KTp::AccountRole:
                     return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
-                    /*} else {
-                    QString accountId = queryNepomukForAccountId(contactId);
-                    //nepomuk stores account path, which is in form /org/freedesktop/Telepathy/Account/...
-                    //while GCM looks for uniqueIdentifier(), which is without this^ prefix, so we need to chop it off first
-                    return QVariant::fromValue<Tp::AccountPtr>(d->contactManager->accountForAccountId(accountId.remove(0,35)));
-                }*/
-                break;
-            case KTp::ContactIsBlockedRole:
-                return contact->isBlocked();
-            case KTp::ContactCanTextChatRole:
-                return true;
-            case KTp::ContactCanAudioCallRole:
-                return contact->audioCallCapability();
-            case KTp::ContactCanVideoCallRole:
-                return contact->videoCallCapability();
-            case KTp::ContactCanFileTransferRole:
-                return contact->fileTransferCapability();
-            case KTp::ContactClientTypesRole:
-                return contact->clientTypes();
+                case KTp::ContactIsBlockedRole:
+                    return contact->isBlocked();
+                case KTp::ContactCanTextChatRole:
+                    return true;
+                case KTp::ContactCanAudioCallRole:
+                    return contact->audioCallCapability();
+                case KTp::ContactCanVideoCallRole:
+                    return contact->videoCallCapability();
+                case KTp::ContactCanFileTransferRole:
+                    return contact->fileTransferCapability();
+                case KTp::ContactClientTypesRole:
+                    return contact->clientTypes();
+            }
+        } else if (contact.isNull() && role == KTp::AccountRole) {
+            //if the KTp contact is null, we still need the Tp account for that contact
+            //so we can either group it properly or bring that account online if user
+            //starts a chat with a contact that belongs to offline account
+            return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContactId(contactId));
         }
     }
 

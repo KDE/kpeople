@@ -12,6 +12,7 @@ target_link_libraries (im_persons_data_source_plugin
     ${TELEPATHY_QT4_LIBRARIES}
     ${KTP_LIBRARIES}
     ${KDE4_KDEUI_LIBS}
+    ${NEPOMUK_CORE_LIBRARY}
     kpeople
 )
 
@@ -45,6 +46,7 @@ target_link_libraries (ktp_kpeople_plugin
     ${TELEPATHY_QT4_LIBRARIES}
     ${KTP_LIBRARIES}
     ${KDE4_KDEUI_LIBS}
+    ${NEPOMUK_CORE_LIBRARY}
     kpeople
 )
 

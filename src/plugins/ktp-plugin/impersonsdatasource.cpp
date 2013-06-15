@@ -194,15 +194,48 @@ KTp::ContactPtr IMPersonsDataSource::contactForContactId(const QString &contactI
     return d->contacts.value(contactId);
 }
 
-Tp::AccountPtr IMPersonsDataSource::accountForContact(const KTp::ContactPtr& contact) const
+Tp::AccountPtr IMPersonsDataSource::accountForContact(const KTp::ContactPtr &contact) const
 {
     return d->contactManager->accountForContact(contact);
+}
+
+Tp::AccountPtr IMPersonsDataSource::accountForContactId(const QString &contactId) const
+{
+    if (contactId.isEmpty()) {
+        kDebug() << "empty contact id";
+    }
+    if (contactForContactId(contactId).isNull()) {
+        QString query = QString::fromUtf8(
+            "select DISTINCT ?a "
+            "WHERE { "
+                "?x a nco:ContactMedium . "
+                "?x nco:imID \"%1\"^^xsd:string . "
+                "?x nco:isAccessedBy ?c . "
+                "?c telepathy:accountIdentifier ?a . "
+                "}").arg(contactId);
+
+                kDebug() << query;
+
+        Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+        Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+
+        QString accountPath;
+
+        while (it.next()) {
+            accountPath = it[0].literal().toString();
+        }
+        kDebug() << "got account path" << accountPath;
+        //nepomuk stores account path, which is in form /org/freedesktop/Telepathy/Account/...
+        //while GCM looks for uniqueIdentifier(), which is without this^ prefix, so we need to chop it off first
+        return d->contactManager->accountForAccountId(accountPath.remove(0,35));
+    } else {
+        return accountForContact(contactForContactId(contactId));
+    }
 }
 
 Tp::AccountManagerPtr IMPersonsDataSource::accountManager() const
 {
     return d->accountManager;
 }
-
 
 #include "impersonsdatasource.moc"

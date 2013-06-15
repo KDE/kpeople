@@ -40,9 +40,6 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
         return QVariant();
     }
 
-    //cache the status from our sourceModel
-    QString status;
-
     IMPersonsDataSource *imPlugin = qobject_cast<IMPersonsDataSource*>(PersonPluginManager::presencePlugin());
 
     if (!imPlugin) {

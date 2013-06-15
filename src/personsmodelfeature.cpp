@@ -159,12 +159,10 @@ PersonsModelFeature PersonsModelFeature::imModelFeature(bool optional)
     imFeature.setQueryPart(QString::fromUtf8(
         "?uri                 nco:hasIMAccount     ?nco_hasIMAccount. "
         "?nco_hasIMAccount    nco:imNickname       ?nco_imNickname. "
-        "?nco_hasIMAccount    nco:imID             ?nco_imID. "
-        "?nco_hasIMAccount    nco:imAccountType    ?nco_imAccountType. "));
+        "?nco_hasIMAccount    nco:imID             ?nco_imID. "));
     QHash<QString, int> b;
     b.insert("nco_imNickname", PersonsModel::NicknamesRole);
     b.insert("nco_imID", PersonsModel::IMsRole);
-    b.insert("nco_imImAcountType", PersonsModel::IMAccountTypeRole);
     imFeature.setBindingsMap(b);
     imFeature.setOptional(optional);
     imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount());

@@ -69,8 +69,6 @@ public:
         NicknamesRole, //nco:   //STRINGLIST
         PhonesRole, //nco:phones //STRINGLIST
         IMsRole, //STRINGLIST
-        IMAccountTypeRole, //FIXME: needed by IM feature; investigate if really needed
-
         PhotosRole,
 
         //move these to presence model

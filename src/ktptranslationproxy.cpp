@@ -78,6 +78,8 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
                     return QVariant::fromValue<KTp::ContactPtr>(contact);
                 case KTp::AccountRole:
                     return QVariant::fromValue<Tp::AccountPtr>(imPlugin->accountForContact(contact));
+                case KTp::ContactPresenceMessageRole:
+                    return contact->presence().statusMessage();
                 case KTp::ContactIsBlockedRole:
                     return contact->isBlocked();
                 case KTp::ContactCanTextChatRole:

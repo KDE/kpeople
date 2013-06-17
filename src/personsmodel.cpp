@@ -307,20 +307,18 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
         }
     }
 
-    if (!pimoPersonUri.isEmpty()) {
-        //look for existing person items
-        QHash< QUrl, PersonItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
-        if (pos == d->persons.constEnd()) {
-            //this means no person exists yet, so lets create new one
-            pos = d->persons.insert(pimoPersonUri, new PersonItem(pimoPersonUri));
-        }
-        //FIXME: we need to check if the contact is not already present in person's children,
-        //       from testing however it turns out that checking newContact == true
-        //       is enough
-        if (newContact) {
-            pos.value()->appendRow(contactNode);
-            d->pimoOccurances.append(currentUri);
-        }
+    //look for existing person items
+    QHash< QUrl, PersonItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+    if (pos == d->persons.constEnd()) {
+        //this means no person exists yet, so lets create new one
+        pos = d->persons.insert(pimoPersonUri, new PersonItem(pimoPersonUri));
+    }
+    //FIXME: we need to check if the contact is not already present in person's children,
+    //       from testing however it turns out that checking newContact == true
+    //       is enough
+    if (newContact) {
+        pos.value()->appendRow(contactNode);
+        d->pimoOccurances.append(currentUri);
     }
 
     query->next();

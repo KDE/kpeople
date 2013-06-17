@@ -101,9 +101,16 @@ QVariant PersonItem::data(int role) const
 
     QVariantList ret;
     for (int i = 0; i < rowCount(); i++) {
-        QVariant value = child(i)->data(role);
+        QVariant value;
+        //if we're being asked for the child contacts uris,
+        //we need to query the children for their UriRole
+        if (role == PersonsModel::ChildContactsUriRole) {
+            value = child(i)->data(PersonsModel::UriRole);
+        } else {
+            value = child(i)->data(role);
+        }
         //these roles must return single QVariant
-        if ((role == Qt::DisplayRole || role == Qt::DecorationRole || role == PersonsModel::ChildContactUriRole) && !value.isNull()) {
+        if ((role == Qt::DisplayRole || role == Qt::DecorationRole) && !value.isNull()) {
             return value;
         }
         if (value.type() == QVariant::List) {

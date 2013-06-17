@@ -48,7 +48,7 @@ void PersonsModelTest::testPhotos()
     QBENCHMARK {
         for(int i=0; i<m.rowCount(); ++i) {
             QModelIndex idx = m.index(i, 0);
-            QVariant ret = idx.data(PersonsModel::PhotoRole);
+            QVariant ret = idx.data(PersonsModel::PhotosRole);
             count += ret.toList().size();
         }
     }

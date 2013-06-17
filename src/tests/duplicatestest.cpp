@@ -59,9 +59,9 @@ PersonItem* createPerson1Contact(PersonsModel::Role role, const QString& id, con
 
     contact->setContactData(role, id);
     if(!nick.isEmpty())
-        contact->setContactData(PersonsModel::NickRole, nick);
+        contact->setContactData(PersonsModel::NicknamesRole, nick);
     else
-        contact->setContactData(PersonsModel::NickRole, id);
+        contact->setContactData(PersonsModel::NicknamesRole, id);
 
     ret->appendRow(contact);
     return ret;
@@ -75,9 +75,9 @@ void DuplicatesTest::testDuplicates_data()
     QList<ContactItem*> emptyContacts;
     QTest::newRow("empty") << QList<PersonItem*>() << 0;
     QTest::newRow("diffemails") << (QList<PersonItem*>()
-            << createPerson1Contact(PersonsModel::EmailRole, "a@a.es") << createPerson1Contact(PersonsModel::EmailRole, "a@a.com")
+            << createPerson1Contact(PersonsModel::EmailsRole, "a@a.es") << createPerson1Contact(PersonsModel::EmailsRole, "a@a.com")
         ) << 0;
     QTest::newRow("emails") << (QList<PersonItem*>()
-            << createPerson1Contact(PersonsModel::EmailRole, "a@a.com") << createPerson1Contact(PersonsModel::EmailRole, "a@a.com")
+            << createPerson1Contact(PersonsModel::EmailsRole, "a@a.com") << createPerson1Contact(PersonsModel::EmailsRole, "a@a.com")
         ) << 1;
 }

@@ -18,9 +18,9 @@ kde4_add_library (kpeople SHARED
     personsmodel.cpp
     persondata.cpp
     resourcewatcherservice.cpp
-#     duplicatesfinder.cpp
-#     matchessolver.cpp
-#     match.cpp
+    duplicatesfinder.cpp
+    matchessolver.cpp
+    match.cpp
     personactionsmodel.cpp
     personpluginmanager.cpp
     basepersonsdatasource.cpp

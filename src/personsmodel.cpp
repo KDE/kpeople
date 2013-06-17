@@ -524,7 +524,7 @@ void PersonsModel::createPersonFromIndexes(const QList<QModelIndex> &indexes)
     Q_FOREACH(const QModelIndex &index, indexes) {
 
         if (index.data(PersonsModel::UriRole).toString().left(10).compare("fakeperson") == 0) {
-            contactUris.append(index.data(PersonsModel::ChildContactUriRole).toUrl());
+            contactUris.append(index.data(PersonsModel::ChildContactsUriRole).toUrl());
         } else {
             personUris.append(index.data(PersonsModel::UriRole).toUrl());
         }

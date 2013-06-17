@@ -61,9 +61,7 @@ public:
     enum Role {
         ContactIdRole = Qt::UserRole, ///uniqueID of contact STRING
         UriRole, //nepomuk URI STRING
-        ChildContactUriRole, //since the model will be almost always used with proxies, we need to have a way
-                             //to access child contact uri from fake persons; index.child() won't always work
-                             //as the proxy might hide the child nodes, so we need another way to get its uri
+        ChildContactsUriRole, //returns list of child contact roles //STRINGLIST
         FullNamesRole, //nco:fullname //STRINGLIST
         EmailsRole, //nco:email //STRINGLIST
         NicknamesRole, //nco:   //STRINGLIST

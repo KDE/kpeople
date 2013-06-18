@@ -37,7 +37,6 @@ public:
     virtual QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
 
 private:
-    Tp::ConnectionPresenceType mostOnlinePresence(const QVariantList &presenceList) const;
     QVariantList translatePresence(const QVariant &presenceList) const;
 };
 

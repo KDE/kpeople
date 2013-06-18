@@ -49,7 +49,11 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
 
     switch (role) {
         case KTp::ContactPresenceTypeRole:
-            return mostOnlinePresence(translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole)));
+            return translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole));
+        case KTp::ContactPresenceIconRole:
+            return mapToSource(proxyIndex).data(PersonsModel::PresenceDecorationRole);
+        case KTp::ContactPresenceNameRole:
+            return mapToSource(proxyIndex).data(PersonsModel::PresenceDisplayRole);
         case Qt::DisplayRole:
             return mapToSource(proxyIndex).data(Qt::DisplayRole);
         case KTp::RowTypeRole:
@@ -102,19 +106,6 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
     }
 
     return QIdentityProxyModel::data(proxyIndex, role);
-}
-
-Tp::ConnectionPresenceType KTpTranslationProxy::mostOnlinePresence(const QVariantList &presenceList) const
-{
-    Tp::ConnectionPresenceType returnPresence = Tp::ConnectionPresenceTypeOffline;
-
-    Q_FOREACH(const QVariant &presence, presenceList) {
-        if (KTp::Presence::sortPriority((Tp::ConnectionPresenceType)presence.toUInt()) < KTp::Presence::sortPriority(returnPresence)) {
-            returnPresence = (Tp::ConnectionPresenceType)presence.toUInt();
-        }
-    }
-
-    return returnPresence;
 }
 
 QVariantList KTpTranslationProxy::translatePresence(const QVariant &presenceList) const

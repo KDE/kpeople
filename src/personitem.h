@@ -48,6 +48,7 @@ public:
 private:
     QVariant queryChildrenForRole(int role) const;
     QVariantList queryChildrenForRoleList(int role) const;
+    int presenceSortPriority(const QString &presenceName) const;
 };
 
 Q_DECLARE_METATYPE(PersonItem*);

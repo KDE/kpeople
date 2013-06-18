@@ -70,28 +70,45 @@ QVariantList PersonItem::queryChildrenForRoleList(int role) const
 
 QVariant PersonItem::data(int role) const
 {
-    if (role == PersonsModel::PresenceTypeRole) {
+    if (role == PersonsModel::PresenceTypeRole
+        || role == PersonsModel::PresenceDisplayRole
+        || role == PersonsModel::PresenceDecorationRole) {
+
         QVariantList presences = queryChildrenForRoleList(PersonsModel::PresenceTypeRole);
-        //FIXME? this is convenient, but in the worst case it has to go through the list 6x and do lots of comparisons
-        //       possible optimization would be to go through it once and find the "most online value", this would need
-        //       helper function with priorities for each string presence
-        if (presences.contains("available")) {
-            return QVariant("available");
-        }
-        if (presences.contains("away")) {
-            return QVariant("away");
-        }
-        if (presences.contains("busy") || presences.contains("dnd")) {
-            return QVariant("busy");
-        }
-        if (presences.contains("xa")) {
-            return QVariant("xa");
-        }
-        if (presences.contains("unknown")) {
-            return QVariant("unknown");
+
+        //we find which position in the list contains the most online presence
+        //and then we use that index to return the other roles
+        int mostOnlineIndex = -1;
+        int mostOnlinePresence = 999;
+
+        for (int i = 0; i < presences.size(); i++) {
+            int currentPresencePriority = presenceSortPriority(presences.at(i).toString());
+            if (currentPresencePriority < mostOnlinePresence) {
+                mostOnlineIndex = i;
+                mostOnlinePresence = currentPresencePriority;
+
+                //if the most online is "available",
+                //break as there can't be anything more online
+                if (mostOnlinePresence == 0) {
+                    break;
+                }
+            }
         }
 
-        return QVariant("offline");
+        Q_ASSERT(mostOnlineIndex != -1);
+
+        switch (role) {
+            case PersonsModel::PresenceTypeRole:
+                return presences.at(mostOnlineIndex);
+            case PersonsModel::PresenceDisplayRole: {
+                const QVariantList presenceDisplayNames = queryChildrenForRoleList(PersonsModel::PresenceDisplayRole);
+                return presenceDisplayNames.at(mostOnlineIndex);
+            }
+            case PersonsModel::PresenceDecorationRole: {
+                const QVariantList presenceDecoration = queryChildrenForRoleList(PersonsModel::PresenceDecorationRole);
+                return presenceDecoration.at(mostOnlineIndex);
+            }
+        }
     }
 
     if (role == PersonsModel::UriRole) {
@@ -203,4 +220,33 @@ void PersonItem::setContacts(const QList<QUrl> &contacts)
     }
     addContacts(toAdd);
     Q_ASSERT(hasChildren());
+}
+
+int PersonItem::presenceSortPriority(const QString &presenceName) const
+{
+    if (presenceName == QLatin1String("available")) {
+        return 0;
+    }
+
+    if (presenceName == QLatin1String("busy") || presenceName == QLatin1String("dnd")) {
+        return 1;
+    }
+
+    if (presenceName == QLatin1String("hidden")) {
+        return 2;
+    }
+
+    if (presenceName == QLatin1String("away")) {
+        return 3;
+    }
+
+    if (presenceName == QLatin1String("xa")) {
+        return 4;
+    }
+
+    if (presenceName == QLatin1String("unknown")) {
+        return 5;
+    }
+
+    return 6;
 }

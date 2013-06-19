@@ -90,9 +90,15 @@ void PersonData::setContactId(const QString &id)
     QString query = QString::fromUtf8(
         "select DISTINCT ?uri "
         "WHERE { "
-            "?uri a nco:PersonContact. "
+            "{?uri a pimo:Person. "
+            "?uri pimo:groundingOccurrence ?contact. "
+            "?contact nco:hasContactMedium ?a . "
+            "?a ?b \"%1\"^^xsd:string .} "
+            "UNION"
+            "{?uri a nco:PersonContact."
             "?uri nco:hasContactMedium ?a . "
-            "?a ?b \"%1\"^^xsd:string . "
+            "?a ?b \"%1\"^^xsd:string .} "
+
         "}").arg(id);
 
     Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();

@@ -12,3 +12,5 @@ target_link_libraries(duplicates ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${KDE4
 
 kde4_add_executable(personwidget personwidget.cpp)
 target_link_libraries(personwidget ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} kpeople)
+
+add_subdirectory(gitlog)

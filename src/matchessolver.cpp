@@ -46,9 +46,11 @@ void MatchesSolver::startMatching()
         persons << idxOrigin.data(PersonsModel::UriRole).toUrl();
 
         KJob *job = Nepomuk2::mergeResources(persons);
+        m_pending.insert(job);
         connect(job, SIGNAL(finished(KJob*)), SLOT(jobDone(KJob*)));
     }
-    jobDone(0);
+    if(m_matches.isEmpty())
+        jobDone(0);
 }
 
 QList<QUrl> MatchesSolver::contactUris(const QModelIndex &idxOrigin)

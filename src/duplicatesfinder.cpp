@@ -90,7 +90,7 @@ QList<int> DuplicatesFinder::matchAt(const QVariantList &value, const QVariantLi
 
             if (!listA.isEmpty() && !listB.isEmpty()) {
                 Q_FOREACH (const QVariant &v, listB) {
-                    if (listA.contains(v)) {
+                    if (!v.isNull() && listA.contains(v)) {
                         Q_ASSERT(!ret.contains(m_compareRoles[i]) && "B");
                         add = true;
                         break;

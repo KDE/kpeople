@@ -24,6 +24,7 @@
 #include <KIcon>
 
 class PersonData;
+class PersonsModel;
 class AbstractPersonDetailsWidgetPrivate;
 
 class AbstractPersonDetailsWidget : public QWidget
@@ -35,6 +36,7 @@ public:
 
     /**Update to show the latest information for this person*/
     virtual void setPerson(PersonData *personData) = 0;
+    virtual void setPersonsModel(PersonsModel *model) ;
 
     /** The title to be displayed in a group header*/
     QString title() const;

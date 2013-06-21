@@ -29,6 +29,7 @@ include_directories (${KDE4_INCLUDES}
 )
 
 add_subdirectory (src)
+add_subdirectory (pixmaps)
 
 set(module_install_dir ${DATA_INSTALL_DIR}/cmake/modules )
 install(FILES cmake/FindKPeople.cmake DESTINATION ${module_install_dir})

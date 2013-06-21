@@ -41,6 +41,10 @@ AbstractPersonDetailsWidget::~AbstractPersonDetailsWidget()
     delete d_ptr;
 }
 
+void AbstractPersonDetailsWidget::setPersonsModel(PersonsModel *model)
+{
+}
+
 void AbstractPersonDetailsWidget::setIcon(const KIcon& icon)
 {
     Q_D(AbstractPersonDetailsWidget);

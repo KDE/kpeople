@@ -27,6 +27,7 @@
 
 class QLabel;
 class PersonData;
+class PersonsModel;
 class QVBoxLayout;
 class AbstractPersonDetailsWidget;
 
@@ -39,6 +40,8 @@ public:
 
 public Q_SLOTS:
     void setPerson(PersonData *person);
+    void setPersonsModel(PersonsModel *model);
+
 private Q_SLOTS:
     void reload();
 private:

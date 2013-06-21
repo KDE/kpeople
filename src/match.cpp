@@ -19,9 +19,13 @@
 
 #include "match.h"
 
-Match::Match(const QList< int > &roles, QPersistentModelIndex a, QPersistentModelIndex b)
+Match::Match(const QList<int> &roles, const QPersistentModelIndex &a, const QPersistentModelIndex &b)
     : role(roles), indexA(a), indexB(b)
-{}
+{
+    if (indexB<indexA) {
+        qSwap(indexA, indexB);
+    }
+}
 
 bool Match::operator==(const Match &m) const
 {

@@ -25,7 +25,7 @@
 
 struct Match
 {
-    Match(const QList<int>& roles, QPersistentModelIndex a, QPersistentModelIndex b);
+    Match(const QList< int >& roles, const QPersistentModelIndex& a, const QPersistentModelIndex& b);
     bool operator==(const Match &m) const;
     bool operator<(const Match &m) const;
 

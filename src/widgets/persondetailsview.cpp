@@ -28,7 +28,6 @@
 #include <KIcon>
 
 #include <QVBoxLayout>
-#include <QFormLayout>
 #include <QLabel>
 #include <QAction>
 #include <QToolButton>
@@ -40,6 +39,7 @@
 
 #include "plugins/emaildetailswidget.h"
 #include "plugins/phonedetailswidget.h"
+#include "plugins/mergecontactswidget.h"
 
 
 using namespace Nepomuk::Vocabulary;
@@ -50,7 +50,7 @@ public:
     DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidget, QWidget *parent);
 };
 
-DetailsGroupWidget::DetailsGroupWidget(AbstractPersonDetailsWidget* detailsWidget, QWidget* parent):
+DetailsGroupWidget::DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidget, QWidget *parent):
     QWidget(parent)
 {
     QGridLayout *layout = new QGridLayout(this);
@@ -112,8 +112,9 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     m_detailWidgets <<  new PhoneDetailsWidget(this);
 //     m_detailWidgets << new FacebookConnector(this);
 //     m_detailWidgets <<  new RecentEmailsDetailsWidget(this);
+    m_detailWidgets <<  new MergeContactsWidget(this);
 
-    foreach(AbstractPersonDetailsWidget* detailsWidget, m_detailWidgets) {
+    foreach(AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
         m_mainLayout->addWidget(new DetailsGroupWidget(detailsWidget, this));
     }
 
@@ -139,6 +140,13 @@ void PersonDetailsView::setPerson(PersonData *person)
     connect(m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
 
     reload();
+}
+
+void PersonDetailsView::setPersonsModel(PersonsModel *model)
+{
+    foreach (AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
+        detailsWidget->setPersonsModel(model);
+    }
 }
 
 void PersonDetailsView::reload()

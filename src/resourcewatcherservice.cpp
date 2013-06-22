@@ -147,7 +147,7 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
     kDebug() << "contact changed:" << property.name() << res.uri();
 
     Q_D(ResourceWatcherService);
-    ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
+    ContactItem *item = d->m_model->contactItemForUri(res.uri());
     if (item) {
         kDebug() << "Existing contact found, running update";
         item->loadData();

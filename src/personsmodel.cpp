@@ -43,7 +43,6 @@
 #include <Nepomuk2/StoreResourcesJob>
 
 #include <KDebug>
-#include <KServiceTypeTrader>
 
 struct PersonsModelPrivate {
     QString prepareQuery(const QUrl &uri = QUrl());
@@ -58,8 +57,6 @@ struct PersonsModelPrivate {
     PersonsModel::Features optionalFeatures;
 
     QList<PersonsModelFeature> modelFeatures;
-
-    BasePersonsDataSource imPlugin;
 
     int fakePersonsCounter; //used to set fake persons uri in form of fakeperson:/N
 };
@@ -227,8 +224,6 @@ void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, Perso
             d->bindingRoleMap.unite(feature.bindingsMap());
         }
     }
-
-//         d->bindingRoleMap.insert("nao_prefLabel", LabelRole);
 
     QString queryString = d->prepareQuery();
 

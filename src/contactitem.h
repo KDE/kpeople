@@ -29,7 +29,6 @@
 
 class QAction;
 class ContactItemPrivate;
-class BasePersonsDataSource;
 
 class KPEOPLE_EXPORT ContactItem : public QStandardItem
 {

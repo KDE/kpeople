@@ -27,7 +27,6 @@
 #include <QStandardItemModel>
 
 class PersonsModelFeature;
-// class PersonsPresenceModel;
 class ContactItem;
 class KJob;
 class QUrl;
@@ -130,12 +129,9 @@ private Q_SLOTS:
     void nextReady(Soprano::Util::AsyncQuery *query);
     void queryFinished(Soprano::Util::AsyncQuery *query);
     void contactChanged(const QUrl &uri);
-//     void findDuplicatesFinished(KJob *finder);
 
     void updateContactFinished(Soprano::Util::AsyncQuery *query);
     void updateContact(ContactItem *contact);
-
-//     void duplicatesFound(QHash<QString, QSet<QPersistentModelIndex> > duplicates);
 
 private:
     /**

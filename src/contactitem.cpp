@@ -22,15 +22,12 @@
 #include "contactitem.h"
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"
-
-#include "base-persons-data-source.h"
+#include "personitem.h"
 
 #include <QAction>
 
 #include <KIcon>
 #include <KDebug>
-#include <KServiceTypeTrader>
-#include <kdemacros.h>
 
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Variant>

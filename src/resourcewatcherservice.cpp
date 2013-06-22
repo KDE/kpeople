@@ -144,11 +144,12 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource &
 void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
                                                        const QVariantList &added, const QVariantList &removed)
 {
-    kDebug() << "contact changed:" << res.uri();
+    kDebug() << "contact changed:" << property.name() << res.uri();
 
     Q_D(ResourceWatcherService);
     ContactItem *item = static_cast<ContactItem*>(d->m_model->itemFromIndex(d->m_model->indexForUri(res.uri())));
     if (item) {
+        kDebug() << "Existing contact found, running update";
         item->loadData();
     } else if (!item && removed.isEmpty()) {
 
@@ -157,6 +158,7 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
         Q_FOREACH (const PersonsModelFeature &feature, d->m_model->modelFeatures()) {
             if (!feature.isOptional() || d->m_model->queryFlags().first.testFlag(PersonsModel::FeatureNone)) {
                 if (feature.watcherProperty() == property) {
+                    kDebug() << "Creating new contact";
                     d->m_model->addContact(res);
                     return;
                 }

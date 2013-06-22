@@ -59,24 +59,22 @@ public:
     Q_FLAGS(Features)
 
     enum Role {
-        ContactIdRole = Qt::UserRole, ///uniqueID of contact STRING
-        UriRole, //nepomuk URI STRING
-        ChildContactsUriRole, //returns list of child contact roles //STRINGLIST
-        FullNamesRole, //nco:fullname //STRINGLIST
-        EmailsRole, //nco:email //STRINGLIST
-        NicknamesRole, //nco:   //STRINGLIST
-        PhonesRole, //nco:phones //STRINGLIST
+        UriRole = Qt::UserRole, //nepomuk URI STRING
+        ChildContactsUriRole, //returns list of child contact roles STRINGLIST
+        FullNamesRole, //nco:fullname STRINGLIST
+        EmailsRole, //nco:email STRINGLIST
+        NicknamesRole, //nco:imNickName STRINGLIST
+        PhonesRole, //nco:phones STRINGLIST
         IMsRole, //STRINGLIST
-        PhotosRole,
+        PhotosRole, //nie:url of the photo STRINGLIST
 
-        //move these to presence model
-        PresenceTypeRole, //ENUM (NEW)
-        PresenceDisplayRole, //  most online presence
-        PresenceDecorationRole,
+        PresenceTypeRole, //QString containing most online presence type
+        PresenceDisplayRole, //QString containing displayable name for most online presence
+        PresenceDecorationRole, //KIcon displaying current presence
 
         GroupsRole, //groups STRINGLIST
 
-        UserRole ///< in case it's needed to extend, use this one to start from
+        UserRole = Qt::UserRole + 100 ///< in case it's needed to extend, use this one to start from
     };
 
     /**

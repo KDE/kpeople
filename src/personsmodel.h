@@ -132,7 +132,6 @@ private Q_SLOTS:
     void contactChanged(const QUrl &uri);
 //     void findDuplicatesFinished(KJob *finder);
 
-    void updateContactNextReady(Soprano::Util::AsyncQuery *query);
     void updateContactFinished(Soprano::Util::AsyncQuery *query);
     void updateContact(ContactItem *contact);
 

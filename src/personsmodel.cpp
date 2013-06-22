@@ -441,35 +441,10 @@ void PersonsModel::updateContact(ContactItem *contact)
     query->setProperty("contactItem", QVariant::fromValue<ContactItem*>(contact));
 
     connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
-            this, SLOT(updateContactNextReady(Soprano::Util::AsyncQuery*)));
+            this, SLOT(nextReady(Soprano::Util::AsyncQuery*)));
 
     connect(query, SIGNAL(finished(Soprano::Util::AsyncQuery*)),
             this, SLOT(updateContactFinished(Soprano::Util::AsyncQuery*)));
-}
-
-void PersonsModel::updateContactNextReady(Soprano::Util::AsyncQuery *query)
-{
-    Q_D(PersonsModel);
-
-    ContactItem *contact = query->property("contactItem").value<ContactItem*>();
-
-    if (!contact) {
-        query->next();
-        return;
-    }
-
-    foreach (const QString &bName, query->bindingNames()) {
-        if (!d->bindingRoleMap.contains(bName))
-            continue;
-
-        int role = d->bindingRoleMap.value(bName);
-        QString value = query->binding(bName).toString();
-        if (!value.isEmpty()) {
-            contact->addContactData(role, value);
-        }
-    }
-
-    query->next();
 }
 
 void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)

@@ -253,33 +253,17 @@ void PersonsModel::query(const QString &queryString)
 void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 {
     Q_D(PersonsModel);
-    const QUrl &currentUri = query->binding(QLatin1String("uri")).uri();
-
-    //before any further processing, check if the current contact
-    //is not a groundingOccurrence of a nepomuk:/me person, if yes, don't process it
-    QUrl pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
-    if (pimoPersonUri == QUrl(QLatin1String("nepomuk:/me"))) {
-        query->next();
-        return;
-    } else if (pimoPersonUri.isEmpty()) {
-        //if the person uri is empty, we need to fake one
-        pimoPersonUri = QUrl("fakeperson:/" + QString::number(s_personId++));
-    }
-
-    //see if we don't have this contact already
-    ContactItem *contactNode = d->contacts.value(currentUri);
-
+    //if we're doing update, the contact node is passed as property of the query
+    ContactItem *contactNode = query->property("contactItem").value<ContactItem*>();
     bool newContact = !contactNode;
+    QUrl currentUri;
 
     if (newContact) {
+        currentUri = query->binding(QLatin1String("uri")).uri();
         contactNode = new ContactItem(currentUri);
         d->contacts.insert(currentUri, contactNode);
     } else {
-        //TODO see if this actually happens. If not, we can remove the lookup above and optimise.
-        //If it still does occur, with a good reason, remove this TODO
-        kWarning() << "the same contact has appeared twice in results. Ignoring";
-        query->next();
-        return;
+        currentUri = contactNode->uri();
     }
 
     //iterate over the results and add the wanted properties into the contact
@@ -307,16 +291,20 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
         }
     }
 
-    //look for existing person items
-    QHash< QUrl, PersonItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
-    if (pos == d->persons.constEnd()) {
-        //this means no person exists yet, so lets create new one
-        pos = d->persons.insert(pimoPersonUri, new PersonItem(pimoPersonUri));
-    }
-    //FIXME: we need to check if the contact is not already present in person's children,
-    //       from testing however it turns out that checking newContact == true
-    //       is enough
+    QUrl pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
+
     if (newContact) {
+        if (pimoPersonUri.isEmpty()) {
+            //if the person uri is empty, we need to fake one
+            pimoPersonUri = QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++));
+        }
+        //look for existing person items
+        QHash< QUrl, PersonItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
+        if (pos == d->persons.constEnd()) {
+            //this means no person exists yet, so lets create new one
+            pos = d->persons.insert(pimoPersonUri, new PersonItem(pimoPersonUri));
+        }
+
         pos.value()->appendRow(contactNode);
         d->pimoOccurances.append(currentUri);
     }

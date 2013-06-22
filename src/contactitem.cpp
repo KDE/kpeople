@@ -208,4 +208,5 @@ void ContactItem::finishLoadingData()
     Q_D(ContactItem);
     d->isBeingUpdated = false;
     emitDataChanged();
+    dynamic_cast<PersonItem*>(parent())->contactDataChanged();
 }

@@ -250,3 +250,8 @@ int PersonItem::presenceSortPriority(const QString &presenceName) const
 
     return 6;
 }
+
+void PersonItem::contactDataChanged()
+{
+    emitDataChanged();
+}

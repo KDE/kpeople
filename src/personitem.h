@@ -45,6 +45,8 @@ public:
     void addContacts(const QList<QUrl> &contacts);
     void setContacts(const QList<QUrl> &contacts);
 
+    void contactDataChanged();
+
 private:
     QVariant queryChildrenForRole(int role) const;
     QVariantList queryChildrenForRoleList(int role) const;

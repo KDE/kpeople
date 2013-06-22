@@ -7,6 +7,8 @@ set (kpeople_widgets_SRCS
     persondetailsview.cpp
     plugins/emaildetailswidget.cpp
     plugins/phonedetailswidget.cpp
+    plugins/mergecontactswidget.cpp
+    plugins/personpresentationwidget.cpp
 )
 
 kde4_add_library (kpeoplewidgets SHARED ${kpeople_widgets_SRCS} )

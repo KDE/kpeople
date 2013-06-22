@@ -39,7 +39,6 @@ struct ResourceWatcherServicePrivate {
 
     Nepomuk2::ResourceWatcher *personWatcher;
     Nepomuk2::ResourceWatcher *contactWatcher;
-    Nepomuk2::ResourceWatcher *imWatcher;
     PersonsModel *m_model;
 
 };
@@ -74,14 +73,6 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
             this, SLOT(onContactPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
 
     d->contactWatcher->start();
-
-    d->imWatcher = new Nepomuk2::ResourceWatcher(this);
-    d->imWatcher->addType(Nepomuk2::Vocabulary::NCO::IMAccount());
-
-    connect(d->imWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
-            this, SLOT(onIMAccountPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
-
-    d->imWatcher->start();
 }
 
 ResourceWatcherService::~ResourceWatcherService()
@@ -170,27 +161,6 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
                     return;
                 }
             }
-        }
-    }
-}
-
-void ResourceWatcherService::onIMAccountPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariantList &added, const QVariantList &removed)
-{
-    kDebug() << "IM contact changed:" << res.uri() << property.name() << removed << added;
-
-    Q_D(ResourceWatcherService);
-    kDebug() << d->m_model->contactForIMAccount(res.uri());
-    ContactItem *item = static_cast<ContactItem*>(d->m_model->contactForIMAccount(res.uri()));
-    if (!item) {
-        return;
-    }
-
-    //we expect only the imNickname to change here
-    if (property.name() == QLatin1String("imNickname")) {
-        if (added.count()) {
-            item->setContactData(PersonsModel::NicknamesRole, added.first());
-        } else {
-            item->removeData(PersonsModel::NicknamesRole);
         }
     }
 }

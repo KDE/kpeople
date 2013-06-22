@@ -490,11 +490,10 @@ void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
     contact->finishLoadingData();
 }
 
-ContactItem* PersonsModel::contactForIMAccount(const QUrl &uri) const
+ContactItem* PersonsModel::contactItemForUri(const QUrl &uri) const
 {
-//     QStandardItem *it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
-//     return dynamic_cast<ContactItem*>(it);
-    return 0;
+    Q_D(const PersonsModel);
+    return d->contacts.value(uri);
 }
 
 void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)

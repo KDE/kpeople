@@ -146,7 +146,7 @@ private:
 
     void addPerson(const Nepomuk2::Resource &res);
     void addContact(const Nepomuk2::Resource &res);
-    ContactItem* contactForIMAccount(const QUrl &uri) const;
+    ContactItem* contactItemForUri(const QUrl &uri) const;
 
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
     QList<PersonsModelFeature> init(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);

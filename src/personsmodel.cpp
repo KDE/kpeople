@@ -421,6 +421,10 @@ void PersonsModel::addContact(const Nepomuk2::Resource &res)
     d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMsRole).toString(),
                                        item->data(PersonsModel::UriRole).toString());
     appendRow(item);
+
+    PersonItem *person = new PersonItem(QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++)));
+    person->appendRow(item);
+    appendRow(person);
 }
 
 void PersonsModel::updateContact(ContactItem *contact)

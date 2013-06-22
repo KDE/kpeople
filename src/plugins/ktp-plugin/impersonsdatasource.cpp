@@ -223,9 +223,8 @@ Tp::AccountPtr IMPersonsDataSource::accountForContactId(const QString &contactId
 
         QString accountPath;
 
-        while (it.next()) {
-            accountPath = it[0].literal().toString();
-        }
+        it.next(); //set the iterator to first entry
+        accountPath = it[0].literal().toString();
         kDebug() << "got account path" << accountPath;
         //nepomuk stores account path, which is in form /org/freedesktop/Telepathy/Account/...
         //while GCM looks for uniqueIdentifier(), which is without this^ prefix, so we need to chop it off first

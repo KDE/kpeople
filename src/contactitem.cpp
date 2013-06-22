@@ -197,10 +197,10 @@ void ContactItem::loadData()
 
     PersonsModel *m = qobject_cast<PersonsModel*>(model());
 
-    if (m) {
-        d->isBeingUpdated = true;
-        m->updateContact(this);
-    }
+    Q_ASSERT(m); //crash if this contact is not part of the model
+
+    d->isBeingUpdated = true;
+    m->updateContact(this);
 }
 
 void ContactItem::finishLoadingData()

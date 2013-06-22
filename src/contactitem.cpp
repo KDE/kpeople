@@ -78,6 +78,14 @@ ContactItem::~ContactItem()
 void ContactItem::setContactData(int role, const QVariant &v)
 {
     Q_D(ContactItem);
+
+    if (v.isNull()) {
+        //don't insert empty values, in case of list roles this
+        //would insert QVariant(QVariantList(QVariant())),
+        //empty QVariant will be returned from data(...) instead
+        return;
+    }
+
     QHash< int, QVariant >::iterator it = d->data.find(role);
     QVariant value = d->listRoles().contains(role) ? (QVariantList() << v) : v;
     if (it == d->data.end()) {
@@ -95,6 +103,12 @@ void ContactItem::setContactData(int role, const QVariant &v)
 void ContactItem::addContactData(int role, const QVariant &value)
 {
     Q_D(ContactItem);
+    if (value.isNull()) {
+        //don't insert empty values, in case of list roles this
+        //would insert QVariant(QVariantList(QVariant())),
+        //empty QVariant will be returned from data(...) instead
+        return;
+    }
     QHash<int, QVariant>::iterator it = d->data.find(role);
     if (!d->listRoles().contains(role)) {
         setContactData(role, value);

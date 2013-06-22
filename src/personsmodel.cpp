@@ -45,8 +45,6 @@
 #include <KDebug>
 #include <KServiceTypeTrader>
 
-static int s_personId = 0;
-
 struct PersonsModelPrivate {
     QString prepareQuery(const QUrl &uri = QUrl());
 
@@ -63,6 +61,7 @@ struct PersonsModelPrivate {
 
     BasePersonsDataSource imPlugin;
 
+    int fakePersonsCounter; //used to set fake persons uri in form of fakeperson:/N
 };
 
 QString PersonsModelPrivate::prepareQuery(const QUrl &uri)
@@ -126,6 +125,7 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
     }
 
     new ResourceWatcherService(this);
+    d->fakePersonsCounter = 0;
 }
 
 PersonsModel::~PersonsModel()

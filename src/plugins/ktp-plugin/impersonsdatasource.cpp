@@ -204,7 +204,9 @@ Tp::AccountPtr IMPersonsDataSource::accountForContactId(const QString &contactId
     if (contactId.isEmpty()) {
         kDebug() << "empty contact id";
     }
-    if (contactForContactId(contactId).isNull()) {
+
+    KTp::ContactPtr contact = contactForContactId(contactId);
+    if (contact.isNull()) {
         QString query = QString::fromUtf8(
             "select DISTINCT ?a "
             "WHERE { "
@@ -229,7 +231,7 @@ Tp::AccountPtr IMPersonsDataSource::accountForContactId(const QString &contactId
         //while GCM looks for uniqueIdentifier(), which is without this^ prefix, so we need to chop it off first
         return d->contactManager->accountForAccountId(accountPath.remove(0,35));
     } else {
-        return accountForContact(contactForContactId(contactId));
+        return accountForContact(contact);
     }
 }
 

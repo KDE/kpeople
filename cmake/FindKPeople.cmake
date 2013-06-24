@@ -1,10 +1,10 @@
 # Find libkpeople
 # Once done this will define
 #
-#  KPEOPLE_FOUND    - system has Analitza Library
-#  KPEOPLE_INCLUDES - the Analitza include directory
-#  KPEOPLE_LIBS     - link these to use Analitza
-#  KPEOPLE_VERSION  - the version of the Analitza Library
+#  KPEOPLE_FOUND    - system has KPeople Library
+#  KPEOPLE_INCLUDES - the KPeople include directory
+#  KPEOPLE_LIBS     - link these to use KPeople
+#  KPEOPLE_VERSION  - the version of the KPeople Library
 
 # Copyright (c) 2012, Aleix Pol Gonzalez <aleixpol@blue-systems.com>
 #
@@ -22,6 +22,6 @@ if(KPEOPLE_INCLUDE_DIR AND KPEOPLE_LIBRARY)
 endif(KPEOPLE_INCLUDE_DIR AND KPEOPLE_LIBRARY)
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(Analitza  DEFAULT_MSG KPEOPLE_INCLUDE_DIR KPEOPLE_LIBRARY)
+find_package_handle_standard_args(KPeople  DEFAULT_MSG KPEOPLE_INCLUDE_DIR KPEOPLE_LIBRARY)
 
 mark_as_advanced(KPEOPLE_INCLUDE_DIR KPEOPLE_LIBRARY)

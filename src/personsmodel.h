@@ -27,7 +27,6 @@
 #include <QStandardItemModel>
 
 class PersonsModelFeature;
-class PersonsPresenceModel;
 class ContactItem;
 class KJob;
 class QUrl;
@@ -49,8 +48,6 @@ public:
         FeatureAvatars    = 0x0004,
         FeatureEmails     = 0x0008,
         FeatureFullName   = 0x0010,
-        FeatureContactUID = 0x0020,
-        FeatureBirthday   = 0x0040,
         FeatureAll = FeatureIM |
                      FeatureGroups |
                      FeatureAvatars |
@@ -61,43 +58,22 @@ public:
     Q_FLAGS(Features)
 
     enum Role {
-        ContactTypeRole = Qt::UserRole,
-        ContactIdRole,
-        ContactsCountRole,
-        UriRole,
-        NameRole,
-        LabelRole,
-        EmailRole,
-        NickRole,
-        PhoneRole,
-        IMRole,
-        PhotoRole,
-        IMAccountUriRole,
-        IMAccountRole,
-        IMAccountTypeRole,
-        IMContactRole,
-        BlockedRole,
-        StatusRole,
-        StatusStringRole,
-        ResourceTypeRole,
-        ContactGroupsRole,
-        ContactCanTextChatRole,
-        ContactCanAudioCallRole,
-        ContactCanVideoCallRole,
-        ContactCanFileTransferRole,
-        ContactClientTypesRole,
+        UriRole = Qt::UserRole, //nepomuk URI STRING
+        ChildContactsUriRole, //returns list of child contact roles STRINGLIST
+        FullNamesRole, //nco:fullname STRINGLIST
+        EmailsRole, //nco:email STRINGLIST
+        NicknamesRole, //nco:imNickName STRINGLIST
+        PhonesRole, //nco:phones STRINGLIST
+        IMsRole, //STRINGLIST
+        PhotosRole, //nie:url of the photo STRINGLIST
 
-        //move these to presence model
-        PresenceTypeRole, //ENUM (NEW)
-        PresenceDisplayRole, //  most online presence
-        PresenceDecorationRole,
+        PresenceTypeRole, //QString containing most online presence type
+        PresenceDisplayRole, //QString containing displayable name for most online presence
+        PresenceDecorationRole, //KIcon displaying current presence
 
-        LastRole ///< in case it's needed to extend, use this one to start from
-    };
+        GroupsRole, //groups STRINGLIST
 
-    enum ResourceType {
-        Person,
-        Contact
+        UserRole = Qt::UserRole + 100 ///< in case it's needed to extend, use this one to start from
     };
 
     /**
@@ -153,6 +129,8 @@ private Q_SLOTS:
     void nextReady(Soprano::Util::AsyncQuery *query);
     void queryFinished(Soprano::Util::AsyncQuery *query);
     void contactChanged(const QUrl &uri);
+    void updateContactFinished(Soprano::Util::AsyncQuery *query);
+    void updateContact(ContactItem *contact);
 
 private:
     /**
@@ -162,16 +140,15 @@ private:
 
     void addPerson(const Nepomuk2::Resource &res);
     void addContact(const Nepomuk2::Resource &res);
-    ContactItem* contactForIMAccount(const QUrl &uri) const;
-
+    ContactItem* contactItemForUri(const QUrl &uri) const;
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
     QList<PersonsModelFeature> init(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
 
     friend class ResourceWatcherService;
+    friend class ContactItem;
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);
-
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(PersonsModel::Features)

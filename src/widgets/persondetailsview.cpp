@@ -41,7 +41,6 @@
 #include "plugins/phonedetailswidget.h"
 #include "plugins/mergecontactswidget.h"
 
-
 using namespace Nepomuk::Vocabulary;
 
 class DetailsGroupWidget : public QWidget
@@ -50,8 +49,8 @@ public:
     DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidget, QWidget *parent);
 };
 
-DetailsGroupWidget::DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidget, QWidget *parent):
-    QWidget(parent)
+DetailsGroupWidget::DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidget, QWidget *parent)
+    : QWidget(parent)
 {
     QGridLayout *layout = new QGridLayout(this);
     layout->setColumnStretch(1, 1);

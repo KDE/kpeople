@@ -25,10 +25,10 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)
     : KJob(parent)
     , m_model(model)
 {
-    m_compareRoles << PersonsModel::NameRole
-                   << PersonsModel::NickRole
-                   << PersonsModel::EmailRole
-                   << PersonsModel::PhoneRole;
+    m_compareRoles << PersonsModel::FullNamesRole
+                   << PersonsModel::NicknamesRole
+                   << PersonsModel::EmailsRole
+                   << PersonsModel::PhonesRole;
 }
 
 void DuplicatesFinder::start()

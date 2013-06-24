@@ -33,18 +33,19 @@ Q_DECLARE_METATYPE(QList<PersonItem*>);
 Q_DECLARE_METATYPE(QList<ContactItem*>);
 Q_DECLARE_METATYPE(QList<Match>);
 
-
-
-DuplicatesTest::DuplicatesTest(QObject* parent): QObject(parent)
-{}
+DuplicatesTest::DuplicatesTest(QObject *parent)
+    : QObject(parent)
+{
+}
 
 void DuplicatesTest::testDuplicates()
 {
     QFETCH(QList<PersonItem*>, people);
     QFETCH(int, matches);
     PersonsModel m(0, 0);
-    foreach(PersonItem* item, people)
+    Q_FOREACH(PersonItem *item, people) {
         m.appendRow(item);
+    }
 
     QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
     f->start();
@@ -52,16 +53,17 @@ void DuplicatesTest::testDuplicates()
     QCOMPARE(f->results().size(), matches);
 }
 
-PersonItem* createPerson1Contact(PersonsModel::Role role, const QString& id, const QString& nick=QString())
+PersonItem* createPerson1Contact(PersonsModel::Role role, const QString &id, const QString &nick = QString())
 {
-    PersonItem* ret = new PersonItem(QString("test:/%1").arg(qrand()));
-    ContactItem* contact = new ContactItem(QUrl("test:/"+id+QString::number(qrand())));
+    PersonItem *ret = new PersonItem(QString("test:/%1").arg(qrand()));
+    ContactItem *contact = new ContactItem(QUrl("test:/" + id + QString::number(qrand())));
 
     contact->setContactData(role, id);
-    if(!nick.isEmpty())
-        contact->setContactData(PersonsModel::NickRole, nick);
-    else
-        contact->setContactData(PersonsModel::NickRole, id);
+    if (!nick.isEmpty()) {
+        contact->setContactData(PersonsModel::NicknamesRole, nick);
+    } else {
+        contact->setContactData(PersonsModel::NicknamesRole, id);
+    }
 
     ret->appendRow(contact);
     return ret;
@@ -75,9 +77,9 @@ void DuplicatesTest::testDuplicates_data()
     QList<ContactItem*> emptyContacts;
     QTest::newRow("empty") << QList<PersonItem*>() << 0;
     QTest::newRow("diffemails") << (QList<PersonItem*>()
-            << createPerson1Contact(PersonsModel::EmailRole, "a@a.es") << createPerson1Contact(PersonsModel::EmailRole, "a@a.com")
+            << createPerson1Contact(PersonsModel::EmailsRole, "a@a.es") << createPerson1Contact(PersonsModel::EmailsRole, "a@a.com")
         ) << 0;
     QTest::newRow("emails") << (QList<PersonItem*>()
-            << createPerson1Contact(PersonsModel::EmailRole, "a@a.com") << createPerson1Contact(PersonsModel::EmailRole, "a@a.com")
+            << createPerson1Contact(PersonsModel::EmailsRole, "a@a.com") << createPerson1Contact(PersonsModel::EmailsRole, "a@a.com")
         ) << 1;
 }

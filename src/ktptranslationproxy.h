@@ -37,8 +37,7 @@ public:
     virtual QVariant data(const QModelIndex &proxyIndex, int role = Qt::DisplayRole) const;
 
 private:
-    Tp::ConnectionPresenceType mostOnlinePresence(const QVariantList &presenceList) const;
-    QVariantList translatePresence(const QVariant &presenceList) const;
+    QVariant translatePresence(const QVariant &presenceName) const;
 };
 
 #endif // KTP_TRANSLATION_PROXY_H

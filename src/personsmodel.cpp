@@ -45,6 +45,8 @@
 #include <KDebug>
 
 struct PersonsModelPrivate {
+    QString prepareQuery(const QUrl &uri = QUrl());
+
     QHash<QUrl, ContactItem*> contacts; //all contacts in the model
     QHash<QUrl, PersonItem*> persons;   //all persons
     QList<QUrl> pimoOccurances;         //contacts that are groundingOccurrences of persons
@@ -55,7 +57,41 @@ struct PersonsModelPrivate {
     PersonsModel::Features optionalFeatures;
 
     QList<PersonsModelFeature> modelFeatures;
+
+    int fakePersonsCounter; //used to set fake persons uri in form of fakeperson:/N
 };
+
+QString PersonsModelPrivate::prepareQuery(const QUrl &uri)
+{
+    QString selectPart(QLatin1String("select DISTINCT ?uri ?pimo_groundingOccurrence "));
+    QString queryPart(QLatin1String("WHERE { ?uri a nco:PersonContact. "
+    "OPTIONAL { ?pimo_groundingOccurrence pimo:groundingOccurrence ?uri. } "
+    "OPTIONAL { ?uri nao:prefLabel ?nao_prefLabel. } "));
+
+    Q_FOREACH(PersonsModelFeature feature, modelFeatures) {
+        queryPart.append(feature.queryPart());
+        queryPart.append(" ");
+    }
+
+    Q_FOREACH(const QString &queryVariable, bindingRoleMap.keys()) {
+        //Normally a contact with multiple email addresses (for example) will appear as multiple rows in the query
+        //By using the sql group_digest function we group all values into a single list on the server rather than multiple rows. Values are separated by ";;;"
+
+        //arg 2 is the seperator, 3 is the max length and 4 is a flag 1 meaning remove duplicates
+        //5000 is an abitrary big number
+        selectPart.append(QString("(sql:group_digest(?%1,';;;',5000,1) as ?%1) ").arg(queryVariable));
+    }
+
+    if (!uri.isEmpty()) {
+        queryPart.replace("?uri", Soprano::Node::resourceToN3(uri));
+    } else {
+        queryPart.append("FILTER(?uri!=<nepomuk:/me>).");
+    }
+
+    selectPart.append(queryPart.append("}"));
+
+    return selectPart;
+}
 
 //-----------------------------------------------------------------------------
 
@@ -70,18 +106,14 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
     connect(d->dataSourceWatcher, SIGNAL(contactChanged(QUrl)), SLOT(contactChanged(QUrl)));
 
     QHash<int, QByteArray> names = roleNames();
-    names.insert(PersonsModel::EmailRole, "email");
-    names.insert(PersonsModel::PhoneRole, "phone");
+    names.insert(PersonsModel::EmailsRole, "emails");
+    names.insert(PersonsModel::PhonesRole, "phones");
     names.insert(PersonsModel::ContactIdRole, "contactId");
-    names.insert(PersonsModel::ContactTypeRole, "contactType");
-    names.insert(PersonsModel::IMRole, "im");
-    names.insert(PersonsModel::NickRole, "nick");
-    names.insert(PersonsModel::LabelRole, "label");
+    names.insert(PersonsModel::IMsRole, "ims");
+    names.insert(PersonsModel::NicknamesRole, "nicks");
     names.insert(PersonsModel::UriRole, "uri");
-    names.insert(PersonsModel::NameRole, "name");
-    names.insert(PersonsModel::PhotoRole, "photo");
-    names.insert(PersonsModel::ContactsCountRole, "contactsCount");
-    names.insert(PersonsModel::ResourceTypeRole, "resourceType");
+    names.insert(PersonsModel::FullNamesRole, "names");
+    names.insert(PersonsModel::PhotosRole, "photos");
     setRoleNames(names);
 
     if (mandatoryFeatures != 0 || optionalFeatures != 0) {
@@ -90,6 +122,12 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
     }
 
     new ResourceWatcherService(this);
+    d->fakePersonsCounter = 0;
+}
+
+PersonsModel::~PersonsModel()
+{
+    delete d_ptr;
 }
 
 PersonsModel::~PersonsModel()
@@ -181,39 +219,20 @@ void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, Perso
         return;
     }
 
-    d->mandatoryFeatures = mandatoryFeatures;
-    d->optionalFeatures = optionalFeatures;
+    if (d->mandatoryFeatures != mandatoryFeatures || d->optionalFeatures != optionalFeatures) {
+        d->mandatoryFeatures = mandatoryFeatures;
+        d->optionalFeatures = optionalFeatures;
 
-    d->modelFeatures = init(mandatoryFeatures, optionalFeatures);
+        d->modelFeatures = init(mandatoryFeatures, optionalFeatures);
 
-    QString selectPart(QLatin1String("select DISTINCT ?uri ?pimo_groundingOccurrence "));
-    QString queryPart(QLatin1String("WHERE { ?uri a nco:PersonContact. "
-            "OPTIONAL { ?pimo_groundingOccurrence pimo:groundingOccurrence ?uri. } "
-            "OPTIONAL { ?uri nao:prefLabel ?nao_prefLabel. } "));
-
-    d->bindingRoleMap.insert("nao_prefLabel", LabelRole);
-
-    Q_FOREACH(PersonsModelFeature feature, d->modelFeatures) {
-        queryPart.append(feature.queryPart());
-        queryPart.append(" ");
-
-        d->bindingRoleMap.unite(feature.bindingsMap());
+        Q_FOREACH(PersonsModelFeature feature, d->modelFeatures) {
+            d->bindingRoleMap.unite(feature.bindingsMap());
+        }
     }
 
-    Q_FOREACH(const QString &queryVariable, d->bindingRoleMap.keys()) {
-        //Normally a contact with multiple email addresses (for example) will appear as multiple rows in the query
-        //By using the sql group_digest function we group all values into a single list on the server rather than multiple rows. Values are separated by ";;;"
+    QString queryString = d->prepareQuery();
 
-        //arg 2 is the seperator, 3 is the max length and 4 is a flag 1 meaning remove duplicates
-        //5000 is an abitrary big number
-        selectPart.append(QString("(sql:group_digest(?%1,';;;',5000,1) as ?%1) ").arg(queryVariable)) ;
-    }
-
-    queryPart.append("FILTER(?uri!=<nepomuk:/me>). }");
-
-    selectPart.append(queryPart);
-
-    QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, selectPart));
+    QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, queryString));
 }
 
 void PersonsModel::query(const QString &queryString)
@@ -234,30 +253,17 @@ void PersonsModel::query(const QString &queryString)
 void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 {
     Q_D(PersonsModel);
-    const QUrl &currentUri = query->binding(QLatin1String("uri")).uri();
-
-    //before any further processing, check if the current contact
-    //is not a groundingOccurrence of a nepomuk:/me person, if yes, don't process it
-    const QUrl &pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
-    if (pimoPersonUri == QUrl(QLatin1String("nepomuk:/me"))) {
-        query->next();
-        return;
-    }
-
-    //see if we don't have this contact already
-    ContactItem *contactNode = d->contacts.value(currentUri);
-
+    //if we're doing update, the contact node is passed as property of the query
+    ContactItem *contactNode = query->property("contactItem").value<ContactItem*>();
     bool newContact = !contactNode;
+    QUrl currentUri;
 
     if (newContact) {
+        currentUri = query->binding(QLatin1String("uri")).uri();
         contactNode = new ContactItem(currentUri);
         d->contacts.insert(currentUri, contactNode);
     } else {
-        //TODO see if this actually happens. If not, we can remove the lookup above and optimise.
-        //If it still does occur, with a good reason, remove this TODO
-        kWarning() << "the same contact has appeared twice in results. Ignoring";
-        query->next();
-        return;
+        currentUri = contactNode->uri();
     }
 
     //iterate over the results and add the wanted properties into the contact
@@ -285,20 +291,22 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
         }
     }
 
-    if (!pimoPersonUri.isEmpty()) {
+    QUrl pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
+
+    if (newContact) {
+        if (pimoPersonUri.isEmpty()) {
+            //if the person uri is empty, we need to fake one
+            pimoPersonUri = QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++));
+        }
         //look for existing person items
         QHash< QUrl, PersonItem* >::const_iterator pos = d->persons.constFind(pimoPersonUri);
         if (pos == d->persons.constEnd()) {
             //this means no person exists yet, so lets create new one
             pos = d->persons.insert(pimoPersonUri, new PersonItem(pimoPersonUri));
         }
-        //FIXME: we need to check if the contact is not already present in person's children,
-        //       from testing however it turns out that checking newContact == true
-        //       is enough
-        if (newContact) {
-            pos.value()->appendRow(contactNode);
-            d->pimoOccurances.append(currentUri);
-        }
+
+        pos.value()->appendRow(contactNode);
+        d->pimoOccurances.append(currentUri);
     }
 
     query->next();
@@ -409,15 +417,51 @@ void PersonsModel::addContact(const Nepomuk2::Resource &res)
 {
     Q_D(PersonsModel);
     ContactItem *item = new ContactItem(res.uri());
+    d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMsRole).toString(),
+                                       item->data(PersonsModel::UriRole).toString());
+
+    PersonItem *person = new PersonItem(QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++)));
+    person->appendRow(item);
+    appendRow(person);
+
+    d->contacts.insert(res.uri(), item);
     item->loadData();
-    d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMRole).toString(), item->data(PersonsModel::UriRole).toString());
-    appendRow(item);
 }
 
-ContactItem* PersonsModel::contactForIMAccount(const QUrl &uri) const
+void PersonsModel::updateContact(ContactItem *contact)
 {
-    QStandardItem *it = itemFromIndex(findRecursively(PersonsModel::IMAccountUriRole, uri));
-    return dynamic_cast<ContactItem*>(it);
+    Q_D(PersonsModel);
+
+    kDebug() << "Updating contact" << contact->uri();
+
+    QString queryString = d->prepareQuery(contact->uri());
+
+    Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, queryString, Soprano::Query::QueryLanguageSparql);
+    query->setProperty("contactItem", QVariant::fromValue<ContactItem*>(contact));
+
+    connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
+            this, SLOT(nextReady(Soprano::Util::AsyncQuery*)));
+
+    connect(query, SIGNAL(finished(Soprano::Util::AsyncQuery*)),
+            this, SLOT(updateContactFinished(Soprano::Util::AsyncQuery*)));
+}
+
+void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
+{
+    ContactItem *contact = query->property("contactItem").value<ContactItem*>();
+
+    if (!contact) {
+        return;
+    }
+
+    contact->finishLoadingData();
+}
+
+ContactItem* PersonsModel::contactItemForUri(const QUrl &uri) const
+{
+    Q_D(const PersonsModel);
+    return d->contacts.value(uri);
 }
 
 void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
@@ -445,10 +489,11 @@ void PersonsModel::createPersonFromIndexes(const QList<QModelIndex> &indexes)
     QList<QUrl> contactUris;
 
     Q_FOREACH(const QModelIndex &index, indexes) {
-        if (index.data(PersonsModel::ResourceTypeRole).toUInt() == PersonsModel::Person) {
-            personUris.append(index.data(PersonsModel::UriRole).toUrl());
+
+        if (index.data(PersonsModel::UriRole).toString().left(10).compare("fakeperson") == 0) {
+            contactUris.append(index.data(PersonsModel::ChildContactsUriRole).toUrl());
         } else {
-            contactUris.append(index.data(PersonsModel::UriRole).toUrl());
+            personUris.append(index.data(PersonsModel::UriRole).toUrl());
         }
     }
 

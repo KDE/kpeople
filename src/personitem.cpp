@@ -70,42 +70,80 @@ QVariantList PersonItem::queryChildrenForRoleList(int role) const
 
 QVariant PersonItem::data(int role) const
 {
-    switch(role) {
-        case PersonsModel::NameRole:
-        case PersonsModel::StatusRole: //TODO: use a better algorithm for finding the actual status
-        case PersonsModel::NickRole:
-        case PersonsModel::LabelRole:
-        case PersonsModel::IMRole:
-        case PersonsModel::IMAccountTypeRole:
-        case PersonsModel::PhoneRole:
-        case PersonsModel::EmailRole:
-        case PersonsModel::PresenceTypeRole:
-        case PersonsModel::PresenceDisplayRole:
-        case PersonsModel::PresenceDecorationRole:
-        case PersonsModel::ContactIdRole:
-        case PersonsModel::ContactTypeRole:
-        case PersonsModel::ContactGroupsRole: {
-            //we need to return empty qvariant here, otherwise we'd get a qvariant
-            //with empty qvariantlist, which would get parsed as non-empty qvariant
+    if (role == PersonsModel::PresenceTypeRole
+        || role == PersonsModel::PresenceDisplayRole
+        || role == PersonsModel::PresenceDecorationRole) {
 
-            QVariantList val = queryChildrenForRoleList(role);
-            if (val.isEmpty()) {
-                return QVariant();
-            } else {
-                return val;
+        QVariantList presences = queryChildrenForRoleList(PersonsModel::PresenceTypeRole);
+
+        //we find which position in the list contains the most online presence
+        //and then we use that index to return the other roles
+        int mostOnlineIndex = -1;
+        int mostOnlinePresence = 999;
+
+        for (int i = 0; i < presences.size(); i++) {
+            int currentPresencePriority = presenceSortPriority(presences.at(i).toString());
+            if (currentPresencePriority < mostOnlinePresence) {
+                mostOnlineIndex = i;
+                mostOnlinePresence = currentPresencePriority;
+
+                //if the most online is "available",
+                //break as there can't be anything more online
+                if (mostOnlinePresence == 0) {
+                    break;
+                }
             }
         }
-        case Qt::DisplayRole:
-        case Qt::DecorationRole:
-        case PersonsModel::PhotoRole:
-            return queryChildrenForRole(role);
-        case PersonsModel::ContactsCountRole:
-            return rowCount();
-        case PersonsModel::ResourceTypeRole:
-            return PersonsModel::Person;
+
+        Q_ASSERT(mostOnlineIndex != -1);
+
+        switch (role) {
+            case PersonsModel::PresenceTypeRole:
+                return presences.at(mostOnlineIndex);
+            case PersonsModel::PresenceDisplayRole: {
+                const QVariantList presenceDisplayNames = queryChildrenForRoleList(PersonsModel::PresenceDisplayRole);
+                return presenceDisplayNames.at(mostOnlineIndex);
+            }
+            case PersonsModel::PresenceDecorationRole: {
+                const QVariantList presenceDecoration = queryChildrenForRoleList(PersonsModel::PresenceDecorationRole);
+                return presenceDecoration.at(mostOnlineIndex);
+            }
+        }
     }
 
-    return QStandardItem::data(role);
+    if (role == PersonsModel::UriRole) {
+        //uri for PersonItem is set using setData(...), so we need to query it from there
+        return QStandardItem::data(role);
+    }
+
+    QVariantList ret;
+    for (int i = 0; i < rowCount(); i++) {
+        QVariant value;
+        //if we're being asked for the child contacts uris,
+        //we need to query the children for their UriRole
+        if (role == PersonsModel::ChildContactsUriRole) {
+            value = child(i)->data(PersonsModel::UriRole);
+        } else {
+            value = child(i)->data(role);
+        }
+        //these roles must return single QVariant
+        if ((role == Qt::DisplayRole || role == Qt::DecorationRole)) {
+            return value;
+        }
+        if (value.type() == QVariant::List) {
+            ret += value.toList();
+        } else if (!value.isNull()) {
+            ret += value;
+        }
+    }
+
+    if (ret.isEmpty()) {
+        //we need to return empty qvariant here, otherwise we'd get a qvariant
+        //with empty qvariantlist, which would get parsed as non-empty qvariant
+        return QVariant();
+    }
+
+    return ret;
 }
 
 void PersonItem::removeContacts(const QList<QUrl> &contacts)
@@ -143,6 +181,7 @@ void PersonItem::addContacts(const QList<QUrl> &_contacts)
     //append the moved contacts to this person and remove them from 'contacts'
     //so they are not added twice
     foreach (QStandardItem *contactItem, toplevelContacts) {
+        //FIXME: we need to remove the fake person item here
         ContactItem *contact = dynamic_cast<ContactItem*>(contactItem);
         appendRow(contact);
         contacts.removeOne(contact->uri());
@@ -181,4 +220,38 @@ void PersonItem::setContacts(const QList<QUrl> &contacts)
     }
     addContacts(toAdd);
     Q_ASSERT(hasChildren());
+}
+
+int PersonItem::presenceSortPriority(const QString &presenceName) const
+{
+    if (presenceName == QLatin1String("available")) {
+        return 0;
+    }
+
+    if (presenceName == QLatin1String("busy") || presenceName == QLatin1String("dnd")) {
+        return 1;
+    }
+
+    if (presenceName == QLatin1String("hidden")) {
+        return 2;
+    }
+
+    if (presenceName == QLatin1String("away")) {
+        return 3;
+    }
+
+    if (presenceName == QLatin1String("xa")) {
+        return 4;
+    }
+
+    if (presenceName == QLatin1String("unknown")) {
+        return 5;
+    }
+
+    return 6;
+}
+
+void PersonItem::contactDataChanged()
+{
+    emitDataChanged();
 }

@@ -26,7 +26,7 @@ class DuplicatesTest : public QObject
 {
     Q_OBJECT
     public:
-        explicit DuplicatesTest(QObject* parent = 0);
+        explicit DuplicatesTest(QObject *parent = 0);
 
     private slots:
         void testDuplicates();

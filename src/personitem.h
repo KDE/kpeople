@@ -45,9 +45,12 @@ public:
     void addContacts(const QList<QUrl> &contacts);
     void setContacts(const QList<QUrl> &contacts);
 
+    void contactDataChanged();
+
 private:
     QVariant queryChildrenForRole(int role) const;
     QVariantList queryChildrenForRoleList(int role) const;
+    int presenceSortPriority(const QString &presenceName) const;
 };
 
 Q_DECLARE_METATYPE(PersonItem*);

@@ -106,7 +106,7 @@ PersonsModelFeature PersonsModelFeature::avatarModelFeature(bool optional)
         "?uri      nco:photo    ?phRes. "
         "?phRes    nie:url      ?nie_url. "));
     QHash<QString, int> pb;
-    pb.insert("nie_url", PersonsModel::PhotoRole);
+    pb.insert("nie_url", PersonsModel::PhotosRole);
     avatarsFeature.setBindingsMap(pb);
     avatarsFeature.setOptional(optional);
     avatarsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::photo());
@@ -120,7 +120,7 @@ PersonsModelFeature PersonsModelFeature::emailModelFeature(bool optional)
         "?uri                    nco:hasEmailAddress    ?nco_hasEmailAddress. "
         "?nco_hasEmailAddress    nco:emailAddress       ?nco_emailAddress. "));
     QHash<QString, int> eb;
-    eb.insert("nco_emailAddress", PersonsModel::EmailRole);
+    eb.insert("nco_emailAddress", PersonsModel::EmailsRole);
     emailsFeature.setBindingsMap(eb);
     emailsFeature.setOptional(optional);
     emailsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasEmailAddress());
@@ -133,7 +133,7 @@ PersonsModelFeature PersonsModelFeature::fullNameModelFeature(bool optional)
     fullNameFeature.setQueryPart(QString::fromUtf8(
         "?uri                    nco:fullname    ?nco_fullname. "));
     QHash<QString, int> fnb;
-    fnb.insert("nco_fullname", PersonsModel::NameRole);
+    fnb.insert("nco_fullname", PersonsModel::FullNamesRole);
     fullNameFeature.setBindingsMap(fnb);
     fullNameFeature.setOptional(optional);
     return fullNameFeature;
@@ -146,7 +146,7 @@ PersonsModelFeature PersonsModelFeature::groupsModelFeature(bool optional)
         "?uri                   nco:belongsToGroup      ?nco_belongsToGroup . "
         "?nco_belongsToGroup    nco:contactGroupName    ?nco_contactGroupName . "));
     QHash<QString, int> gb;
-    gb.insert("nco_contactGroupName", PersonsModel::ContactGroupsRole);
+    gb.insert("nco_contactGroupName", PersonsModel::GroupsRole);
     groupsFeature.setBindingsMap(gb);
     groupsFeature.setOptional(optional);
     groupsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::belongsToGroup());
@@ -159,14 +159,13 @@ PersonsModelFeature PersonsModelFeature::imModelFeature(bool optional)
     imFeature.setQueryPart(QString::fromUtf8(
         "?uri                 nco:hasIMAccount     ?nco_hasIMAccount. "
         "?nco_hasIMAccount    nco:imNickname       ?nco_imNickname. "
-        "?nco_hasIMAccount    nco:imID             ?nco_imID. "
-        "?nco_hasIMAccount    nco:imAccountType    ?nco_imAccountType. "));
+        "?nco_hasIMAccount    nco:imID             ?nco_imID. "));
     QHash<QString, int> b;
-    b.insert("nco_imNickname", PersonsModel::NickRole);
-    b.insert("nco_imID", PersonsModel::IMRole);
-    b.insert("nco_imImAcountType", PersonsModel::IMAccountTypeRole);
+    b.insert("nco_imNickname", PersonsModel::NicknamesRole);
+    b.insert("nco_imID", PersonsModel::IMsRole);
     imFeature.setBindingsMap(b);
     imFeature.setOptional(optional);
     imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount());
+    imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::nickname());
     return imFeature;
 }

@@ -55,6 +55,9 @@ public:
      * querying Nepomuk
      */
     void loadData();
+
+    void finishLoadingData();
+
 private:
     ContactItemPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(ContactItem)

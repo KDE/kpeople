@@ -57,6 +57,7 @@ install (FILES personsmodel.h
                personactionsmodel.h
                basepersonsdatasource.h
                personpluginmanager.h
+
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
          COMPONENT Devel
 )

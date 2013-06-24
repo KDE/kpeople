@@ -353,5 +353,3 @@ QString PersonData::findMostOnlinePresence(const QStringList &presences) const
 
     return "offline";
 }
-
-

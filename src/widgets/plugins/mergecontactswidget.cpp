@@ -45,7 +45,7 @@ MergeContactsWidget::MergeContactsWidget(QWidget *parent)
     , m_model(0)
     , m_containerListDetails(0)
     , m_duplicatesBuster(0)
-    ,m_person(0)
+    , m_person(0)
 {
     setLayout(new QVBoxLayout());
 
@@ -94,7 +94,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
 
         QString name = duplicate.data(Qt::DisplayRole).toString();
         QPixmap avatar;
-        QString avatarPath = duplicate.data(PersonsModel::PhotoRole).toString();
+        QString avatarPath = duplicate.data(PersonsModel::PhotosRole).toString();
         if (!avatarPath.isEmpty()) {
             avatar.load(avatarPath);
         }

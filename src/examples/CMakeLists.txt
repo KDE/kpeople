@@ -11,8 +11,4 @@ kde4_add_executable(duplicates duplicates.cpp)
 target_link_libraries(duplicates ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBRARY} kpeople)
 
 kde4_add_executable(personwidget personwidget.cpp)
-<<<<<<< HEAD
 target_link_libraries(personwidget ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} kpeople kpeoplewidgets)
-=======
-target_link_libraries(personwidget ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} kpeople)
->>>>>>> mklapetek/refactor

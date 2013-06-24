@@ -108,7 +108,6 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
     QHash<int, QByteArray> names = roleNames();
     names.insert(PersonsModel::EmailsRole, "emails");
     names.insert(PersonsModel::PhonesRole, "phones");
-    names.insert(PersonsModel::ContactIdRole, "contactId");
     names.insert(PersonsModel::IMsRole, "ims");
     names.insert(PersonsModel::NicknamesRole, "nicks");
     names.insert(PersonsModel::UriRole, "uri");
@@ -123,11 +122,6 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
 
     new ResourceWatcherService(this);
     d->fakePersonsCounter = 0;
-}
-
-PersonsModel::~PersonsModel()
-{
-    delete d_ptr;
 }
 
 PersonsModel::~PersonsModel()

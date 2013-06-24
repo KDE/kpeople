@@ -39,6 +39,7 @@
 #include <QPushButton>
 #include <QCheckBox>
 
+using namespace KPeople;
 
 MergeContactsWidget::MergeContactsWidget(QWidget *parent)
     : AbstractPersonDetailsWidget(parent)

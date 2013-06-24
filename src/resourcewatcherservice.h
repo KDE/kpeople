@@ -25,6 +25,9 @@
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Types/Property>
 
+
+namespace KPeople
+{
 class PersonsModel;
 class ResourceWatcherServicePrivate;
 
@@ -51,5 +54,6 @@ private:
     ResourceWatcherServicePrivate * const d_ptr;
     Q_DECLARE_PRIVATE(ResourceWatcherService)
 };
+}
 
 #endif // RESOURCE_WATCHER_SERVICE_H

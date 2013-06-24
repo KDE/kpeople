@@ -23,6 +23,9 @@
 #include <QList>
 #include <QPersistentModelIndex>
 
+namespace KPeople
+{
+
 struct Match
 {
     Match(const QList< int >& roles, const QPersistentModelIndex& a, const QPersistentModelIndex& b);
@@ -32,5 +35,7 @@ struct Match
     QList<int> role;
     QPersistentModelIndex indexA, indexB;
 };
+
+}
 
 #endif // MATCH_H

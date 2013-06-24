@@ -37,6 +37,8 @@
 #include <Soprano/QueryResultIterator>
 #include <Nepomuk2/ResourceManager>
 
+using namespace KPeople;
+
 class IMPersonsDataSource::Private {
 public:
     KTp::GlobalContactManager *contactManager;

@@ -23,6 +23,8 @@
 #include <nepomuk2/datamanagement.h>
 #include <QUrl>
 
+using namespace KPeople;
+
 MatchesSolver::MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent)
     : KJob(parent)
     , m_matches(matches)

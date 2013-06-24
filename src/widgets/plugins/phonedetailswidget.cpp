@@ -26,6 +26,8 @@
 
 #include "persondata.h"
 
+using namespace KPeople;
+
 PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent):
     AbstractPersonDetailsWidget(parent)
 {

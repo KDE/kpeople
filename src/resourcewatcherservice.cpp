@@ -32,6 +32,8 @@
 #include <Nepomuk2/Variant>
 #include <KDebug>
 
+
+namespace KPeople {
 struct ResourceWatcherServicePrivate {
     ResourceWatcherServicePrivate(PersonsModel *model)
         : contactWatcher(0), personsModel(model)
@@ -40,8 +42,10 @@ struct ResourceWatcherServicePrivate {
     Nepomuk2::ResourceWatcher *personWatcher;
     Nepomuk2::ResourceWatcher *contactWatcher;
     PersonsModel *personsModel;
-
 };
+}
+
+using namespace KPeople;
 
 ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     : QObject(parent),

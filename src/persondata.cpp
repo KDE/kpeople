@@ -44,6 +44,9 @@
 using namespace Nepomuk2::Vocabulary;
 using namespace Soprano::Vocabulary;
 
+using namespace KPeople;
+
+namespace KPeople {
 class PersonDataPrivate {
 public:
     PersonDataPrivate(PersonData* q)
@@ -59,6 +62,7 @@ public:
     Nepomuk2::Resource personResource;
     QList<Nepomuk2::Resource> contactResources;
 };
+}
 
 PersonData::PersonData(QObject *parent)
     : QObject(parent),

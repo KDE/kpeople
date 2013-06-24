@@ -39,6 +39,7 @@
 using namespace Nepomuk2;
 using namespace Nepomuk2::Vocabulary;
 using namespace Soprano::Vocabulary;
+using namespace KPeople;
 
 void PersonDataTests::initContact1()
 {

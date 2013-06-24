@@ -27,6 +27,9 @@
 
 #include "personsmodel.h"
 
+
+namespace KPeople
+{
 class PersonsModelFeaturePrivate;
 
 class PersonsModelFeature
@@ -102,5 +105,6 @@ public:
 private:
     QSharedDataPointer<PersonsModelFeaturePrivate> d;
 };
+}
 
 #endif // PERSONS_MODEL_FEATURE_H

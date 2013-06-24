@@ -44,6 +44,9 @@
 
 #include <KDebug>
 
+using namespace KPeople;
+
+namespace KPeople{
 struct PersonsModelPrivate {
     QString prepareQuery(const QUrl &uri = QUrl());
 
@@ -60,6 +63,7 @@ struct PersonsModelPrivate {
 
     int fakePersonsCounter; //used to set fake persons uri in form of fakeperson:/N
 };
+}
 
 QString PersonsModelPrivate::prepareQuery(const QUrl &uri)
 {

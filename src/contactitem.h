@@ -26,9 +26,13 @@
 #include "kpeople_export.h"
 #include <QStandardItem>
 #include "personsmodel.h"
+#include "abstractpersonplugin.h"
 
 class QAction;
 class ContactItemPrivate;
+
+namespace KPeople
+{
 
 class KPEOPLE_EXPORT ContactItem : public QStandardItem
 {
@@ -43,7 +47,7 @@ public:
 
     /**
      * such the data to the role, with special treatment to list roles.
-     * In such cases the data will be added to the list 
+     * In such cases the data will be added to the list
      */
     void addContactData(int role, const QVariant &value);
     void removeData(int role);
@@ -63,7 +67,9 @@ private:
     Q_DECLARE_PRIVATE(ContactItem)
 };
 
-Q_DECLARE_METATYPE(ContactItem*);
+}
+
+Q_DECLARE_METATYPE(KPeople::ContactItem*);
 Q_DECLARE_METATYPE(QList<QAction *>);
 
 #endif // PERSONS_MODEL_CONTACT_ITEM_H

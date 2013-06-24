@@ -29,6 +29,8 @@
 #include <Soprano/Vocabulary/NAO>
 #include <KDebug>
 
+using namespace KPeople;
+
 PersonItem::PersonItem(const QUrl &personUri)
 {
     setData(personUri, PersonsModel::UriRole);

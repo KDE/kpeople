@@ -27,6 +27,9 @@
 
 struct DataSourceWatcherPrivate;
 
+namespace KPeople
+{
+
 class KPEOPLE_EXPORT DataSourceWatcher : public QObject
 {
     Q_OBJECT
@@ -56,6 +59,8 @@ private:
     Q_DECLARE_PRIVATE(DataSourceWatcher)
     DataSourceWatcherPrivate * d_ptr;
 };
+
+}
 
 #endif
 

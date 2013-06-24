@@ -22,13 +22,13 @@
 
 #include "abstractpersonplugin.h"
 
-class EmailPlugin : public AbstractPersonPlugin
+class EmailPlugin : public KPeople::AbstractPersonPlugin
 {
     Q_OBJECT
 public:
     EmailPlugin(QObject* parent, const QVariantList &args);
 
-    virtual QList<QAction*> actionsForPerson(PersonData *personData, QObject *parent);
+    virtual QList<QAction*> actionsForPerson(KPeople::PersonData *personData, QObject *parent);
 
 private Q_SLOTS:
     void onEmailTriggered();

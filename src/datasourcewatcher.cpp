@@ -22,6 +22,8 @@
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"
 
+using namespace KPeople;
+
 struct DataSourceWatcherPrivate
 {
     QHash<QString, QUrl> watchedContactsMap;

@@ -28,6 +28,8 @@
 #include <cstdio>
 #include <iostream>
 
+using namespace KPeople;
+
 class ResultPrinter : public QObject
 {
     Q_OBJECT
@@ -58,7 +60,7 @@ class ResultPrinter : public QObject
                 else
                     ++it;
             }
-            
+
             if((m_action==Apply || m_action==Ask) && !res.isEmpty()) {
                 MatchesSolver* s = new MatchesSolver(res, m_model, this);
                 connect(s, SIGNAL(finished(KJob*)), this, SLOT(matchesSolverDone(KJob*)));
@@ -107,7 +109,7 @@ int main(int argc, char** argv)
     DuplicatesFinder* f = new DuplicatesFinder(&model);
     QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
     QObject::connect(&model, SIGNAL(modelInitialized()), f, SLOT(start()));
-    
+
     app.exec();
 }
 

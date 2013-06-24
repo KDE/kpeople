@@ -29,6 +29,9 @@
 #include <KDateTime>
 
 namespace Nepomuk2 { class Resource; }
+
+namespace KPeople
+{
 struct PersonDataPrivate;
 
 class KPEOPLE_EXPORT PersonData : public QObject
@@ -105,5 +108,6 @@ class KPEOPLE_EXPORT PersonData : public QObject
         QString findMostOnlinePresence(const QStringList &presences) const;
 
 };
+}
 
 #endif // PERSONDATA_H

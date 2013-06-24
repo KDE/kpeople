@@ -39,6 +39,8 @@
 #include <Soprano/Model>
 #include <Soprano/QueryResultIterator>
 
+using namespace KPeople;
+
 class ContactItemPrivate {
 public:
     QUrl uri;

@@ -23,11 +23,11 @@
 
 class QGridLayout;
 
-class PhoneDetailsWidget : public AbstractPersonDetailsWidget
+class PhoneDetailsWidget : public KPeople::AbstractPersonDetailsWidget
 {
 public:
     explicit PhoneDetailsWidget(QWidget* parent = 0);
-    void setPerson(PersonData *person);
+    void setPerson(KPeople::PersonData *person);
 };
 
 #endif // PHONE_DETAILS_WIDGET_H

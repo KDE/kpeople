@@ -31,6 +31,8 @@
 
 #include "basepersonsdatasource.h"
 
+using namespace KPeople;
+
 class PersonPluginManagerPrivate
 {
 public:

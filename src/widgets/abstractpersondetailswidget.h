@@ -23,6 +23,8 @@
 
 #include <KIcon>
 
+namespace KPeople
+{
 class PersonData;
 class PersonsModel;
 class AbstractPersonDetailsWidgetPrivate;
@@ -60,5 +62,6 @@ private:
     AbstractPersonDetailsWidgetPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(AbstractPersonDetailsWidget);
 };
+}
 
 #endif // ABSTRATPERSONDETAILSWIDGET_H

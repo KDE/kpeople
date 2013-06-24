@@ -55,6 +55,7 @@ install (FILES personsmodel.h
                kpeople_export.h
                ktptranslationproxy.h
                personactionsmodel.h
+               abstractpersonplugin.h
                basepersonsdatasource.h
                personpluginmanager.h
 

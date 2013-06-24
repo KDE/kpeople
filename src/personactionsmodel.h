@@ -25,6 +25,10 @@
 #include "kpeople_export.h"
 
 class QAction;
+
+
+namespace KPeople
+{
 class PersonActionsPrivate;
 
 class KPEOPLE_EXPORT PersonActionsModel : public QAbstractListModel
@@ -51,5 +55,6 @@ private:
     Q_DECLARE_PRIVATE(PersonActions);
     PersonActionsPrivate * const d_ptr;
 };
+}
 
 #endif // PERSON_ACTIONS_H

@@ -19,6 +19,8 @@
 
 #include "match.h"
 
+using namespace KPeople;
+
 Match::Match(const QList<int> &roles, const QPersistentModelIndex &a, const QPersistentModelIndex &b)
     : role(roles), indexA(a), indexB(b)
 {

@@ -22,6 +22,8 @@
 #include <QList>
 #include <QAction>
 
+using namespace KPeople;
+
 AbstractPersonPlugin::AbstractPersonPlugin(QObject *parent) : QObject (parent)
 {
 

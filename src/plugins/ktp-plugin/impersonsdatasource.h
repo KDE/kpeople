@@ -31,7 +31,7 @@
 namespace KTp { class GlobalContactManager; }
 namespace Tp { class PendingOperation; }
 
-class KDE_EXPORT IMPersonsDataSource : public BasePersonsDataSource
+class KDE_EXPORT IMPersonsDataSource : public KPeople::BasePersonsDataSource
 {
     Q_OBJECT
 public:

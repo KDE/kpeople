@@ -24,6 +24,8 @@
 
 #include <personsmodel.h>
 
+using namespace KPeople;
+
 class ContactDelegate : public QStyledItemDelegate
 {
     virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {

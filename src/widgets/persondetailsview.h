@@ -26,10 +26,12 @@
 #include "kpeople_export.h"
 
 class QLabel;
+class QVBoxLayout;
+
+namespace KPeople {
+class AbstractPersonDetailsWidget;
 class PersonData;
 class PersonsModel;
-class QVBoxLayout;
-class AbstractPersonDetailsWidget;
 
 class KPEOPLE_EXPORT PersonDetailsView : public QWidget
 {
@@ -58,5 +60,6 @@ private:
 
     QList<AbstractPersonDetailsWidget*> m_detailWidgets;
 };
+}
 
 #endif // PERSON_DETAILS_VIEW_H

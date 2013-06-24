@@ -20,6 +20,7 @@
 
 #include <KDebug>
 
+namespace KPeople {
 class AbstractPersonDetailsWidgetPrivate
 {
 public:
@@ -27,6 +28,9 @@ public:
     KIcon icon;
     bool active;
 };
+}
+
+using namespace KPeople;
 
 AbstractPersonDetailsWidget::AbstractPersonDetailsWidget(QWidget *parent) :
     QWidget(parent),

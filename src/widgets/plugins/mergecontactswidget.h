@@ -26,24 +26,23 @@
 
 class QGridLayout;
 class QPushButton;
+class QModelIndex;
 
 class MainWindow;
-class PersonDetailsView;
-
 class KJob;
-class DuplicatesFinder;
-
-class QModelIndex;
 class PersonPresentationWidget;
 
+namespace KPeople {
+class DuplicatesFinder;
+}
 
-class MergeContactsWidget : public AbstractPersonDetailsWidget
+class MergeContactsWidget : public KPeople::AbstractPersonDetailsWidget
 {
     Q_OBJECT
 public:
     explicit MergeContactsWidget(QWidget *parent = 0);
-    void setPerson(PersonData *person);
-    void setPersonsModel(PersonsModel *model);
+    void setPerson(KPeople::PersonData *person);
+    void setPersonsModel(KPeople::PersonsModel *model);
 
     void searchForDuplicates();
     void fillDuplicatesWidget(const QList<QPersistentModelIndex> &duplicates);
@@ -55,13 +54,14 @@ private Q_SLOTS:
     void onMergePossibilitiesButtonPressed();
     void searchForDuplicatesFinished();
 private:
-    PersonData *m_person;
-    PersonsModel *m_model;
+    KPeople::PersonData *m_person;
+    KPeople::PersonsModel *m_model;
     QPushButton *m_mergeButton;
 
     QWidget *m_containerListDetails;
-    DuplicatesFinder *m_duplicatesBuster ;
+    KPeople::DuplicatesFinder *m_duplicatesBuster;
     QList< QPair<QPersistentModelIndex, PersonPresentationWidget*> > m_listMergeContacts;
 };
+
 
 #endif // MERGE_CONTACT_WIDGET_H

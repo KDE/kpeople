@@ -25,6 +25,9 @@
 
 class QUrl;
 class QModelIndex;
+
+namespace KPeople
+{
 class PersonsModel;
 struct Match;
 
@@ -47,5 +50,6 @@ class KPEOPLE_EXPORT MatchesSolver : public KJob
         QSet<KJob*> m_pending;
         PersonsModel *m_model;
 };
+}
 
 #endif // MATCHESSOLVER_H

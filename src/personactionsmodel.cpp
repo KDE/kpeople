@@ -34,6 +34,7 @@
 #include "personpluginmanager.h"
 #include "persondata.h"
 
+namespace KPeople {
 struct PersonActionsPrivate {
     PersonActionsPrivate():
         person(0)
@@ -43,12 +44,15 @@ struct PersonActionsPrivate {
     QPersistentModelIndex index;
     PersonData *person;
 };
+}
+
+using namespace KPeople;
+
 
 PersonActionsModel::PersonActionsModel(QObject *parent)
     : QAbstractListModel(parent),
     d_ptr(new PersonActionsPrivate)
 {
-    Q_D(PersonActions);
 }
 
 PersonActionsModel::~PersonActionsModel()

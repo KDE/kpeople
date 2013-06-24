@@ -25,6 +25,9 @@
 
 #include "kpeople_export.h"
 
+namespace KPeople
+{
+
 class KPEOPLE_EXPORT BasePersonsDataSource : public QObject
 {
     Q_OBJECT
@@ -38,4 +41,6 @@ Q_SIGNALS:
     void contactChanged(const QString &contactId);
 };
 
+
+}
 #endif // BASE_PERSONS_DATA_SOURCE_H

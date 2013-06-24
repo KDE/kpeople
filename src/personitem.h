@@ -30,8 +30,12 @@ class Resource;
 }
 
 class QUrl;
-class PersonsModelItemPrivate;
+
+
+namespace KPeople
+{
 class PersonCacheItem;
+class PersonsModelItemPrivate;
 
 class KPEOPLE_EXPORT PersonItem : public QStandardItem
 {
@@ -52,7 +56,8 @@ private:
     QVariantList queryChildrenForRoleList(int role) const;
     int presenceSortPriority(const QString &presenceName) const;
 };
+}
 
-Q_DECLARE_METATYPE(PersonItem*);
+Q_DECLARE_METATYPE(KPeople::PersonItem*);
 
 #endif // PERSONS_MODEL_ITEM_H

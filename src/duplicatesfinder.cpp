@@ -21,6 +21,8 @@
 #include "personsmodel.h"
 #include <QDebug>
 
+using namespace KPeople;
+
 DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)
     : KJob(parent)
     , m_model(model)

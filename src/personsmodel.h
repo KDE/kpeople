@@ -26,14 +26,18 @@
 
 #include <QStandardItemModel>
 
-class PersonsModelFeature;
-class ContactItem;
 class KJob;
 class QUrl;
-struct PersonsModelPrivate;
 
 namespace Nepomuk2 { class Resource; }
 namespace Soprano { namespace Util { class AsyncQuery; } }
+
+namespace KPeople
+{
+class PersonsModelFeature;
+class ContactItem;
+struct PersonsModelPrivate;
+
 
 class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
 {
@@ -117,7 +121,7 @@ public:
     void removePersonFromModel(const QModelIndex &index);
 
     Q_SCRIPTABLE QModelIndex indexForUri(const QUrl &uri) const;
-    
+
     Q_SCRIPTABLE QList<QModelIndex> indexesForUris(const QVariantList& uris) const;
 
 Q_SIGNALS:
@@ -150,7 +154,8 @@ private:
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);
 };
+}
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(PersonsModel::Features)
+Q_DECLARE_OPERATORS_FOR_FLAGS(KPeople::PersonsModel::Features)
 
 #endif // PERSONS_MODEL_H

@@ -21,6 +21,9 @@
 
 #include <Nepomuk2/Vocabulary/NCO>
 
+using namespace KPeople;
+
+namespace KPeople {
 class PersonsModelFeaturePrivate : public QSharedData
 {
 public:
@@ -29,6 +32,7 @@ public:
     bool isOptional;
     QUrl watcherProperty;
 };
+}
 
 PersonsModelFeature::PersonsModelFeature()
 : d (new PersonsModelFeaturePrivate)

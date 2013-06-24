@@ -24,8 +24,11 @@
 
 #include "kpeople_export.h"
 
-class BasePersonsDataSource;
 class QAction;
+
+namespace KPeople
+{
+class BasePersonsDataSource;
 class PersonData;
 
 class KPEOPLE_EXPORT PersonPluginManager
@@ -35,5 +38,6 @@ public:
 
     static BasePersonsDataSource* presencePlugin();
 };
+}
 
 #endif // PERSON_PLUGIN_MANAGER_H

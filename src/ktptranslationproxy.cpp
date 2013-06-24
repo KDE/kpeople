@@ -25,6 +25,9 @@
 #include <KTp/types.h>
 #include <KDebug>
 
+using namespace KPeople;
+
+
 KTpTranslationProxy::KTpTranslationProxy(QObject *parent)
     : QIdentityProxyModel(parent)
 {

@@ -42,6 +42,7 @@
 #include "plugins/mergecontactswidget.h"
 
 using namespace Nepomuk::Vocabulary;
+using namespace KPeople;
 
 class DetailsGroupWidget : public QWidget
 {

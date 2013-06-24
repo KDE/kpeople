@@ -26,6 +26,9 @@
 #include "kpeople_export.h"
 #include "match.h"
 
+namespace KPeople
+{
+
 class PersonsModel;
 class KPEOPLE_EXPORT DuplicatesFinder : public KJob
 {
@@ -47,5 +50,6 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
         QList<Match> m_matches;
         QVector<int> m_compareRoles;
 };
+}
 
 #endif // DUPLICATESFINDER_H

@@ -33,7 +33,7 @@ EmailPlugin::EmailPlugin(QObject* parent, const QVariantList &args):
 
 }
 
-QList< QAction* > EmailPlugin::actionsForPerson(PersonData* personData, QObject* parent)
+QList< QAction* > EmailPlugin::actionsForPerson(KPeople::PersonData* personData, QObject* parent)
 {
     QList<QAction*> actions;
     foreach(const QString &email, personData->emails()) {

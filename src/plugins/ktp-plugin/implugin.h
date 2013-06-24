@@ -23,12 +23,12 @@
 
 class PersonData;
 
-class IMPlugin : public AbstractPersonPlugin
+class IMPlugin : public KPeople::AbstractPersonPlugin
 {
     Q_OBJECT
 public:
     IMPlugin(QObject *parent, const QVariantList &args);
-    virtual QList<QAction*> actionsForPerson(PersonData *personData, QObject *parent);
+    virtual QList<QAction*> actionsForPerson(KPeople::PersonData *personData, QObject *parent);
 
 private Q_SLOTS:
     void onActionTriggered();

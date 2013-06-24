@@ -19,6 +19,8 @@
 
 #include "basepersonsdatasource.h"
 
+using namespace KPeople;
+
 BasePersonsDataSource::BasePersonsDataSource(QObject *parent)
 {
 }

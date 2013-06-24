@@ -87,11 +87,11 @@ AbstractPersonPlugin(parent)
 {
 }
 
-QList<QAction*> IMPlugin::actionsForPerson(PersonData *personData, QObject *parent)
+QList<QAction*> IMPlugin::actionsForPerson(KPeople::PersonData *personData, QObject *parent)
 {
     QList<QAction*> actions;
 
-    IMPersonsDataSource *dataSource = dynamic_cast<IMPersonsDataSource*>(PersonPluginManager::presencePlugin());
+    IMPersonsDataSource *dataSource = dynamic_cast<IMPersonsDataSource*>(KPeople::PersonPluginManager::presencePlugin());
     if (!dataSource) {
         return actions;
     }

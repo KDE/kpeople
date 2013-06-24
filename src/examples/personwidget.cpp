@@ -23,46 +23,9 @@
 #include <QDebug>
 #include <QToolButton>
 #include <QMenu>
+
 #include <persondata.h>
-#include <personactionsmodel.h>
-
-class PersonWidget : public QWidget
-{
-    Q_OBJECT
-    public:
-        explicit PersonWidget(const QString& contactId, QWidget* parent = 0, Qt::WindowFlags f = 0)
-            : QWidget(parent)
-            , m_person(contactId)
-        {
-            initGUI();
-        }
-
-    private:
-        void initGUI() {
-            QFormLayout* l = new QFormLayout(this);
-            l->addRow("contactId:", new QLabel(m_person.contactId()));
-//             l->addRow("All Contacts:", new QLabel(m_person.bareContacts().join(", ")));
-            l->addRow("nickname:", new QLabel(m_person.name()));
-            l->addRow("status:", new QLabel(m_person.status()));
-
-            QLabel* avatar = new QLabel;
-            avatar->setPixmap(QPixmap(m_person.avatar().toLocalFile()));
-            l->addRow("avatar:", avatar);
-
-            PersonActionsModel* actions = new PersonActionsModel(&m_person);
-//             actions->setPerson(); //TODO: figure out API to set a person
-            QToolButton* b = new QToolButton;
-            b->setText("Actions");
-            QMenu* m = new QMenu(b);
-            m->addActions(actions->actions());
-            b->setPopupMode(QToolButton::MenuButtonPopup);
-            b->setMenu(m);
-            l->addRow("actions:", b);
-        }
-
-    private:
-        PersonData m_person;
-};
+#include <widgets/persondetailsview.h>
 
 int main(int argc, char** argv)
 {
@@ -72,10 +35,13 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    PersonWidget w(app.arguments()[1]);
+    PersonData person;
+    person.setContactId(app.arguments()[1]);
+
+    PersonDetailsView w;
+    w.setPerson(&person);
 
     w.show();
+
     app.exec();
 }
-
-#include "niceperson.moc"

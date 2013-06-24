@@ -38,10 +38,6 @@ public:
      * @parent parent object for newly created actions
      */
     virtual QList<QAction*> actionsForPerson(PersonData * const personData, QObject *parent);
-
-    /** Return a custom widget to show detailed information about a contact
-     */
-//     virtual QList<AbstractPersonDetailsWidget*> detailWidgets(PersonData * const personData, QWidget *parent);
 };
 
 #endif

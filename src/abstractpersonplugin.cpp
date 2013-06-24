@@ -31,8 +31,3 @@ QList< QAction* > AbstractPersonPlugin::actionsForPerson(PersonData*const person
 {
     return QList<QAction*>();
 }
-
-// QList< AbstractPersonDetailsWidget* > AbstractPersonPlugin::detailWidgets(PersonData*const personData, QWidget* parent)
-// {
-//     return QList<AbstractPersonPlugin*>();
-// }

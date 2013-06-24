@@ -166,5 +166,6 @@ PersonsModelFeature PersonsModelFeature::imModelFeature(bool optional)
     imFeature.setBindingsMap(b);
     imFeature.setOptional(optional);
     imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount());
+    imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::nickname());
     return imFeature;
 }

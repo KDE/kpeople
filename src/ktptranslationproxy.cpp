@@ -54,7 +54,7 @@ QVariant KTpTranslationProxy::data(const QModelIndex &proxyIndex, int role) cons
         case KTp::ContactPresenceTypeRole:
             return translatePresence(mapToSource(proxyIndex).data(PersonsModel::PresenceTypeRole));
         case KTp::ContactPresenceIconRole:
-            return mapToSource(proxyIndex).data(PersonsModel::PresenceDecorationRole);
+            return mapToSource(proxyIndex).data(PersonsModel::PresenceIconNameRole);
         case KTp::ContactPresenceNameRole:
             return mapToSource(proxyIndex).data(PersonsModel::PresenceDisplayRole);
         case Qt::DisplayRole:

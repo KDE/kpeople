@@ -79,6 +79,10 @@ QVariant PersonItem::data(int role) const
 
         QVariantList presences = queryChildrenForRoleList(PersonsModel::PresenceTypeRole);
 
+        if (presences.isEmpty()) {
+            return QVariant();
+        }
+
         //we find which position in the list contains the most online presence
         //and then we use that index to return the other roles
         int mostOnlineIndex = -1;
@@ -113,9 +117,6 @@ QVariant PersonItem::data(int role) const
             }
             case PersonsModel::PresenceIconNameRole: {
                 const QVariantList presenceIconNames = queryChildrenForRoleList(PersonsModel::PresenceIconNameRole);
-                if (presenceIconNames.isEmpty()) {
-                    return QVariant();
-                }
                 return presenceIconNames.at(mostOnlineIndex);
             }
         }

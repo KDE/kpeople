@@ -50,16 +50,25 @@ install (TARGETS kpeople
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES personsmodel.h
-               persondata.h
-               kpeople_export.h
-               ktptranslationproxy.h
-               personactionsmodel.h
-               abstractpersonplugin.h
-               basepersonsdatasource.h
-               personpluginmanager.h
+install (FILES
+            personsmodel.h
+            persondata.h
+            kpeople_export.h
+            ktptranslationproxy.h
+            abstractpersonplugin.h
+            basepersonsdatasource.h
+            personsmodelfeature.h
+            personpluginmanager.h
+         DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/
+         COMPONENT Devel
+)
 
-         DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople
+install (FILES
+            KPeople/AbstractPersonPlugin
+            KPeople/BasePersonsDataSource
+            KPeople/PersonData
+            KPeople/PersonsModel
+         DESTINATION ${INCLUDE_INSTALL_DIR}/KPeople
          COMPONENT Devel
 )
 

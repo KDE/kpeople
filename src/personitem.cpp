@@ -63,7 +63,7 @@ QVariantList PersonItem::queryChildrenForRoleList(int role) const
         QVariant value = child(i)->data(role);
         if (value.type() == QVariant::List) {
             ret += value.toList();
-        } else if (!value.isNull()) {
+        } else {
             ret += value;
         }
     }

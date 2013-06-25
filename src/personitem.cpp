@@ -74,7 +74,8 @@ QVariant PersonItem::data(int role) const
 {
     if (role == PersonsModel::PresenceTypeRole
         || role == PersonsModel::PresenceDisplayRole
-        || role == PersonsModel::PresenceDecorationRole) {
+        || role == PersonsModel::PresenceDecorationRole
+        || role == PersonsModel::PresenceIconNameRole) {
 
         QVariantList presences = queryChildrenForRoleList(PersonsModel::PresenceTypeRole);
 
@@ -109,6 +110,13 @@ QVariant PersonItem::data(int role) const
             case PersonsModel::PresenceDecorationRole: {
                 const QVariantList presenceDecoration = queryChildrenForRoleList(PersonsModel::PresenceDecorationRole);
                 return presenceDecoration.at(mostOnlineIndex);
+            }
+            case PersonsModel::PresenceIconNameRole: {
+                const QVariantList presenceIconNames = queryChildrenForRoleList(PersonsModel::PresenceIconNameRole);
+                if (presenceIconNames.isEmpty()) {
+                    return QVariant();
+                }
+                return presenceIconNames.at(mostOnlineIndex);
             }
         }
     }

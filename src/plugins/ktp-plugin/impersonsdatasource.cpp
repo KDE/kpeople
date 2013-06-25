@@ -152,6 +152,14 @@ QVariant IMPersonsDataSource::dataForContact(const QString &contactId, int role)
                 return QVariant();
             }
         break;
+        case PersonsModel::PresenceIconNameRole:
+            if (!contact.isNull()) {
+                return contact->presence().iconName();
+            } else if (!contactId.isEmpty()) {
+                return QString("user-offline");
+            } else if (contactId.isEmpty()) {
+                return QVariant();
+            }
     }
 
     return QVariant();

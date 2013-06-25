@@ -177,6 +177,7 @@ QVariant ContactItem::data(int role) const
         case PersonsModel::PresenceTypeRole:
         case PersonsModel::PresenceDisplayRole:
         case PersonsModel::PresenceDecorationRole:
+        case PersonsModel::PresenceIconNameRole:
             return PersonPluginManager::presencePlugin()->dataForContact(data(PersonsModel::IMsRole).toString(), role);
     }
 

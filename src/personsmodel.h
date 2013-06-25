@@ -74,6 +74,7 @@ public:
         PresenceTypeRole, //QString containing most online presence type
         PresenceDisplayRole, //QString containing displayable name for most online presence
         PresenceDecorationRole, //KIcon displaying current presence
+        PresenceIconNameRole, //QString with icon name of the current presence
 
         GroupsRole, //groups STRINGLIST
 

@@ -160,7 +160,7 @@ void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource 
         //go through all model features and check mandatory features,
         //only create contacts that have the mandatory property
         Q_FOREACH (const PersonsModelFeature &feature, d->personsModel->modelFeatures()) {
-            if (!feature.isOptional() || d->personsModel->queryFlags().first.testFlag(PersonsModel::FeatureNone)) {
+            if (!feature.isOptional()) {
                 if (feature.watcherProperty() == property) {
                     kDebug() << "Creating new contact";
                     d->personsModel->addContact(res);

@@ -24,6 +24,7 @@
 #include <personsmodel.h>
 #include <duplicatesfinder.h>
 #include <matchessolver.h>
+#include <personsmodelfeature.h>
 
 #include <cstdio>
 #include <iostream>
@@ -98,7 +99,9 @@ class ResultPrinter : public QObject
 int main(int argc, char** argv)
 {
     QCoreApplication app(argc, argv);
-    PersonsModel model(0, PersonsModel::FeatureEmails | PersonsModel::FeatureIM);
+    PersonsModel model;
+
+    model.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(true) << PersonsModelFeature::imModelFeature(true));
 
     ResultPrinter r;
     r.m_model = &model;

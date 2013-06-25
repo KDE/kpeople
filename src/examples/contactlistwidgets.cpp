@@ -23,6 +23,7 @@
 #include <qpainter.h>
 
 #include <personsmodel.h>
+#include <personsmodelfeature.h>
 
 using namespace KPeople;
 
@@ -45,12 +46,17 @@ int main(int argc, char** argv)
 
     QTreeView view;
     view.setItemDelegate(new ContactDelegate);
-    view.setModel(new PersonsModel(0,
-                                   PersonsModel::FeatureEmails
-                                   | PersonsModel::FeatureIM
-                                   | PersonsModel::FeatureAvatars
-                                   | PersonsModel::FeatureFullName,
-                                   &view));
+
+    KPeople::PersonsModel *model = new KPeople::PersonsModel(&view);
+
+    QList<KPeople::PersonsModelFeature> features;
+    features << KPeople::PersonsModelFeature::emailModelFeature(true)
+             << KPeople::PersonsModelFeature::avatarModelFeature(true)
+             << KPeople::PersonsModelFeature::imModelFeature(true)
+             << KPeople::PersonsModelFeature::fullNameModelFeature(true);
+    model->startQuery(features);
+
+    view.setModel(model);
     view.setSortingEnabled(true);
     view.show();
 

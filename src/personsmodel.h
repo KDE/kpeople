@@ -2,6 +2,7 @@
     Persons Model
     Copyright (C) 2012  Martin Klapetek <martin.klapetek@gmail.com>
     Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -45,22 +46,6 @@ class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
     Q_DISABLE_COPY(PersonsModel)
 
 public:
-    enum Feature {
-        FeatureNone       = 0x0000,
-        FeatureIM         = 0x0001,
-        FeatureGroups     = 0x0002,
-        FeatureAvatars    = 0x0004,
-        FeatureEmails     = 0x0008,
-        FeatureFullName   = 0x0010,
-        FeatureAll = FeatureIM |
-                     FeatureGroups |
-                     FeatureAvatars |
-                     FeatureEmails |
-                     FeatureFullName
-    };
-    Q_DECLARE_FLAGS(Features, Feature)
-    Q_FLAGS(Features)
-
     enum Role {
         UriRole = Qt::UserRole, //nepomuk URI STRING
         ChildContactsUriRole, //returns list of child contact roles STRINGLIST
@@ -81,25 +66,12 @@ public:
         UserRole = Qt::UserRole + 100 ///< in case it's needed to extend, use this one to start from
     };
 
-    /**
-     * @p mandatoryFeatures features we want to be sure the contact has
-     * @p optionalFeatures optional contact features we'd like to have
-     */
-    PersonsModel(Features mandatoryFeatures = 0, Features optionalFeatures = 0, QObject *parent = 0);
+    PersonsModel(QObject *parent = 0);
 
     virtual ~PersonsModel();
 
-    /**
-     * Sets the features we want to construct a query for; this starts populating the model
-     * @p mandatoryFeatures features we want to be sure the contact has
-     * @p optionalFeatures optional contact features we'd like to have
-     */
-    Q_SCRIPTABLE void setQueryFlags(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
-
-    /**
-     * @return QPair of query flags used to populate the model, first is mandatory, second is optional
-     */
-    QPair<PersonsModel::Features, PersonsModel::Features> queryFlags() const;
+    /**Start querying the database using the supplied features*/
+    void startQuery(const QList<PersonsModelFeature> &features);
 
     /** Creates a pimo:person with contacts as groundingOccurances */
     void createPersonFromContacts(const QList<QUrl> &contacts);
@@ -147,7 +119,6 @@ private:
     void addContact(const Nepomuk2::Resource &res);
     ContactItem* contactItemForUri(const QUrl &uri) const;
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
-    QList<PersonsModelFeature> init(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures);
 
     friend class ResourceWatcherService;
     friend class ContactItem;
@@ -157,6 +128,5 @@ private:
 };
 }
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(KPeople::PersonsModel::Features)
 
 #endif // PERSONS_MODEL_H

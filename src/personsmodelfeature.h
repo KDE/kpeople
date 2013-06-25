@@ -27,12 +27,13 @@
 
 #include "personsmodel.h"
 
+#include "kpeople_export.h"
 
 namespace KPeople
 {
 class PersonsModelFeaturePrivate;
 
-class PersonsModelFeature
+class KPEOPLE_EXPORT PersonsModelFeature
 {
 public:
     /**

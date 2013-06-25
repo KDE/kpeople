@@ -9,20 +9,18 @@ Rectangle {
     width: 300
     height: 300
     color: "red"
-    
+
     Core.SortFilterModel {
         id: filteredPeople
         sortRole: "display"
         sortCaseSensitivity: Qt.CaseInsensitive
         sourceModel: PersonsModel {
             id: people
-            Component.onCompleted: {
-                people.setQueryFlags(PersonsModel.FeatureNone, PersonsModel.FeatureAll);
-            }
+            optionalFeatures: PersonsModel.FeatureAll
         }
         filterRegExp: searchField.text
     }
-    
+
     CheckBox {
         id: areWeMerging
         anchors {
@@ -32,7 +30,7 @@ Rectangle {
         text: "Merging"
         onCheckedChanged: toMergeItems.clear()
     }
-    
+
     TextField {
         id: searchField
         focus: true
@@ -41,7 +39,7 @@ Rectangle {
             right: mergeLabel.left
         }
     }
-    
+
     Label {
         id: mergeLabel
         anchors {
@@ -50,7 +48,7 @@ Rectangle {
         }
         ListModel {
             id: toMergeItems
-            
+
             function uriIndex(uri) {
                 var ret = -1
                 for(var i=0; i<count && ret<0; ++i) {
@@ -59,12 +57,12 @@ Rectangle {
                 }
                 return ret
             }
-            
+
             function addUri(uri, name) {
                 if(uriIndex(uri)<0)
                     toMergeItems.append({ "uri": uri, "name": name })
             }
-            
+
             function indexes() {
                 var ret = new Array
                 for(var i=0; i<count; ++i) {
@@ -72,13 +70,13 @@ Rectangle {
                 }
                 return people.indexesForUris(ret)
             }
-            
+
             function removeUri(uri) {
                 remove(uriIndex(uri))
             }
         }
     }
-    
+
     GridView {
         id: view
         clip: true
@@ -88,7 +86,7 @@ Rectangle {
             left: parent.left
             right: contactItem.left
         }
-        
+
         cellWidth: 100
         cellHeight: 100
         model: filteredPeople
@@ -118,7 +116,7 @@ Rectangle {
                         }
                     }
     }
-    
+
     Flickable {
         id: contactItem
         anchors {
@@ -128,7 +126,7 @@ Rectangle {
         }
         width: parent.width/2
         property variant contactData
-        
+
         Column {
             width: parent.width
             spacing: 5
@@ -147,12 +145,12 @@ Rectangle {
                     }
                 }
             }
-            
+
             Label {
                 id: contactText
                 width: parent.width
                 text: dataToString(contactItem.contactData)
-                
+
                 function dataToString(data) {
                     var text = ""
                     if(data==null)
@@ -209,7 +207,7 @@ Rectangle {
             }
         }
     }
-    
+
     Component {
         id: unmergeDialogComponent
         CommonDialog {
@@ -217,7 +215,7 @@ Rectangle {
             property string name: contactItem.contactData.name
             property int index: filteredPeople.mapRowToSource(contactItem.contactData.index)
             property url uri: contactItem.contactData.uri
-            
+
             buttonTexts: ["Unmerge", "Cancel"]
             titleText: i18n("Unmerging %1", unmergeDialog.name)
             content: Column {

@@ -2,6 +2,7 @@
     Persons Model
     Copyright (C) 2012  Martin Klapetek <martin.klapetek@gmail.com>
     Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -56,9 +57,6 @@ struct PersonsModelPrivate {
     QHash<QString, int> bindingRoleMap;
     DataSourceWatcher *dataSourceWatcher;
 
-    PersonsModel::Features mandatoryFeatures;
-    PersonsModel::Features optionalFeatures;
-
     QList<PersonsModelFeature> modelFeatures;
 
     int fakePersonsCounter; //used to set fake persons uri in form of fakeperson:/N
@@ -99,9 +97,7 @@ QString PersonsModelPrivate::prepareQuery(const QUrl &uri)
 
 //-----------------------------------------------------------------------------
 
-PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
-                           PersonsModel::Features optionalFeatures,
-                           QObject *parent)
+PersonsModel::PersonsModel(QObject *parent)
     : QStandardItemModel(parent)
     , d_ptr(new PersonsModelPrivate)
 {
@@ -118,11 +114,6 @@ PersonsModel::PersonsModel(PersonsModel::Features mandatoryFeatures,
     names.insert(PersonsModel::FullNamesRole, "names");
     names.insert(PersonsModel::PhotosRole, "photos");
     setRoleNames(names);
-
-    if (mandatoryFeatures != 0 || optionalFeatures != 0) {
-        //this starts the query and populates the model
-        setQueryFlags(mandatoryFeatures, optionalFeatures);
-    }
 
     new ResourceWatcherService(this);
     d->fakePersonsCounter = 0;
@@ -143,95 +134,18 @@ QList<QStandardItem*> toStandardItems(const QList<T*> &items)
     return ret;
 }
 
-QList<PersonsModelFeature> PersonsModel::init(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures)
-{
-    QList<PersonsModelFeature> features;
-
-    //do nothing if empty flags are passed
-    if (mandatoryFeatures == 0 && optionalFeatures == 0) {
-        kWarning() << "null query flags passed!";
-        return features;
-    }
-
-    //FIXME there is a bug in which a feature is in both mandatory and optional it is included twice.
-
-    if (mandatoryFeatures & PersonsModel::FeatureIM) {
-        kDebug() << "Adding mandatory IM";
-        features << PersonsModelFeature::imModelFeature(false);
-    }
-
-    if (mandatoryFeatures & PersonsModel::FeatureAvatars) {
-        kDebug() << "Adding mandatory Avatars";
-        features << PersonsModelFeature::avatarModelFeature(false);
-    }
-
-    if (mandatoryFeatures & PersonsModel::FeatureGroups) {
-        kDebug() << "Adding mandatory Groups";
-        features << PersonsModelFeature::groupsModelFeature(false);
-    }
-
-    if (mandatoryFeatures & PersonsModel::FeatureEmails) {
-        kDebug() << "Adding mandatory Emails";
-        features << PersonsModelFeature::emailModelFeature(false);
-    }
-
-    if (mandatoryFeatures & PersonsModel::FeatureFullName) {
-        kDebug() << "Adding mandatory FullName";
-        features << PersonsModelFeature::fullNameModelFeature(false);
-    }
-
-    if (optionalFeatures & PersonsModel::FeatureIM) {
-        kDebug() << "Adding optional IM";
-        features << PersonsModelFeature::imModelFeature(true);
-    }
-
-    if (optionalFeatures & PersonsModel::FeatureAvatars) {
-        kDebug() << "Adding optional Avatars";
-        features << PersonsModelFeature::avatarModelFeature(true);
-    }
-
-    if (optionalFeatures & PersonsModel::FeatureGroups) {
-        kDebug() << "Adding optional Groups";
-        features << PersonsModelFeature::groupsModelFeature(true);
-    }
-
-    if (optionalFeatures & PersonsModel::FeatureEmails) {
-        kDebug() << "Adding optional Emails";
-        features << PersonsModelFeature::emailModelFeature(true);
-    }
-
-    if (optionalFeatures & PersonsModel::FeatureFullName) {
-        kDebug() << "Adding optional FullName";
-        features << PersonsModelFeature::fullNameModelFeature(true);
-    }
-
-    return features;
-}
-
-void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, PersonsModel::Features optionalFeatures)
+void PersonsModel::startQuery(const QList< PersonsModelFeature> &features)
 {
     Q_D(PersonsModel);
-
-    if (rowCount() > 0) {
-        kWarning() << "Model is already populated";
-        return;
-    }
-
-    if (d->mandatoryFeatures != mandatoryFeatures || d->optionalFeatures != optionalFeatures) {
-        d->mandatoryFeatures = mandatoryFeatures;
-        d->optionalFeatures = optionalFeatures;
-
-        d->modelFeatures = init(mandatoryFeatures, optionalFeatures);
-
-        Q_FOREACH(PersonsModelFeature feature, d->modelFeatures) {
-            d->bindingRoleMap.unite(feature.bindingsMap());
-        }
+    d->modelFeatures = features;
+    Q_FOREACH(PersonsModelFeature feature, d->modelFeatures) {
+        d->bindingRoleMap.unite(feature.bindingsMap());
     }
 
     QString queryString = d->prepareQuery();
-
     QMetaObject::invokeMethod(this, "query", Qt::QueuedConnection, Q_ARG(QString, queryString));
 }
+
 
 void PersonsModel::query(const QString &queryString)
 {
@@ -282,12 +196,12 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
     }
 
     //if we have IM features watch for data changes
-    if ((d->optionalFeatures | d->mandatoryFeatures) & FeatureIM) {
-        const QString &imContactId = query->binding("nco_imID").toString();
-        if (!imContactId.isEmpty())  {
-            d->dataSourceWatcher->watchContact(imContactId, currentUri);
-        }
+//     if ((d->optionalFeatures | d->mandatoryFeatures) & FeatureIM) {
+    const QString &imContactId = query->binding("nco_imID").toString();
+    if (!imContactId.isEmpty())  {
+        d->dataSourceWatcher->watchContact(imContactId, currentUri);
     }
+//     }
 
     QUrl pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
 
@@ -354,12 +268,6 @@ QModelIndex PersonsModel::findRecursively(int role, const QVariant &value, const
     }
 
     return QModelIndex();
-}
-
-QPair<PersonsModel::Features, PersonsModel::Features> PersonsModel::queryFlags() const
-{
-    Q_D(const PersonsModel);
-    return qMakePair(d->mandatoryFeatures, d->optionalFeatures);
 }
 
 QList<PersonsModelFeature> PersonsModel::modelFeatures() const

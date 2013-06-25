@@ -235,7 +235,7 @@ void PersonsModel::setQueryFlags(PersonsModel::Features mandatoryFeatures, Perso
 
 void PersonsModel::query(const QString &queryString)
 {
-    qDebug() << queryString;
+    kDebug() << queryString;
     Q_ASSERT(rowCount() == 0);
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();

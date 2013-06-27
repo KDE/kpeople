@@ -196,12 +196,10 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
     }
 
     //if we have IM features watch for data changes
-//     if ((d->optionalFeatures | d->mandatoryFeatures) & FeatureIM) {
     const QString &imContactId = query->binding("nco_imID").toString();
     if (!imContactId.isEmpty())  {
         d->dataSourceWatcher->watchContact(imContactId, currentUri);
     }
-//     }
 
     QUrl pimoPersonUri = query->binding(QLatin1String("pimo_groundingOccurrence")).uri();
 

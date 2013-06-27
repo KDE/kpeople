@@ -24,17 +24,12 @@ kde4_add_library (kpeople SHARED
     personactionsmodel.cpp
     personpluginmanager.cpp
     basepersonsdatasource.cpp
-    plugins/ktp-plugin/impersonsdatasource.cpp
-
-    ktptranslationproxy.cpp
 )
 
 target_link_libraries (kpeople
                        ${QT_QTCORE_LIBRARIES}
                        ${KDE4_KIO_LIBS}
                        ${NEPOMUK_CORE_LIBRARY}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${KTP_LIBRARIES}
 )
 
 set_target_properties (kpeople PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
@@ -54,7 +49,6 @@ install (FILES
             personsmodel.h
             persondata.h
             kpeople_export.h
-            ktptranslationproxy.h
             abstractpersonplugin.h
             basepersonsdatasource.h
             personsmodelfeature.h

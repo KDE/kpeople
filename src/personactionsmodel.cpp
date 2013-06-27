@@ -26,11 +26,6 @@
 #include <KLocalizedString>
 #include <KToolInvocation>
 
-#include <KTp/contact.h>
-#include <KTp/actions.h>
-#include <KTp/types.h>
-#include <TelepathyQt/Account>
-
 #include "personpluginmanager.h"
 #include "persondata.h"
 

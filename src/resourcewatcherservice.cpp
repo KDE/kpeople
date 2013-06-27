@@ -90,7 +90,7 @@ void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource &res
 
     if (property.uri() == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
         Q_D(ResourceWatcherService);
-        PersonItem *item = static_cast<PersonItem*>(d->personsModel->itemFromIndex(d->personsModel->indexForUri(res.uri())));
+        PersonItem *item = d->personsModel->personItemForUri(res.uri());
         if (item) {
             item->addContacts(QList<QUrl>() << value.toUrl());
         } else {

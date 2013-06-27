@@ -283,11 +283,13 @@ QModelIndex PersonsModel::indexForUri(const QUrl &uri) const
     //therefore we search both hashes and return the index if it exists
     item = d->contacts[uri];
     if (item) {
-        return item->index();
+        //item->index() returns invalid index for some reason
+        return indexFromItem(item);
     }
     item = d->persons[uri];
     if (item) {
-        return item->index();
+        //item->index() returns invalid index for some reason
+        return indexFromItem(item);
     }
     return QModelIndex();
 }
@@ -304,6 +306,7 @@ QList<QModelIndex> PersonsModel::indexesForUris(const QVariantList& uris) const
 
 void PersonsModel::addPerson(const Nepomuk2::Resource &res)
 {
+    Q_D(PersonsModel);
     Q_ASSERT(!indexForUri(res.uri()).isValid());
     //pass only the uri as that will not add the contacts from groundingOccurrence
     //rationale: if we're adding contacts to the person, we need to check the model
@@ -314,7 +317,10 @@ void PersonsModel::addPerson(const Nepomuk2::Resource &res)
     //           Furthermore this slot is used only when new pimo:Person is created
     //           in Nepomuk and in that case Nepomuk *always* signals propertyAdded
     //           with "groundingOccurrence", so we get the contacts either way.
-    appendRow(new PersonItem(res.uri()));
+    PersonItem *newPerson = new PersonItem(res.uri());
+    d->persons.insert(res.uri(), newPerson);
+    appendRow(newPerson);
+
 }
 
 void PersonsModel::addContact(const Nepomuk2::Resource &res)
@@ -366,6 +372,12 @@ ContactItem* PersonsModel::contactItemForUri(const QUrl &uri) const
 {
     Q_D(const PersonsModel);
     return d->contacts.value(uri);
+}
+
+PersonItem* PersonsModel::personItemForUri(const QUrl &uri) const
+{
+    Q_D(const PersonsModel);
+    return d->persons.value(uri);
 }
 
 void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
@@ -461,6 +473,7 @@ void PersonsModel::removePerson(const QUrl &uri)
 
 void PersonsModel::removePersonFromModel(const QModelIndex &index)
 {
+    Q_D(PersonsModel);
     kDebug() << "Removing person from model";
     PersonItem *person = dynamic_cast<PersonItem*>(itemFromIndex(index));
     if (!person) {
@@ -468,10 +481,16 @@ void PersonsModel::removePersonFromModel(const QModelIndex &index)
         return;
     }
 
+    //for each contact we remove we need to create fake person and add it to the model
     while (person->rowCount()) {
-        invisibleRootItem()->appendRow(person->takeRow(person->rowCount() - 1));
+        QUrl personUri("fakeperson:/" + QString::number(d->fakePersonsCounter++));
+        PersonItem *fakePerson = new PersonItem(personUri);
+        d->persons.insert(personUri, fakePerson);
+        fakePerson->appendRow(person->takeRow(person->rowCount() - 1));
+        invisibleRootItem()->appendRow(fakePerson);
     }
 
+    d->persons.remove(person->data(PersonsModel::UriRole).toUrl());
     removeRow(index.row());
 }
 

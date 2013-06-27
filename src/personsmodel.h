@@ -37,6 +37,7 @@ namespace KPeople
 {
 class PersonsModelFeature;
 class ContactItem;
+class PersonItem;
 struct PersonsModelPrivate;
 
 
@@ -118,9 +119,11 @@ private:
     void addPerson(const Nepomuk2::Resource &res);
     void addContact(const Nepomuk2::Resource &res);
     ContactItem* contactItemForUri(const QUrl &uri) const;
+    PersonItem* personItemForUri(const QUrl &uri) const;
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
 
     friend class ResourceWatcherService;
+    friend class PersonItem;
     friend class ContactItem;
 
     PersonsModelPrivate * const d_ptr;

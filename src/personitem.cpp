@@ -181,18 +181,32 @@ void PersonItem::addContacts(const QList<QUrl> &_contacts)
     }
 
     //query the model for the contacts, if they are present, then need to be just moved
-    QList<QStandardItem*> toplevelContacts;
+    QList<QStandardItem*> personContacts;
     foreach (const QUrl &uri, contacts) {
-        QModelIndex contactIndex = qobject_cast<PersonsModel*>(model())->indexForUri(uri);
-        if (contactIndex.isValid()) {
-             toplevelContacts.append(qobject_cast<PersonsModel*>(model())->takeRow(contactIndex.row()));
+        QModelIndex index = qobject_cast<PersonsModel*>(model())->indexForUri(uri);
+
+        if (index.parent().isValid()) {
+            //find the parent item of that contact
+            bool isFakePerson = index.parent().data(PersonsModel::UriRole).toString().startsWith("fakeperson");
+
+            QStandardItem *item = model()->item(index.parent().row(), 0);
+            Q_ASSERT(item->hasChildren());
+
+            if (isFakePerson) {
+                //take the child contact away from that person item, fake persons have 1 child
+                personContacts.append(item->takeRow(0).first());
+                //if it's a fake person, delete it (it's not part of the model at this point)
+                qobject_cast<PersonsModel*>(model())->removePersonFromModel(index.parent());
+            } else {
+                //if it's not a fake person, we just append it without removing
+                personContacts.append(item->child(index.row(), 0));
+            }
         }
     }
 
     //append the moved contacts to this person and remove them from 'contacts'
     //so they are not added twice
-    foreach (QStandardItem *contactItem, toplevelContacts) {
-        //FIXME: we need to remove the fake person item here
+    foreach (QStandardItem *contactItem, personContacts) {
         ContactItem *contact = dynamic_cast<ContactItem*>(contactItem);
         appendRow(contact);
         contacts.removeOne(contact->uri());

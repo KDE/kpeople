@@ -53,7 +53,6 @@ struct PersonsModelPrivate {
 
     QHash<QUrl, ContactItem*> contacts; //all contacts in the model
     QHash<QUrl, PersonItem*> persons;   //all persons
-    QList<QUrl> pimoOccurances;         //contacts that are groundingOccurrences of persons
     QHash<QString, int> bindingRoleMap;
     DataSourceWatcher *dataSourceWatcher;
 
@@ -216,7 +215,6 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
         }
 
         pos.value()->appendRow(contactNode);
-        d->pimoOccurances.append(currentUri);
     }
 
     query->next();
@@ -231,14 +229,6 @@ void PersonsModel::queryFinished(Soprano::Util::AsyncQuery *query)
         invisibleRootItem()->appendRows(toStandardItems(d->persons.values()));
     }
 
-    Q_FOREACH(const QUrl &uri, d->pimoOccurances) {
-        //remove all contacts being groundingOccurrences
-        d->contacts.remove(uri);
-    }
-    //add the remaining contacts to the model as top level items
-    if (!d->contacts.values().isEmpty()) {
-        invisibleRootItem()->appendRows(toStandardItems(d->contacts.values()));
-    }
     emit modelInitialized();
     kDebug() << "Model ready";
 }

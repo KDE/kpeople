@@ -212,7 +212,6 @@ void PersonItem::addContacts(const QList<QUrl> &_contacts)
         contacts.removeOne(contact->uri());
     }
 
-    QList<ContactItem*> rows;
     foreach (const QUrl &uri, contacts) {
         ContactItem *item = new ContactItem(uri);
         appendRow(item);

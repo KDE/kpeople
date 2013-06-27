@@ -215,8 +215,8 @@ void PersonItem::addContacts(const QList<QUrl> &_contacts)
     QList<ContactItem*> rows;
     foreach (const QUrl &uri, contacts) {
         ContactItem *item = new ContactItem(uri);
-        item->loadData();
         appendRow(item);
+        item->loadData();
     }
     emitDataChanged();
 }

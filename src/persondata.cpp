@@ -155,10 +155,9 @@ void PersonData::setUri(const QString &uri)
 
     r.setWatchEnabled(true);
     d->watcher->addResource(r);
-
-    connect(d->watcher.data(), SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
+    connect(d->watcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SIGNAL(dataChanged()));
-
+    d->watcher->start();
 
     //watch for IM changes
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {

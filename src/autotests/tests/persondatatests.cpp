@@ -141,7 +141,7 @@ void PersonDataTests::contactProperties()
     QCOMPARE(personData.isPerson(), false);
     QCOMPARE(personData.contactResources().size(), 1);
 
-    QCOMPARE(personData.name(), QLatin1String("Contact One"));
+    QCOMPARE(personData.name(), QLatin1String("Contact 1"));
     QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact1@example.com"));
 }
 
@@ -153,7 +153,7 @@ void PersonDataTests::personProperties()
     QCOMPARE(personData.isPerson(), true);
     QCOMPARE(personData.contactResources().size(), 2);
     QCOMPARE(personData.name(), QLatin1String("Person A"));
-    QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact2@example.com") << QLatin1String("contact3@example.com"));
+    QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact3@example.com") << QLatin1String("contact2@example.com"));
 }
 
 void PersonDataTests::personFromContactID()
@@ -192,6 +192,40 @@ void PersonDataTests::miscTests()
 
     test2.name();
 }
+
+void PersonDataTests::contactChanged()
+{
+    PersonData personData;
+    personData.setUri(m_contact1Uri.toString());
+
+    Nepomuk2::SimpleResourceGraph graph;
+
+    Nepomuk2::SimpleResource contact(m_contact1Uri);
+
+    Nepomuk2::SimpleResource email;
+    email.addType(NCO::EmailAddress());
+    email.addProperty(NCO::emailAddress(), "contact1@newsiteZZ.com");
+    contact.addProperty(NCO::hasEmailAddress(), email);
+
+    graph << contact << email;
+
+    Nepomuk2::StoreResourcesJob *job = graph.save();
+    job->exec();
+    QVERIFY(!job->error());
+
+    QVERIFY(QTest::kWaitForSignal(&personData, SIGNAL(dataChanged()), 5000), true);
+
+
+    QCoreApplication::processEvents();
+
+
+    //contact object is updated with the new email address
+
+    //for some reason this fails...
+    //FIXME investigate
+    QCOMPARE(personData.emails().size(), 2);
+}
+
 
 
 QTEST_KDEMAIN(PersonDataTests, NoGUI)

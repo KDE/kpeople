@@ -50,7 +50,9 @@ private Q_SLOTS:
 
     //tests the contact updated signal is correctly emitted
     //FIXME - not complete
-//     void changed();
+    void contactChanged();
+
+//     void personChanged();
 
 private:
     void initContact1();

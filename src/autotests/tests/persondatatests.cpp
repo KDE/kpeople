@@ -193,5 +193,34 @@ void PersonDataTests::miscTests()
     test2.name();
 }
 
+void PersonDataTests::contactChanged()
+{
+
+    PersonData personData;
+    personData.setUri(m_contact1Uri.toString());
+
+    Nepomuk2::SimpleResourceGraph graph;
+    Nepomuk2::SimpleResource contact(m_contact1Uri);
+
+    Nepomuk2::SimpleResource email;
+    email.addType(NCO::EmailAddress());
+    email.addProperty(NCO::emailAddress(), "contact1@newsite.com");
+    contact.addProperty(NCO::hasEmailAddress(), email);
+
+    graph << contact;
+    graph << email;
+
+    Nepomuk2::StoreResourcesJob *job = graph.save();
+    job->exec();
+
+    qDebug() << QTest::kWaitForSignal(&personData, SIGNAL(dataChanged()), 5000);
+
+    qDebug() << personData.emails();
+
+    //contact object is updated with the new email address
+    QCOMPARE(personData.emails().size(), 2);
+}
+
+
 
 QTEST_KDEMAIN(PersonDataTests, NoGUI)

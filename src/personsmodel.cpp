@@ -294,59 +294,6 @@ QList<QModelIndex> PersonsModel::indexesForUris(const QVariantList& uris) const
     return ret;
 }
 
-void PersonsModel::addPerson(const Nepomuk2::Resource &res)
-{
-    Q_D(PersonsModel);
-    Q_ASSERT(!indexForUri(res.uri()).isValid());
-    //pass only the uri as that will not add the contacts from groundingOccurrence
-    //rationale: if we're adding contacts to the person, we need to check the model
-    //           if those contacts are not already in the model and if they are,
-    //           we need to remove them from the toplevel and put them only under
-    //           the person item. In the time of creation, the model() call from
-    //           PersonsModelItem is null, so we cannot check the model.
-    //           Furthermore this slot is used only when new pimo:Person is created
-    //           in Nepomuk and in that case Nepomuk *always* signals propertyAdded
-    //           with "groundingOccurrence", so we get the contacts either way.
-    PersonItem *newPerson = new PersonItem(res.uri());
-    d->persons.insert(res.uri(), newPerson);
-    appendRow(newPerson);
-
-}
-
-void PersonsModel::addContact(const Nepomuk2::Resource &res)
-{
-    Q_D(PersonsModel);
-    ContactItem *item = new ContactItem(res.uri());
-    d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMsRole).toString(),
-                                       item->data(PersonsModel::UriRole).toString());
-
-    PersonItem *person = new PersonItem(QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++)));
-    person->appendRow(item);
-    appendRow(person);
-
-    d->contacts.insert(res.uri(), item);
-    item->loadData();
-}
-
-void PersonsModel::updateContact(ContactItem *contact)
-{
-    Q_D(PersonsModel);
-
-    kDebug() << "Updating contact" << contact->uri();
-
-    QString queryString = d->prepareQuery(contact->uri());
-
-    Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
-    Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, queryString, Soprano::Query::QueryLanguageSparql);
-    query->setProperty("contactItem", QVariant::fromValue<ContactItem*>(contact));
-
-    connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
-            this, SLOT(nextReady(Soprano::Util::AsyncQuery*)));
-
-    connect(query, SIGNAL(finished(Soprano::Util::AsyncQuery*)),
-            this, SLOT(updateContactFinished(Soprano::Util::AsyncQuery*)));
-}
-
 void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
 {
     ContactItem *contact = query->property("contactItem").value<ContactItem*>();
@@ -370,68 +317,269 @@ PersonItem* PersonsModel::personItemForUri(const QUrl &uri) const
     return d->persons.value(uri);
 }
 
-void PersonsModel::createPersonFromContacts(const QList<QUrl> &contacts)
+void PersonsModel::contactChanged(const QUrl& uri)
 {
-    Q_ASSERT(!contacts.isEmpty());
-    Nepomuk2::SimpleResource newPimoPerson;
-    newPimoPerson.addType(Nepomuk2::Vocabulary::PIMO::Person());
-
-    foreach(const QUrl &contact, contacts) {
-        newPimoPerson.addProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contact);
-    }
-
-    Nepomuk2::SimpleResourceGraph graph;
-    graph << newPimoPerson;
-
-    KJob *job = Nepomuk2::storeResources( graph, Nepomuk2::IdentifyNew, Nepomuk2::OverwriteProperties );
-    connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
-    //the new person will be added to the model by the resourceCreated and propertyAdded Nepomuk signals
+    const QModelIndex index = indexForUri(uri);
+    dataChanged(index, index); //FIXME it's normally bad to do this on a QStandardItemModel
 }
 
-void PersonsModel::createPersonFromIndexes(const QList<QModelIndex> &indexes)
+void PersonsModel::addContact(const QUrl &uri)
 {
-    Q_ASSERT(!indexes.isEmpty());
-    QList<QUrl> personUris;
-    QList<QUrl> contactUris;
+    Q_D(PersonsModel);
+    ContactItem *item = new ContactItem(uri);
+    d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMsRole).toString(),
+                                       item->data(PersonsModel::UriRole).toString());
 
-    Q_FOREACH(const QModelIndex &index, indexes) {
+    //create new fake person for this contact
+    PersonItem *person = new PersonItem(QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++)));
 
-        if (index.data(PersonsModel::UriRole).toString().startsWith("fakeperson")) {
-            contactUris.append(index.data(PersonsModel::ChildContactsUriRole).toList().first().toUrl());
+    d->contacts.insert(uri, item);
+    d->persons.insert(person->uri(), person);
+
+    //append the ContactItem to the fake person PersonItem
+    person->appendRow(item);
+    appendRow(person);
+
+    //load the contact data
+    item->loadData();
+}
+
+void PersonsModel::updateContact(ContactItem *contact)
+{
+    if (contact) {
+        updateContact(contact->uri());
+    }
+}
+
+void PersonsModel::updateContact(const QUrl &uri)
+{
+    Q_D(PersonsModel);
+
+    kDebug() << "Updating contact" << uri;
+
+    QString queryString = d->prepareQuery(uri);
+
+    Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
+    Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, queryString, Soprano::Query::QueryLanguageSparql);
+    query->setProperty("contactItem", QVariant::fromValue<ContactItem*>(d->contacts[uri]));
+
+    connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
+            this, SLOT(nextReady(Soprano::Util::AsyncQuery*)));
+
+    connect(query, SIGNAL(finished(Soprano::Util::AsyncQuery*)),
+            this, SLOT(updateContactFinished(Soprano::Util::AsyncQuery*)));
+}
+
+void PersonsModel::removeContact(const QUrl &uri)
+{
+    Q_D(PersonsModel);
+
+    ContactItem *contact = d->contacts[uri];
+
+    if (!contact) {
+        kWarning() << "Contact not found! Uri is" << uri;
+        return;
+    }
+
+    PersonItem *person = dynamic_cast<PersonItem*>(contact->parent());
+
+    if (!person) {
+        kWarning() << "Found contact without valid person!";
+        return;
+    }
+
+    person->removeRow(indexFromItem(contact).row());
+    d->contacts.remove(uri);
+
+    //if the person is now empty, remove it from the model too
+    if (person->rowCount() == 0) {
+        removePerson(person->uri());
+    }
+
+}
+
+void PersonsModel::addPerson(const QUrl &uri)
+{
+    Q_D(PersonsModel);
+
+    PersonItem *newPerson = new PersonItem(uri);
+    d->persons.insert(uri, newPerson);
+    appendRow(newPerson);
+}
+
+void PersonsModel::removePerson(const QUrl &uri)
+{
+    Q_D(PersonsModel);
+
+    PersonItem *person = d->persons[uri];
+
+    if (!person) {
+        kWarning() << "Person not found! Uri is" << uri;
+        return;
+    }
+
+    //move the child contacts into new fake persons
+    while (person->rowCount()) {
+        QUrl pimoPersonUri = QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++));
+        addPerson(pimoPersonUri);
+        d->persons[pimoPersonUri]->appendRow(person->takeRow(person->rowCount() - 1));
+    }
+
+    removeRow(indexFromItem(person).row());
+    d->persons.remove(uri);
+}
+
+
+void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> &_contacts)
+{
+    Q_D(PersonsModel);
+
+    PersonItem *person = d->persons[personUri];
+
+    if (!person) {
+        kWarning() << "Person not found! Uri is" << personUri;
+        return;
+    }
+
+    QList<QUrl> contacts(_contacts);
+
+    //get existing child-contacts and remove them from the new ones
+    QVariantList uris = person->data(PersonsModel::ChildContactsUriRole).toList();
+    foreach (const QVariant &uri, uris) {
+        contacts.removeOne(uri.toUrl());
+    }
+
+    //query the model for the contacts, if they are present, then need to be just moved
+    QList<QStandardItem*> personContacts;
+    foreach (const QUrl &uri, contacts) {
+        ContactItem *contact = d->contacts[uri];
+
+        if (!contact) {
+            kDebug() << "Contact not found" << uri;
+            continue;
+        }
+
+        PersonItem *parentPerson = dynamic_cast<PersonItem*>(contact->parent());
+
+        if (!parentPerson) {
+            kWarning() << "Found contact without valid person!";
+            Q_ASSERT(parentPerson); //this should never ever happen
+        }
+
+        if (parentPerson->uri().toString().startsWith("fakeperson")) {
+            //the contact does not have any real person
+            personContacts.append(parentPerson->takeRow(0));
+            //remove the fake person
+            removePerson(parentPerson->uri());
         } else {
-            personUris.append(index.data(PersonsModel::UriRole).toUrl());
+            //the contact does already have a person so we just append
+            //it without removing from the original person
+            personContacts.append(contact);
         }
     }
 
-    if (personUris.isEmpty()) {
-        kDebug() << "Got only contacts, creating pimo:person";
-        createPersonFromContacts(contactUris);
-    } else if (personUris.size() == 1) {
-        kDebug() << "Got one pimo:person, adding contacts to it";
-        addContactsToPerson(personUris.first(), contactUris);
-    } else {
-        kDebug() << "Got two pimo:persons, unsupported for now";
+    //append the moved contacts to this person and remove them from 'contacts'
+    //so they are not added twice
+    foreach (QStandardItem *contactItem, personContacts) {
+        ContactItem *contact = dynamic_cast<ContactItem*>(contactItem);
+        person->appendRow(contact);
+        contacts.removeOne(contact->uri());
+    }
+
+    //if we have any contacts left, we need to create them
+    foreach (const QUrl &uri, contacts) {
+        ContactItem *item = new ContactItem(uri);
+        d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMsRole).toString(),
+                                           item->data(PersonsModel::UriRole).toString());
+
+        d->contacts.insert(uri, item);
+        //append the ContactItem to the current person
+        person->appendRow(item);
+        //load the contact data
+        item->loadData();
     }
 }
 
-void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts)
-{
-    //put the contacts from QList<QUrl> into QVariantList
-    QVariantList contactsList;
-    Q_FOREACH(const QUrl &contact, contacts) {
-        contactsList << contact;
-    }
-
-    KJob *job = Nepomuk2::addProperty(QList<QUrl>() << personUri,
-                                      Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
-                                      QVariantList() << contactsList);
-    connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
-}
 
 void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts)
 {
+//     Q_D(PersonsModel);
+    Q_UNUSED(personUri);
+
+    //simply remove the contacts from the model and re-add them
+    //this will take care of removing empty persons in case the contact
+    //is the last one left and also creating new fake persons
+    //without duplicating any code, plus the contact data gets
+    //updated in the process
+    Q_FOREACH (const QUrl &contactUri, contacts) {
+        removeContact(contactUri);
+        addContact(contactUri);
+    }
+}
+
+void PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
+{
+    Q_D(PersonsModel);
+    QList<QUrl> personUris;
+    QList<QUrl> contactUris;
+
+    //uris identification
+    Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
+
+    Q_FOREACH (QUrl uri, uris) {
+        if (uri.toString().startsWith("fakeperson")) {
+            uri = d->persons[uri]->data(PersonsModel::ChildContactsUriRole).toList().first().toUrl();
+        }
+        //for each uri we query it as if it was pimo:Person
+        QString query = QString::fromLatin1("SELECT DISTINCT ?r WHERE { %1 rdf:type pimo:Person }")
+                        .arg(Soprano::Node::resourceToN3(uri));
+
+        Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
+        //if the resource with the given uri is in fact pimo:Person,
+        //we get back one result, if it's not pimo:Person, it's nco:PersonContact
+        if (it.allElements().size() == 1) {
+            personUris << uri;
+        } else {
+            contactUris << uri;
+        }
+    }
+
+    KJob *job = 0;
+
+    if (personUris.isEmpty() && !contactUris.isEmpty()) {
+        Nepomuk2::SimpleResource newPimoPerson;
+        newPimoPerson.addType(Nepomuk2::Vocabulary::PIMO::Person());
+
+        foreach(const QUrl &contact, contactUris) {
+            newPimoPerson.addProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contact);
+        }
+
+        Nepomuk2::SimpleResourceGraph graph;
+        graph << newPimoPerson;
+
+        job = Nepomuk2::storeResources( graph, Nepomuk2::IdentifyNew, Nepomuk2::OverwriteProperties );
+        //the new person will be added to the model by the resourceCreated and propertyAdded Nepomuk signals
+    } else if (personUris.size() == 1 && !contactUris.isEmpty()) {
+        //put the contacts from QList<QUrl> into QVariantList
+        QVariantList contactsList;
+        Q_FOREACH(const QUrl &contact, contactUris) {
+            contactsList << contact;
+        }
+
+        job = Nepomuk2::addProperty(QList<QUrl>() << personUris.first(),
+                                          Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
+                                          QVariantList() << contactsList);
+    } else if (personUris.size() > 1) {
+        //TODO: merge those two persons then append contacts
+    }
+
+    connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+}
+
+void PersonsModel::unlinkContactFromPerson(const QUrl &personUri, const QList<QUrl> &contactUris)
+{
     QVariantList contactsList;
-    Q_FOREACH(const QUrl &contact, contacts) {
+    Q_FOREACH(const QUrl &contact, contactUris) {
         contactsList << contact;
     }
 
@@ -447,45 +595,12 @@ void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<Q
     Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
 
     QString query = QString::fromLatin1("select distinct ?go where { %1 pimo:groundingOccurrence ?go . }")
-        .arg(Soprano::Node::resourceToN3(personUri));
+    .arg(Soprano::Node::resourceToN3(personUri));
 
     Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
     if (it.allBindings().count() == 1) {
-        removePerson(personUri);
+        //remove the person from Nepomuk
+        Nepomuk2::Resource oldPerson(personUri);
+        oldPerson.remove();
     }
-}
-
-void PersonsModel::removePerson(const QUrl &uri)
-{
-    Nepomuk2::Resource oldPerson(uri);
-    oldPerson.remove();
-}
-
-void PersonsModel::removePersonFromModel(const QModelIndex &index)
-{
-    Q_D(PersonsModel);
-    kDebug() << "Removing person from model";
-    PersonItem *person = dynamic_cast<PersonItem*>(itemFromIndex(index));
-    if (!person) {
-        kDebug() << "Invalid person, returning";
-        return;
-    }
-
-    //for each contact we remove we need to create fake person and add it to the model
-    while (person->rowCount()) {
-        QUrl personUri("fakeperson:/" + QString::number(d->fakePersonsCounter++));
-        PersonItem *fakePerson = new PersonItem(personUri);
-        d->persons.insert(personUri, fakePerson);
-        fakePerson->appendRow(person->takeRow(person->rowCount() - 1));
-        invisibleRootItem()->appendRow(fakePerson);
-    }
-
-    d->persons.remove(person->data(PersonsModel::UriRole).toUrl());
-    removeRow(index.row());
-}
-
-void PersonsModel::contactChanged(const QUrl& uri)
-{
-    const QModelIndex index = indexForUri(uri);
-    dataChanged(index, index); //FIXME it's normally bad to do this on a QStandardItemModel
 }

@@ -172,7 +172,7 @@ void MergeContactsWidget::onMergeButtonPressed()
         indexToMergeConverted << pIndex;
     }
     //commented because it removes the test cases
-    m_model->createPersonFromIndexes(indexToMergeConverted);
+//     m_model->createPersonFromIndexes(indexToMergeConverted);
 
     searchForDuplicates();
 }

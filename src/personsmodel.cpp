@@ -357,6 +357,11 @@ void PersonsModel::updateContact(const QUrl &uri)
 
     kDebug() << "Updating contact" << uri;
 
+    if (!d->contacts[uri]) {
+        kWarning() << "Contact not found! Uri is" << uri;
+        return;
+    }
+
     QString queryString = d->prepareQuery(uri);
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();

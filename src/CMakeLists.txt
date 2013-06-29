@@ -62,6 +62,7 @@ install (FILES
             KPeople/BasePersonsDataSource
             KPeople/PersonData
             KPeople/PersonsModel
+            KPeople/PersonsModelFeature
          DESTINATION ${INCLUDE_INSTALL_DIR}/KPeople
          COMPONENT Devel
 )

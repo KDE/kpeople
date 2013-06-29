@@ -294,17 +294,6 @@ QList<QModelIndex> PersonsModel::indexesForUris(const QVariantList& uris) const
     return ret;
 }
 
-void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
-{
-    ContactItem *contact = query->property("contactItem").value<ContactItem*>();
-
-    if (!contact) {
-        return;
-    }
-
-    contact->finishLoadingData();
-}
-
 ContactItem* PersonsModel::contactItemForUri(const QUrl &uri) const
 {
     Q_D(const PersonsModel);
@@ -373,6 +362,17 @@ void PersonsModel::updateContact(const QUrl &uri)
 
     connect(query, SIGNAL(finished(Soprano::Util::AsyncQuery*)),
             this, SLOT(updateContactFinished(Soprano::Util::AsyncQuery*)));
+}
+
+void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
+{
+    ContactItem *contact = query->property("contactItem").value<ContactItem*>();
+
+    if (!contact) {
+        return;
+    }
+
+    contact->finishLoadingData();
 }
 
 void PersonsModel::removeContact(const QUrl &uri)

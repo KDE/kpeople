@@ -213,7 +213,7 @@ void PersonDataTests::contactChanged()
     job->exec();
     QVERIFY(!job->error());
 
-    QVERIFY(QTest::kWaitForSignal(&personData, SIGNAL(dataChanged()), 5000), true);
+    QVERIFY(QTest::kWaitForSignal(&personData, SIGNAL(dataChanged()), 5000));
 
 
     QCoreApplication::processEvents();

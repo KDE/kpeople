@@ -134,14 +134,7 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource &
         //in which case it is handled by the propertyAdded and/or propertyRemoved slots
         return;
     }
-//     Q_D(ResourceWatcherService);
-//     if (property == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
-//         PersonItem *item = static_cast<PersonItem*>(d->personsModel->itemFromIndex(d->personsModel->indexForUri(res.uri())));
-//         if (item) {
-//             item->removeContacts(qvariantlist_cast<QUrl>(removed));
-//             item->addContacts(qvariantlist_cast<QUrl>(added));
-//         }
-//     }
+    //TODO: fill up once we have person editing available
 }
 
 

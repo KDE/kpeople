@@ -393,7 +393,7 @@ void PersonsModel::removeContact(const QUrl &uri)
         return;
     }
 
-    person->removeRow(indexFromItem(contact).row());
+    person->removeRow(contact->row());
     d->contacts.remove(uri);
 
     //if the person is now empty, remove it from the model too

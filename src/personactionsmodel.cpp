@@ -69,8 +69,7 @@ void PersonActionsModel::setPerson(const QPersistentModelIndex& index)
     if (d->person) {
         d->person->deleteLater();
     }
-    d->person = new PersonData(this);
-    d->person->setUri(index.data(PersonsModel::UriRole).toString());
+    d->person = PersonData::loadFromUri(index.data(PersonsModel::UriRole).toString(), this);
 
     d->actions.append(PersonPluginManager::actionsForPerson(d->person, this));
 

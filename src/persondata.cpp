@@ -39,6 +39,7 @@
 #include <Soprano/QueryResultIterator>
 
 #include <KDebug>
+
 #include <QPointer>
 
 using namespace Nepomuk2::Vocabulary;
@@ -55,13 +56,26 @@ public:
         q->connect(dataSourceWatcher, SIGNAL(contactChanged(QUrl)), q, SIGNAL(dataChanged()));
     }
 
-    QString uri;
-    QString id;
+    QUrl uri;
     QPointer<Nepomuk2::ResourceWatcher> watcher;
     DataSourceWatcher *dataSourceWatcher;
     Nepomuk2::Resource personResource;
     QList<Nepomuk2::Resource> contactResources;
 };
+}
+
+PersonData* PersonData::loadFromContactId(const QString& contactId, QObject* parent)
+{
+    PersonData *person = new PersonData(parent);
+    person->loadContact(contactId);
+    return person;
+}
+
+PersonData* PersonData::loadFromUri(const QUrl& uri, QObject* parent)
+{
+    PersonData *person = new PersonData(parent);
+    person->loadUri(uri);
+    return person;
 }
 
 PersonData::PersonData(QObject *parent)
@@ -70,26 +84,14 @@ PersonData::PersonData(QObject *parent)
 {
 }
 
-PersonData::PersonData(const QString &uri, QObject *parent)
-    : QObject(parent),
-      d_ptr(new PersonDataPrivate(this))
-{
-    setUri(uri);
-}
-
 PersonData::~PersonData()
 {
     delete d_ptr;
 }
 
-void PersonData::setContactId(const QString &id)
+void PersonData::loadContact(const QString &id)
 {
     Q_D(PersonData);
-    if (d->id == id) {
-        return;
-    }
-
-    d->id = id;
 
     QString query = QString::fromUtf8(
         "select DISTINCT ?uri "
@@ -108,36 +110,24 @@ void PersonData::setContactId(const QString &id)
     }
 
     if (d->uri != uri) {
-        setUri(uri);
+        loadUri(uri);
     }
 }
 
-QString PersonData::contactId() const
-{
-    Q_D(const PersonData);
-    return d->id;
-}
-
-QString PersonData::uri() const
+QUrl PersonData::uri() const
 {
     Q_D(const PersonData);
     return d->uri;
 }
 
-void PersonData::setUri(const QString &uri)
+void PersonData::loadUri(const QUrl &uri)
 {
     Q_D(PersonData);
 
     d->uri = uri;
-    d->contactResources.clear();
     d->personResource = Nepomuk2::Resource();
-    d->dataSourceWatcher->clearWatchedContacts();
 
     Nepomuk2::Resource r(uri);
-
-    if (!d->watcher.isNull()) {
-        delete d->watcher;
-    }
 
     d->watcher = new Nepomuk2::ResourceWatcher(this);
 
@@ -166,7 +156,6 @@ void PersonData::setUri(const QString &uri)
         }
     }
 
-    emit uriChanged();
     emit dataChanged();
 }
 

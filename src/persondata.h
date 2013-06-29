@@ -37,7 +37,6 @@ struct PersonDataPrivate;
 class KPEOPLE_EXPORT PersonData : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QString uri READ uri WRITE setUri NOTIFY uriChanged)
     Q_PROPERTY(QUrl avatar READ avatar NOTIFY dataChanged)
     Q_PROPERTY(QString name READ name NOTIFY dataChanged)
     Q_PROPERTY(QString status READ status NOTIFY dataChanged)
@@ -45,26 +44,19 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_PROPERTY(QStringList imAccounts READ imAccounts NOTIFY dataChanged)
     Q_PROPERTY(QStringList phones READ phones NOTIFY dataChanged)
     Q_PROPERTY(bool isPerson READ isPerson)
+    Q_PROPERTY(bool isValid READ isValid)
 
     public:
-        PersonData(QObject *parent = 0);
-
-        PersonData(const QString &uri, QObject *parent = 0);
+        static PersonData* loadFromUri(const QUrl &url, QObject *parent=0);
+        static PersonData* loadFromContactId(const QString &contactId, QObject *parent=0);
 
         virtual ~PersonData();
-
-        /** @returns the uri of the current person */
-        QString uri() const;
-
-        /** sets new contact uri, all data are refetched */
-        void setUri(const QString &uri);
 
         /** Returns if the URI represents a valid person or contact*/
         bool isValid() const;
 
-        /** @p id will specify the person we're offering by finding the pimo:Person related to it */
-        void setContactId(const QString &id);
-        QString contactId() const;
+        /** @returns the uri of the current person */
+        QUrl uri() const;
 
         /** @returns a url pointing to the avatar image */
         QUrl avatar() const;
@@ -95,18 +87,23 @@ class KPEOPLE_EXPORT PersonData : public QObject
         QList<Nepomuk2::Resource> contactResources() const;
 
     Q_SIGNALS:
-        /** the person has changed */
-        void uriChanged();
-
         /** Some of the person's data we're offering has changed */
         void dataChanged();
+
+    protected:
+        PersonData(QObject *parent);
+
+        /** sets new contact uri, all data are refetched */
+        void loadUri(const QUrl &uri);
+
+        /** @p id will specify the person we're offering by finding the pimo:Person related to it */
+        void loadContact(const QString &id);
 
     private:
         Q_DECLARE_PRIVATE(PersonData)
         PersonDataPrivate * d_ptr;
 
         QString findMostOnlinePresence(const QStringList &presences) const;
-
 };
 }
 

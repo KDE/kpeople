@@ -5,7 +5,10 @@ include_directories(
         ${CMAKE_BINARY_DIR}
 )
 
-kde4_add_library(kpeopledeclarative SHARED declarativepersonsmodel.cpp peopleqmlplugin.cpp)
+kde4_add_library(kpeopledeclarative SHARED
+                    declarativepersonsmodel.cpp
+                    declarativepersondata.cpp
+                    peopleqmlplugin.cpp)
 
 target_link_libraries(kpeopledeclarative ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTDECLARATIVE_LIBRARY} ${KDE4_KDECORE_LIBRARY} kpeople)
 

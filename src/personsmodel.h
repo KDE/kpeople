@@ -130,7 +130,6 @@ private:
     void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
 
     friend class ResourceWatcherService;
-    friend class PersonItem;
     friend class ContactItem;
 
     PersonsModelPrivate * const d_ptr;

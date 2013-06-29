@@ -164,8 +164,9 @@ void PersonsModel::query(const QString &queryString)
 void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
 {
     Q_D(PersonsModel);
-    //if we're doing update, the contact node is passed as property of the query
-    ContactItem *contactNode = query->property("contactItem").value<ContactItem*>();
+    //if we're doing update, the contact uri is passed as property of the query
+    QUrl updateUri = query->property("contactUri").toUrl();
+    ContactItem *contactNode = d->contacts[updateUri];
     bool newContact = !contactNode;
     QUrl currentUri;
 
@@ -174,7 +175,7 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
         contactNode = new ContactItem(currentUri);
         d->contacts.insert(currentUri, contactNode);
     } else {
-        currentUri = contactNode->uri();
+        currentUri = updateUri;
     }
 
     //iterate over the results and add the wanted properties into the contact
@@ -355,7 +356,7 @@ void PersonsModel::updateContact(const QUrl &uri)
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, queryString, Soprano::Query::QueryLanguageSparql);
-    query->setProperty("contactItem", QVariant::fromValue<ContactItem*>(d->contacts[uri]));
+    query->setProperty("contactUri", QVariant(uri));
 
     connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
             this, SLOT(nextReady(Soprano::Util::AsyncQuery*)));
@@ -366,7 +367,10 @@ void PersonsModel::updateContact(const QUrl &uri)
 
 void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
 {
-    ContactItem *contact = query->property("contactItem").value<ContactItem*>();
+    Q_D(PersonsModel);
+    QUrl contactUri = query->property("contactUri").toUrl();
+
+    ContactItem *contact = d->contacts[contactUri];
 
     if (!contact) {
         return;

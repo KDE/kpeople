@@ -52,10 +52,12 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
     }
 
     KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/DataSource");
-    if (imService.isNull()) {
-        presencePlugin = new BasePersonsDataSource(0);
-    } else {
+    if (!imService.isNull()) {
         presencePlugin = imService->createInstance<BasePersonsDataSource>(0);
+    }
+    if (!presencePlugin)
+    {
+        presencePlugin = new BasePersonsDataSource(0);
     }
 }
 

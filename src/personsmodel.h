@@ -87,12 +87,6 @@ public:
      */
     Q_SCRIPTABLE void unlinkContactFromPerson(const QUrl &personUri, const QList<QUrl> &contactUris);
 
-    /** Adds contacts to existing PIMO:Person */
-    void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-
-    /** Removes given contacts from existing PIMO:Person */
-    void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-
     Q_SCRIPTABLE QModelIndex indexForUri(const QUrl &uri) const;
 
     Q_SCRIPTABLE QList<QModelIndex> indexesForUris(const QVariantList& uris) const;
@@ -130,6 +124,10 @@ private:
     void addPerson(const QUrl &uri);
     /** Removes person with @param uri from the model (not Nepomuk) */
     void removePerson(const QUrl &uri);
+    /** Adds contacts to existing PIMO:Person */
+    void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
+    /** Removes given contacts from existing PIMO:Person */
+    void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
 
     friend class ResourceWatcherService;
     friend class PersonItem;

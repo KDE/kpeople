@@ -141,6 +141,8 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource &
 void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
                                                        const QVariantList &added, const QVariantList &removed)
 {
+    Q_UNUSED(added);
+    Q_UNUSED(removed);
     kDebug() << "contact changed:" << property.name() << res.uri();
 
     Q_D(ResourceWatcherService);

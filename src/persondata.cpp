@@ -64,17 +64,17 @@ public:
 };
 }
 
-PersonData* PersonData::loadFromContactId(const QString& contactId, QObject* parent)
+PersonDataPtr PersonData::createFromUri(const QUrl& uri)
 {
-    PersonData *person = new PersonData(parent);
-    person->loadContact(contactId);
+    PersonDataPtr person(new PersonData);
+    person->loadUri(uri);
     return person;
 }
 
-PersonData* PersonData::loadFromUri(const QUrl& uri, QObject* parent)
+PersonDataPtr PersonData::createFromContactId(const QString& contactId)
 {
-    PersonData *person = new PersonData(parent);
-    person->loadUri(uri);
+    PersonDataPtr person(new PersonData);
+    person->loadContact(contactId);
     return person;
 }
 

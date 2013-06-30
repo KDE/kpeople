@@ -25,10 +25,10 @@ class PersonData;
 #include <QAction>
 
 #include "kpeople_export.h"
+#include "persondata.h"
 
 namespace KPeople
 {
-class PersonData;
 
 class KPEOPLE_EXPORT AbstractPersonPlugin : public QObject
 {
@@ -41,7 +41,7 @@ public:
      * @personData information on a single contact
      * @parent parent object for newly created actions
      */
-    virtual QList<QAction*> actionsForPerson(KPeople::PersonData * const personData, QObject *parent);
+    virtual QList<QAction*> actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent);
 };
 
 }

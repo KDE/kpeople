@@ -134,7 +134,7 @@ void PersonDataTests::init()
 void PersonDataTests::contactProperties()
 {
     //create a simple contact with name + email
-    QScopedPointer<PersonData> personData(PersonData::loadFromUri(m_contact1Uri));
+    PersonDataPtr personData(PersonData::createFromUri(m_contact1Uri));
     QCOMPARE(personData->isValid(), true);
     QCOMPARE(personData->uri(), m_contact1Uri);
     QCOMPARE(personData->isPerson(), false);
@@ -146,7 +146,7 @@ void PersonDataTests::contactProperties()
 
 void PersonDataTests::personProperties()
 {
-    QScopedPointer<PersonData> personData(PersonData::loadFromUri(m_personAUri));
+    PersonDataPtr personData(PersonData::createFromUri(m_personAUri));
     QCOMPARE(personData->isValid(), true);
     QCOMPARE(personData->isPerson(), true);
     QCOMPARE(personData->contactResources().size(), 2);
@@ -156,20 +156,20 @@ void PersonDataTests::personProperties()
 
 void PersonDataTests::personFromContactID()
 {
-    QScopedPointer<PersonData> personData(PersonData::loadFromContactId(QLatin1String("contact2@example.com")));
+    PersonDataPtr personData(PersonData::createFromContactId(QLatin1String("contact2@example.com")));
     //This should load PersonA NOT Contact2
     QCOMPARE(personData->uri(), m_personAUri);
 }
 
 void PersonDataTests::contactFromContactID()
 {
-    QScopedPointer<PersonData> personData(PersonData::loadFromContactId(QLatin1String("contact1@example.com")));
+    PersonDataPtr personData(PersonData::createFromContactId(QLatin1String("contact1@example.com")));
     QCOMPARE(personData->uri(), m_contact1Uri);
 }
 
 void PersonDataTests::miscTests()
 {
-    QScopedPointer<PersonData> personData(PersonData::loadFromContactId(QLatin1String("NOTEXIST")));
+    PersonDataPtr personData(PersonData::createFromContactId(QLatin1String("NOTEXIST")));
     personData->uri();
     personData->name();
     personData->avatar();
@@ -185,7 +185,7 @@ void PersonDataTests::miscTests()
 
 void PersonDataTests::contactChanged()
 {
-    QScopedPointer<PersonData> personData(PersonData::loadFromUri(m_contact1Uri));
+    PersonDataPtr personData(PersonData::createFromUri(m_contact1Uri));
 
     Nepomuk2::SimpleResourceGraph graph;
 

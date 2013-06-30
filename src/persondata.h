@@ -34,6 +34,10 @@ namespace KPeople
 {
 struct PersonDataPrivate;
 
+class PersonData;
+
+typedef QSharedPointer<PersonData> PersonDataPtr;
+
 class KPEOPLE_EXPORT PersonData : public QObject
 {
     Q_OBJECT
@@ -47,8 +51,8 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_PROPERTY(bool isValid READ isValid)
 
     public:
-        static PersonData* loadFromUri(const QUrl &url, QObject *parent=0);
-        static PersonData* loadFromContactId(const QString &contactId, QObject *parent=0);
+        static PersonDataPtr createFromUri(const QUrl &url);
+        static PersonDataPtr createFromContactId(const QString &contactId);
 
         virtual ~PersonData();
 
@@ -91,7 +95,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
         void dataChanged();
 
     protected:
-        PersonData(QObject *parent);
+        PersonData(QObject *parent=0);
 
         /** sets new contact uri, all data are refetched */
         void loadUri(const QUrl &uri);

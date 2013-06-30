@@ -24,17 +24,18 @@
 
 #include "kpeople_export.h"
 
+#include "persondata.h"
+
 class QAction;
 
 namespace KPeople
 {
 class BasePersonsDataSource;
-class PersonData;
 
 class KPEOPLE_EXPORT PersonPluginManager
 {
 public:
-    static QList<QAction*> actionsForPerson(PersonData *person, QObject *parent);
+    static QList<QAction*> actionsForPerson(PersonDataPtr, QObject *parent);
 
     static BasePersonsDataSource* presencePlugin();
 };

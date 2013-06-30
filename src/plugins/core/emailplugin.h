@@ -28,7 +28,7 @@ class EmailPlugin : public KPeople::AbstractPersonPlugin
 public:
     EmailPlugin(QObject* parent, const QVariantList &args);
 
-    virtual QList<QAction*> actionsForPerson(KPeople::PersonData *personData, QObject *parent);
+    virtual QList<QAction*> actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent);
 
 private Q_SLOTS:
     void onEmailTriggered();

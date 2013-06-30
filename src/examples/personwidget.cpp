@@ -35,7 +35,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    QScopedPointer<KPeople::PersonData> person(KPeople::PersonData::loadFromContactId(app.arguments()[1]));
+    KPeople::PersonDataPtr person(KPeople::PersonData::createFromContactId(app.arguments()[1]));
 
     KPeople::PersonDetailsView w;
     w.setPerson(person.data());

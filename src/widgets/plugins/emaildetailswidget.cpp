@@ -24,6 +24,7 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QDebug>
 
 #include <KLocalizedString>
 
@@ -34,6 +35,11 @@ EmailDetailsWidget::EmailDetailsWidget(QWidget *parent):
 {
     setTitle(i18n("Email"));
     setIcon(KIcon("mail-message"));
+    QVBoxLayout *newLayout = new QVBoxLayout(this);
+    newLayout->setContentsMargins(0,0,0,0);
+    setLayout(newLayout);
+
+    qDebug() << "in ctor";
 }
 
 void EmailDetailsWidget::setPerson(PersonData* person)
@@ -44,14 +50,14 @@ void EmailDetailsWidget::setPerson(PersonData* person)
         setActive(true);
     }
 
-    if (layout()) {
-        layout()->deleteLater();
+    QLayoutItem *child;
+    while ((child = layout()->takeAt(0)) != 0) {
+        delete child->widget();
+        delete child;
     }
-    QVBoxLayout *newLayout = new QVBoxLayout(this);
-    newLayout->setContentsMargins(0,0,0,0);
+
     Q_FOREACH (const QString &email, person->emails()) {
         QLabel *emailLabel = new QLabel(email, this);
-        newLayout->addWidget(emailLabel);
+        layout()->addWidget(emailLabel);
     }
-    setLayout(newLayout);
 }

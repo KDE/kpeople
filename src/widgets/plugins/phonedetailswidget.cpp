@@ -33,6 +33,8 @@ PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent):
 {
     setTitle(i18n("Phone"));
     setIcon(KIcon("phone"));
+
+    setLayout(new QVBoxLayout(this));
 }
 
 void PhoneDetailsWidget::setPerson(PersonData* person)
@@ -43,14 +45,14 @@ void PhoneDetailsWidget::setPerson(PersonData* person)
         setActive(true);
     }
 
-    if (layout()) {
-        layout()->deleteLater();
+    QLayoutItem *child;
+    while ((child = layout()->takeAt(0)) != 0) {
+        delete child->widget();
+        delete child;
     }
-    QVBoxLayout *newLayout = new QVBoxLayout(this);
-    newLayout->setContentsMargins(0,0,0,0);
+
     Q_FOREACH (const QString &phone, person->phones()) {
         QLabel *phoneLabel = new QLabel(phone, this);
-        newLayout->addWidget(phoneLabel);
+        layout()->addWidget(phoneLabel);
     }
-    setLayout(newLayout);
 }

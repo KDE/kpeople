@@ -38,7 +38,7 @@ PersonItem::PersonItem(const QUrl &personUri)
 
 QUrl PersonItem::uri() const
 {
-    return data(PersonsModel::UriRole).toUrl();
+    return QStandardItem::data(PersonsModel::UriRole).toUrl();
 }
 
 

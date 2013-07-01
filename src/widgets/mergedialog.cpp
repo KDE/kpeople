@@ -21,7 +21,7 @@
 #include "mergedelegate.h"
 #include "duplicatesfinder.h"
 #include "persondata.h"
-#include "kpeople/personsmodel.h"
+#include "personsmodel.h"
 
 #include <KDebug>
 

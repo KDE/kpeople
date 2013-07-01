@@ -25,12 +25,13 @@
 
 #include "kpeople_export.h"
 
+#include "kpeople/persondata.h"
+
 class QLabel;
 class QVBoxLayout;
 
 namespace KPeople {
 class AbstractPersonDetailsWidget;
-class PersonData;
 class PersonsModel;
 
 class KPEOPLE_EXPORT PersonDetailsView : public QWidget
@@ -41,7 +42,7 @@ public:
     virtual ~PersonDetailsView();
 
 public Q_SLOTS:
-    void setPerson(PersonData *person);
+    void setPerson(const PersonDataPtr &person);
     void setPersonsModel(PersonsModel *model);
 
 private Q_SLOTS:
@@ -49,7 +50,7 @@ private Q_SLOTS:
 private:
     QPixmap iconForPresence(const QString &presenceString);
 
-    PersonData *m_person;
+    PersonDataPtr m_person;
     QVBoxLayout *m_mainLayout;
 
     QLabel *m_contactPixmap;

@@ -38,7 +38,7 @@ int main(int argc, char** argv)
     KPeople::PersonDataPtr person(KPeople::PersonData::createFromContactId(app.arguments()[1]));
 
     KPeople::PersonDetailsView w;
-    w.setPerson(person.data());
+    w.setPerson(person);
 
     w.show();
 

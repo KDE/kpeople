@@ -120,8 +120,6 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 
     m_mainLayout->addSpacerItem(new QSpacerItem(32, 32, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
-    m_person = 0;
-
     setLayout(m_mainLayout);
 }
 
@@ -129,16 +127,12 @@ PersonDetailsView::~PersonDetailsView()
 {
 }
 
-void PersonDetailsView::setPerson(PersonData *person)
+void PersonDetailsView::setPerson(const PersonDataPtr &person)
 {
-    disconnect(m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
-
-    m_person->deleteLater();
+    disconnect(m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));
 
     m_person = person;
-
-    connect(m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
-
+    connect(m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));
     reload();
 }
 
@@ -168,7 +162,7 @@ void PersonDetailsView::reload()
     m_contactBirthdayLabel->setText(m_person->groups().join(", "));
 
     foreach (AbstractPersonDetailsWidget* detailsWidget, m_detailWidgets) {
-        detailsWidget->setPerson(m_person);
+        detailsWidget->setPerson(m_person.data());
     }
 }
 

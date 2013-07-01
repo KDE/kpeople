@@ -124,7 +124,6 @@ void MergeDialog::mergeMatchingContactsFromIndex(const QStandardItem *parent)
 
 void MergeDialog::onMergeButtonClicked()
 {
-    Q_D(MergeDialog);
     QList<QStandardItem*> parents = checkedItems();
     foreach(QStandardItem *parent , parents) {
         mergeMatchingContactsFromIndex(parent);
@@ -187,13 +186,15 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
     Q_D(MergeDialog);
     QStandardItem *item = new QStandardItem;
     PersonDataPtr person(PersonData::createFromUri(idx.data(PersonsModel::UriRole).toUrl()));
-    item->setText(person->name());
     item->setData(person->uri(), UriRole);
     item->setCheckable(true);
     item->setCheckState(Qt::Checked);
 
     if (!idx.isValid()) { // child
         item->setData(qVariantFromValue<Match>(match), MergeReasonRole);
+        item->setText(match.indexB.data(Qt::DisplayRole).toString() );
+    } else { // parent
+        item->setText(match.indexA.data(Qt::DisplayRole).toString() );
     }
 
     QVariant pix = idx.data(Qt::DecorationRole);

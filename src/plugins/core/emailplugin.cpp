@@ -30,7 +30,7 @@
 EmailPlugin::EmailPlugin(QObject *parent, const QVariantList &args):
     AbstractPersonPlugin(parent)
 {
-
+    Q_UNUSED(args);
 }
 
 QList< QAction* > EmailPlugin::actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent)

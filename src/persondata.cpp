@@ -90,8 +90,6 @@ PersonData::~PersonData()
 
 void PersonData::loadContact(const QString &id)
 {
-    Q_D(PersonData);
-
     QString query = QString::fromUtf8(
         "select DISTINCT ?uri "
         "WHERE { "

@@ -45,6 +45,7 @@ AbstractPersonDetailsWidget::~AbstractPersonDetailsWidget()
 
 void AbstractPersonDetailsWidget::setPersonsModel(PersonsModel *model)
 {
+    Q_UNUSED(model);
 }
 
 void AbstractPersonDetailsWidget::setIcon(const KIcon &icon)

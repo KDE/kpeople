@@ -22,6 +22,7 @@
 using namespace KPeople;
 
 BasePersonsDataSource::BasePersonsDataSource(QObject *parent)
+    : QObject(parent)
 {
 }
 
@@ -31,5 +32,8 @@ BasePersonsDataSource::~BasePersonsDataSource()
 
 QVariant BasePersonsDataSource::dataForContact(const QString &contactId, int role) const
 {
+    Q_UNUSED(contactId);
+    Q_UNUSED(role);
+
     return QVariant();
 }

@@ -24,12 +24,8 @@
 
 #include "QPersistentModelIndex"
 
-class QGridLayout;
 class QPushButton;
 class QModelIndex;
-
-class MainWindow;
-class KJob;
 class PersonPresentationWidget;
 
 namespace KPeople {

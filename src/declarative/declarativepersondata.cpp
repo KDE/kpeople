@@ -1,5 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) 2013  David Edmundson <D.Edmundson@lboro.ac.uk>
 
     This program is free software: you can redistribute it and/or modify
@@ -21,8 +20,8 @@
 
 #include <KDebug>
 
-DeclarativePersonData::DeclarativePersonData(QObject* parent)
-    :KPeople::PersonData(parent)
+DeclarativePersonData::DeclarativePersonData(QObject *parent)
+    : KPeople::PersonData(parent)
 {
 
 }
@@ -43,14 +42,12 @@ void DeclarativePersonData::componentComplete()
     }
 }
 
-void DeclarativePersonData::setContactId(const QString& contactId)
+void DeclarativePersonData::setContactId(const QString &contactId)
 {
     m_contactId = contactId;
 }
 
-void DeclarativePersonData::setUri(const QString& uri)
+void DeclarativePersonData::setUri(const QString &uri)
 {
     m_uri = uri;
 }
-
-

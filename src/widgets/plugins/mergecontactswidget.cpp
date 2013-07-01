@@ -18,26 +18,18 @@
 
 #include "mergecontactswidget.h"
 #include "personpresentationwidget.h"
-
-#include <QGridLayout>
-#include <QObject>
-#include <KDebug>
-
-#include <KLocalizedString>
-#include <KIconLoader>
-#include <KStandardDirs>
-#include <KIcon>
-#include <KJob>
-
 #include "persondata.h"
 #include "personsmodel.h"
 #include "duplicatesfinder.h"
-#include "math.h"
 
+#include <QObject>
 #include <QVBoxLayout>
-#include <QLabel>
 #include <QPushButton>
-#include <QCheckBox>
+
+#include <KLocalizedString>
+#include <KStandardDirs>
+#include <KJob>
+#include <KDebug>
 
 using namespace KPeople;
 
@@ -88,7 +80,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     m_containerListDetails->layout()->addWidget(triggerButton);
 
     // building personPresentationWidget to fill up the list
-    foreach (const QPersistentModelIndex &duplicate, duplicates)
+    Q_FOREACH (const QPersistentModelIndex &duplicate, duplicates)
     {
         // displaying contact in a user friendly way
         kDebug() << "Name retireved form the duplicate :" << duplicate.data(Qt::DisplayRole).toString();
@@ -117,7 +109,7 @@ QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(cons
     QList<Match> wrongFormatResults = m_duplicatesBuster->results();
     QList<QPersistentModelIndex> duplicateMatching;
 
-    foreach (const Match &match, wrongFormatResults) {
+    Q_FOREACH (const Match &match, wrongFormatResults) {
         // pick up only the couple with match with our parameter index
         if (match.indexA == original) {
             duplicateMatching.append(match.indexB);
@@ -168,7 +160,7 @@ void MergeContactsWidget::onMergeButtonPressed()
 
     // do the merge
     QList<QUrl> urisToMergeConverted;
-    foreach (const QPersistentModelIndex &pIndex, indexesToMerge) {
+    Q_FOREACH (const QPersistentModelIndex &pIndex, indexesToMerge) {
         urisToMergeConverted << pIndex.data(KPeople::PersonsModel::UriRole).toUrl();
     }
     //commented because it removes the test cases
@@ -183,7 +175,7 @@ QList<QPersistentModelIndex> MergeContactsWidget::getContactsCheckedToMerge()
 
     // retrieve all the widget where the box is checked
     QPair<QPersistentModelIndex, PersonPresentationWidget*> mergeContact ;
-    foreach (mergeContact, m_listMergeContacts) {
+    Q_FOREACH (mergeContact, m_listMergeContacts) {
         if (mergeContact.second->isContactSelected()) {
             indexesToMerge.append(mergeContact.first);
         }
@@ -191,5 +183,3 @@ QList<QPersistentModelIndex> MergeContactsWidget::getContactsCheckedToMerge()
     kDebug() << "Amount of checked box enable :" << indexesToMerge.size();
     return indexesToMerge;
 }
-
-

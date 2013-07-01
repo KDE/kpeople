@@ -18,8 +18,6 @@
 
 #include "abstractpersondetailswidget.h"
 
-#include <KDebug>
-
 namespace KPeople {
 class AbstractPersonDetailsWidgetPrivate
 {
@@ -49,7 +47,7 @@ void AbstractPersonDetailsWidget::setPersonsModel(PersonsModel *model)
 {
 }
 
-void AbstractPersonDetailsWidget::setIcon(const KIcon& icon)
+void AbstractPersonDetailsWidget::setIcon(const KIcon &icon)
 {
     Q_D(AbstractPersonDetailsWidget);
     d->icon = icon;
@@ -61,7 +59,7 @@ KIcon AbstractPersonDetailsWidget::icon() const
     return d->icon;
 }
 
-void AbstractPersonDetailsWidget::setTitle(const QString& title)
+void AbstractPersonDetailsWidget::setTitle(const QString &title)
 {
     Q_D(AbstractPersonDetailsWidget);
     d->title = title;

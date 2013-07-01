@@ -1,5 +1,4 @@
 /*
-    KPeople
     Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
     Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
 
@@ -50,7 +49,7 @@ using namespace KPeople;
 namespace KPeople {
 class PersonDataPrivate {
 public:
-    PersonDataPrivate(PersonData* q)
+    PersonDataPrivate(PersonData *q)
     {
         dataSourceWatcher = new DataSourceWatcher(q);
         q->connect(dataSourceWatcher, SIGNAL(contactChanged(QUrl)), q, SIGNAL(dataChanged()));
@@ -80,7 +79,7 @@ PersonDataPtr PersonData::createFromContactId(const QString &contactId)
 
 PersonData::PersonData(QObject *parent)
     : QObject(parent),
-    d_ptr(new PersonDataPrivate(this))
+      d_ptr(new PersonDataPrivate(this))
 {
 }
 

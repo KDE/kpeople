@@ -24,9 +24,10 @@
 #define PERSONS_MODEL_CONTACT_ITEM_H
 
 #include "kpeople_export.h"
-#include <QStandardItem>
 #include "personsmodel.h"
 #include "abstractpersonplugin.h"
+
+#include <QStandardItem>
 
 class QAction;
 class ContactItemPrivate;

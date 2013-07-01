@@ -35,12 +35,12 @@ public:
 }
 
 PersonsModelFeature::PersonsModelFeature()
-: d (new PersonsModelFeaturePrivate)
+    : d (new PersonsModelFeaturePrivate)
 {
 }
 
 PersonsModelFeature::PersonsModelFeature(const PersonsModelFeature &other)
-: d (other.d)
+    : d (other.d)
 {
 }
 
@@ -49,7 +49,7 @@ PersonsModelFeature::~PersonsModelFeature()
     //note do not need to delete d as it is a QSharedData
 }
 
-PersonsModelFeature& PersonsModelFeature::operator=(const PersonsModelFeature& other)
+PersonsModelFeature& PersonsModelFeature::operator=(const PersonsModelFeature &other)
 {
     if (this == &other) {
         return *this; //Protect against self-assignment

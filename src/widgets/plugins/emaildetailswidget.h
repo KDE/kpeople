@@ -26,7 +26,7 @@ class QGridLayout;
 class EmailDetailsWidget : public KPeople::AbstractPersonDetailsWidget
 {
 public:
-    explicit EmailDetailsWidget(QWidget* parent = 0);
+    explicit EmailDetailsWidget(QWidget *parent = 0);
     void setPerson(KPeople::PersonData *person);
 };
 

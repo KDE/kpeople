@@ -21,12 +21,10 @@
 
 #include "abstractpersondetailswidget.h"
 
-class QGridLayout;
-
 class PhoneDetailsWidget : public KPeople::AbstractPersonDetailsWidget
 {
 public:
-    explicit PhoneDetailsWidget(QWidget* parent = 0);
+    explicit PhoneDetailsWidget(QWidget *parent = 0);
     void setPerson(KPeople::PersonData *person);
 };
 

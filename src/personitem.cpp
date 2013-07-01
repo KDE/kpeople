@@ -27,7 +27,6 @@
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Variant>
 #include <Soprano/Vocabulary/NAO>
-#include <KDebug>
 
 using namespace KPeople;
 

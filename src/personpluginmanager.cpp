@@ -1,5 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This program is free software: you can redistribute it and/or modify
@@ -18,6 +17,8 @@
 
 
 #include "personpluginmanager.h"
+#include "abstractpersonplugin.h"
+#include "basepersonsdatasource.h"
 
 #include <QAction>
 #include <KService>
@@ -27,10 +28,6 @@
 
 #include <kdemacros.h>
 
-#include "abstractpersonplugin.h"
-
-#include "basepersonsdatasource.h"
-
 using namespace KPeople;
 
 class PersonPluginManagerPrivate
@@ -39,7 +36,7 @@ public:
     PersonPluginManagerPrivate();
     ~PersonPluginManagerPrivate();
     QList<AbstractPersonPlugin*> plugins;
-    BasePersonsDataSource* presencePlugin;
+    BasePersonsDataSource *presencePlugin;
 };
 
 K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);

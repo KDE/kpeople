@@ -114,7 +114,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 //     m_detailWidgets <<  new RecentEmailsDetailsWidget(this);
     m_detailWidgets <<  new MergeContactsWidget(this);
 
-    foreach(AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
+    Q_FOREACH (AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
         m_mainLayout->addWidget(new DetailsGroupWidget(detailsWidget, this));
     }
 
@@ -138,7 +138,7 @@ void PersonDetailsView::setPerson(const PersonDataPtr &person)
 
 void PersonDetailsView::setPersonsModel(PersonsModel *model)
 {
-    foreach (AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
+    Q_FOREACH (AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
         detailsWidget->setPersonsModel(model);
     }
 }
@@ -161,7 +161,7 @@ void PersonDetailsView::reload()
     m_contactStatusLabel->setPixmap(iconForPresence(m_person->status()));
     m_contactBirthdayLabel->setText(m_person->groups().join(", "));
 
-    foreach (AbstractPersonDetailsWidget* detailsWidget, m_detailWidgets) {
+    Q_FOREACH (AbstractPersonDetailsWidget* detailsWidget, m_detailWidgets) {
         detailsWidget->setPerson(m_person.data());
     }
 }

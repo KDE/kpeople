@@ -118,7 +118,7 @@ void ContactItem::addContactData(int role, const QVariant &value)
         } else if (*it != value) {
             Q_ASSERT(it->type() == QVariant::List);
             QVariantList current = it->toList();
-            Q_ASSERT(current.isEmpty() || current.first().type()==value.type());
+            Q_ASSERT(current.isEmpty() || current.first().type() == value.type());
             current.append(value);
             *it = current;
             emitDataChanged();

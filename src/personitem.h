@@ -31,7 +31,6 @@ class Resource;
 
 class QUrl;
 
-
 namespace KPeople
 {
 class PersonCacheItem;

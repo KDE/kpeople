@@ -1,5 +1,4 @@
 /*
-    Persons Model
     Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
 
     This library is free software; you can redistribute it and/or

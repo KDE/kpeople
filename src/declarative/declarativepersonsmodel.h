@@ -1,5 +1,4 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
     Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
@@ -50,7 +49,7 @@ public:
     Q_DECLARE_FLAGS(Features, Feature)
     Q_FLAGS(Features)
 
-    DeclarativePersonsModel(QObject *parent=0);
+    DeclarativePersonsModel(QObject *parent = 0);
 
     void classBegin();
     void componentComplete();

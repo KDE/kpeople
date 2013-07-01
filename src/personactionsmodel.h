@@ -26,7 +26,6 @@
 
 class QAction;
 
-
 namespace KPeople
 {
 class PersonActionsPrivate;

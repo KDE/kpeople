@@ -35,13 +35,13 @@ class ResultPrinter : public QObject
 {
     Q_OBJECT
     public slots:
-        void print(KJob* j) {
-            QList<Match> res = ((DuplicatesFinder* ) j)->results();
+        void print(KJob *j) {
+            QList<Match> res = ((DuplicatesFinder *) j)->results();
             std::cout << "Results:" << std::endl;
-            for(QList<Match>::iterator it=res.begin(); it!=res.end(); ) {
+            for (QList<Match>::iterator it = res.begin(); it != res.end();) {
                 QStringList roles;
                 QStringList rA, rB;
-                foreach(int i, it->role) {
+                Q_FOREACH (int i, it->role) {
                     roles += m_model->roleNames()[i];
                     rA += variantToString(it->indexA.data(it->role.first()));
                     rB += variantToString(it->indexB.data(it->role.first()));
@@ -49,59 +49,64 @@ class ResultPrinter : public QObject
                 std::cout << "\t- " << qPrintable(roles.join(", ")) << ": " << it->indexA.row() << " " << it->indexB.row()
                           << " because: " << qPrintable(rA.join(", ")) << " // " << qPrintable(rB.join(", ")) << '.' << std::endl;
                 bool remove = false;
-                if(m_action==Ask) {
-                    for(char ans=' '; ans!='y' && ans!='n'; ) {
+                if (m_action == Ask) {
+                    for (char ans=' '; ans != 'y' && ans != 'n';) {
                         std::cout << "apply? (y/n) ";
                         std::cin >> ans;
                         remove = ans == 'n';
                     }
                 }
-                if(remove)
+                if (remove) {
                     it = res.erase(it);
-                else
-                    ++it;
+                } else {
+                    ++it;}
             }
 
-            if((m_action==Apply || m_action==Ask) && !res.isEmpty()) {
-                MatchesSolver* s = new MatchesSolver(res, m_model, this);
+            if ((m_action == Apply || m_action == Ask) && !res.isEmpty()) {
+                MatchesSolver *s = new MatchesSolver(res, m_model, this);
                 connect(s, SIGNAL(finished(KJob*)), this, SLOT(matchesSolverDone(KJob*)));
                 s->start();
-            } else
+            } else {
                 QCoreApplication::instance()->quit();
+            }
         }
 
-        void matchesSolverDone(KJob* job) {
-            if(job->error()==0)
+        void matchesSolverDone(KJob *job) {
+            if (job->error() == 0) {
                 std::cout << "Matching successfully finished" << std::endl;
-            else
+            } else {
                 std::cout << "Matching failed with error: " << job->error() << std::endl;
+            }
             QCoreApplication::instance()->quit();
         }
 
     private:
-        QString variantToString(const QVariant& data) {
-            if(data.type()==QVariant::List) {
+        QString variantToString(const QVariant &data) {
+            if (data.type() == QVariant::List) {
                 QList<QVariant> list = data.toList();
                 QStringList strings;
-                foreach(const QVariant& v, list)
+                Q_FOREACH (const QVariant &v, list) {
                     strings += variantToString(v);
+                }
                 return "("+strings.join(", ")+")";
-            } else
+            } else {
                 return data.toString();
+            }
         }
 
     public:
         enum MatchAction { Apply, NotApply, Ask };
         MatchAction m_action;
-        PersonsModel* m_model;
+        PersonsModel *m_model;
 };
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     QCoreApplication app(argc, argv);
     PersonsModel model;
 
-    model.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(true) << PersonsModelFeature::imModelFeature(true));
+    model.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(true)
+                                                  << PersonsModelFeature::imModelFeature(true));
 
     ResultPrinter r;
     r.m_model = &model;
@@ -109,7 +114,7 @@ int main(int argc, char** argv)
                : app.arguments().contains("--ask") ? ResultPrinter::Ask
                : ResultPrinter::NotApply;
 
-    DuplicatesFinder* f = new DuplicatesFinder(&model);
+    DuplicatesFinder *f = new DuplicatesFinder(&model);
     QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
     QObject::connect(&model, SIGNAL(modelInitialized()), f, SLOT(start()));
 

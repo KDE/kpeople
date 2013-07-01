@@ -41,7 +41,7 @@ DataSourceWatcher::~DataSourceWatcher()
     delete d_ptr;
 }
 
-void DataSourceWatcher::watchContact(const QString& contactId, const QUrl& contactUri)
+void DataSourceWatcher::watchContact(const QString &contactId, const QUrl &contactUri)
 {
     Q_D(DataSourceWatcher);
     d->watchedContactsMap[contactId] = contactUri;
@@ -53,7 +53,7 @@ void DataSourceWatcher::clearWatchedContacts()
     d->watchedContactsMap.clear();
 }
 
-void DataSourceWatcher::onContactChanged(const QString& contactId)
+void DataSourceWatcher::onContactChanged(const QString &contactId)
 {
     Q_D(DataSourceWatcher);
 

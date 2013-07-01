@@ -16,6 +16,7 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include <QApplication>
 #include <QTreeView>
 #include <QHeaderView>
@@ -29,10 +30,10 @@ using namespace KPeople;
 
 class ContactDelegate : public QStyledItemDelegate
 {
-    virtual void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
         QStyledItemDelegate::paint(painter, option, index);
         QRect infoRect(QPoint(option.rect.center().x(), option.rect.top()), option.rect.bottomRight());
-        if(index.parent().isValid()) {
+        if (index.parent().isValid()) {
             painter->drawText(infoRect, index.data(PersonsModel::PresenceTypeRole).toString());
         } else {
             painter->drawText(infoRect, QString::number(index.model()->rowCount(index)));

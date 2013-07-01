@@ -41,6 +41,5 @@ Q_SIGNALS:
     void contactChanged(const QString &contactId);
 };
 
-
 }
 #endif // BASE_PERSONS_DATA_SOURCE_H

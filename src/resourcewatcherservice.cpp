@@ -120,8 +120,9 @@ template <typename T>
 QList<T> qvariantlist_cast(const QVariantList &vals)
 {
     QList<T> ret;
-    foreach (const QVariant &v, vals)
+    Q_FOREACH (const QVariant &v, vals) {
         ret += v.value<T>();
+    }
     return ret;
 }
 

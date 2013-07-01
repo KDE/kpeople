@@ -18,11 +18,11 @@
 
 #include "personpresentationwidget.h"
 
-#include "QHBoxLayout";
-#include "QLabel"
+#include <QHBoxLayout>
+#include <QLabel>
 
-PersonPresentationWidget::PersonPresentationWidget(const QString &name, const QPixmap &avatar, QWidget *parent):
-    QWidget(parent)
+PersonPresentationWidget::PersonPresentationWidget(const QString &name, const QPixmap &avatar, QWidget *parent)
+    : QWidget(parent)
 {
     setLayout(new QHBoxLayout(this));
 

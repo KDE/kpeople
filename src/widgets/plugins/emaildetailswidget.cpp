@@ -17,14 +17,11 @@
 
 
 #include "emaildetailswidget.h"
-
-#include <QGridLayout>
-
 #include "persondata.h"
 
+#include <QGridLayout>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QDebug>
 
 #include <KLocalizedString>
 
@@ -38,11 +35,9 @@ EmailDetailsWidget::EmailDetailsWidget(QWidget *parent):
     QVBoxLayout *newLayout = new QVBoxLayout(this);
     newLayout->setContentsMargins(0,0,0,0);
     setLayout(newLayout);
-
-    qDebug() << "in ctor";
 }
 
-void EmailDetailsWidget::setPerson(PersonData* person)
+void EmailDetailsWidget::setPerson(PersonData *person)
 {
     if(person->emails().size() == 0) {
         setActive(false);

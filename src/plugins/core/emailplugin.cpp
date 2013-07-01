@@ -27,16 +27,16 @@
 #include <KDebug>
 #include <KPluginFactory>
 
-EmailPlugin::EmailPlugin(QObject* parent, const QVariantList &args):
+EmailPlugin::EmailPlugin(QObject *parent, const QVariantList &args):
     AbstractPersonPlugin(parent)
 {
 
 }
 
-QList< QAction* > EmailPlugin::actionsForPerson(const KPeople::PersonDataPtr &personData, QObject* parent)
+QList< QAction* > EmailPlugin::actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent)
 {
     QList<QAction*> actions;
-    foreach(const QString &email, personData->emails()) {
+    Q_FOREACH (const QString &email, personData->emails()) {
         QAction *action = new QAction(KIcon("main-unread"), i18nc("%1 is a specific email address","Email %1").arg(email), parent);
         connect(action, SIGNAL(triggered(bool)), SLOT(onEmailTriggered()));
         action->setProperty("emailAddress", email);

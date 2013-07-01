@@ -20,7 +20,7 @@
 #define PERSONPRESENTATIONWIDGET_H
 
 #include <QWidget>
-#include "QCheckBox"
+#include <QCheckBox>
 
 class QLabel;
 

@@ -1,5 +1,4 @@
 /*
-    <one line to give the library's name and an idea of what it does.>
     Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
@@ -25,10 +24,10 @@ using namespace KPeople;
 #include "personsmodelfeature.h"
 #include <KDebug>
 
-DeclarativePersonsModel::DeclarativePersonsModel(QObject* parent):
-    PersonsModel(parent),
-    m_optionalFeatures(0),
-    m_mandatoryFeatures(0)
+DeclarativePersonsModel::DeclarativePersonsModel(QObject *parent)
+    : PersonsModel(parent),
+      m_optionalFeatures(0),
+      m_mandatoryFeatures(0)
 {
 
 }

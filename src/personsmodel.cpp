@@ -127,7 +127,7 @@ template <class T>
 QList<QStandardItem*> toStandardItems(const QList<T*> &items)
 {
     QList<QStandardItem*> ret;
-    foreach (QStandardItem *it, items) {
+    Q_FOREACH (QStandardItem *it, items) {
         ret += it;
     }
     return ret;
@@ -179,7 +179,7 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
     }
 
     //iterate over the results and add the wanted properties into the contact
-    foreach (const QString &bName, query->bindingNames()) {
+    Q_FOREACH (const QString &bName, query->bindingNames()) {
         QHash<QString, int>::const_iterator it = d->bindingRoleMap.constFind(bName);
         if (it == d->bindingRoleMap.constEnd()) {
             continue;
@@ -189,7 +189,7 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
         if (!node.isEmpty()) {
             //contact info fields are stored as lists seperated by ;;;
             //contact item can only take single values in addContactData so looping is done here
-            foreach (const QString &data, node.toString().split(";;;")) {
+            Q_FOREACH (const QString &data, node.toString().split(";;;")) {
                 contactNode->addContactData(*it, data);
             }
         }
@@ -289,7 +289,7 @@ QList<QModelIndex> PersonsModel::indexesForUris(const QVariantList& uris) const
 {
     Q_ASSERT(!uris.isEmpty());
     QList<QModelIndex> ret;
-    foreach(const QVariant& uri, uris) {
+    Q_FOREACH (const QVariant& uri, uris) {
         ret += indexForUri(uri.toUrl());
     }
     return ret;
@@ -454,13 +454,13 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
 
     //get existing child-contacts and remove them from the new ones
     QVariantList uris = person->data(PersonsModel::ChildContactsUriRole).toList();
-    foreach (const QVariant &uri, uris) {
+    Q_FOREACH (const QVariant &uri, uris) {
         contacts.removeOne(uri.toUrl());
     }
 
     //query the model for the contacts, if they are present, then need to be just moved
     QList<QStandardItem*> personContacts;
-    foreach (const QUrl &uri, contacts) {
+    Q_FOREACH (const QUrl &uri, contacts) {
         ContactItem *contact = d->contacts[uri];
 
         if (!contact) {
@@ -489,14 +489,14 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
 
     //append the moved contacts to this person and remove them from 'contacts'
     //so they are not added twice
-    foreach (QStandardItem *contactItem, personContacts) {
+    Q_FOREACH (QStandardItem *contactItem, personContacts) {
         ContactItem *contact = dynamic_cast<ContactItem*>(contactItem);
         person->appendRow(contact);
         contacts.removeOne(contact->uri());
     }
 
     //if we have any contacts left, we need to create them
-    foreach (const QUrl &uri, contacts) {
+    Q_FOREACH (const QUrl &uri, contacts) {
         ContactItem *item = new ContactItem(uri);
         d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMsRole).toString(),
                                            item->data(PersonsModel::UriRole).toString());
@@ -559,7 +559,7 @@ void PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
         Nepomuk2::SimpleResource newPimoPerson;
         newPimoPerson.addType(Nepomuk2::Vocabulary::PIMO::Person());
 
-        foreach(const QUrl &contact, contactUris) {
+        Q_FOREACH (const QUrl &contact, contactUris) {
             newPimoPerson.addProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence(), contact);
         }
 
@@ -571,7 +571,7 @@ void PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
     } else if (personUris.size() == 1 && !contactUris.isEmpty()) {
         //put the contacts from QList<QUrl> into QVariantList
         QVariantList contactsList;
-        Q_FOREACH(const QUrl &contact, contactUris) {
+        Q_FOREACH (const QUrl &contact, contactUris) {
             contactsList << contact;
         }
 

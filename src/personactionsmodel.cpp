@@ -19,15 +19,15 @@
 
 #include "personactionsmodel.h"
 #include "personsmodel.h"
+#include "personpluginmanager.h"
+#include "persondata.h"
 
 #include <QPersistentModelIndex>
 #include <QAction>
+
 #include <KIcon>
 #include <KLocalizedString>
 #include <KToolInvocation>
-
-#include "personpluginmanager.h"
-#include "persondata.h"
 
 namespace KPeople {
 struct PersonActionsPrivate {
@@ -55,12 +55,12 @@ PersonActionsModel::~PersonActionsModel()
     delete d_ptr;
 }
 
-void PersonActionsModel::setPerson(QAbstractItemModel* model, int row)
+void PersonActionsModel::setPerson(QAbstractItemModel *model, int row)
 {
     setPerson(model->index(row, 0));
 }
 
-void PersonActionsModel::setPerson(const QPersistentModelIndex& index)
+void PersonActionsModel::setPerson(const QPersistentModelIndex &index)
 {
     Q_D(PersonActions);
     beginResetModel();

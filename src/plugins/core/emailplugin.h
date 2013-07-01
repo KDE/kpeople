@@ -1,5 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) 2013  David Edmundson <D.Edmundson@lboro.ac.uk>
 
     This program is free software: you can redistribute it and/or modify
@@ -26,7 +25,7 @@ class EmailPlugin : public KPeople::AbstractPersonPlugin
 {
     Q_OBJECT
 public:
-    EmailPlugin(QObject* parent, const QVariantList &args);
+    EmailPlugin(QObject *parent, const QVariantList &args);
 
     virtual QList<QAction*> actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent);
 

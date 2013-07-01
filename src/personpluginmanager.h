@@ -1,5 +1,4 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
     Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This program is free software: you can redistribute it and/or modify
@@ -23,7 +22,6 @@
 #include <QObject>
 
 #include "kpeople_export.h"
-
 #include "persondata.h"
 
 class QAction;

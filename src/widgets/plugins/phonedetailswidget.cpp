@@ -17,14 +17,13 @@
 
 
 #include "phonedetailswidget.h"
+#include "persondata.h"
 
 #include <QGridLayout>
 #include <QVBoxLayout>
 #include <QLabel>
 
 #include <KLocalizedString>
-
-#include "persondata.h"
 
 using namespace KPeople;
 
@@ -37,9 +36,9 @@ PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent):
     setLayout(new QVBoxLayout(this));
 }
 
-void PhoneDetailsWidget::setPerson(PersonData* person)
+void PhoneDetailsWidget::setPerson(PersonData *person)
 {
-    if(person->phones().size() == 0) {
+    if (person->phones().size() == 0) {
         setActive(false);
     } else {
         setActive(true);

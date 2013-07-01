@@ -20,8 +20,9 @@
 #define MATCHESSOLVER_H
 
 #include <KJob>
-#include "kpeople_export.h"
 #include <QSet>
+
+#include "kpeople_export.h"
 
 class QUrl;
 class QModelIndex;
@@ -41,7 +42,7 @@ class KPEOPLE_EXPORT MatchesSolver : public KJob
     public Q_SLOTS:
         void startMatching();
     private Q_SLOTS:
-        void jobDone(KJob *job=0);
+        void jobDone(KJob *job = 0);
 
     private:
         QList<QUrl> contactUris(const QModelIndex &idxOrigin);

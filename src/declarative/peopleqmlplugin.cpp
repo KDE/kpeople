@@ -28,7 +28,7 @@
 
 #include <QtDeclarative/QDeclarativeItem>
 
-void PeopleQMLPlugin::registerTypes(const char* uri)
+void PeopleQMLPlugin::registerTypes(const char *uri)
 {
     qmlRegisterType<DeclarativePersonsModel>(uri, 0, 1, "PersonsModel");
     qmlRegisterType<KPeople::PersonActionsModel>(uri, 0, 1, "PersonActions");

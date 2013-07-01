@@ -21,6 +21,7 @@
 #define MERGEDIALOG_H
 
 #include "kpeople_export.h"
+
 #include <QDialog>
 #include <QModelIndex>
 
@@ -32,24 +33,24 @@ namespace KPeople {
 class PersonsModel;
 class Match;
 
-class KPEOPLE_EXPORT MergeDialog: public QDialog
+class KPEOPLE_EXPORT MergeDialog : public QDialog
 {
     Q_OBJECT
 
 public:
     enum Role {
         NameRole = Qt::DisplayRole,
-        UriRole = Qt::UserRole +1,
+        UriRole = Qt::UserRole + 1,
         PixmapRole = Qt::UserRole + 2,
         MergeReasonRole = Qt::UserRole + 3
     };
 
-    explicit MergeDialog(QWidget* parent = 0);
-    void setPersonsModel(KPeople::PersonsModel* model);
+    explicit MergeDialog(QWidget *parent = 0);
+    void setPersonsModel(KPeople::PersonsModel *model);
 
 private:
-    QList< QStandardItem* > checkedItems();
-    void mergeMatchingContactsFromIndex(const QStandardItem* parent);
+    QList<QStandardItem*> checkedItems();
+    void mergeMatchingContactsFromIndex(const QStandardItem *parent);
     QStandardItem* itemMergeContactFromMatch(const QModelIndex &idx, const Match &match);
 
     void feedDuplicateModelFromMatches(const QList<Match> &matches) ;
@@ -60,7 +61,7 @@ private Q_SLOTS:
     void onMergeButtonClicked();
 
 private:
-    MergeDialogPrivate *const d_ptr;
+    MergeDialogPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(MergeDialog)
 };
 

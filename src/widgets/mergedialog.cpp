@@ -51,7 +51,7 @@ public:
 };
 
 //NOTE: look at KDialog
-MergeDialog::MergeDialog(QWidget* parent)
+MergeDialog::MergeDialog(QWidget *parent)
     : QDialog(parent)
     , d_ptr(new MergeDialogPrivate)
 {
@@ -84,7 +84,7 @@ MergeDialog::MergeDialog(QWidget* parent)
     layout()->addWidget(buttons);
 }
 
-void MergeDialog::setPersonsModel(PersonsModel* model)
+void MergeDialog::setPersonsModel(PersonsModel *model)
 {
     Q_D(MergeDialog);
     d->personsModel = model;
@@ -125,7 +125,7 @@ void MergeDialog::mergeMatchingContactsFromIndex(const QStandardItem *parent)
 void MergeDialog::onMergeButtonClicked()
 {
     QList<QStandardItem*> parents = checkedItems();
-    foreach(QStandardItem *parent , parents) {
+    Q_FOREACH (QStandardItem *parent , parents) {
         mergeMatchingContactsFromIndex(parent);
     }
     emit accept();
@@ -141,20 +141,20 @@ void MergeDialog::searchForDuplicatesFinished(KJob*)
     d->view->setItemDelegate(d->delegate);
 
     // To extend the selected item
-    connect(d->view->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
-            d->delegate, SLOT(onSelectedContactsChanged(const QItemSelection &, const QItemSelection &)));
+    connect(d->view->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            d->delegate, SLOT(onSelectedContactsChanged(QItemSelection,QItemSelection)));
     // To contract an already selected item
-    connect(d->view, SIGNAL(doubleClicked(const QModelIndex &)),
-            d->delegate, SLOT(onClickContactParent(const QModelIndex &)));
+    connect(d->view, SIGNAL(doubleClicked(QModelIndex)),
+            d->delegate, SLOT(onClickContactParent(QModelIndex)));
 }
 
 void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
 {
     Q_D(MergeDialog);
-    QMap<QPersistentModelIndex, QList< Match > > compareTable;
+    QMap<QPersistentModelIndex, QList<Match> > compareTable;
     QList<Match> currentValue;
 
-    foreach (const Match& match, matches) {
+    Q_FOREACH (const Match &match, matches) {
         currentValue = compareTable.value(match.indexA);
 
         if (currentValue.isEmpty()) { // new parent, create it
@@ -174,7 +174,7 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
         QStandardItem *parent = itemMergeContactFromMatch(i.key(), i->first());
         rootItem->appendRow(parent);
 
-        foreach (const Match &matchChild, compareTable.value(QModelIndex() , *i)) {
+        Q_FOREACH (const Match &matchChild, compareTable.value(QModelIndex() , *i)) {
             QStandardItem *oneChild = itemMergeContactFromMatch(QModelIndex(), matchChild);
             parent->appendRow(oneChild);
         }
@@ -192,9 +192,9 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
 
     if (!idx.isValid()) { // child
         item->setData(qVariantFromValue<Match>(match), MergeReasonRole);
-        item->setText(match.indexB.data(Qt::DisplayRole).toString() );
+        item->setText(match.indexB.data(Qt::DisplayRole).toString());
     } else { // parent
-        item->setText(match.indexA.data(Qt::DisplayRole).toString() );
+        item->setText(match.indexA.data(Qt::DisplayRole).toString());
     }
 
     QVariant pix = idx.data(Qt::DecorationRole);
@@ -212,7 +212,7 @@ QList<QStandardItem*> MergeDialog::checkedItems()
     QStandardItem *root = d->model->invisibleRootItem();
     int rows = root->rowCount();
     QList<QStandardItem*> results;
-    for (int i=0 ; i < rows ; i++) {
+    for (int i = 0 ; i < rows ; i++) {
         QStandardItem *currentParent = root->child(i,0);
         if (currentParent->checkState() == Qt::Checked) {
             results.append(currentParent);

@@ -20,7 +20,7 @@
 #include "mergedialog.h"
 #include "mergedelegate.h"
 #include "duplicatesfinder.h"
-#include "kpeople/persondata.h"
+#include "persondata.h"
 #include "kpeople/personsmodel.h"
 
 #include <KDebug>
@@ -186,9 +186,9 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
 {
     Q_D(MergeDialog);
     QStandardItem *item = new QStandardItem;
-    PersonData person(idx.data(PersonsModel::UriRole).toString());
-    item->setText(person.name());
-    item->setData(person.uri(), UriRole);
+    PersonDataPtr person(PersonData::createFromUri(idx.data(PersonsModel::UriRole).toUrl()));
+    item->setText(person->name());
+    item->setData(person->uri(), UriRole);
     item->setCheckable(true);
     item->setCheckState(Qt::Checked);
 

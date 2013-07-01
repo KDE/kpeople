@@ -24,6 +24,7 @@
 #include <persondata.h>
 
 #include "declarativepersonsmodel.h"
+#include "declarativepersondata.h"
 
 #include <QtDeclarative/QDeclarativeItem>
 
@@ -31,7 +32,7 @@ void PeopleQMLPlugin::registerTypes(const char* uri)
 {
     qmlRegisterType<DeclarativePersonsModel>(uri, 0, 1, "PersonsModel");
     qmlRegisterType<KPeople::PersonActionsModel>(uri, 0, 1, "PersonActions");
-    qmlRegisterType<KPeople::PersonData>(uri, 0, 1, "PersonData");
+    qmlRegisterType<DeclarativePersonData>(uri, 0, 1, "PersonData");
     qmlRegisterType<QAbstractItemModel>();
 
     qRegisterMetaType<QModelIndex>("QModelIndex");

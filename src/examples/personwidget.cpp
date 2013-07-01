@@ -35,11 +35,10 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    KPeople::PersonData person;
-    person.setContactId(app.arguments()[1]);
+    KPeople::PersonDataPtr person(KPeople::PersonData::createFromContactId(app.arguments()[1]));
 
     KPeople::PersonDetailsView w;
-    w.setPerson(&person);
+    w.setPerson(person);
 
     w.show();
 

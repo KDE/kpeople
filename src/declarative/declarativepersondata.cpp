@@ -17,21 +17,40 @@
 */
 
 
-#ifndef EMAIL_PLUGIN_H
-#define EMAIL_PLUGIN_H
+#include "declarativepersondata.h"
 
-#include "abstractpersonplugin.h"
+#include <KDebug>
 
-class EmailPlugin : public KPeople::AbstractPersonPlugin
+DeclarativePersonData::DeclarativePersonData(QObject* parent)
+    :KPeople::PersonData(parent)
 {
-    Q_OBJECT
-public:
-    EmailPlugin(QObject* parent, const QVariantList &args);
 
-    virtual QList<QAction*> actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent);
+}
 
-private Q_SLOTS:
-    void onEmailTriggered();
-};
+void DeclarativePersonData::classBegin()
+{
 
-#endif // EMAIL_PLUGIN_H
+}
+
+void DeclarativePersonData::componentComplete()
+{
+    if (!m_uri.isEmpty()) {
+        loadUri(m_uri);
+    } else if (!m_contactId.isEmpty()) {
+        loadContact(m_contactId);
+    } else {
+        kWarning() << "item has no uri or contactId set";
+    }
+}
+
+void DeclarativePersonData::setContactId(const QString& contactId)
+{
+    m_contactId = contactId;
+}
+
+void DeclarativePersonData::setUri(const QString& uri)
+{
+    m_uri = uri;
+}
+
+

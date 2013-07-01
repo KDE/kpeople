@@ -17,21 +17,34 @@
 */
 
 
-#ifndef EMAIL_PLUGIN_H
-#define EMAIL_PLUGIN_H
+#ifndef DECLARATIVEPERSONDATA_H
+#define DECLARATIVEPERSONDATA_H
 
-#include "abstractpersonplugin.h"
+#include "persondata.h"
 
-class EmailPlugin : public KPeople::AbstractPersonPlugin
+#include <QDeclarativeParserStatus>
+
+class DeclarativePersonData : public KPeople::PersonData, public QDeclarativeParserStatus
 {
     Q_OBJECT
+    Q_INTERFACES(QDeclarativeParserStatus)
+
+    Q_PROPERTY(QString uri WRITE setUri);
+    Q_PROPERTY(QString contactId WRITE setContactId);
+
 public:
-    EmailPlugin(QObject* parent, const QVariantList &args);
+    DeclarativePersonData(QObject *parent=0);
 
-    virtual QList<QAction*> actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent);
+    void setUri(const QString &uri);
+    void setContactId(const QString &uri);
 
-private Q_SLOTS:
-    void onEmailTriggered();
+
+    void classBegin();
+    void componentComplete();
+
+private:
+    QString m_uri;
+    QString m_contactId;
 };
 
-#endif // EMAIL_PLUGIN_H
+#endif // DECLARATIVEPERSONDATA_H

@@ -134,69 +134,58 @@ void PersonDataTests::init()
 void PersonDataTests::contactProperties()
 {
     //create a simple contact with name + email
-    PersonData personData;
-    personData.setUri(m_contact1Uri.toString());
-    QCOMPARE(personData.isValid(), true);
-    QCOMPARE(personData.uri(), m_contact1Uri.toString());
-    QCOMPARE(personData.isPerson(), false);
-    QCOMPARE(personData.contactResources().size(), 1);
+    PersonDataPtr personData(PersonData::createFromUri(m_contact1Uri));
+    QCOMPARE(personData->isValid(), true);
+    QCOMPARE(personData->uri(), m_contact1Uri);
+    QCOMPARE(personData->isPerson(), false);
+    QCOMPARE(personData->contactResources().size(), 1);
 
-    QCOMPARE(personData.name(), QLatin1String("Contact 1"));
-    QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact1@example.com"));
+    QCOMPARE(personData->name(), QLatin1String("Contact 1"));
+    QCOMPARE(personData->emails(), QStringList() << QLatin1String("contact1@example.com"));
 }
 
 void PersonDataTests::personProperties()
 {
-    PersonData personData;
-    personData.setUri(m_personAUri.toString());
-    QCOMPARE(personData.isValid(), true);
-    QCOMPARE(personData.isPerson(), true);
-    QCOMPARE(personData.contactResources().size(), 2);
-    QCOMPARE(personData.name(), QLatin1String("Person A"));
-    QCOMPARE(personData.emails(), QStringList() << QLatin1String("contact3@example.com") << QLatin1String("contact2@example.com"));
+    PersonDataPtr personData(PersonData::createFromUri(m_personAUri));
+    QCOMPARE(personData->isValid(), true);
+    QCOMPARE(personData->isPerson(), true);
+    QCOMPARE(personData->contactResources().size(), 2);
+    QCOMPARE(personData->name(), QLatin1String("Person A"));
+    QCOMPARE(personData->emails(), QStringList() << QLatin1String("contact3@example.com") << QLatin1String("contact2@example.com"));
 }
 
 void PersonDataTests::personFromContactID()
 {
-    PersonData personData;
-    personData.setContactId(QLatin1String("contact2@example.com"));
+    PersonDataPtr personData(PersonData::createFromContactId(QLatin1String("contact2@example.com")));
     //This should load PersonA NOT Contact2
-    QCOMPARE(personData.uri(), m_personAUri.toString());
+    QCOMPARE(personData->uri(), m_personAUri);
 }
 
 void PersonDataTests::contactFromContactID()
 {
-    PersonData personData;
-    personData.setContactId(QLatin1String("contact1@example.com"));
-    QCOMPARE(personData.uri(), m_contact1Uri.toString());
+    PersonDataPtr personData(PersonData::createFromContactId(QLatin1String("contact1@example.com")));
+    QCOMPARE(personData->uri(), m_contact1Uri);
 }
 
 void PersonDataTests::miscTests()
 {
-    PersonData personData;
-    personData.uri();
-    personData.name();
-    personData.avatar();
-    personData.birthday();
-    personData.contactResources();
-    personData.emails();
-    personData.groups();
-    personData.imAccounts();
-    personData.isPerson();
-    personData.phones();
-    QCOMPARE(personData.isValid(), false);
-
-    PersonData test2;
-    test2.setContactId(QLatin1String("IDThatDoesNotExist"));
-    QCOMPARE(test2.isValid(), false);
-
-    test2.name();
+    PersonDataPtr personData(PersonData::createFromContactId(QLatin1String("NOTEXIST")));
+    personData->uri();
+    personData->name();
+    personData->avatar();
+    personData->birthday();
+    personData->contactResources();
+    personData->emails();
+    personData->groups();
+    personData->imAccounts();
+    personData->isPerson();
+    personData->phones();
+    QCOMPARE(personData->isValid(), false);
 }
 
 void PersonDataTests::contactChanged()
 {
-    PersonData personData;
-    personData.setUri(m_contact1Uri.toString());
+    PersonDataPtr personData(PersonData::createFromUri(m_contact1Uri));
 
     Nepomuk2::SimpleResourceGraph graph;
 
@@ -213,7 +202,7 @@ void PersonDataTests::contactChanged()
     job->exec();
     QVERIFY(!job->error());
 
-    QVERIFY(QTest::kWaitForSignal(&personData, SIGNAL(dataChanged()), 5000));
+    QVERIFY(QTest::kWaitForSignal(personData.data(), SIGNAL(dataChanged()), 5000));
 
 
     QCoreApplication::processEvents();
@@ -223,7 +212,7 @@ void PersonDataTests::contactChanged()
 
     //for some reason this fails...
     //FIXME investigate
-    QCOMPARE(personData.emails().size(), 2);
+    QCOMPARE(personData->emails().size(), 2);
 }
 
 

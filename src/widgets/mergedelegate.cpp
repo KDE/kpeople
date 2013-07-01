@@ -47,6 +47,8 @@
 
 #define MAX_MATCHING_CONTACTS_ICON 5
 
+using namespace KPeople;
+
 MergeDelegate::MergeDelegate(QAbstractItemView *parent)
     : KExtendableItemDelegate(parent)
     , m_arrowSize(15,15)

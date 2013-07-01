@@ -19,16 +19,23 @@
 #include <QApplication>
 
 #include <personsmodel.h>
+#include <personsmodelfeature.h>
 #include <widgets/mergedialog.h>
+
+using namespace KPeople;
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
     MergeDialog dialog;
-    PersonsModel *persons = new PersonsModel(
-                        0,
-                        PersonsModel::FeatureEmails | PersonsModel::FeatureIM | PersonsModel::FeatureAvatars, &dialog);
+    PersonsModel *persons = new PersonsModel(&dialog);
+    QList<KPeople::PersonsModelFeature> features;
+    features << KPeople::PersonsModelFeature::emailModelFeature(true)
+             << KPeople::PersonsModelFeature::avatarModelFeature(true)
+             << KPeople::PersonsModelFeature::imModelFeature(true)
+             << KPeople::PersonsModelFeature::fullNameModelFeature(true);
+    persons->startQuery(features);
 
     dialog.setPersonsModel(persons);
 

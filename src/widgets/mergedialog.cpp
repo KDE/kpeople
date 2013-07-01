@@ -19,23 +19,24 @@
 
 #include "mergedialog.h"
 #include "mergedelegate.h"
+#include "duplicatesfinder.h"
 #include "kpeople/persondata.h"
 #include "kpeople/personsmodel.h"
-#include "kpeople/duplicatesfinder.h"
 
 #include <KDebug>
-#include <QObject>
 
+#include <QObject>
 #include <QLabel>
 #include <QLayout>
 #include <QPushButton>
 #include <QDialogButtonBox>
-
 #include <QListView>
 #include <QStandardItemModel>
 
 #include <KStandardDirs>
 #include <KLocalizedString>
+
+using namespace KPeople;
 
 class MergeDialogPrivate {
 public:

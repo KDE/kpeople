@@ -5,6 +5,8 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 set (kpeople_widgets_SRCS
     abstractpersondetailswidget.cpp
     persondetailsview.cpp
+    mergedialog.cpp
+    mergedelegate.cpp
     plugins/emaildetailswidget.cpp
     plugins/phonedetailswidget.cpp
     plugins/mergecontactswidget.cpp
@@ -33,7 +35,7 @@ install (TARGETS kpeoplewidgets
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES persondetailsview.h
+install (FILES persondetailsview.h mergedialog.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets
          COMPONENT Devel
 )

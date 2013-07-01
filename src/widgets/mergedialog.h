@@ -22,17 +22,15 @@
 
 #include "kpeople_export.h"
 #include <QDialog>
-#include <QStandardItemModel>
+#include <QModelIndex>
 
-class DuplicatesFinder;
-class Match;
+class QStandardItem;
 class KJob;
-
-class QListView;
-class QStandardItemModel;
-class PersonsModel;
-class MergeDelegate;
 class MergeDialogPrivate;
+
+namespace KPeople {
+class PersonsModel;
+class Match;
 
 class KPEOPLE_EXPORT MergeDialog: public QDialog
 {
@@ -47,7 +45,7 @@ public:
     };
 
     explicit MergeDialog(QWidget* parent = 0);
-    void setPersonsModel(PersonsModel* model);
+    void setPersonsModel(KPeople::PersonsModel* model);
 
 private:
     QList< QStandardItem* > checkedItems();
@@ -55,7 +53,6 @@ private:
     QStandardItem* itemMergeContactFromMatch(const QModelIndex &idx, const Match &match);
 
     void feedDuplicateModelFromMatches(const QList<Match> &matches) ;
-    void feedDuplicateModelFromIndex(QList< QPair<QPersistentModelIndex,QPersistentModelIndex> > lp);
 
 private Q_SLOTS:
     void searchForDuplicates();
@@ -66,5 +63,7 @@ private:
     MergeDialogPrivate *const d_ptr;
     Q_DECLARE_PRIVATE(MergeDialog)
 };
+
+}
 
 #endif // MERGEDIALOG_H

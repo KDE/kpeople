@@ -55,8 +55,6 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     d->personWatcher = new Nepomuk2::ResourceWatcher(this);
     d->personWatcher->addType(Nepomuk2::Vocabulary::PIMO::Person());
 
-    connect(d->personWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
-            this, SLOT(personCreated(Nepomuk2::Resource,QList<QUrl>)));
     connect(d->personWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
             this, SLOT(personRemoved(QUrl)));
     connect(d->personWatcher, SIGNAL(propertyAdded(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariant)),
@@ -71,8 +69,10 @@ ResourceWatcherService::ResourceWatcherService(PersonsModel *parent)
     d->contactWatcher = new Nepomuk2::ResourceWatcher(this);
     d->contactWatcher->addType(Nepomuk2::Vocabulary::NCO::PersonContact());
 
+    connect(d->contactWatcher, SIGNAL(resourceCreated(Nepomuk2::Resource,QList<QUrl>)),
+            this, SLOT(contactCreated(Nepomuk2::Resource)));
     connect(d->contactWatcher, SIGNAL(resourceRemoved(QUrl,QList<QUrl>)),
-            this, SLOT(contactRemoved(QUrl,QList<QUrl>)));
+            this, SLOT(contactRemoved(QUrl)));
     connect(d->contactWatcher, SIGNAL(propertyChanged(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)),
             this, SLOT(onContactPropertyModified(Nepomuk2::Resource,Nepomuk2::Types::Property,QVariantList,QVariantList)));
 
@@ -91,28 +91,28 @@ void ResourceWatcherService::onPersonPropertyAdded(const Nepomuk2::Resource &res
     if (property.uri() == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
         Q_D(ResourceWatcherService);
         PersonItem *item = d->personsModel->personItemForUri(res.uri());
-        if (item) {
-            item->addContacts(QList<QUrl>() << value.toUrl());
-        } else {
-            kWarning() << "Non-existing person specified!";
+        if (!item) {
+            //if the person does not exist yet, create it first
+            d->personsModel->addPerson(res.uri());
         }
+
+        d->personsModel->addContactsToPerson(res.uri(), QList<QUrl>() << value.toUrl());
     }
 }
 
-void ResourceWatcherService::onPersonPropertyRemoved(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &_value)
+void ResourceWatcherService::onPersonPropertyRemoved(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property, const QVariant &value)
 {
-    kDebug() << "person property removed:" /*<< res.uri() */<< property.name() << _value;
+    kDebug() << "person property removed:" /*<< res.uri() */<< property.name() << value;
 
-    if (property.name() == "groundingOccurrence") {
+    if (property.uri() == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
         Q_D(ResourceWatcherService);
-        PersonItem *item = static_cast<PersonItem*>(d->personsModel->itemFromIndex(d->personsModel->indexForUri(res.uri())));
-        if (item) {
-            if (_value.canConvert<QUrl>()) {    //one contact was removed from groundingOccurrence
-                item->removeContacts(QList<QUrl>() << _value.toUrl());
-            } else if (_value.canConvert<QList<QUrl> >()) {
-                item->removeContacts(_value.value<QList<QUrl> >());
-            }
+        PersonItem *item = d->personsModel->personItemForUri(res.uri());
+        if (!item) {
+            kWarning() << "Person does not exist in the model!";
+            return;
         }
+
+        d->personsModel->removeContactsFromPerson(res.uri(), QList<QUrl>() << value.toUrl());
     }
 }
 
@@ -134,71 +134,40 @@ void ResourceWatcherService::onPersonPropertyModified(const Nepomuk2::Resource &
         //in which case it is handled by the propertyAdded and/or propertyRemoved slots
         return;
     }
-    Q_D(ResourceWatcherService);
-    if (property == Nepomuk2::Vocabulary::PIMO::groundingOccurrence()) {
-        PersonItem *item = static_cast<PersonItem*>(d->personsModel->itemFromIndex(d->personsModel->indexForUri(res.uri())));
-        if (item) {
-            item->removeContacts(qvariantlist_cast<QUrl>(removed));
-            item->addContacts(qvariantlist_cast<QUrl>(added));
-        }
-    }
+    //TODO: fill up once we have person editing available
 }
 
 
 void ResourceWatcherService::onContactPropertyModified(const Nepomuk2::Resource &res, const Nepomuk2::Types::Property &property,
                                                        const QVariantList &added, const QVariantList &removed)
 {
+    Q_UNUSED(added);
+    Q_UNUSED(removed);
     kDebug() << "contact changed:" << property.name() << res.uri();
 
     Q_D(ResourceWatcherService);
-    ContactItem *item = d->personsModel->contactItemForUri(res.uri());
-    if (item) {
-        kDebug() << "Existing contact found, running update";
-        item->loadData();
-    } else if (!item && removed.isEmpty()) {
-
-        //go through all model features and check mandatory features,
-        //only create contacts that have the mandatory property
-        Q_FOREACH (const PersonsModelFeature &feature, d->personsModel->modelFeatures()) {
-            if (!feature.isOptional()) {
-                if (feature.watcherProperty() == property) {
-                    kDebug() << "Creating new contact";
-                    d->personsModel->addContact(res);
-                    return;
-                }
-            }
-        }
-    }
+    d->personsModel->updateContact(res.uri());
 }
 
-void ResourceWatcherService::personCreated(const Nepomuk2::Resource &res, const QList< QUrl > &types)
+void ResourceWatcherService::contactCreated(const Nepomuk2::Resource &res)
 {
-    kDebug() << "new person" /*<< res.uri() */<< types;
+    kDebug() << "new contact created:" << res.uri();
+
     Q_D(ResourceWatcherService);
-    Q_ASSERT(res.hasProperty(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()));
-    QModelIndex idx = d->personsModel->indexForUri(res.uri());
-    if (!idx.isValid()) {
-        d->personsModel->addPerson(res);
-    }
+    //addContact() will also load all wanted properties
+    d->personsModel->addContact(res.uri());
 }
 
-void ResourceWatcherService::contactRemoved(const QUrl &uri, const QList<QUrl> &types)
+void ResourceWatcherService::contactRemoved(const QUrl &uri)
 {
-    Q_UNUSED(types);
     Q_D(ResourceWatcherService);
-    QModelIndex idx = d->personsModel->indexForUri(uri);
-    if (uri.isValid()) {
-        d->personsModel->removeRow(idx.row());
-    }
-    kDebug() << "contact removed" << uri;
+    kDebug() << "Removing contact with" << uri;
+    d->personsModel->removeContact(uri);
 }
 
 void ResourceWatcherService::personRemoved(const QUrl &uri)
 {
     Q_D(ResourceWatcherService);
-    QModelIndex idx = d->personsModel->indexForUri(uri);
-    if (idx.isValid()) {
-        d->personsModel->removePersonFromModel(idx);
-    }
-    kDebug() << "person removed" << uri;
+    kDebug() << "Removing person with" << uri;
+    d->personsModel->removePerson(uri);
 }

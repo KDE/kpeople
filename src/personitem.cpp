@@ -36,12 +36,11 @@ PersonItem::PersonItem(const QUrl &personUri)
     setData(personUri, PersonsModel::UriRole);
 }
 
-PersonItem::PersonItem(const Nepomuk2::Resource &person)
+QUrl PersonItem::uri() const
 {
-    setData(person.uri(), PersonsModel::UriRole);
-    setContacts(person.property(Nepomuk2::Vocabulary::PIMO::groundingOccurrence()).toUrlList());
-    kDebug() << "new person" << text() << rowCount();
+    return data(PersonsModel::UriRole).toUrl();
 }
+
 
 QVariant PersonItem::queryChildrenForRole(int role) const
 {
@@ -155,95 +154,6 @@ QVariant PersonItem::data(int role) const
     }
 
     return ret;
-}
-
-void PersonItem::removeContacts(const QList<QUrl> &contacts)
-{
-    kDebug() << "remove contacts" << contacts;
-    for (int i = 0; i < rowCount(); ) {
-        QStandardItem *item = child(i);
-        if (item && contacts.contains(item->data(PersonsModel::UriRole).toUrl())) {
-            model()->invisibleRootItem()->appendRow(takeRow(i));
-        } else {
-            ++i;
-        }
-    }
-    emitDataChanged();
-}
-
-void PersonItem::addContacts(const QList<QUrl> &_contacts)
-{
-    QList<QUrl> contacts(_contacts);
-    //get existing child-contacts and remove them from the new ones
-    QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
-    foreach (const QVariant &uri, uris) {
-        contacts.removeOne(uri.toUrl());
-    }
-
-    //query the model for the contacts, if they are present, then need to be just moved
-    QList<QStandardItem*> personContacts;
-    foreach (const QUrl &uri, contacts) {
-        QModelIndex index = qobject_cast<PersonsModel*>(model())->indexForUri(uri);
-
-        if (index.parent().isValid()) {
-            //find the parent item of that contact
-            bool isFakePerson = index.parent().data(PersonsModel::UriRole).toString().startsWith("fakeperson");
-
-            QStandardItem *item = model()->item(index.parent().row(), 0);
-            Q_ASSERT(item->hasChildren());
-
-            if (isFakePerson) {
-                //take the child contact away from that person item, fake persons have 1 child
-                personContacts.append(item->takeRow(0).first());
-                //if it's a fake person, delete it (it's not part of the model at this point)
-                qobject_cast<PersonsModel*>(model())->removePersonFromModel(index.parent());
-            } else {
-                //if it's not a fake person, we just append it without removing
-                personContacts.append(item->child(index.row(), 0));
-            }
-        }
-    }
-
-    //append the moved contacts to this person and remove them from 'contacts'
-    //so they are not added twice
-    foreach (QStandardItem *contactItem, personContacts) {
-        ContactItem *contact = dynamic_cast<ContactItem*>(contactItem);
-        appendRow(contact);
-        contacts.removeOne(contact->uri());
-    }
-
-    foreach (const QUrl &uri, contacts) {
-        ContactItem *item = new ContactItem(uri);
-        appendRow(item);
-        item->loadData();
-    }
-    emitDataChanged();
-}
-
-void PersonItem::setContacts(const QList<QUrl> &contacts)
-{
-    kDebug() << "set contacts" << contacts;
-    if (contacts.isEmpty()) {
-        //nothing to do here
-        return;
-    }
-
-    if (hasChildren()) {
-        QList<QUrl> toRemove;
-        QVariantList uris = queryChildrenForRoleList(PersonsModel::UriRole);
-        foreach (const QVariant &contact, uris) {
-            if (!contacts.contains(contact.toUrl()))
-                toRemove += contact.toUrl();
-        }
-        removeContacts(toRemove);
-    }
-
-    QList<QUrl> toAdd;
-    foreach (const QUrl &contact, contacts) {
-        toAdd += contact;
-    }
-    addContacts(toAdd);
-    Q_ASSERT(hasChildren());
 }
 
 int PersonItem::presenceSortPriority(const QString &presenceName) const

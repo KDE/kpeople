@@ -74,25 +74,18 @@ public:
     /**Start querying the database using the supplied features*/
     void startQuery(const QList<PersonsModelFeature> &features);
 
-    /** Creates a pimo:person with contacts as groundingOccurances */
-    void createPersonFromContacts(const QList<QUrl> &contacts);
-
-    /**
-     * Creates a pimo:person from indexes, checking if one of them isn't person already and
-     * adding the contacts to it if it is
+    /** Creates PIMO:Person with NCO:PersonContacts as grounding occurances
+     *  The list that it's passed can contain uris of both Person and PersonContacts,
+     *  the method checks their type and does the right thing(tm)
+     *  @param uris list of Person and PersonContact uris
      */
-    Q_SCRIPTABLE void createPersonFromIndexes(const QList<QModelIndex> &indexes);
+    Q_SCRIPTABLE void createPersonFromUris(const QList<QUrl> &uris);
 
-    /** Adds contacts to existing PIMO:Person */
-    void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-
-    /** Removes given contacts from existing PIMO:Person */
-    void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-
-    /** Removes the link between all contacts, removes the pimo:person but leaves the contacts intact */
-    void removePerson(const QUrl &uri);
-    //FIXME: maybe merge with ^ ?
-    void removePersonFromModel(const QModelIndex &index);
+    /** Removes the link between contacts and the given person
+     *  @param personUri PIMO:Person uri to unlink the contacts from
+     *  @param contactUris list of NCO:PersonContacts to unlink
+     */
+    Q_SCRIPTABLE void unlinkContactFromPerson(const QUrl &personUri, const QList<QUrl> &contactUris);
 
     Q_SCRIPTABLE QModelIndex indexForUri(const QUrl &uri) const;
 
@@ -108,22 +101,35 @@ private Q_SLOTS:
     void queryFinished(Soprano::Util::AsyncQuery *query);
     void contactChanged(const QUrl &uri);
     void updateContactFinished(Soprano::Util::AsyncQuery *query);
-    void updateContact(ContactItem *contact);
 
 private:
     /**
      * @return actual features used to populate the model
      */
     QList<PersonsModelFeature> modelFeatures() const;
-
-    void addPerson(const Nepomuk2::Resource &res);
-    void addContact(const Nepomuk2::Resource &res);
     ContactItem* contactItemForUri(const QUrl &uri) const;
     PersonItem* personItemForUri(const QUrl &uri) const;
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
 
+    /** Adds new contact to the model with @param uri as its URI */
+    void addContact(const QUrl &uri);
+    /** Refreshes data of the contact given by @param uri */
+    void updateContact(const QUrl &uri);
+    /** Convenience function */
+    void updateContact(ContactItem *contact);
+    /** Removes contact with @param uri from the model (not Nepomuk) */
+    void removeContact(const QUrl &uri);
+
+    /** Adds new person to the model with @param uri as its URI */
+    void addPerson(const QUrl &uri);
+    /** Removes person with @param uri from the model (not Nepomuk) */
+    void removePerson(const QUrl &uri);
+    /** Adds contacts to existing PIMO:Person */
+    void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
+    /** Removes given contacts from existing PIMO:Person */
+    void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
+
     friend class ResourceWatcherService;
-    friend class PersonItem;
     friend class ContactItem;
 
     PersonsModelPrivate * const d_ptr;

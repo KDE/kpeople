@@ -167,12 +167,12 @@ void MergeContactsWidget::onMergeButtonPressed()
     indexesToMerge.prepend(index);
 
     // do the merge
-    QList<QModelIndex> indexToMergeConverted;
+    QList<QUrl> urisToMergeConverted;
     foreach (const QPersistentModelIndex &pIndex, indexesToMerge) {
-        indexToMergeConverted << pIndex;
+        urisToMergeConverted << pIndex.data(KPeople::PersonsModel::UriRole).toUrl();
     }
     //commented because it removes the test cases
-    m_model->createPersonFromIndexes(indexToMergeConverted);
+    m_model->createPersonFromUris(urisToMergeConverted);
 
     searchForDuplicates();
 }

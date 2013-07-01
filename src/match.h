@@ -36,6 +36,9 @@ struct Match
     QList<int> role;
     QPersistentModelIndex indexA, indexB;
 };
-Q_DECLARE_METATYPE(Match);
+
+}
+
+Q_DECLARE_METATYPE(KPeople::Match);
 
 #endif // MATCH_H

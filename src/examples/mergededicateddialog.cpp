@@ -1,6 +1,6 @@
 /*
     KPeople - Duplicates
-    Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
+    Copyright (C) 2013  Franck Arrecot <franck.arrecot@gmail.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -16,26 +16,23 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#include <QApplication>
 
-#ifndef MATCH_H
-#define MATCH_H
+#include <personsmodel.h>
+#include <widgets/mergedialog.h>
 
-#include <QList>
-#include <QPersistentModelIndex>
-
-namespace KPeople
+int main(int argc, char** argv)
 {
+    QApplication app(argc, argv);
 
-struct Match
-{
-    Match() {}
-    Match(const QList< int >& roles, const QPersistentModelIndex& a, const QPersistentModelIndex& b);
-    bool operator==(const Match &m) const;
-    bool operator<(const Match &m) const;
+    MergeDialog dialog;
+    PersonsModel *persons = new PersonsModel(
+                        0,
+                        PersonsModel::FeatureEmails | PersonsModel::FeatureIM | PersonsModel::FeatureAvatars, &dialog);
 
-    QList<int> role;
-    QPersistentModelIndex indexA, indexB;
-};
-Q_DECLARE_METATYPE(Match);
+    dialog.setPersonsModel(persons);
 
-#endif // MATCH_H
+    QObject::connect(persons, SIGNAL(modelInitialized()), &dialog, SLOT(show()));
+    QObject::connect(&dialog, SIGNAL(finished(int)), &app, SLOT(quit()));
+    app.exec();
+}

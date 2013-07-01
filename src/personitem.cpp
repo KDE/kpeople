@@ -122,7 +122,10 @@ QVariant PersonItem::data(int role) const
     }
 
     if (role == PersonsModel::UriRole) {
-        //uri for PersonItem is set using setData(...), so we need to query it from there
+        //return child contact uri instead of fake uri for fake persons
+        if (QStandardItem::data(PersonsModel::UriRole).toString().startsWith("fakeperson")) {
+            return child(0)->data(PersonsModel::UriRole);
+        }
         return QStandardItem::data(role);
     }
 

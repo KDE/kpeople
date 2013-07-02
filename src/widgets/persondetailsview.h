@@ -23,7 +23,7 @@
 #include <QWidget>
 #include <QVariantList>
 
-#include <kpeople/kpeople_export.h>
+#include <kpeople_export.h>
 #include <KPeople/PersonData>
 
 class QLabel;

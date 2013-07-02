@@ -259,8 +259,6 @@ QStringList PersonData::imAccounts() const
 
     Q_FOREACH (const Nepomuk2::Resource &resource, d->contactResources) {
         Q_FOREACH (const Nepomuk2::Resource &im, resource.property(NCO::hasIMAccount()).toResourceList()) {
-            ims << im.property(NCO::imAccountType()).toString();
-            ims << im.property(NCO::imNickname()).toString();
             ims << im.property(NCO::imID()).toString();
         }
     }

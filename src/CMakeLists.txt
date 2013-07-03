@@ -2,8 +2,12 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_subdirectory(examples)
-add_subdirectory(autotests)
+if (ENABLE_EXAMPLES)
+  add_subdirectory(examples)
+endif (ENABLE_EXAMPLES)
+if (ENABLE_TESTS)
+  add_subdirectory(autotests)
+endif (ENABLE_TESTS)
 add_subdirectory(declarative)
 add_subdirectory(plugins)
 add_subdirectory(widgets)

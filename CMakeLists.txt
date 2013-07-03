@@ -1,5 +1,8 @@
 project (kpeople)
 
+option(ENABLE_EXAMPLES "Enable building of examples" ON)
+option(ENABLE_TESTS "Enable building of tests" ON)
+
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
      ${CMAKE_MODULE_PATH}

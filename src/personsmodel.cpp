@@ -307,10 +307,13 @@ PersonItem* PersonsModel::personItemForUri(const QUrl &uri) const
     return d->persons.value(uri);
 }
 
-void PersonsModel::contactChanged(const QUrl& uri)
+void PersonsModel::contactChanged(const QUrl &uri)
 {
     const QModelIndex index = indexForUri(uri);
     dataChanged(index, index); //FIXME it's normally bad to do this on a QStandardItemModel
+    if (index.parent().isValid()) {
+        dataChanged(index.parent(), index.parent());
+    }
 }
 
 void PersonsModel::addContact(const QUrl &uri)

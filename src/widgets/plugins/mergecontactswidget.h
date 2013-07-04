@@ -43,8 +43,9 @@ public:
     void searchForDuplicates();
     void fillDuplicatesWidget(const QList<QPersistentModelIndex> &duplicates);
 
-    QList<QPersistentModelIndex> duplicateBusterFromPerson(const QModelIndex &original);
-    QList<QPersistentModelIndex> getContactsCheckedToMerge();
+    QList<QPersistentModelIndex> duplicateBusterFromPerson(const QUrl& uri) const;
+    QList<QPersistentModelIndex> getContactsCheckedToMerge() const;
+
 private Q_SLOTS:
     void onMergeButtonPressed();
     void onMergePossibilitiesButtonPressed();

@@ -71,6 +71,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     // clean the previous list
     delete m_containerListDetails;
     m_listMergeContacts.clear();
+    m_mergeButton->setVisible(!duplicates.isEmpty());
 
     // 1- Vertical list of person-presentation-widget : one contact, one checkbox
     m_containerListDetails = new QWidget(this);
@@ -111,7 +112,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     }
 }
 
-QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(const QModelIndex &original)
+QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(const QUrl &uri) const
 {
     Q_ASSERT(m_duplicatesBuster);
     QList<Match> wrongFormatResults = m_duplicatesBuster->results();
@@ -119,21 +120,17 @@ QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(cons
 
     Q_FOREACH (const Match &match, wrongFormatResults) {
         // pick up only the couple with match with our parameter index
-        QString uri = original.data(PersonsModel::UriRole).toString() ;
-        QString uriA = match.indexA.data(PersonsModel::UriRole).toString() ;
+        QUrl uriA = match.indexA.data(PersonsModel::UriRole).toUrl();
 
         // Tested with URI because QModelIndex isn't reliable
         if (uriA == uri) {
             duplicateMatching.append(match.indexB);
         }
-
-        QString uriB = match.indexB.data(PersonsModel::UriRole).toString() ;
+        QUrl uriB = match.indexB.data(PersonsModel::UriRole).toUrl();
         if (uriB == uri) {
             duplicateMatching.append(match.indexA);
         }
     }
-    m_duplicatesBuster = 0;
-
     kDebug() << "Result of the duplicates Buster :" << duplicateMatching.size();
     return duplicateMatching;
 }
@@ -147,16 +144,16 @@ void MergeContactsWidget::searchForDuplicates()
     }
     m_duplicatesBuster = new DuplicatesFinder(m_model , this);
     connect (m_duplicatesBuster, SIGNAL(result(KJob*)), SLOT(searchForDuplicatesFinished()));
+    m_duplicatesBuster->setSpecificPerson(m_person->uri());
     m_duplicatesBuster->start();
 }
 
 void MergeContactsWidget::searchForDuplicatesFinished()
 {
-    QModelIndex index = m_model->indexForUri( m_person->uri() );
-    QList<QPersistentModelIndex> duplicates = duplicateBusterFromPerson(index);
+    QList<QPersistentModelIndex> duplicates = duplicateBusterFromPerson(m_person->uri() );
 
-    m_mergeButton->setVisible(!duplicates.isEmpty());
     fillDuplicatesWidget(duplicates);
+    m_duplicatesBuster = 0;
 }
 
 void MergeContactsWidget::onMergePossibilitiesButtonPressed()
@@ -183,7 +180,7 @@ void MergeContactsWidget::onMergeButtonPressed()
     searchForDuplicates();
 }
 
-QList<QPersistentModelIndex> MergeContactsWidget::getContactsCheckedToMerge()
+QList<QPersistentModelIndex> MergeContactsWidget::getContactsCheckedToMerge() const
 {
     QList<QPersistentModelIndex> indexesToMerge;
 

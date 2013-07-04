@@ -79,13 +79,13 @@ public:
      *  the method checks their type and does the right thing(tm)
      *  @param uris list of Person and PersonContact uris
      */
-    Q_SCRIPTABLE void createPersonFromUris(const QList<QUrl> &uris);
+    Q_SCRIPTABLE static KJob* createPersonFromUris(const QList<QUrl> &uris);
 
     /** Removes the link between contacts and the given person
      *  @param personUri PIMO:Person uri to unlink the contacts from
      *  @param contactUris list of NCO:PersonContacts to unlink
      */
-    Q_SCRIPTABLE void unlinkContactFromPerson(const QUrl &personUri, const QList<QUrl> &contactUris);
+    Q_SCRIPTABLE static void unlinkContactFromPerson(const QUrl &personUri, const QList<QUrl> &contactUris);
 
     Q_SCRIPTABLE QModelIndex indexForUri(const QUrl &uri) const;
 

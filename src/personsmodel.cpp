@@ -529,19 +529,17 @@ void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<Q
     }
 }
 
-void PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
+KJob* PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
 {
-    Q_D(PersonsModel);
     QList<QUrl> personUris;
     QList<QUrl> contactUris;
 
     //uris identification
     Soprano::Model *model = Nepomuk2::ResourceManager::instance()->mainModel();
 
-    Q_FOREACH (QUrl uri, uris) {
-        if (uri.toString().startsWith("fakeperson")) {
-            uri = d->persons[uri]->data(PersonsModel::ChildContactsUriRole).toList().first().toUrl();
-        }
+    Q_FOREACH (const QUrl &uri, uris) {
+        //we should never get the fakeperson:/ uri here
+        Q_ASSERT(!uri.toString().startsWith("fakeperson"));
         //for each uri we query it as if it was pimo:Person
         QString query = QString::fromLatin1("SELECT DISTINCT ?r WHERE { %1 rdf:type pimo:Person }")
                         .arg(Soprano::Node::resourceToN3(uri));
@@ -583,9 +581,10 @@ void PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
                                           QVariantList() << contactsList);
     } else if (personUris.size() > 1) {
         //TODO: merge those two persons then append contacts
+        kWarning() << "not implemented yet";
     }
 
-    connect(job, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+    return job;
 }
 
 void PersonsModel::unlinkContactFromPerson(const QUrl &personUri, const QList<QUrl> &contactUris)

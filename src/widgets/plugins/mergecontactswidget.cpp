@@ -47,7 +47,7 @@ MergeContactsWidget::MergeContactsWidget(QWidget *parent, const QVariantList &ar
 {
     setLayout(new QVBoxLayout());
     m_mergeButton = new QPushButton(this);
-    m_mergeButton->setText(i18n("Merge Suggestions"));
+    m_mergeButton->setText(i18n("Show Merge Suggestions..."));
     m_mergeButton->setVisible(false);
 
     connect(m_mergeButton, SIGNAL(clicked(bool)), this, SLOT(onMergePossibilitiesButtonPressed()));
@@ -85,7 +85,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
 
     // building the new button
     QPushButton *triggerButton = new QPushButton(m_containerListDetails);
-    triggerButton->setText(i18n("Merge with Selected Contacts", 0));
+    triggerButton->setText(i18n("Merge with Selected Contacts"));
     connect(triggerButton, SIGNAL(clicked(bool)), this, SLOT(onMergeButtonPressed()));
     m_containerListDetails->layout()->addWidget(triggerButton);
 

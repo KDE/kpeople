@@ -19,6 +19,7 @@
 #include "duplicatesfinder.h"
 #include "personsmodel.h"
 #include <QDebug>
+#include <QUrl>
 
 using namespace KPeople;
 
@@ -32,9 +33,30 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)
                    << PersonsModel::PhonesRole;
 }
 
+void DuplicatesFinder::setSpecificPerson(const QUrl& uri)
+{
+    m_uri = uri;
+}
+
 void DuplicatesFinder::start()
 {
-    QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
+    if(!m_uri.isEmpty()) {
+        QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
+    } else {
+        QMetaObject::invokeMethod(this, "doSpecificSearch", Qt::QueuedConnection);
+    }
+}
+
+QVariantList DuplicatesFinder::valuesForIndex(const QModelIndex& idx)
+{
+    //we gather the values
+    QVariantList values;
+    Q_FOREACH (int role, m_compareRoles) {
+        values += idx.data(role);
+    }
+    Q_ASSERT(values.size() == m_compareRoles.size());
+
+    return values;
 }
 
 //TODO: start providing partial results so that we can start processing matches while it's not done
@@ -46,15 +68,11 @@ void DuplicatesFinder::doSearch()
     QVector<QVariantList> collectedValues;
     m_matches.clear();
 
-    for (int i = 0; i < m_model->rowCount(); i++) {
+    for (int i = 0, rows = m_model->rowCount(); i < rows; i++) {
         QModelIndex idx = m_model->index(i, 0);
 
         //we gather the values
-        QVariantList values;
-        Q_FOREACH (int role, m_compareRoles) {
-            values += idx.data(role);
-        }
-        Q_ASSERT(values.size() == m_compareRoles.size());
+        QVariantList values = valuesForIndex(idx);
 
         //we check if it matches
         int j = 0;
@@ -62,10 +80,9 @@ void DuplicatesFinder::doSearch()
             QList<int> matchedRoles = matchAt(values, valueToCompare);
 
             if (!matchedRoles.isEmpty()) {
-                QPersistentModelIndex i1(m_model->index(i, 0));
                 QPersistentModelIndex i2(m_model->index(j, 0));
 
-                m_matches.append(Match(matchedRoles, i1, i2));
+                m_matches.append(Match(matchedRoles, idx, i2));
             }
             j++;
         }
@@ -73,6 +90,29 @@ void DuplicatesFinder::doSearch()
         //we add our data for comparing later
         collectedValues.append(values);
     }
+    emitResult();
+}
+
+void DuplicatesFinder::doSpecificSearch()
+{
+    m_matches.clear();
+
+    QModelIndex idx = m_model->indexForUri(m_uri);
+    QVariantList values = valuesForIndex(idx);
+
+    for(int i = 0, rows = m_model->rowCount(); i<rows; i++) {
+        if(i==idx.row()) {
+            continue;
+        }
+
+        QModelIndex idx2 = m_model->index(i, 0);
+        QVariantList values2 = valuesForIndex(idx2);
+        QList<int> matchedRoles = matchAt(values, values2);
+        if(!matchedRoles.isEmpty()) {
+            m_matches.append(Match(matchedRoles, idx, idx2));
+        }
+    }
+
     emitResult();
 }
 

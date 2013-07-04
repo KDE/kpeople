@@ -22,6 +22,7 @@
 #include <KJob>
 #include <QVariantList>
 #include <QVector>
+#include <QUrl>
 #include "kpeople_export.h"
 #include "match.h"
 
@@ -34,6 +35,7 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
     Q_OBJECT
     public:
         explicit DuplicatesFinder(PersonsModel *model, QObject *parent = 0);
+        void setSpecificPerson(const QUrl& uri);
 
         QList<Match> results() const;
 
@@ -42,12 +44,16 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
 
     private Q_SLOTS:
         void doSearch();
+        void doSpecificSearch();
 
     private:
+        QVariantList valuesForIndex(const QModelIndex& idx);
+
         QList< int > matchAt(const QVariantList &value, const QVariantList &toCompare) const;
         PersonsModel *m_model;
         QList<Match> m_matches;
         QVector<int> m_compareRoles;
+        QUrl m_uri;
 };
 }
 

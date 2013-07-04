@@ -1,19 +1,19 @@
 /*
     Copyright (C) 2013  Franck Arrecot <franck.arrecot@gmail.com>
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+    This library is free software; you can redistribute it and/or
+    modify it under the terms of the GNU Lesser General Public
+    License as published by the Free Software Foundation; either
+    version 2.1 of the License, or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
+    This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+    Lesser General Public License for more details.
 
-    You should have received a copy of the GNU General Public License along
-    with this program; if not, write to the Free Software Foundation, Inc.,
-    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+    You should have received a copy of the GNU Lesser General Public
+    License along with this library; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "mergecontactswidget.h"
@@ -46,7 +46,6 @@ MergeContactsWidget::MergeContactsWidget(QWidget *parent, const QVariantList &ar
     , m_duplicatesBuster(0)
 {
     setLayout(new QVBoxLayout());
-
     m_mergeButton = new QPushButton(this);
     m_mergeButton->setText(i18n("Merge Suggestions"));
     m_mergeButton->setVisible(false);
@@ -77,6 +76,11 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     m_containerListDetails = new QWidget(this);
     m_containerListDetails->setLayout(new QVBoxLayout());
     layout()->addWidget(m_containerListDetails);
+    m_containerListDetails->setVisible(false);
+
+    if (!duplicates.size()) {
+        return ;
+    }
 
     // building the new button
     QPushButton *triggerButton = new QPushButton(m_containerListDetails);
@@ -105,7 +109,6 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
         m_containerListDetails->layout()->addWidget(myMergeContactWidget);
         m_listMergeContacts.append(qMakePair(duplicate, myMergeContactWidget));
     }
-    m_containerListDetails->setVisible(false);
 }
 
 QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(const QModelIndex &original)
@@ -148,10 +151,8 @@ void MergeContactsWidget::searchForDuplicatesFinished()
     QModelIndex index = m_model->indexForUri( m_person->uri() );
     QList<QPersistentModelIndex> duplicates = duplicateBusterFromPerson(index);
 
-    if (!duplicates.isEmpty()) {
-        m_mergeButton->setVisible(true);
-        fillDuplicatesWidget(duplicates);
-    }
+    m_mergeButton->setVisible(!duplicates.isEmpty());
+    fillDuplicatesWidget(duplicates);
 }
 
 void MergeContactsWidget::onMergePossibilitiesButtonPressed()

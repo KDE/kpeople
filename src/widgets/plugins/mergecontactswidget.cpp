@@ -119,11 +119,16 @@ QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(cons
 
     Q_FOREACH (const Match &match, wrongFormatResults) {
         // pick up only the couple with match with our parameter index
-        if (match.indexA == original) {
+        QString uri = original.data(PersonsModel::UriRole).toString() ;
+        QString uriA = match.indexA.data(PersonsModel::UriRole).toString() ;
+
+        // Tested with URI because QModelIndex isn't reliable
+        if (uriA == uri) {
             duplicateMatching.append(match.indexB);
         }
 
-        if (match.indexB == original) {
+        QString uriB = match.indexB.data(PersonsModel::UriRole).toString() ;
+        if (uriB == uri) {
             duplicateMatching.append(match.indexA);
         }
     }
@@ -147,7 +152,6 @@ void MergeContactsWidget::searchForDuplicates()
 
 void MergeContactsWidget::searchForDuplicatesFinished()
 {
-    kDebug() << "Result From duplicatesFinder Available!" ;
     QModelIndex index = m_model->indexForUri( m_person->uri() );
     QList<QPersistentModelIndex> duplicates = duplicateBusterFromPerson(index);
 

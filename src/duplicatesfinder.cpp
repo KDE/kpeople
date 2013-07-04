@@ -40,7 +40,7 @@ void DuplicatesFinder::setSpecificPerson(const QUrl& uri)
 
 void DuplicatesFinder::start()
 {
-    if(!m_uri.isEmpty()) {
+    if(m_uri.isEmpty()) {
         QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
     } else {
         QMetaObject::invokeMethod(this, "doSpecificSearch", Qt::QueuedConnection);

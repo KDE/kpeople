@@ -36,7 +36,7 @@ class MergeContactsWidget : public KPeople::AbstractPersonDetailsWidget
 {
     Q_OBJECT
 public:
-    explicit MergeContactsWidget(QWidget *parent = 0);
+    explicit MergeContactsWidget(QWidget *parent, const QVariantList &args);
     void setPerson(KPeople::PersonData *person);
     void setPersonsModel(KPeople::PersonsModel *model);
 

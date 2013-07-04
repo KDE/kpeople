@@ -25,15 +25,20 @@
 #include <QObject>
 #include <QVBoxLayout>
 #include <QPushButton>
+#include <QLabel>
 
 #include <KLocalizedString>
 #include <KStandardDirs>
 #include <KJob>
 #include <KDebug>
+#include <KPluginFactory>
+
+K_PLUGIN_FACTORY( MergeContactsWidgetFactory, registerPlugin<MergeContactsWidget>(); )
+K_EXPORT_PLUGIN( MergeContactsWidgetFactory("mergecontactswidgetplugin") )
 
 using namespace KPeople;
 
-MergeContactsWidget::MergeContactsWidget(QWidget *parent)
+MergeContactsWidget::MergeContactsWidget(QWidget *parent, const QVariantList &args)
     : AbstractPersonDetailsWidget(parent)
     , m_person(0)
     , m_model(0)
@@ -127,7 +132,9 @@ QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(cons
 
 void MergeContactsWidget::searchForDuplicates()
 {
-    if (m_duplicatesBuster || !m_person || !m_model) {
+    m_mergeButton->setVisible(false);
+    if (m_duplicatesBuster || !m_person || !m_person->isValid() || !m_model) {
+        kDebug() << "Merge Widget failed to launch the duplicates search";
         return;
     }
     m_duplicatesBuster = new DuplicatesFinder(m_model , this);
@@ -138,11 +145,13 @@ void MergeContactsWidget::searchForDuplicates()
 void MergeContactsWidget::searchForDuplicatesFinished()
 {
     kDebug() << "Result From duplicatesFinder Available!" ;
-
     QModelIndex index = m_model->indexForUri( m_person->uri() );
     QList<QPersistentModelIndex> duplicates = duplicateBusterFromPerson(index);
-    m_mergeButton->setVisible(!duplicates.isEmpty());
-    fillDuplicatesWidget(duplicates);
+
+    if (!duplicates.isEmpty()) {
+        m_mergeButton->setVisible(true);
+        fillDuplicatesWidget(duplicates);
+    }
 }
 
 void MergeContactsWidget::onMergePossibilitiesButtonPressed()

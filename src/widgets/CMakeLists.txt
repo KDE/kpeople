@@ -1,3 +1,5 @@
+add_subdirectory(plugins)
+
 include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
@@ -7,10 +9,6 @@ set (kpeople_widgets_SRCS
     persondetailsview.cpp
     mergedialog.cpp
     mergedelegate.cpp
-    plugins/emaildetailswidget.cpp
-    plugins/phonedetailswidget.cpp
-    plugins/mergecontactswidget.cpp
-    plugins/personpresentationwidget.cpp
 )
 
 kde4_add_library (kpeoplewidgets SHARED ${kpeople_widgets_SRCS} )
@@ -35,9 +33,14 @@ install (TARGETS kpeoplewidgets
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
+
 install (FILES persondetailsview.h mergedialog.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets
          COMPONENT Devel
 )
 
+install (FILES persondetailsplugin.desktop
+         DESTINATION
+         ${SERVICETYPES_INSTALL_DIR}
+)
 

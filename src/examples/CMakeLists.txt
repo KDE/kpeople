@@ -15,3 +15,4 @@ target_link_libraries(personwidget ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} kpeo
 
 kde4_add_executable(mergededicateddialog mergededicateddialog.cpp)
 target_link_libraries(mergededicateddialog ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} kpeople kpeoplewidgets)
+

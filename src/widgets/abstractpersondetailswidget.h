@@ -20,8 +20,8 @@
 #define ABSTRATPERSONDETAILSWIDGET_H
 
 #include <QWidget>
-
-#include <KIcon>
+#include "kpeople_export.h"
+#include <QIcon>
 
 namespace KPeople
 {
@@ -29,7 +29,7 @@ class PersonData;
 class PersonsModel;
 class AbstractPersonDetailsWidgetPrivate;
 
-class AbstractPersonDetailsWidget : public QWidget
+class KPEOPLE_EXPORT AbstractPersonDetailsWidget: public QWidget
 {
 Q_OBJECT
 public:
@@ -43,7 +43,7 @@ public:
     /** The title to be displayed in a group header*/
     QString title() const;
     /** The icon to be shown in the group header*/
-    KIcon icon() const;
+    QIcon icon() const;
 
     bool active() const;
 
@@ -52,7 +52,7 @@ signals:
 
 protected:
     void setTitle(const QString &title);
-    void setIcon(const KIcon &icon);
+    void setIcon(const QIcon &icon);
     /** Sets whether this widget contains any useful information.
      * If not it along with any group headers will not be shown
      */

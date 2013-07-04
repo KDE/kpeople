@@ -28,10 +28,13 @@
 
 class QLabel;
 class QVBoxLayout;
+class KPluginInfo;
 
 namespace KPeople {
 class AbstractPersonDetailsWidget;
 class PersonsModel;
+class AbstractPersonPlugin;
+
 
 class KPEOPLE_EXPORT PersonDetailsView : public QWidget
 {

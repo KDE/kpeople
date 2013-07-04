@@ -41,6 +41,16 @@
 #include "plugins/phonedetailswidget.h"
 #include "plugins/mergecontactswidget.h"
 
+#include <KService>
+#include <KServiceTypeTrader>
+#include <KPluginInfo>
+#include <KPluginLoader>
+#include <KPluginFactory>
+
+
+#include <QList>
+#include "abstractpersonplugin.h"
+
 using namespace Nepomuk::Vocabulary;
 using namespace KPeople;
 
@@ -77,6 +87,10 @@ DetailsGroupWidget::DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidge
     setLayout(layout);
 }
 
+bool pluginWeightLess(const KPluginInfo &p1, const KPluginInfo &p2) {
+    return p1.property("X-KPeople-Weight").toInt() < p2.property("X-KPeople-Weight").toInt();
+}
+
 PersonDetailsView::PersonDetailsView(QWidget *parent)
     : QWidget(parent)
 {
@@ -106,20 +120,27 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     m_mainLayout->addLayout(namePresenceLayout);
     m_mainLayout->addWidget(m_contactsListWidget);
 
+    // load every KPeopleWidgets Plugin
+    KService::List pluginList = KServiceTypeTrader::self()->query( QLatin1String("KPeopleWidgets/Plugin"));
 
-    m_detailWidgets << new EmailDetailsWidget(this);
-//     m_detailWidgets << new IMDetailsWidget(this);
-    m_detailWidgets <<  new PhoneDetailsWidget(this);
-//     m_detailWidgets << new FacebookConnector(this);
-//     m_detailWidgets <<  new RecentEmailsDetailsWidget(this);
-    m_detailWidgets <<  new MergeContactsWidget(this);
+    QList<KPluginInfo> plugins = KPluginInfo::fromServices(pluginList);
+    qSort(plugins.begin(), plugins.end(), pluginWeightLess );
 
-    Q_FOREACH (AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
-        m_mainLayout->addWidget(new DetailsGroupWidget(detailsWidget, this));
+    Q_FOREACH(const KPluginInfo &p, plugins) {
+        QString error;
+        AbstractPersonDetailsWidget *plugin = p.service()->createInstance<AbstractPersonDetailsWidget>(this, QVariantList(), &error);
+
+        if (plugin) {
+            m_detailWidgets.append(plugin);
+        }
     }
+    kDebug() << "List of loaded plugins :"  << m_detailWidgets;
+
+     Q_FOREACH(AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
+         m_mainLayout->addWidget(new DetailsGroupWidget(detailsWidget, this));
+     }
 
     m_mainLayout->addSpacerItem(new QSpacerItem(32, 32, QSizePolicy::Minimum, QSizePolicy::Expanding));
-
     setLayout(m_mainLayout);
 }
 

@@ -20,13 +20,15 @@
 #define EMAIL_DETAILS_WIDGET_H
 
 #include "abstractpersondetailswidget.h"
+#include <QVariantList>
 
 class QGridLayout;
 
 class EmailDetailsWidget : public KPeople::AbstractPersonDetailsWidget
 {
+    Q_OBJECT
 public:
-    explicit EmailDetailsWidget(QWidget *parent = 0);
+    explicit EmailDetailsWidget(QWidget *p, const QVariantList &args);
     void setPerson(KPeople::PersonData *person);
 };
 

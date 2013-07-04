@@ -23,7 +23,7 @@ class AbstractPersonDetailsWidgetPrivate
 {
 public:
     QString title;
-    KIcon icon;
+    QIcon icon;
     bool active;
 };
 }
@@ -48,13 +48,13 @@ void AbstractPersonDetailsWidget::setPersonsModel(PersonsModel *model)
     Q_UNUSED(model);
 }
 
-void AbstractPersonDetailsWidget::setIcon(const KIcon &icon)
+void AbstractPersonDetailsWidget::setIcon(const QIcon &icon)
 {
     Q_D(AbstractPersonDetailsWidget);
     d->icon = icon;
 }
 
-KIcon AbstractPersonDetailsWidget::icon() const
+QIcon AbstractPersonDetailsWidget::icon() const
 {
     Q_D(const AbstractPersonDetailsWidget);
     return d->icon;

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KPeopleWidgets/Plugin
+
+X-KDE-Library=mergecontactswidgetplugin
+X-KDE-PluginInfo-Name=mergecontactswidgetplugin
+X-KDE-PluginInfo-Author=franck.arrecot
+X-KDE-PluginInfo-Email=franck.arrecot@gmail.com
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-License=LGPL
+X-KPeople-Weight=5

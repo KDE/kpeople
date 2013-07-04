@@ -23,15 +23,19 @@
 #include <QVBoxLayout>
 #include <QLabel>
 
+#include <KPluginFactory>
 #include <KLocalizedString>
+
+K_PLUGIN_FACTORY( EmailDetailsWidgetFactory, registerPlugin<EmailDetailsWidget>(); )
+K_EXPORT_PLUGIN( EmailDetailsWidgetFactory("emaildetailswidgetplugin") )
 
 using namespace KPeople;
 
-EmailDetailsWidget::EmailDetailsWidget(QWidget *parent):
-    AbstractPersonDetailsWidget(parent)
+EmailDetailsWidget::EmailDetailsWidget(QWidget *parent, const QVariantList &args)
+    : AbstractPersonDetailsWidget(parent)
 {
     setTitle(i18n("Email"));
-    setIcon(KIcon("mail-message"));
+    setIcon(QIcon::fromTheme("mail-message"));
     QVBoxLayout *newLayout = new QVBoxLayout(this);
     newLayout->setContentsMargins(0,0,0,0);
     setLayout(newLayout);

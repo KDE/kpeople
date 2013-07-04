@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KPeopleWidgets/Plugin
+
+X-KDE-Library=emaildetailswidgetplugin
+X-KDE-PluginInfo-Name=emaildetailswidgetplugin
+X-KDE-PluginInfo-Author=David Edmundson
+X-KDE-PluginInfo-Email=davidedmundson@kde.org
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-License=LGPL
+X-KPeople-Weight=1

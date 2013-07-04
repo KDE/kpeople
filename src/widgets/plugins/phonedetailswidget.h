@@ -20,11 +20,13 @@
 #define PHONE_DETAILS_WIDGET_H
 
 #include "abstractpersondetailswidget.h"
+#include <QVariant>
 
 class PhoneDetailsWidget : public KPeople::AbstractPersonDetailsWidget
 {
+    Q_OBJECT
 public:
-    explicit PhoneDetailsWidget(QWidget *parent = 0);
+    explicit PhoneDetailsWidget(QWidget *parent, const QVariantList &args);
     void setPerson(KPeople::PersonData *person);
 };
 

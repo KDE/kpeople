@@ -24,14 +24,18 @@
 #include <QLabel>
 
 #include <KLocalizedString>
+#include <KPluginFactory>
+
+K_PLUGIN_FACTORY( PhoneDetailsWidgetFactory, registerPlugin<PhoneDetailsWidget>(); )
+K_EXPORT_PLUGIN( PhoneDetailsWidgetFactory("phonedetailswidgetplugin"))
 
 using namespace KPeople;
 
-PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent):
+PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent, const QVariantList &args):
     AbstractPersonDetailsWidget(parent)
 {
     setTitle(i18n("Phone"));
-    setIcon(KIcon("phone"));
+    setIcon(QIcon::fromTheme("phone"));
 
     setLayout(new QVBoxLayout(this));
 }

@@ -43,6 +43,8 @@ K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 {
+    presencePlugin = 0;
+    
     KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
     Q_FOREACH(const KService::Ptr &service, pluginList) {
         plugins << service->createInstance<AbstractPersonPlugin>(0);

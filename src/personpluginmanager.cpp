@@ -24,7 +24,6 @@
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginInfo>
-#include <KDebug>
 
 #include <kdemacros.h>
 
@@ -44,7 +43,7 @@ K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 {
     presencePlugin = 0;
-    
+
     KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
     Q_FOREACH(const KService::Ptr &service, pluginList) {
         plugins << service->createInstance<AbstractPersonPlugin>(0);
@@ -54,8 +53,7 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
     if (!imService.isNull()) {
         presencePlugin = imService->createInstance<BasePersonsDataSource>(0);
     }
-    if (!presencePlugin)
-    {
+    if (!presencePlugin) {
         presencePlugin = new BasePersonsDataSource(0);
     }
 }

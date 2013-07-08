@@ -18,7 +18,7 @@
 
 #include "duplicatesfinder.h"
 #include "personsmodel.h"
-#include <QDebug>
+
 #include <QUrl>
 
 using namespace KPeople;
@@ -33,7 +33,7 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)
                    << PersonsModel::PhonesRole;
 }
 
-void DuplicatesFinder::setSpecificPerson(const QUrl& uri)
+void DuplicatesFinder::setSpecificPerson(const QUrl &uri)
 {
     m_uri = uri;
 }
@@ -47,7 +47,7 @@ void DuplicatesFinder::start()
     }
 }
 
-QVariantList DuplicatesFinder::valuesForIndex(const QModelIndex& idx)
+QVariantList DuplicatesFinder::valuesForIndex(const QModelIndex &idx)
 {
     //we gather the values
     QVariantList values;
@@ -100,15 +100,15 @@ void DuplicatesFinder::doSpecificSearch()
     QModelIndex idx = m_model->indexForUri(m_uri);
     QVariantList values = valuesForIndex(idx);
 
-    for(int i = 0, rows = m_model->rowCount(); i<rows; i++) {
-        if(i==idx.row()) {
+    for (int i = 0, rows = m_model->rowCount(); i < rows; i++) {
+        if (i == idx.row()) {
             continue;
         }
 
         QModelIndex idx2 = m_model->index(i, 0);
         QVariantList values2 = valuesForIndex(idx2);
         QList<int> matchedRoles = matchAt(values, values2);
-        if(!matchedRoles.isEmpty()) {
+        if (!matchedRoles.isEmpty()) {
             m_matches.append(Match(matchedRoles, idx, idx2));
         }
     }

@@ -18,5 +18,25 @@ target_link_libraries(persondatatest
   nepomuktestlib
   kpeople
 )
-
 add_nepomuk_test(PersonDataTest ${CMAKE_CURRENT_BINARY_DIR}/persondatatest)
+
+
+#
+# Duplicates Tests
+#
+
+set( DUPLICATES_TESTS_SRC duplicatestests.cpp )
+
+kde4_add_executable(duplicatestest ${DUPLICATES_TESTS_SRC})
+
+target_link_libraries(duplicatestest
+  ${QT_QTCORE_LIBRARY}
+  ${QT_QTTEST_LIBRARY}
+  ${QT_QTGUI_LIBRARY}
+  ${SOPRANO_LIBRARIES}
+  ${KDE4_KDECORE_LIBS}
+  ${NEPOMUK_CORE_LIBRARY}
+  nepomuktestlib
+  kpeople
+)
+add_nepomuk_test(DuplicatesTest ${CMAKE_CURRENT_BINARY_DIR}/duplicatestest)

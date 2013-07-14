@@ -55,6 +55,12 @@ public:
     *   emailsFeature.setOptional(false);
     *   emailsFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasEmailAddress());
     */
+
+    enum Optionality {
+        Optional,
+        Mandatory
+    };
+
     PersonsModelFeature();
     PersonsModelFeature(const PersonsModelFeature &other);
     virtual ~PersonsModelFeature();
@@ -97,11 +103,11 @@ public:
     void setWatcherProperty(const QUrl &property);
     QUrl watcherProperty() const;
 
-    static PersonsModelFeature imModelFeature(bool optional=true);
-    static PersonsModelFeature groupsModelFeature(bool optional=true);
-    static PersonsModelFeature avatarModelFeature(bool optional=true);
-    static PersonsModelFeature emailModelFeature(bool optional=true);
-    static PersonsModelFeature fullNameModelFeature(bool optional=true);
+    static PersonsModelFeature imModelFeature(Optionality optional=Optional);
+    static PersonsModelFeature groupsModelFeature(Optionality optional=Optional);
+    static PersonsModelFeature avatarModelFeature(Optionality optional=Optional);
+    static PersonsModelFeature emailModelFeature(Optionality optional=Optional);
+    static PersonsModelFeature fullNameModelFeature(Optionality optional=Optional);
 
 private:
     QSharedDataPointer<PersonsModelFeaturePrivate> d;

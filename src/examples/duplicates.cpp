@@ -105,8 +105,8 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
     PersonsModel model;
 
-    model.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(true)
-                                                  << PersonsModelFeature::imModelFeature(true));
+    model.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature()
+                                                  << PersonsModelFeature::imModelFeature());
 
     ResultPrinter r;
     r.m_model = &model;

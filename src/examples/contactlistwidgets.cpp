@@ -48,13 +48,13 @@ int main(int argc, char** argv)
     QTreeView view;
     view.setItemDelegate(new ContactDelegate);
 
-    KPeople::PersonsModel *model = new KPeople::PersonsModel(&view);
+    PersonsModel *model = new PersonsModel(&view);
 
-    QList<KPeople::PersonsModelFeature> features;
-    features << KPeople::PersonsModelFeature::emailModelFeature(true)
-             << KPeople::PersonsModelFeature::avatarModelFeature(true)
-             << KPeople::PersonsModelFeature::imModelFeature(true)
-             << KPeople::PersonsModelFeature::fullNameModelFeature(true);
+    QList<PersonsModelFeature> features;
+    features << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Optional)
+             << PersonsModelFeature::avatarModelFeature(PersonsModelFeature::Optional)
+             << PersonsModelFeature::imModelFeature(PersonsModelFeature::Optional)
+             << PersonsModelFeature::fullNameModelFeature(PersonsModelFeature::Optional);
     model->startQuery(features);
 
     view.setModel(model);

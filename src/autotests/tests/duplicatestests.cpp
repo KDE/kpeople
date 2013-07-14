@@ -169,7 +169,7 @@ void DuplicatesTests::init()
 void DuplicatesTests::duplicatesSpecificPersonSearch()
 {
     PersonsModel m;
-    m.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(false));
+    m.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Mandatory));
     QTest::kWaitForSignal(&m, SIGNAL(modelInitialized()));
     // check the model
     QCOMPARE(m.rowCount(),2);

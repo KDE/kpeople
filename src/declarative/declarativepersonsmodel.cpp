@@ -71,52 +71,52 @@ void DeclarativePersonsModel::componentComplete()
 
     if (m_mandatoryFeatures & DeclarativePersonsModel::FeatureIM) {
         kDebug() << "Adding mandatory IM";
-        features << PersonsModelFeature::imModelFeature(false);
+        features << PersonsModelFeature::imModelFeature(PersonsModelFeature::Mandatory);
     }
 
     if (m_mandatoryFeatures & DeclarativePersonsModel::FeatureAvatars) {
         kDebug() << "Adding mandatory Avatars";
-        features << PersonsModelFeature::avatarModelFeature(false);
+        features << PersonsModelFeature::avatarModelFeature(PersonsModelFeature::Mandatory);
     }
 
     if (m_mandatoryFeatures & DeclarativePersonsModel::FeatureGroups) {
         kDebug() << "Adding mandatory Groups";
-        features << PersonsModelFeature::groupsModelFeature(false);
+        features << PersonsModelFeature::groupsModelFeature(PersonsModelFeature::Mandatory);
     }
 
     if (m_mandatoryFeatures & DeclarativePersonsModel::FeatureEmails) {
         kDebug() << "Adding mandatory Emails";
-        features << PersonsModelFeature::emailModelFeature(false);
+        features << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Mandatory);
     }
 
     if (m_mandatoryFeatures & DeclarativePersonsModel::FeatureFullName) {
         kDebug() << "Adding mandatory FullName";
-        features << PersonsModelFeature::fullNameModelFeature(false);
+        features << PersonsModelFeature::fullNameModelFeature(PersonsModelFeature::Mandatory);
     }
 
     if (m_optionalFeatures & DeclarativePersonsModel::FeatureIM) {
         kDebug() << "Adding optional IM";
-        features << PersonsModelFeature::imModelFeature(true);
+        features << PersonsModelFeature::imModelFeature(PersonsModelFeature::Optional);
     }
 
     if (m_optionalFeatures & DeclarativePersonsModel::FeatureAvatars) {
         kDebug() << "Adding optional Avatars";
-        features << PersonsModelFeature::avatarModelFeature(true);
+        features << PersonsModelFeature::avatarModelFeature(PersonsModelFeature::Optional);
     }
 
     if (m_optionalFeatures & DeclarativePersonsModel::FeatureGroups) {
         kDebug() << "Adding optional Groups";
-        features << PersonsModelFeature::groupsModelFeature(true);
+        features << PersonsModelFeature::groupsModelFeature(PersonsModelFeature::Optional);
     }
 
     if (m_optionalFeatures & DeclarativePersonsModel::FeatureEmails) {
         kDebug() << "Adding optional Emails";
-        features << PersonsModelFeature::emailModelFeature(true);
+        features << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Optional);
     }
 
     if (m_optionalFeatures & DeclarativePersonsModel::FeatureFullName) {
         kDebug() << "Adding optional FullName";
-        features << PersonsModelFeature::fullNameModelFeature(true);
+        features << PersonsModelFeature::fullNameModelFeature(PersonsModelFeature::Optional);
     }
 
     startQuery(features);

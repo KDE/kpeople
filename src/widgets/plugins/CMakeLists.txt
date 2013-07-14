@@ -20,3 +20,11 @@ target_link_libraries(phonedetailswidgetplugin ${QT_QTCORE_LIBRARY} ${QT_QTGUI_L
 
 install(TARGETS phonedetailswidgetplugin DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES phonedetailswidgetplugin.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+
+# Recent emails
+
+kde4_add_plugin(recentemailswidgetplugin recentemailswidget.cpp)
+target_link_libraries(recentemailswidgetplugin ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${KDE4_KDECORE_LIBRARY} kpeople kpeoplewidgets)
+
+install(TARGETS recentemailswidgetplugin DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES recentemailswidgetplugin.desktop DESTINATION ${SERVICES_INSTALL_DIR})

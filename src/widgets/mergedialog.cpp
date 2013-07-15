@@ -84,6 +84,11 @@ MergeDialog::MergeDialog(QWidget *parent)
     layout()->addWidget(buttons);
 }
 
+MergeDialog::~MergeDialog()
+{
+   delete d_ptr;
+}
+
 void MergeDialog::setPersonsModel(PersonsModel *model)
 {
     Q_D(MergeDialog);

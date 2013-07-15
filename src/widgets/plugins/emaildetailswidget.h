@@ -24,7 +24,6 @@
 #include "abstractpersondetailswidget.h"
 #include <QVariantList>
 
-class QGridLayout;
 
 class EmailDetailsWidget : public KPeople::AbstractPersonDetailsWidget
 {

@@ -28,9 +28,7 @@
 
 
 class QAbstractItemView;
-class QStandardItemModel;
 class QItemSelection;
-class MergeExtensionWidget;
 
 class KPEOPLE_EXPORT MergeDelegate: public KExtendableItemDelegate
 {

@@ -26,15 +26,12 @@
 #include <qstandarditemmodel.h>
 
 namespace Nepomuk2 {
-class Resource;
 }
 
 class QUrl;
 
 namespace KPeople
 {
-class PersonCacheItem;
-class PersonsModelItemPrivate;
 
 class KPEOPLE_EXPORT PersonItem : public QStandardItem
 {

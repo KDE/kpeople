@@ -25,7 +25,6 @@
 #include "QPersistentModelIndex"
 
 class QPushButton;
-class QModelIndex;
 class PersonPresentationWidget;
 
 namespace KPeople {

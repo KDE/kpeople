@@ -151,7 +151,10 @@ PersonDetailsView::~PersonDetailsView()
 
 void PersonDetailsView::setPerson(const PersonDataPtr &person)
 {
-    disconnect(m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));
+    if (!m_person.isNull()) {
+        disconnect(m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));
+        //m_person is QSharedPointer and will get deleted automagically when out of scope
+    }
 
     m_person = person;
     connect(m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));

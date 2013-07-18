@@ -118,9 +118,7 @@ QVariant PersonItem::data(int role) const
                 return presenceIconNames.at(mostOnlineIndex);
             }
         }
-    }
-
-    if (role == PersonsModel::UriRole) {
+    } else if (role == PersonsModel::UriRole) {
         //return child contact uri instead of fake uri for fake persons
         if (QStandardItem::data(PersonsModel::UriRole).toString().startsWith("fakeperson") && rowCount() > 0) {
             return child(0)->data(PersonsModel::UriRole);

@@ -129,14 +129,16 @@ QVariant PersonItem::data(int role) const
     }
 
     QVariantList ret;
-    for (int i = 0; i < rowCount(); i++) {
+    for (int i = 0, rows = rowCount(); i < rows; i++) {
         QVariant value;
+        QStandardItem *item = child(i);
+        Q_ASSERT(item);
         //if we're being asked for the child contacts uris,
         //we need to query the children for their UriRole
         if (role == PersonsModel::ChildContactsUriRole) {
-            value = child(i)->data(PersonsModel::UriRole);
+            value = item->data(PersonsModel::UriRole);
         } else {
-            value = child(i)->data(role);
+            value = item->data(role);
         }
         //these roles must return single QVariant
         if (role == Qt::DisplayRole || role == Qt::DecorationRole) {

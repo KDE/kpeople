@@ -173,7 +173,8 @@ QVariant ContactItem::data(int role) const
             const QVariantList photos = d->data.value(PersonsModel::PhotosRole).toList();
             return photos.isEmpty() ? KIcon("im-user") : KIcon(photos.first().toUrl().toLocalFile());
         }
-        case PersonsModel::UriRole: return d->uri; break;
+        case PersonsModel::UriRole:
+            return d->uri;
         case PersonsModel::PresenceTypeRole:
         case PersonsModel::PresenceDisplayRole:
         case PersonsModel::PresenceDecorationRole:

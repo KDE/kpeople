@@ -580,7 +580,9 @@ KJob* PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
         job = Nepomuk2::addProperty(QList<QUrl>() << personUris.first(),
                                           Nepomuk2::Vocabulary::PIMO::groundingOccurrence(),
                                           QVariantList() << contactsList);
-    } else if (personUris.size() > 1) {
+    } else if (personUris.size() > 1 && contactUris.isEmpty()) {
+        job = Nepomuk2::mergeResources(personUris);
+    } else {
         //TODO: merge those two persons then append contacts
         kWarning() << "not implemented yet";
     }

@@ -139,7 +139,7 @@ QVariant PersonItem::data(int role) const
             value = child(i)->data(role);
         }
         //these roles must return single QVariant
-        if ((role == Qt::DisplayRole || role == Qt::DecorationRole)) {
+        if (role == Qt::DisplayRole || role == Qt::DecorationRole) {
             return value;
         }
         if (value.type() == QVariant::List) {

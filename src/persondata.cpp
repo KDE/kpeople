@@ -91,8 +91,9 @@ PersonData::~PersonData()
 void PersonData::loadContact(const QString &id)
 {
     QString query = QString::fromUtf8(
-        "select DISTINCT ?uri "
+        "select DISTINCT ?uri ?person "
         "WHERE { "
+            "OPTIONAL { ?person pimo:groundingOccurrence ?uri. }"
             "?uri a nco:PersonContact. "
             "?uri nco:hasContactMedium ?a . "
             "?a ?b \"%1\"^^xsd:string . "
@@ -102,7 +103,12 @@ void PersonData::loadContact(const QString &id)
     Soprano::QueryResultIterator it = model->executeQuery(query, Soprano::Query::QueryLanguageSparql);
     QString uri;
     while (it.next()) {
-        uri = it[0].uri().toString();
+        const QString person = it[1].uri().toString();
+        if (person.isEmpty()) {
+            uri = it[0].uri().toString();
+        } else {
+            uri = person;
+        }
         break;
     }
     loadUri(uri);

@@ -168,7 +168,7 @@ QVariant ContactItem::data(int role) const
                 return data(PersonsModel::PhonesRole);
             }
 
-            return QString("Unknown contact");
+            return i18n("Unknown contact");
         case Qt::DecorationRole: {
             const QVariantList photos = d->data.value(PersonsModel::PhotosRole).toList();
             return photos.isEmpty() ? KIcon("im-user") : KIcon(photos.first().toUrl().toLocalFile());

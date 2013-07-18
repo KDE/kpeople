@@ -531,6 +531,7 @@ void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<Q
 
 KJob* PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
 {
+    Q_ASSERT(uris.size()>1);
     QList<QUrl> personUris;
     QList<QUrl> contactUris;
 

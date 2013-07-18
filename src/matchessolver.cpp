@@ -21,6 +21,7 @@
 #include "personsmodel.h"
 #include <nepomuk2/datamanagement.h>
 #include <QUrl>
+#include <QDebug>
 
 using namespace KPeople;
 
@@ -38,19 +39,28 @@ void MatchesSolver::start()
 
 void MatchesSolver::startMatching()
 {
+    QMap<int, QSet<QUrl> > jobsData;
     Q_FOREACH(const Match &m, m_matches) {
         QPersistentModelIndex idxDestination = m.indexA;
         QPersistentModelIndex idxOrigin = m.indexB;
 
-        QList<QUrl> persons;
-        persons << idxDestination.data(PersonsModel::UriRole).toUrl();
-        persons << idxOrigin.data(PersonsModel::UriRole).toUrl();
+        QSet<QUrl>& jobs = jobsData[m.indexA.row()];
+        jobs.insert(idxDestination.data(PersonsModel::UriRole).toUrl());
+        jobs.insert(idxOrigin.data(PersonsModel::UriRole).toUrl());
+        Q_ASSERT(jobs.size()>=2);
+    }
 
-        KJob *job = Nepomuk2::mergeResources(persons);
+    foreach(const QSet<QUrl>& uris, jobsData) {
+        KJob* job = m_model->createPersonFromUris(uris.toList());
         m_pending.insert(job);
         connect(job, SIGNAL(finished(KJob*)), SLOT(jobDone(KJob*)));
     }
-    if(m_matches.isEmpty())
+    bool wrongJobsCount = m_pending.remove(0);
+    if(wrongJobsCount >= 0) {
+        qDebug() << "error: some of the jobs couldn't be performed" << wrongJobsCount;
+    }
+
+    if(jobsData.isEmpty())
         jobDone(0);
 }
 

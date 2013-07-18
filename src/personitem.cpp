@@ -122,7 +122,7 @@ QVariant PersonItem::data(int role) const
 
     if (role == PersonsModel::UriRole) {
         //return child contact uri instead of fake uri for fake persons
-        if (QStandardItem::data(PersonsModel::UriRole).toString().startsWith("fakeperson")) {
+        if (QStandardItem::data(PersonsModel::UriRole).toString().startsWith("fakeperson") && rowCount() > 0) {
             return child(0)->data(PersonsModel::UriRole);
         }
         return QStandardItem::data(role);

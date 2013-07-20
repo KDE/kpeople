@@ -1,1 +1,1 @@
-INSTALL (FILES dummy_avatar.png DESTINATION "${KDE4_DATA_INSTALL_DIR}/kpeople/")
+INSTALL (FILES dummy_avatar.png DESTINATION ${DATA_INSTALL_DIR}/kpeople/)

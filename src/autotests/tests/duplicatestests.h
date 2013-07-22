@@ -30,17 +30,27 @@ class DuplicatesTests : public Nepomuk2::TestBase
     Q_OBJECT
 private Q_SLOTS:
     void init();
+    void initSpecificSearch();
+    void initGeneralSearch();
+
     void duplicatesSpecificPersonSearch();
+    void duplicatesSearch();
 
 private:
     void initContact1();
+    void initContact1BIS();
+
     void initPersonA();
     void initPersonB();
 
     QUrl m_contact1Uri;
+    QUrl m_contact1BISUri;
+
     QUrl m_contact2Uri;
     QUrl m_contact2BISUri;
+
     QUrl m_contact3Uri;
+
     QUrl m_personAUri;
     QUrl m_personBUri;
 };

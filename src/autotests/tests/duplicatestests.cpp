@@ -66,6 +66,33 @@ void DuplicatesTests::initContact1()
     m_contact1Uri = job->mappings()[contact.uri()];
 }
 
+void DuplicatesTests::initContact1BIS()
+{
+    Nepomuk2::SimpleResourceGraph graph;
+
+    Nepomuk2::SimpleResource contact;
+    contact.addType(NCO::PersonContact());
+    contact.addProperty(NAO::prefLabel(), "Contact 1Bis");
+    contact.addProperty(NCO::fullname(), "Contact OneBis");
+
+    Nepomuk2::SimpleResource email;
+    email.addType(NCO::EmailAddress());
+    email.addProperty(NCO::emailAddress(), "contact1@example.com");
+
+    contact.addProperty(NCO::hasEmailAddress(), email);
+
+    graph << contact << email;
+
+    Nepomuk2::StoreResourcesJob *job = graph.save();
+    job->exec();
+
+    if (job->error()) {
+        qWarning() << job->errorString();
+        QVERIFY(!job->error());
+    }
+    m_contact1BISUri = job->mappings()[contact.uri()];
+}
+
 void DuplicatesTests::initPersonA()
 {
     //create contact 2 and contact 3
@@ -161,18 +188,34 @@ void DuplicatesTests::initPersonB()
 
 void DuplicatesTests::init()
 {
-    //initContact1();
+//     initContact1();
+//     initPersonA();
+//     initPersonB();
+}
+
+void DuplicatesTests::initSpecificSearch()
+{
     initPersonA();
     initPersonB();
 }
 
+void DuplicatesTests::initGeneralSearch()
+{
+    // data wiped after at each slot call
+    initContact1();
+    initContact1BIS();
+}
+
 void DuplicatesTests::duplicatesSpecificPersonSearch()
 {
+    // Test a simple matching case between two person
+    // having contact with the same mail, using specific search
+    initSpecificSearch() ;
+
     PersonsModel m;
     m.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Mandatory));
     QTest::kWaitForSignal(&m, SIGNAL(modelInitialized()));
-    // check the model
-    QCOMPARE(m.rowCount(),2);
+    QCOMPARE(m.rowCount(),2); // check the model
 
     // launch the duplicates search for one Person
     QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
@@ -180,11 +223,58 @@ void DuplicatesTests::duplicatesSpecificPersonSearch()
     f->start();
     QTest::kWaitForSignal(f.data(), SIGNAL(finished(KJob*)));
 
-    // Duplicates found : Person A match with Person B : 1
+    // Duplicates found : Person A match with Person B
     QList< Match > matches = f->results();
     QCOMPARE(matches.size(), 1);
-    QCOMPARE(matches.first().indexA.data(PersonsModel::UriRole).toUrl() , m_personAUri);
-    QCOMPARE(matches.first().indexB.data(PersonsModel::UriRole).toUrl() , m_personBUri);
+
+    // indexA or B : that is the question !
+    QUrl uriA = matches.first().indexA.data(PersonsModel::UriRole).toUrl();
+    QUrl uriB = matches.first().indexB.data(PersonsModel::UriRole).toUrl();
+    if (uriA == m_personAUri) {
+        QCOMPARE(uriB , m_personBUri);
+    }
+    else if (uriA == m_personBUri) {
+        QCOMPARE(uriB , m_personAUri);
+    }
+    else QCOMPARE (0,1) ; // fail !
+    //QCOMPARE(matches.first().indexA.data(PersonsModel::UriRole).toUrl() , m_personAUri );
+    //QCOMPARE(matches.first().indexB.data(PersonsModel::UriRole).toUrl() , m_personBUri);
+    //qDebug() << "m_personsB URI" << m_personBUri.toString() ;
+}
+
+void DuplicatesTests::duplicatesSearch()
+{
+    // Test a simple matching case betwee)n two person
+    // having contact with the same mail, using general search
+
+    // Contact 1 and 1BIS = duplicates : 1 because same email
+    initGeneralSearch();
+    PersonsModel m;
+    m.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(false));
+    QTest::kWaitForSignal(&m, SIGNAL(modelInitialized()));
+    QCOMPARE(m.rowCount(),2); // check the model
+
+     // launch the duplicates search
+    QScopedPointer<DuplicatesFinder> f(new DuplicatesFinder(&m));
+    f->start();
+    QTest::kWaitForSignal(f.data(), SIGNAL(finished(KJob*)));
+
+    // Duplicates found : Contact 1 match with Contact 1 Bis
+    QList< Match > matches = f->results();
+    QCOMPARE(matches.size(), 1);
+    // indexA or B : that is the question !
+    QUrl uriA = matches.first().indexA.data(PersonsModel::UriRole).toUrl();
+    QUrl uriB = matches.first().indexB.data(PersonsModel::UriRole).toUrl();
+    if (uriA == m_contact1Uri) {
+        QCOMPARE(uriB , m_contact1BISUri);
+    }
+    else if(uriA == m_contact1BISUri) {
+        QCOMPARE(uriB , m_contact1Uri);
+    }
+    else QCOMPARE (0,1) ; // Fail !
+    //QCOMPARE(matches.first().indexA.data(PersonsModel::UriRole).toUrl() , m_contact1Uri );
+    //QCOMPARE(matches.first().indexB.data(PersonsModel::UriRole).toUrl() , m_contact1BISUri);
+
 }
 
 QTEST_KDEMAIN(DuplicatesTests, NoGUI)

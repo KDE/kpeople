@@ -20,6 +20,7 @@
 #include "personsmodelfeature.h"
 
 #include <Nepomuk2/Vocabulary/NCO>
+#include <QSet>
 
 using namespace KPeople;
 
@@ -182,4 +183,29 @@ PersonsModelFeature PersonsModelFeature::nicknameModelFeature(PersonsModelFeatur
     nicknameFeature.setOptional(optional == Optional);
     nicknameFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::nickname());
     return nicknameFeature;
+}
+
+QList <PersonsModelFeature> PersonsModelFeature::commonFeatures()
+{
+    QList<PersonsModelFeature> features;
+    features.reserve(3);
+    features << fullNameModelFeature()
+             << nicknameModelFeature()
+             << avatarModelFeature();
+    return features;
+}
+
+
+QList <PersonsModelFeature> PersonsModelFeature::allFeatures()
+{
+    QList<PersonsModelFeature> features;
+    features.reserve(6);
+    features << fullNameModelFeature()
+             << nicknameModelFeature()
+             << avatarModelFeature()
+             << groupsModelFeature()
+             << emailModelFeature()
+             << imModelFeature();
+
+    return features;
 }

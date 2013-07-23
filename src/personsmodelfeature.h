@@ -107,6 +107,7 @@ public:
     static PersonsModelFeature groupsModelFeature(Optionality optional=Optional);
     static PersonsModelFeature avatarModelFeature(Optionality optional=Optional);
     static PersonsModelFeature emailModelFeature(Optionality optional=Optional);
+    static PersonsModelFeature nicknameModelFeature(Optionality optional=Optional);
     static PersonsModelFeature fullNameModelFeature(Optionality optional=Optional);
 
 private:

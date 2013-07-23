@@ -162,14 +162,24 @@ PersonsModelFeature PersonsModelFeature::imModelFeature(Optionality optional)
     PersonsModelFeature imFeature;
     imFeature.setQueryPart(QString::fromUtf8(
         "?uri                 nco:hasIMAccount     ?nco_hasIMAccount. "
-        "?nco_hasIMAccount    nco:imNickname       ?nco_imNickname. "
         "?nco_hasIMAccount    nco:imID             ?nco_imID. "));
     QHash<QString, int> b;
-    b.insert("nco_imNickname", PersonsModel::NicknamesRole);
     b.insert("nco_imID", PersonsModel::IMsRole);
     imFeature.setBindingsMap(b);
     imFeature.setOptional(optional == Optional);
     imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::hasIMAccount());
-    imFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::nickname());
     return imFeature;
+}
+
+PersonsModelFeature PersonsModelFeature::nicknameModelFeature(PersonsModelFeature::Optionality optional)
+{
+    PersonsModelFeature nicknameFeature;
+    nicknameFeature.setQueryPart(QString::fromUtf8(
+        "?uri                    nco:nickname    ?nco_nickname. "));
+    QHash<QString, int> b;
+    b.insert("nco_nickname", PersonsModel::NicknamesRole);
+    nicknameFeature.setBindingsMap(b);
+    nicknameFeature.setOptional(optional == Optional);
+    nicknameFeature.setWatcherProperty(Nepomuk2::Vocabulary::NCO::nickname());
+    return nicknameFeature;
 }

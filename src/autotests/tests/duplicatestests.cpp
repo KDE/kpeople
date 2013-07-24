@@ -237,9 +237,6 @@ void DuplicatesTests::duplicatesSpecificPersonSearch()
         QCOMPARE(uriB , m_personAUri);
     }
     else QCOMPARE (0,1) ; // fail !
-    //QCOMPARE(matches.first().indexA.data(PersonsModel::UriRole).toUrl() , m_personAUri );
-    //QCOMPARE(matches.first().indexB.data(PersonsModel::UriRole).toUrl() , m_personBUri);
-    //qDebug() << "m_personsB URI" << m_personBUri.toString() ;
 }
 
 void DuplicatesTests::duplicatesSearch()
@@ -250,7 +247,7 @@ void DuplicatesTests::duplicatesSearch()
     // Contact 1 and 1BIS = duplicates : 1 because same email
     initGeneralSearch();
     PersonsModel m;
-    m.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(false));
+    m.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Mandatory));
     QTest::kWaitForSignal(&m, SIGNAL(modelInitialized()));
     QCOMPARE(m.rowCount(),2); // check the model
 
@@ -272,9 +269,6 @@ void DuplicatesTests::duplicatesSearch()
         QCOMPARE(uriB , m_contact1Uri);
     }
     else QCOMPARE (0,1) ; // Fail !
-    //QCOMPARE(matches.first().indexA.data(PersonsModel::UriRole).toUrl() , m_contact1Uri );
-    //QCOMPARE(matches.first().indexB.data(PersonsModel::UriRole).toUrl() , m_contact1BISUri);
-
 }
 
 QTEST_KDEMAIN(DuplicatesTests, NoGUI)

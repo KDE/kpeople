@@ -51,7 +51,6 @@ private:
 
     QSize m_arrowSize;
     QPixmap m_defaultPixmap;
-    int m_rectSize;
 };
 
 #endif // MERGEDELEGATE_H

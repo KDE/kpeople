@@ -37,6 +37,7 @@
 #include <KDebug>
 
 #define MAX_MATCHING_CONTACTS_ICON 5
+#define SIZE_STANDARD_PIXMAP 35
 
 using namespace KPeople;
 
@@ -45,7 +46,7 @@ MergeDelegate::MergeDelegate(QAbstractItemView *parent)
     , m_arrowSize(15,15)
     , m_defaultPixmap(KStandardDirs::locate("data", "kpeople/dummy_avatar.png"))
 {
-    m_defaultPixmap = m_defaultPixmap.scaled(QSize(35, 35), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    m_defaultPixmap = m_defaultPixmap.scaled(QSize(SIZE_STANDARD_PIXMAP, SIZE_STANDARD_PIXMAP), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 }
 
 MergeDelegate::~MergeDelegate()
@@ -127,9 +128,12 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
         style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
     }
 
+    option.decorationSize = QSize(SIZE_STANDARD_PIXMAP,SIZE_STANDARD_PIXMAP);
     KExtendableItemDelegate::paint(painter, option, index);
 
     const int separation = 5;
+    static KIcon arrow("arrow-right");
+
     int facesRows = qMin(rows, MAX_MATCHING_CONTACTS_ICON );
     for (int i = 0; i < facesRows; i++) { // Children Icon Displaying Loop
         const QModelIndex child = index.child(i,0);
@@ -145,6 +149,11 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
         pixmapRect.setY(option.rect.top() + m_defaultPixmap.height()/4 + option.fontMetrics.height()/4);
         painter->drawPixmap(pixmapRect, icon);
     }
+    // draw a vertical blue line to separate the original person and the merging contacts
+    painter->setPen(QColor("blue"));
+    int midWidth = option.rect.width()/2;
+    painter->drawLine( option.rect.left()+midWidth -SIZE_STANDARD_PIXMAP, option.rect.bottom()-5,
+                      option.rect.left()+midWidth-SIZE_STANDARD_PIXMAP, option.rect.top()+5 );
 }
 
 QSize MergeDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

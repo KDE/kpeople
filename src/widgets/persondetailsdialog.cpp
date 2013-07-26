@@ -22,7 +22,7 @@
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
 
-#include <kpeople/widgets/persondetailsview.h>
+#include "persondetailsview.h"
 
 using namespace KPeople;
 

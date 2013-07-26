@@ -24,7 +24,7 @@
 #include <QtGui/QDialog>
 
 #include <kpeople_export.h>
-#include <kpeople/persondata.h>
+#include "../persondata.h"
 
 namespace KPeople
 {

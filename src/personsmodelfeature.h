@@ -107,7 +107,14 @@ public:
     static PersonsModelFeature groupsModelFeature(Optionality optional=Optional);
     static PersonsModelFeature avatarModelFeature(Optionality optional=Optional);
     static PersonsModelFeature emailModelFeature(Optionality optional=Optional);
+    static PersonsModelFeature nicknameModelFeature(Optionality optional=Optional);
     static PersonsModelFeature fullNameModelFeature(Optionality optional=Optional);
+
+    /** Populates the model with names + avatars only*/
+    static QList<PersonsModelFeature> commonFeatures();
+
+    /** Populates the model with all data*/
+    static QList<PersonsModelFeature> allFeatures();
 
 private:
     QSharedDataPointer<PersonsModelFeaturePrivate> d;

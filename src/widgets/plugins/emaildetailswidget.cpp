@@ -34,6 +34,7 @@ using namespace KPeople;
 EmailDetailsWidget::EmailDetailsWidget(QWidget *parent, const QVariantList &args)
     : AbstractPersonDetailsWidget(parent)
 {
+    Q_UNUSED(args);
     setTitle(i18n("Email"));
     setIcon(QIcon::fromTheme("mail-message"));
     QVBoxLayout *newLayout = new QVBoxLayout(this);

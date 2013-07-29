@@ -45,6 +45,7 @@ MergeContactsWidget::MergeContactsWidget(QWidget *parent, const QVariantList &ar
     , m_containerListDetails(0)
     , m_duplicatesBuster(0)
 {
+    Q_UNUSED(args);
     setLayout(new QVBoxLayout());
     m_mergeButton = new QPushButton(this);
     m_mergeButton->setText(i18n("Show Merge Suggestions..."));

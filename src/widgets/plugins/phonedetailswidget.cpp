@@ -36,6 +36,7 @@ using namespace KPeople;
 PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent, const QVariantList &args):
     AbstractPersonDetailsWidget(parent)
 {
+    Q_UNUSED(args);
     setTitle(i18n("Phone"));
     setIcon(QIcon::fromTheme("phone"));
 

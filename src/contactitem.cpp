@@ -85,16 +85,20 @@ void ContactItem::setContactData(int role, const QVariant &v)
         return;
     }
 
-    QHash< int, QVariant >::iterator it = d->data.find(role);
+    //look if we already have data for the passed role
+    QHash<int, QVariant>::iterator it = d->data.find(role);
+
+    //if we're inserting data for a role that needs to be a list, make it a list
     QVariant value = d->listRoles().contains(role) ? (QVariantList() << v) : v;
-    if (it == d->data.end()) {
+
+    if (it == d->data.end()) {  //we don't have data for this role yet
         d->data.insert(role, value);
-        emitDataChanged();
-    } else if (*it != value) {
+    } else if (*it != value) {  //if the stored value is not the same...
         Q_ASSERT(value.type() == it->type());
-        *it = value;
-        emitDataChanged();
+        *it = value;            //...overwrite it
     }
+
+    emitDataChanged();
 }
 
 //TODO update so value can be a list. This will then concat onto any existing list.
@@ -108,21 +112,25 @@ void ContactItem::addContactData(int role, const QVariant &value)
         //empty QVariant will be returned from data(...) instead
         return;
     }
+
+    //look if we already have data for the passed role
     QHash<int, QVariant>::iterator it = d->data.find(role);
+    //if we're not inserting data for a role that's supposed to be a list,
+    //overwrite it with setContactData instead
     if (!d->listRoles().contains(role)) {
         setContactData(role, value);
     } else {
-        if (it == d->data.end()) {
-            d->data.insert(role, QVariantList() << value);
-            emitDataChanged();
-        } else if (*it != value) {
+        if (it == d->data.end()) {  //if we don't have data for the passed role yet
+            d->data.insert(role, QVariantList() << value);  //insert new data as QVariantList
+        } else if (*it != value) {  //check if we're not inserting the same value
             Q_ASSERT(it->type() == QVariant::List);
             QVariantList current = it->toList();
             Q_ASSERT(current.isEmpty() || current.first().type() == value.type());
-            current.append(value);
+            current.append(value);  //append to the stored list
             *it = current;
-            emitDataChanged();
         }
+
+        emitDataChanged();
     }
 }
 

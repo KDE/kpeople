@@ -167,13 +167,19 @@ QVariant ContactItem::data(int role) const
                 return data(PersonsModel::FullNamesRole);
             }
             if (!data(PersonsModel::EmailsRole).isNull()) {
-                return data(PersonsModel::EmailsRole);
+                const QVariantList r = data(PersonsModel::EmailsRole).toList();
+                if (!r.isEmpty()) {
+                    return r.first();
+                }
             }
             if (!data(PersonsModel::IMsRole).isNull()) {
                 return data(PersonsModel::IMsRole);
             }
             if (!data(PersonsModel::PhonesRole).isNull()) {
-                return data(PersonsModel::PhonesRole);
+                const QVariantList r = data(PersonsModel::PhonesRole).toList();
+                if (!r.isEmpty()) {
+                    return r.first();
+                }
             }
 
             return i18n("Unknown contact");

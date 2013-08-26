@@ -41,8 +41,8 @@ public:
     enum Role {
         NameRole = Qt::DisplayRole,
         UriRole = Qt::UserRole + 1,
-        PixmapRole = Qt::UserRole + 2,
-        MergeReasonRole = Qt::UserRole + 3
+        PixmapRole,
+        MergeReasonRole
     };
 
     explicit MergeDialog(QWidget *parent = 0);

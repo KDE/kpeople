@@ -50,7 +50,7 @@ private:
     QWidget* buildMultipleLineLabel(const QModelIndex &idx);
 
     QSize m_arrowSize;
-    QPixmap m_defaultPixmap;
+    QSize m_decorationSize;
 };
 
 #endif // MERGEDELEGATE_H

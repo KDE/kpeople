@@ -44,9 +44,8 @@ using namespace KPeople;
 MergeDelegate::MergeDelegate(QAbstractItemView *parent)
     : KExtendableItemDelegate(parent)
     , m_arrowSize(15,15)
-    , m_defaultPixmap(KStandardDirs::locate("data", "kpeople/dummy_avatar.png"))
+    , m_decorationSize(SIZE_STANDARD_PIXMAP , SIZE_STANDARD_PIXMAP)
 {
-    m_defaultPixmap = m_defaultPixmap.scaled(QSize(SIZE_STANDARD_PIXMAP, SIZE_STANDARD_PIXMAP), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 }
 
 MergeDelegate::~MergeDelegate()
@@ -114,7 +113,7 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
     QPoint arrowRect = optionOld.rect.topLeft();
     int rows = index.model()->rowCount(index);
 
-    QPoint arrowPlace(arrowRect.x(), arrowRect.y() + m_defaultPixmap.height()/2 + option.fontMetrics.height()/4);
+    QPoint arrowPlace(arrowRect.x(), arrowRect.y() + m_decorationSize.height()/2 + option.fontMetrics.height()/4);
     if (!isExtended(index)) {
         static KIcon arrow("arrow-right");
         painter->drawPixmap(arrowPlace, arrow.pixmap(m_arrowSize));
@@ -136,18 +135,22 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
 
     int facesRows = qMin(rows, MAX_MATCHING_CONTACTS_ICON );
     for (int i = 0; i < facesRows; i++) { // Children Icon Displaying Loop
-        const QModelIndex child = index.child(i,0);
-        QPixmap icon = qvariant_cast<QPixmap>(child.data(Qt::DecorationRole));
 
-        if (!icon.isNull()) {
-            icon = icon.scaled(m_defaultPixmap.size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-        } else {
-            icon = m_defaultPixmap;
+        QPixmap pix ; QIcon icon;
+        const QModelIndex child = index.child(i,0);
+
+        QVariant decoration = child.data(Qt::DecorationRole);
+        if (decoration.type() == (QVariant::Icon)) {
+            icon = decoration.value<QIcon>();
+            pix = icon.pixmap(m_decorationSize);
+        } else if (decoration.type() == (QVariant::Pixmap)) {
+            pix = decoration.value<QPixmap>();
         }
+
         QPoint pixmapRect;
-        pixmapRect.setX(option.rect.width()/2 + i*(icon.width() + separation));
-        pixmapRect.setY(option.rect.top() + m_defaultPixmap.height()/4 + option.fontMetrics.height()/4);
-        painter->drawPixmap(pixmapRect, icon);
+        pixmapRect.setX(option.rect.width()/2 + i*(m_decorationSize.width() + separation));
+        pixmapRect.setY(option.rect.top() + m_decorationSize.height()/4 + option.fontMetrics.height()/4);
+        painter->drawPixmap(pixmapRect, pix);
     }
     // draw a vertical blue line to separate the original person and the merging contacts
     painter->setPen(QColor("blue"));
@@ -160,6 +163,6 @@ QSize MergeDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIn
 {
     // the width doesn't matter here : the dialog overchoose it.
     QSize defaultSize = KExtendableItemDelegate::sizeHint(option, index);
-    defaultSize.rheight() += m_defaultPixmap.height();
+    defaultSize.rheight() += m_decorationSize.height();
     return defaultSize;
 }

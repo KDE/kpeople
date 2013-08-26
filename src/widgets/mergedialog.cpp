@@ -46,8 +46,6 @@ public:
 
     QStandardItemModel *model;
     DuplicatesFinder *duplicatesFinder;
-
-    QPixmap defaultPixmap;
 };
 
 //NOTE: look at KDialog
@@ -62,7 +60,6 @@ MergeDialog::MergeDialog(QWidget *parent)
     d_ptr->duplicatesFinder = 0;
 
     setWindowTitle(i18n("Duplicates Manager"));
-    d->defaultPixmap.load(KStandardDirs::locate("data", "kpeople/dummy_avatar.png"));
     setLayout(new QVBoxLayout());
     setMinimumSize(450,350);
 
@@ -198,15 +195,10 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
     if (!idx.isValid()) { // child
         item->setData(qVariantFromValue<Match>(match), MergeReasonRole);
         item->setText(match.indexB.data(Qt::DisplayRole).toString());
+        item->setData(match.indexB.data(Qt::DecorationRole), Qt::DecorationRole);
     } else { // parent
         item->setText(match.indexA.data(Qt::DisplayRole).toString());
-    }
-
-    QVariant pix = idx.data(Qt::DecorationRole);
-    if (!pix.isNull()) {
-        item->setIcon(d->defaultPixmap);
-    } else {
-        item->setIcon(pix.value<QPixmap>());
+        item->setData(match.indexA.data(Qt::DecorationRole) , Qt::DecorationRole);
     }
     return item;
 }

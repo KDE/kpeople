@@ -47,7 +47,7 @@ public:
 
     explicit MergeDialog(QWidget *parent = 0);
     ~MergeDialog();
-    void setPersonsModel(KPeople::PersonsModel *model);
+    void setPersonsModel(PersonsModel *model);
 
 private:
     QList<QStandardItem*> checkedItems();

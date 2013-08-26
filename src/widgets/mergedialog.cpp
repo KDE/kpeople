@@ -112,16 +112,16 @@ void MergeDialog::mergeMatchingContactsFromIndex(const QStandardItem *parent)
 {
     Q_D(MergeDialog);
     // sum-up all children plus father from PersonsModel indexes in order to merge
-    QList<QModelIndex> mergingList;
+    QList<QUrl> mergingList;
     int rows = parent->rowCount();
 
     for (int i = 0; i<rows; i++) {
         QStandardItem *child = parent->child(i,0);
-        mergingList << d->personsModel->indexForUri(child->data(UriRole).toUrl());
+        mergingList << child->data(PersonsModel::UriRole).toUrl();
     }
-    mergingList.prepend(d->personsModel->indexForUri(parent->data(UriRole).toUrl()));
+    mergingList << parent->data(PersonsModel::UriRole).toUrl();
     // NOTE : not working so far, known issue, wait for the fix : let it comment 'til then
-    //d->personsModel->createPersonFromIndexes(mergingList);
+    d->personsModel->createPersonFromUris(mergingList);
 }
 
 void MergeDialog::onMergeButtonClicked()

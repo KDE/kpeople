@@ -169,18 +169,14 @@ void MergeContactsWidget::onMergePossibilitiesButtonPressed()
 void MergeContactsWidget::onMergeButtonPressed()
 {
     // Retrieve the selected contacts
-    QList<QPersistentModelIndex> indexesToMerge = getContactsCheckedToMerge();
-    QModelIndex index = m_model->indexForUri(m_person->uri());
-    indexesToMerge.prepend(index);
+    QList<QUrl> urisToMerge;
+    urisToMerge << m_person->uri();
 
     // do the merge
-    QList<QUrl> urisToMergeConverted;
-    Q_FOREACH (const QPersistentModelIndex &pIndex, indexesToMerge) {
-        urisToMergeConverted << pIndex.data(KPeople::PersonsModel::UriRole).toUrl();
+    Q_FOREACH (const QPersistentModelIndex &pIndex, getContactsCheckedToMerge()) {
+        urisToMerge << pIndex.data(PersonsModel::UriRole).toUrl();
     }
-    //commented because it removes the test cases
-    m_model->createPersonFromUris(urisToMergeConverted);
-
+    m_model->createPersonFromUris(urisToMerge);
     searchForDuplicates();
 }
 

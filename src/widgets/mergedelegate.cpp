@@ -113,6 +113,8 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
     QPoint arrowRect = optionOld.rect.topLeft();
     int rows = index.model()->rowCount(index);
 
+    QStyleOptionViewItemV4 opt(option);
+    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
     QPoint arrowPlace(arrowRect.x(), arrowRect.y() + m_decorationSize.height()/2 + option.fontMetrics.height()/4);
     if (!isExtended(index)) {
         static KIcon arrow("arrow-right");
@@ -122,8 +124,6 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
         painter->drawPixmap(arrowPlace, arrow.pixmap(m_arrowSize));
 
         // paint the extender in blue
-        QStyleOptionViewItemV4 opt(option);
-        QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
         style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
     }
 
@@ -136,12 +136,12 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
     int facesRows = qMin(rows, MAX_MATCHING_CONTACTS_ICON );
     for (int i = 0; i < facesRows; i++) { // Children Icon Displaying Loop
 
-        QPixmap pix ; QIcon icon;
+        QPixmap pix;
         const QModelIndex child = index.child(i,0);
 
         QVariant decoration = child.data(Qt::DecorationRole);
         if (decoration.type() == (QVariant::Icon)) {
-            icon = decoration.value<QIcon>();
+            QIcon icon = decoration.value<QIcon>();
             pix = icon.pixmap(m_decorationSize);
         } else if (decoration.type() == (QVariant::Pixmap)) {
             pix = decoration.value<QPixmap>();
@@ -153,10 +153,10 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
         painter->drawPixmap(pixmapRect, pix);
     }
     // draw a vertical blue line to separate the original person and the merging contacts
-    painter->setPen(QColor("blue"));
     int midWidth = option.rect.width()/2;
+    painter->setPen(opt.palette.color(QPalette::Background));
     painter->drawLine( option.rect.left()+midWidth -SIZE_STANDARD_PIXMAP, option.rect.bottom()-5,
-                      option.rect.left()+midWidth-SIZE_STANDARD_PIXMAP, option.rect.top()+5 );
+                       option.rect.left()+midWidth-SIZE_STANDARD_PIXMAP, option.rect.top()+5);
 }
 
 QSize MergeDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const

@@ -164,10 +164,16 @@ QVariant ContactItem::data(int role) const
     switch(role) {
         case Qt::DisplayRole:
             if (!data(PersonsModel::NicknamesRole).isNull()) {
-                return data(PersonsModel::NicknamesRole);
+                const QVariantList &r = data(PersonsModel::NicknamesRole).toList();
+                if (!r.isEmpty()) {
+                    return r.first();
+                }
             }
             if (!data(PersonsModel::FullNamesRole).isNull()) {
-                return data(PersonsModel::FullNamesRole);
+                const QVariantList &r = data(PersonsModel::FullNamesRole).toList();
+                if (!r.isEmpty()) {
+                    return r.first();
+                }
             }
             if (!data(PersonsModel::EmailsRole).isNull()) {
                 const QVariantList r = data(PersonsModel::EmailsRole).toList();

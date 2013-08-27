@@ -52,10 +52,13 @@ public:
     static QSet<int> listRoles() {
         static QSet<int> s_listRoles;
         if(s_listRoles.isEmpty()) {
-            //TODO: document this in persons-model.h
-            s_listRoles.insert(PersonsModel::PhotosRole);
+            s_listRoles.insert(PersonsModel::FullNamesRole);
             s_listRoles.insert(PersonsModel::EmailsRole);
+            s_listRoles.insert(PersonsModel::NicknamesRole);
             s_listRoles.insert(PersonsModel::PhonesRole);
+            s_listRoles.insert(PersonsModel::IMsRole);
+            s_listRoles.insert(PersonsModel::PhotosRole);
+            s_listRoles.insert(PersonsModel::GroupsRole);
         }
         return s_listRoles;
     }

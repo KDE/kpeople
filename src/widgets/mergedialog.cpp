@@ -117,10 +117,9 @@ void MergeDialog::mergeMatchingContactsFromIndex(const QStandardItem *parent)
 
     for (int i = 0; i<rows; i++) {
         QStandardItem *child = parent->child(i,0);
-        mergingList << child->data(PersonsModel::UriRole).toUrl();
+        mergingList << child->data(MergeDialog::UriRole).toUrl();
     }
-    mergingList << parent->data(PersonsModel::UriRole).toUrl();
-    // NOTE : not working so far, known issue, wait for the fix : let it comment 'til then
+    mergingList << parent->data(MergeDialog::UriRole).toUrl();
     d->personsModel->createPersonFromUris(mergingList);
 }
 
@@ -185,18 +184,26 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
 
 QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, const Match &match)
 {
-    Q_D(MergeDialog);
     QStandardItem *item = new QStandardItem;
-    PersonDataPtr person(PersonData::createFromUri(idx.data(PersonsModel::UriRole).toUrl()));
-    item->setData(person->uri(), UriRole);
+
     item->setCheckable(true);
     item->setCheckState(Qt::Checked);
 
+    QUrl uri ;
     if (!idx.isValid()) { // child
+
+        uri = match.indexB.data(PersonsModel::UriRole).toUrl();
+        item->setData(qVariantFromValue<QUrl>(uri), UriRole);
+
         item->setData(qVariantFromValue<Match>(match), MergeReasonRole);
         item->setText(match.indexB.data(Qt::DisplayRole).toString());
         item->setData(match.indexB.data(Qt::DecorationRole), Qt::DecorationRole);
+
     } else { // parent
+
+        uri = match.indexA.data(PersonsModel::UriRole).toUrl();
+        item->setData(qVariantFromValue<QUrl>(uri), UriRole);
+
         item->setText(match.indexA.data(Qt::DisplayRole).toString());
         item->setData(match.indexA.data(Qt::DecorationRole) , Qt::DecorationRole);
     }

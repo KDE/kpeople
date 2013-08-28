@@ -33,8 +33,6 @@
 #include <KDebug>
 #include <KPluginFactory>
 
-#define SIZE_STANDARD_PIXMAP 35
-
 K_PLUGIN_FACTORY( MergeContactsWidgetFactory, registerPlugin<MergeContactsWidget>(); )
 K_EXPORT_PLUGIN( MergeContactsWidgetFactory("mergecontactswidgetplugin") )
 
@@ -98,15 +96,15 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
         // displaying contact in a user friendly way
         kDebug() << "Name retireved form the duplicate :" << duplicate.data(Qt::DisplayRole).toString();
 
-        QPixmap avatar ;
+        QIcon avatar ;
         QString name = duplicate.data(Qt::DisplayRole).toString();
 
         QVariant decoration = duplicate.data(Qt::DecorationRole);
         if (decoration.type() == (QVariant::Icon)) {
-            QIcon icon = decoration.value<QIcon>();
-            avatar = icon.pixmap(QSize(SIZE_STANDARD_PIXMAP,SIZE_STANDARD_PIXMAP));
+            avatar = decoration.value<QIcon>();
+
         } else if (decoration.type() == (QVariant::Pixmap)) {
-            avatar = decoration.value<QPixmap>();
+            avatar = QIcon(decoration.value<QPixmap>());
         }
 
         // memorise the link between checkbox widget and model index

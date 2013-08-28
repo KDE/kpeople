@@ -20,8 +20,9 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QSize>
 
-PersonPresentationWidget::PersonPresentationWidget(const QString &name, const QPixmap &avatar, QWidget *parent)
+PersonPresentationWidget::PersonPresentationWidget(const QString &name, const QIcon &avatar, QWidget *parent)
     : QWidget(parent)
 {
     setLayout(new QHBoxLayout(this));
@@ -35,8 +36,13 @@ PersonPresentationWidget::PersonPresentationWidget(const QString &name, const QP
     m_selected->setChecked(true);
 
     m_name->setText(name);
-    m_pixmap->setPixmap(avatar.scaled(60, 60, Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
+    // Scaling the pixmap size to the name font
+    int pixmapHeight = m_name->fontMetrics().height()*3;
+    QSize pixSize(pixmapHeight,pixmapHeight);
+
+    m_pixmap->setPixmap( avatar.pixmap(pixSize)
+                .scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     draw() ;
 }
 

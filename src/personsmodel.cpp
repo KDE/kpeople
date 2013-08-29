@@ -583,7 +583,7 @@ KJob* PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
         job = Nepomuk2::mergeResources(personUris);
     } else if (personUris.size() > 1 && !contactUris.isEmpty()) {
 
-        contactUris << personUris.takeFirst();
+        contactUris << personUris.first();
         // will add contacts properties to the person
         createPersonFromUris(contactUris) ;
         // will merge all the persons

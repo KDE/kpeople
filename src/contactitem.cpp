@@ -56,7 +56,11 @@ public:
             s_listRoles.insert(PersonsModel::EmailsRole);
             s_listRoles.insert(PersonsModel::NicknamesRole);
             s_listRoles.insert(PersonsModel::PhonesRole);
-            s_listRoles.insert(PersonsModel::IMsRole);
+//disable IM roles from being a list.
+//On a nepomuk level a contact can have two IM accounts
+//However KTp will always feed one per contact
+//Multiples break the presence lookup
+//             s_listRoles.insert(PersonsModel::IMsRole);
             s_listRoles.insert(PersonsModel::PhotosRole);
             s_listRoles.insert(PersonsModel::GroupsRole);
         }

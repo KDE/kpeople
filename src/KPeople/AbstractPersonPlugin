@@ -1,1 +1,1 @@
-#include <abstractpersonplugin.h>
+#include <kpeople/abstractpersonplugin.h>

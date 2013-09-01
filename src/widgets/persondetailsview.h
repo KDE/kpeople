@@ -24,8 +24,9 @@
 #include <QWidget>
 #include <QVariantList>
 
-#include <kpeople_export.h>
-#include <KPeople/PersonData>
+#include "../kpeople_export.h"
+
+#include "../persondata.h"
 
 class QLabel;
 class QVBoxLayout;

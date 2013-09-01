@@ -23,7 +23,7 @@
 
 #include <QtGui/QDialog>
 
-#include <kpeople_export.h>
+#include "../kpeople_export.h"
 #include "../persondata.h"
 
 namespace KPeople

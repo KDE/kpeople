@@ -1,1 +1,1 @@
-#include <persondata.h>
+#include <kpeople/persondata.h>

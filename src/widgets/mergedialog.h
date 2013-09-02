@@ -20,7 +20,7 @@
 #ifndef MERGEDIALOG_H
 #define MERGEDIALOG_H
 
-#include "kpeople_export.h"
+#include "../kpeople_export.h"
 
 #include <QDialog>
 #include <QModelIndex>

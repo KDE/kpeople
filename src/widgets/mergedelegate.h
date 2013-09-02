@@ -20,7 +20,7 @@
 #ifndef MERGEDELEGATE_H
 #define MERGEDELEGATE_H
 
-#include "kpeople_export.h"
+#include "../kpeople_export.h"
 
 #include <QItemSelection>
 #include <QItemDelegate>

@@ -22,8 +22,9 @@
 #define ABSTRATPERSONDETAILSWIDGET_H
 
 #include <QWidget>
-#include "kpeople_export.h"
 #include <QIcon>
+
+#include "../kpeople_export.h"
 
 namespace KPeople
 {

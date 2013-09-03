@@ -166,7 +166,7 @@ void PersonsModel::nextReady(Soprano::Util::AsyncQuery *query)
     Q_D(PersonsModel);
     //if we're doing update, the contact uri is passed as property of the query
     QUrl updateUri = query->property("contactUri").toUrl();
-    ContactItem *contactNode = d->contacts[updateUri];
+    ContactItem *contactNode = d->contacts.value(updateUri);
     bool newContact = !contactNode;
     QUrl currentUri;
 
@@ -226,7 +226,7 @@ void PersonsModel::queryFinished(Soprano::Util::AsyncQuery *query)
     Q_UNUSED(query)
     Q_D(PersonsModel);
     //add the persons to the model
-    if (!d->persons.values().isEmpty()) {
+    if (!d->persons.isEmpty()) {
         invisibleRootItem()->appendRows(toStandardItems(d->persons.values()));
     }
 
@@ -350,7 +350,7 @@ void PersonsModel::updateContact(const QUrl &uri)
 
     kDebug() << "Updating contact" << uri;
 
-    if (!d->contacts[uri]) {
+    if (!d->contacts.contains(uri)) {
         kWarning() << "Contact not found! Uri is" << uri;
         return;
     }
@@ -370,7 +370,7 @@ void PersonsModel::updateContact(const QUrl &uri)
 
 void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
 {
-    Q_D(PersonsModel);
+    Q_D(const PersonsModel);
     QUrl contactUri = query->property("contactUri").toUrl();
 
     ContactItem *contact = d->contacts[contactUri];
@@ -386,7 +386,7 @@ void PersonsModel::removeContact(const QUrl &uri)
 {
     Q_D(PersonsModel);
 
-    ContactItem *contact = d->contacts[uri];
+    ContactItem *contact = d->contacts.value(uri);
 
     if (!contact) {
         kWarning() << "Contact not found! Uri is" << uri;
@@ -423,7 +423,7 @@ void PersonsModel::removePerson(const QUrl &uri)
 {
     Q_D(PersonsModel);
 
-    PersonItem *person = d->persons[uri];
+    PersonItem *person = d->persons.value(uri);
 
     if (!person) {
         kWarning() << "Person not found! Uri is" << uri;
@@ -446,7 +446,7 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
 {
     Q_D(PersonsModel);
 
-    PersonItem *person = d->persons[personUri];
+    PersonItem *person = d->persons.value(personUri);
 
     if (!person) {
         kWarning() << "Person not found! Uri is" << personUri;
@@ -464,7 +464,7 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
     //query the model for the contacts, if they are present, then need to be just moved
     QList<QStandardItem*> personContacts;
     Q_FOREACH (const QUrl &uri, contacts) {
-        ContactItem *contact = d->contacts[uri];
+        ContactItem *contact = d->contacts.value(uri);
 
         if (!contact) {
             kDebug() << "Contact not found" << uri;

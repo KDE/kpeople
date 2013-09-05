@@ -478,7 +478,7 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
         }
         Q_ASSERT(parentPerson); //this should never ever happen
 
-        if (parentPerson->uri().host() == "fakeperson") {
+        if (parentPerson->uri().scheme() == "fakeperson") {
             //the contact does not have any real person
             parentPerson->takeRow(0);
             //remove the fake person

@@ -536,6 +536,37 @@ void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<Q
     }
 }
 
+class MergePersonsAndContacts : public KJob
+{
+    Q_OBJECT
+    public:
+        MergePersonsAndContacts(const QList<QUrl>& personUris, const QList<QUrl>& contactUris)
+            : KJob()
+            , m_personUris(personUris)
+            , m_contactUris(contactUris)
+        {
+            m_contactUris << personUris.first();
+        }
+
+    virtual void start() {
+        // will add contacts to one the persons
+        KJob* job = PersonsModel::createPersonFromUris(m_contactUris) ;
+        connect(job, SIGNAL(finished(KJob*)), SLOT(contactsMerged()));
+    }
+
+    public slots:
+        void contactsMerged()
+        {
+            //we merge all the persons
+            KJob* jobB = PersonsModel::createPersonFromUris(m_personUris);
+            connect(jobB, SIGNAL(finished(KJob*)), this, SLOT(jobFinished(KJob*)));
+        }
+
+    private:
+        QList<QUrl> m_personUris;
+        QList<QUrl> m_contactUris;
+};
+
 KJob* PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
 {
     Q_ASSERT(uris.size()>1);
@@ -589,13 +620,8 @@ KJob* PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
     } else if (personUris.size() > 1 && contactUris.isEmpty()) {
         job = Nepomuk2::mergeResources(personUris);
     } else if (personUris.size() > 1 && !contactUris.isEmpty()) {
-
-        contactUris << personUris.first();
-        // will add contacts properties to the person
-        createPersonFromUris(contactUris) ;
-        // will merge all the persons
-        createPersonFromUris(personUris);
-
+        job = new MergePersonsAndContacts(personUris, contactUris);
+        job->start();
     } else {
         kWarning() << "not implemented yet";
     }
@@ -631,3 +657,6 @@ void PersonsModel::unlinkContactFromPerson(const QUrl &personUri, const QList<QU
         oldPerson.remove();
     }
 }
+
+#include "personsmodel.moc"
+#include "moc_personsmodel.cpp"

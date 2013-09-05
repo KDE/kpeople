@@ -406,6 +406,8 @@ void PersonsModel::removeContact(const QUrl &uri)
     //if the person is now empty, remove it from the model too
     if (person->rowCount() == 0) {
         removePerson(person->uri());
+    } else {
+        person->contactDataChanged();
     }
 
 }
@@ -513,6 +515,7 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
         newContacts += item;
     }
     person->appendRows(newContacts);
+    person->contactDataChanged();
 }
 
 

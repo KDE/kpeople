@@ -121,7 +121,7 @@ private:
     void removeContact(const QUrl &uri);
 
     /** Adds new person to the model with @param uri as its URI */
-    void addPerson(const QUrl &uri);
+    PersonItem* addPerson(const QUrl &uri);
     /** Removes person with @param uri from the model (not Nepomuk) */
     void removePerson(const QUrl &uri);
     /** Adds contacts to existing PIMO:Person */

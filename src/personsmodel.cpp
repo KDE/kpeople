@@ -412,13 +412,14 @@ void PersonsModel::removeContact(const QUrl &uri)
 
 }
 
-void PersonsModel::addPerson(const QUrl &uri)
+PersonItem *PersonsModel::addPerson(const QUrl &uri)
 {
     Q_D(PersonsModel);
 
     PersonItem *newPerson = new PersonItem(uri);
     d->persons.insert(uri, newPerson);
     appendRow(newPerson);
+    return newPerson;
 }
 
 void PersonsModel::removePerson(const QUrl &uri)
@@ -435,8 +436,8 @@ void PersonsModel::removePerson(const QUrl &uri)
     //move the child contacts into new fake persons
     while (person->rowCount()) {
         QUrl pimoPersonUri = QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++));
-        addPerson(pimoPersonUri);
-        d->persons[pimoPersonUri]->appendRow(person->takeRow(person->rowCount() - 1));
+        PersonItem* p = addPerson(pimoPersonUri);
+        p->appendRow(person->takeRow(0));
     }
 
     removeRow(indexFromItem(person).row());

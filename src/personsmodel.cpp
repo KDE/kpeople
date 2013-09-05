@@ -334,7 +334,7 @@ void PersonsModel::addContact(const QUrl &uri)
     appendRow(person);
 
     //load the contact data
-    item->loadData();
+    item->loadData(this);
 }
 
 void PersonsModel::updateContact(ContactItem *contact)
@@ -475,26 +475,27 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
 
         if (!parentPerson) {
             kWarning() << "Found contact without valid person!";
-            Q_ASSERT(parentPerson); //this should never ever happen
         }
+        Q_ASSERT(parentPerson); //this should never ever happen
 
-        if (parentPerson->uri().toString().startsWith("fakeperson")) {
+        if (parentPerson->uri().host() == "fakeperson") {
             //the contact does not have any real person
-            personContacts.append(parentPerson->takeRow(0));
+            parentPerson->takeRow(0);
             //remove the fake person
             removePerson(parentPerson->uri());
         } else {
             //the contact does already have a person so we just append
             //it without removing from the original person
-            personContacts.append(contact);
         }
+        personContacts.append(contact);
     }
 
     //append the moved contacts to this person and remove them from 'contacts'
     //so they are not added twice
+    QList<QStandardItem*> newContacts;
     Q_FOREACH (QStandardItem *contactItem, personContacts) {
         ContactItem *contact = dynamic_cast<ContactItem*>(contactItem);
-        person->appendRow(contact);
+        newContacts += contact;
         contacts.removeOne(contact->uri());
     }
 
@@ -505,11 +506,13 @@ void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> 
                                            item->data(PersonsModel::UriRole).toString());
 
         d->contacts.insert(uri, item);
-        //append the ContactItem to the current person
-        person->appendRow(item);
+
         //load the contact data
-        item->loadData();
+        item->loadData(this);
+
+        newContacts += item;
     }
+    person->appendRows(newContacts);
 }
 
 

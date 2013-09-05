@@ -212,7 +212,7 @@ QVariant ContactItem::data(int role) const
     return QStandardItem::data(role);
 }
 
-void ContactItem::loadData()
+void ContactItem::loadData(PersonsModel* m)
 {
     Q_D(ContactItem);
 
@@ -222,8 +222,6 @@ void ContactItem::loadData()
     }
 
     d->data.clear();
-
-    PersonsModel *m = qobject_cast<PersonsModel*>(model());
 
     Q_ASSERT(m); //crash if this contact is not part of the model
 

@@ -59,7 +59,7 @@ public:
      * Discards all the previous data and reload everything by
      * querying Nepomuk
      */
-    void loadData();
+    void loadData(KPeople::PersonsModel* m);
 
     void finishLoadingData();
 

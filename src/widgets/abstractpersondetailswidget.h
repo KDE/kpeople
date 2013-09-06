@@ -50,7 +50,7 @@ public:
 
     bool active() const;
 
-signals:
+Q_SIGNALS:
     void activeChanged(bool);
 
 protected:

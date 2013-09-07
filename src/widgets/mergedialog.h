@@ -49,19 +49,17 @@ public:
     ~MergeDialog();
     void setPersonsModel(PersonsModel *model);
 
-private:
-    QList<QStandardItem*> checkedItems();
-    void mergeMatchingContactsFromIndex(const QStandardItem *parent);
-    QStandardItem* itemMergeContactFromMatch(const QModelIndex &idx, const Match &match);
-
-    void feedDuplicateModelFromMatches(const QList<Match> &matches) ;
-
 private Q_SLOTS:
     void searchForDuplicates();
     void searchForDuplicatesFinished(KJob *);
     void onMergeButtonClicked();
 
 private:
+    QList<QStandardItem*> checkedItems();
+    void mergeMatchingContactsFromIndex(const QStandardItem *parent);
+    QStandardItem* itemMergeContactFromMatch(const QModelIndex &idx, const Match &match);
+    void feedDuplicateModelFromMatches(const QList<Match> &matches);
+
     MergeDialogPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(MergeDialog)
 };

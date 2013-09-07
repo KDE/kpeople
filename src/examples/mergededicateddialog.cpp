@@ -42,5 +42,5 @@ int main(int argc, char **argv)
     QObject::connect(persons, SIGNAL(modelInitialized()), &dialog, SLOT(show()));
     QObject::connect(&dialog, SIGNAL(finished(int)), &app, SLOT(quit()));
 
-    app.exec();
+    return app.exec();
 }

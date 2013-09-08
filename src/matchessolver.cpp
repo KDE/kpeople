@@ -43,8 +43,9 @@ void MatchesSolver::startMatching()
     Q_FOREACH(const Match &m, m_matches) {
         QPersistentModelIndex idxDestination = m.indexA;
         QPersistentModelIndex idxOrigin = m.indexB;
+        Q_ASSERT(idxDestination.isValid() && idxOrigin.isValid());
 
-        QSet<QUrl>& jobs = jobsData[m.indexA.row()];
+        QSet<QUrl>& jobs = jobsData[idxDestination.row()];
         jobs.insert(idxDestination.data(PersonsModel::UriRole).toUrl());
         jobs.insert(idxOrigin.data(PersonsModel::UriRole).toUrl());
         Q_ASSERT(jobs.size()>=2);
@@ -55,23 +56,13 @@ void MatchesSolver::startMatching()
         m_pending.insert(job);
         connect(job, SIGNAL(finished(KJob*)), SLOT(jobDone(KJob*)));
     }
-    bool wrongJobsCount = m_pending.remove(0);
-    if(wrongJobsCount >= 0) {
-        qDebug() << "error: some of the jobs couldn't be performed" << wrongJobsCount;
+    bool foundNullJob = m_pending.remove(0);
+    if(foundNullJob) {
+        qWarning() << "error: some of the jobs couldn't be performed" << foundNullJob;
     }
 
     if(jobsData.isEmpty())
         jobDone(0);
-}
-
-QList<QUrl> MatchesSolver::contactUris(const QModelIndex &idxOrigin)
-{
-    QList<QUrl> ret;
-    QModelIndex idx=idxOrigin.child(0,0);
-    for (; idx.isValid(); idx = idx.sibling(idx.row() + 1, 0)) {
-        ret += idx.data(PersonsModel::UriRole).toUrl();
-    }
-    return ret;
 }
 
 void MatchesSolver::jobDone(KJob *job)

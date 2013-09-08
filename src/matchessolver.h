@@ -39,14 +39,11 @@ class KPEOPLE_EXPORT MatchesSolver : public KJob
         explicit MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent = 0);
         virtual void start();
 
-    public Q_SLOTS:
-        void startMatching();
     private Q_SLOTS:
-        void jobDone(KJob *job = 0);
+        void startMatching();
+        void jobDone(KJob *job);
 
     private:
-        QList<QUrl> contactUris(const QModelIndex &idxOrigin);
-
         QList<Match> m_matches;
         QSet<KJob*> m_pending;
         PersonsModel *m_model;

@@ -55,8 +55,6 @@ private Q_SLOTS:
     void onMergeButtonClicked();
 
 private:
-    QList<QStandardItem*> checkedItems();
-    void mergeMatchingContactsFromIndex(const QStandardItem *parent);
     QStandardItem* itemMergeContactFromMatch(const QModelIndex &idx, const Match &match);
     void feedDuplicateModelFromMatches(const QList<Match> &matches);
 

@@ -22,6 +22,7 @@
 #include "duplicatesfinder.h"
 #include "persondata.h"
 #include "personsmodel.h"
+#include "matchessolver.h"
 
 #include <KDebug>
 
@@ -35,6 +36,8 @@
 
 #include <KStandardDirs>
 #include <KLocalizedString>
+#include <KPixmapSequence>
+#include <KPixmapSequenceWidget>
 
 using namespace KPeople;
 
@@ -46,9 +49,9 @@ public:
 
     QStandardItemModel *model;
     DuplicatesFinder *duplicatesFinder;
+    KPixmapSequenceWidget* sequence;
 };
 
-//NOTE: look at KDialog
 MergeDialog::MergeDialog(QWidget *parent)
     : QDialog(parent)
     , d_ptr(new MergeDialogPrivate)
@@ -76,8 +79,14 @@ MergeDialog::MergeDialog(QWidget *parent)
     connect(buttons, SIGNAL(accepted()), SLOT(onMergeButtonClicked()));
     connect(buttons, SIGNAL(rejected()), SLOT(reject()));
 
+    d->sequence = new KPixmapSequenceWidget(this);
+    d->sequence->setSequence(KPixmapSequence("process-working", 22));
+    d->sequence->setInterval(100);
+    d->sequence->setVisible(false);
+
     layout()->addWidget(topLabel);
     layout()->addWidget(d->view);
+    layout()->addWidget(d->sequence);
     layout()->addWidget(buttons);
 }
 
@@ -108,34 +117,30 @@ void MergeDialog::searchForDuplicates()
     d->duplicatesFinder->start();
 }
 
-void MergeDialog::mergeMatchingContactsFromIndex(const QStandardItem *parent)
-{
-    Q_D(MergeDialog);
-    // sum-up all children plus father from PersonsModel indexes in order to merge
-    QList<QUrl> mergingList;
-    int rows = parent->rowCount();
-
-    for (int i = 0; i<rows; i++) {
-        QStandardItem *child = parent->child(i, 0);
-        mergingList << child->data(MergeDialog::UriRole).toUrl();
-    }
-    mergingList << parent->data(MergeDialog::UriRole).toUrl();
-    d->personsModel->createPersonFromUris(mergingList);
-}
-
 void MergeDialog::onMergeButtonClicked()
 {
-    QList<QStandardItem*> parents = checkedItems();
-    Q_FOREACH (QStandardItem *parent, parents) {
-        mergeMatchingContactsFromIndex(parent);
+    Q_D(MergeDialog);
+    QList<Match> matches;
+    for (int i = 0, rows = d->model->rowCount(); i<rows; i++) {
+        QStandardItem *item = d->model->item(i, 0);
+        if (item->checkState() == Qt::Checked) {
+            for(int j=0, contactsCount=item->rowCount(); j<contactsCount; ++j) {
+                QStandardItem *matchItem = item->child(j);
+                matches << matchItem->data(MergeDialog::MergeReasonRole).value<Match>();
+            }
+        }
     }
-    emit accept();
+
+    MatchesSolver* solverJob = new MatchesSolver(matches, d->personsModel, this);
+    solverJob->start();
+    d->sequence->setVisible(true);
+    d->view->setEnabled(false);
+    connect(solverJob, SIGNAL(finished(KJob*)), this, SLOT(accept()));
 }
 
 void MergeDialog::searchForDuplicatesFinished(KJob*)
 {
     Q_D(MergeDialog);
-    QList<Match> matches = d->duplicatesFinder->results();
     feedDuplicateModelFromMatches(d->duplicatesFinder->results());
 
     d->delegate = new MergeDelegate(d->view);
@@ -153,10 +158,9 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
 {
     Q_D(MergeDialog);
     QMap<QPersistentModelIndex, QList<Match> > compareTable;
-    QList<Match> currentValue;
 
     Q_FOREACH (const Match &match, matches) {
-        currentValue = compareTable.value(match.indexA);
+        QList<Match> currentValue = compareTable.value(match.indexA);
 
         if (currentValue.isEmpty()) { // new parent, create it
             QList<Match> firstList = QList<Match>() << match;
@@ -208,19 +212,4 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
         item->setData(match.indexA.data(Qt::DecorationRole), Qt::DecorationRole);
     }
     return item;
-}
-
-QList<QStandardItem*> MergeDialog::checkedItems()
-{
-    Q_D(MergeDialog);
-    QStandardItem *root = d->model->invisibleRootItem();
-    int rows = root->rowCount();
-    QList<QStandardItem*> results;
-    for (int i = 0; i < rows; i++) {
-        QStandardItem *currentParent = root->child(i, 0);
-        if (currentParent->checkState() == Qt::Checked) {
-            results.append(currentParent);
-        }
-    }
-    return results;
 }

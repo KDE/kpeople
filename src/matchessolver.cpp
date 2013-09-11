@@ -39,6 +39,7 @@ void MatchesSolver::start()
 
 void MatchesSolver::startMatching()
 {
+    //group all matching pairs into a list of URIs indexed by the row of the 'destination' contact
     QMap<int, QSet<QUrl> > jobsData;
     Q_FOREACH(const Match &m, m_matches) {
         QPersistentModelIndex idxDestination = m.indexA;
@@ -51,18 +52,21 @@ void MatchesSolver::startMatching()
         Q_ASSERT(jobs.size()>=2);
     }
 
-    foreach(const QSet<QUrl>& uris, jobsData) {
+    Q_FOREACH(const QSet<QUrl>& uris, jobsData) {
         KJob* job = m_model->createPersonFromUris(uris.toList());
-        m_pending.insert(job);
-        connect(job, SIGNAL(finished(KJob*)), SLOT(jobDone(KJob*)));
-    }
-    bool foundNullJob = m_pending.remove(0);
-    if(foundNullJob) {
-        qWarning() << "error: some of the jobs couldn't be performed" << foundNullJob;
+        //createPersonFromUris can return null if there nothing to be done
+        if (job) {
+            m_pending.insert(job);
+            connect(job, SIGNAL(finished(KJob*)), SLOT(jobDone(KJob*)));
+        } else {
+            qWarning() << "error: failing to merge contacts: " << uris;
+        }
     }
 
-    if(jobsData.isEmpty())
+    //if there are no jobs in the queue emit finished
+    if(m_pending.isEmpty()) {
         jobDone(0);
+    }
 }
 
 void MatchesSolver::jobDone(KJob *job)

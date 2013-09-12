@@ -434,6 +434,8 @@ void PersonsModel::removePerson(const QUrl &uri)
     }
 
     //move the child contacts into new fake persons
+
+    //when called from addContactToPerson if URI is a fakeperson the child has already been removed
     while (person->rowCount()) {
         QUrl pimoPersonUri = QUrl("fakeperson:/" + QString::number(d->fakePersonsCounter++));
         PersonItem* p = addPerson(pimoPersonUri);

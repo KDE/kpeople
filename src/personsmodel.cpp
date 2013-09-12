@@ -440,7 +440,7 @@ void PersonsModel::removePerson(const QUrl &uri)
         p->appendRow(person->takeRow(0));
     }
 
-    removeRow(indexFromItem(person).row());
+    invisibleRootItem()->removeRow(person->row());
     d->persons.remove(uri);
 }
 

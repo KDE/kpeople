@@ -319,6 +319,9 @@ void PersonsModel::contactChanged(const QUrl &uri)
 void PersonsModel::addContact(const QUrl &uri)
 {
     Q_D(PersonsModel);
+
+    kDebug() << "adding contact " << uri;
+
     ContactItem *item = new ContactItem(uri);
     d->dataSourceWatcher->watchContact(item->data(PersonsModel::IMsRole).toString(),
                                        item->data(PersonsModel::UriRole).toString());
@@ -385,6 +388,7 @@ void PersonsModel::updateContactFinished(Soprano::Util::AsyncQuery *query)
 void PersonsModel::removeContact(const QUrl &uri)
 {
     Q_D(PersonsModel);
+    kDebug() << "removing contact " << uri;
 
     ContactItem *contact = d->contacts.value(uri);
 
@@ -415,6 +419,7 @@ void PersonsModel::removeContact(const QUrl &uri)
 PersonItem *PersonsModel::addPerson(const QUrl &uri)
 {
     Q_D(PersonsModel);
+    kDebug() << "creating new person " << uri;
 
     PersonItem *newPerson = new PersonItem(uri);
     d->persons.insert(uri, newPerson);
@@ -425,6 +430,7 @@ PersonItem *PersonsModel::addPerson(const QUrl &uri)
 void PersonsModel::removePerson(const QUrl &uri)
 {
     Q_D(PersonsModel);
+    kDebug() << "removing person " << uri;
 
     PersonItem *person = d->persons.value(uri);
 
@@ -450,6 +456,7 @@ void PersonsModel::removePerson(const QUrl &uri)
 void PersonsModel::addContactsToPerson(const QUrl &personUri, const QList<QUrl> &_contacts)
 {
     Q_D(PersonsModel);
+    kDebug() << "adding contacts" << _contacts << " to " << personUri;
 
     PersonItem *person = d->persons.value(personUri);
 
@@ -526,6 +533,7 @@ void PersonsModel::removeContactsFromPerson(const QUrl &personUri, const QList<Q
 {
 //     Q_D(PersonsModel);
     Q_UNUSED(personUri);
+    kDebug() << "removing " << contacts << " from " << personUri;
 
     //simply remove the contacts from the model and re-add them
     //this will take care of removing empty persons in case the contact

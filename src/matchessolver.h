@@ -32,11 +32,32 @@ namespace KPeople
 class PersonsModel;
 struct Match;
 
+/**
+ * @brief This class is responsible for merging different persons into one
+ *
+ * One of the important tasks of KPeople is putting together different contacts into
+ * the same person representation.
+ *
+ * This class gets a list of matches, usually from @a DuplicatesFinder and makes
+ * the needed changes to the database so that everything looks as it should.
+ */
+
 class KPEOPLE_EXPORT MatchesSolver : public KJob
 {
     Q_OBJECT
     public:
+        /**
+         * Constructs a solver given the @p matches against a @p model.
+         *
+         * Note: Obviously, the @p model should be the same @p matches refers to.
+         */
         explicit MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent = 0);
+
+        /**
+         * Start doing some crazy matching!
+         *
+         * @see KJob::finished()
+         */
         virtual void start();
 
     private Q_SLOTS:

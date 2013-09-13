@@ -48,21 +48,21 @@ class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
 
 public:
     enum Role {
-        UriRole = Qt::UserRole, //nepomuk URI STRING
-        ChildContactsUriRole, //returns list of child contact roles STRINGLIST
-        FullNamesRole, //nco:fullname STRINGLIST
-        EmailsRole, //nco:email STRINGLIST
-        NicknamesRole, //nco:imNickName STRINGLIST
-        PhonesRole, //nco:phones STRINGLIST
-        IMsRole, //STRINGLIST
-        PhotosRole, //nie:url of the photo STRINGLIST
+        UriRole = Qt::UserRole, ///nepomuk URI STRING
+        ChildContactsUriRole, ///returns list of child contact roles STRINGLIST
+        FullNamesRole, ///nco:fullname STRINGLIST
+        EmailsRole, ///nco:email STRINGLIST
+        NicknamesRole, ///nco:imNickName STRINGLIST
+        PhonesRole, ///nco:phones STRINGLIST
+        IMsRole, ///STRINGLIST
+        PhotosRole, ///nie:url of the photo STRINGLIST
 
-        PresenceTypeRole, //QString containing most online presence type
-        PresenceDisplayRole, //QString containing displayable name for most online presence
-        PresenceDecorationRole, //KIcon displaying current presence
-        PresenceIconNameRole, //QString with icon name of the current presence
+        PresenceTypeRole, ///QString containing most online presence type
+        PresenceDisplayRole, ///QString containing displayable name for most online presence
+        PresenceDecorationRole, ///KIcon displaying current presence
+        PresenceIconNameRole, ///QString with icon name of the current presence
 
-        GroupsRole, //groups STRINGLIST
+        GroupsRole, ///groups STRINGLIST
 
         UserRole = Qt::UserRole + 100 ///< in case it's needed to extend, use this one to start from
     };
@@ -71,17 +71,21 @@ public:
 
     virtual ~PersonsModel();
 
-    /**Start querying the database using the supplied features*/
+    /**
+     * Start querying the database using the supplied features
+     */
     void startQuery(const QList<PersonsModelFeature> &features);
 
-    /** Creates PIMO:Person with NCO:PersonContacts as grounding occurances
+    /**
+     * Creates PIMO:Person with NCO:PersonContacts as grounding occurances
      *  The list that it's passed can contain uris of both Person and PersonContacts,
      *  the method checks their type and does the right thing(tm)
      *  @param uris list of Person and PersonContact uris
      */
     Q_SCRIPTABLE static KJob* createPersonFromUris(const QList<QUrl> &uris);
 
-    /** Removes the link between contacts and the given person
+    /**
+     * Removes the link between contacts and the given person
      *  @param personUri PIMO:Person uri to unlink the contacts from
      *  @param contactUris list of NCO:PersonContacts to unlink
      */
@@ -111,22 +115,44 @@ private:
     PersonItem* personItemForUri(const QUrl &uri) const;
     QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
 
-    /** Adds new contact to the model with @param uri as its URI */
+    /**
+     * Adds new contact to the model with @param uri as its URI
+     */
     void addContact(const QUrl &uri);
-    /** Refreshes data of the contact given by @param uri */
+
+    /**
+     * Refreshes data of the contact given by @param uri
+     */
     void updateContact(const QUrl &uri);
-    /** Convenience function */
+
+    /**
+     * Convenience function
+     */
     void updateContact(ContactItem *contact);
-    /** Removes contact with @param uri from the model (not Nepomuk) */
+
+    /**
+     * Removes contact with @param uri from the model (not Nepomuk)
+     */
     void removeContact(const QUrl &uri);
 
-    /** Adds new person to the model with @param uri as its URI */
+    /**
+     * Adds new person to the model with @param uri as its URI
+     */
     PersonItem* addPerson(const QUrl &uri);
-    /** Removes person with @param uri from the model (not Nepomuk) */
+
+    /**
+     * Removes person with @param uri from the model (not Nepomuk)
+     */
     void removePerson(const QUrl &uri);
-    /** Adds contacts to existing PIMO:Person */
+
+    /**
+     * Adds contacts to existing PIMO:Person
+     */
     void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-    /** Removes given contacts from existing PIMO:Person */
+
+    /**
+     * Removes given contacts from existing PIMO:Person
+     */
     void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
 
     friend class ResourceWatcherService;

@@ -55,14 +55,35 @@
 using namespace Nepomuk::Vocabulary;
 using namespace KPeople;
 
+namespace KPeople {
+
+class PersonDetailsViewPrivate{
+public:
+    PersonDataPtr m_person;
+    QVBoxLayout *m_mainLayout;
+
+    QLabel *m_contactPixmap;
+    QLabel *m_contactNameLabel;
+    QLabel *m_contactBirthdayLabel;
+    QLabel *m_contactStatusLabel;
+    QWidget *m_contactsListWidget;
+
+    QList<AbstractPersonDetailsWidget*> m_detailWidgets;
+
+    QPixmap iconForPresence(const QString &presenceString);
+};
+}
+
 class DetailsGroupWidget : public QWidget
 {
 public:
     DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidget, QWidget *parent);
 };
 
+
+
 DetailsGroupWidget::DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidget, QWidget *parent)
-    : QWidget(parent)
+    :QWidget(parent)
 {
     QGridLayout *layout = new QGridLayout(this);
     layout->setColumnStretch(1, 1);
@@ -88,27 +109,30 @@ DetailsGroupWidget::DetailsGroupWidget(AbstractPersonDetailsWidget *detailsWidge
     setLayout(layout);
 }
 
+
 bool pluginWeightLess(const KPluginInfo &p1, const KPluginInfo &p2) {
     return p1.property("X-KPeople-Weight").toInt() < p2.property("X-KPeople-Weight").toInt();
 }
 
 PersonDetailsView::PersonDetailsView(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent),
+      d_ptr(new PersonDetailsViewPrivate())
 {
-    m_mainLayout = new QVBoxLayout(this);
-    m_contactPixmap = new QLabel(this);
-    m_contactNameLabel = new QLabel(this);
+    Q_D(PersonDetailsView);
+    d->m_mainLayout = new QVBoxLayout(this);
+    d->m_contactPixmap = new QLabel(this);
+    d->m_contactNameLabel = new QLabel(this);
     QFont f;
     f.setPixelSize(18);
-    m_contactNameLabel->setFont(f);
-    m_contactStatusLabel = new QLabel(this);
-    m_contactBirthdayLabel = new QLabel(this);
+    d->m_contactNameLabel->setFont(f);
+    d->m_contactStatusLabel = new QLabel(this);
+    d->m_contactBirthdayLabel = new QLabel(this);
 
     QGridLayout *namePresenceLayout = new QGridLayout(this);
-    namePresenceLayout->addWidget(m_contactPixmap, 0, 0, 2, 1);
-    namePresenceLayout->addWidget(m_contactNameLabel, 0, 1);
-    namePresenceLayout->addWidget(m_contactStatusLabel, 0, 2);
-    namePresenceLayout->addWidget(m_contactBirthdayLabel, 1, 1);
+    namePresenceLayout->addWidget(d->m_contactPixmap, 0, 0, 2, 1);
+    namePresenceLayout->addWidget(d->m_contactNameLabel, 0, 1);
+    namePresenceLayout->addWidget(d->m_contactStatusLabel, 0, 2);
+    namePresenceLayout->addWidget(d->m_contactBirthdayLabel, 1, 1);
     namePresenceLayout->addItem(new QSpacerItem(1, 1, QSizePolicy::Expanding), 0, 3);
 
     QFrame *line = new QFrame(this);
@@ -116,10 +140,10 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 
     namePresenceLayout->addWidget(line, 2, 0, 1, 4);
 
-    m_contactsListWidget = new QWidget(this);
+    d->m_contactsListWidget = new QWidget(this);
 
-    m_mainLayout->addLayout(namePresenceLayout);
-    m_mainLayout->addWidget(m_contactsListWidget);
+    d->m_mainLayout->addLayout(namePresenceLayout);
+    d->m_mainLayout->addWidget(d->m_contactsListWidget);
 
     // load every KPeopleWidgets Plugin
     KService::List pluginList = KServiceTypeTrader::self()->query( QLatin1String("KPeopleWidgets/Plugin"));
@@ -132,47 +156,51 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
         AbstractPersonDetailsWidget *plugin = p.service()->createInstance<AbstractPersonDetailsWidget>(this, QVariantList(), &error);
 
         if (plugin) {
-            m_detailWidgets.append(plugin);
+            d->m_detailWidgets.append(plugin);
         }
     }
-    kDebug() << "List of loaded plugins :"  << m_detailWidgets;
+    kDebug() << "List of loaded plugins :"  << d->m_detailWidgets;
 
-     Q_FOREACH(AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
-         m_mainLayout->addWidget(new DetailsGroupWidget(detailsWidget, this));
+     Q_FOREACH(AbstractPersonDetailsWidget *detailsWidget, d->m_detailWidgets) {
+         d->m_mainLayout->addWidget(new DetailsGroupWidget(detailsWidget, this));
      }
 
-    m_mainLayout->addSpacerItem(new QSpacerItem(32, 32, QSizePolicy::Minimum, QSizePolicy::Expanding));
-    setLayout(m_mainLayout);
+    d->m_mainLayout->addSpacerItem(new QSpacerItem(32, 32, QSizePolicy::Minimum, QSizePolicy::Expanding));
+    setLayout(d->m_mainLayout);
 }
 
 PersonDetailsView::~PersonDetailsView()
 {
+    delete d_ptr;
 }
 
 void PersonDetailsView::setPerson(const PersonDataPtr &person)
 {
-    if (!m_person.isNull()) {
-        disconnect(m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));
-        //m_person is QSharedPointer and will get deleted automagically when out of scope
+    Q_D(PersonDetailsView);
+    if (!d->m_person.isNull()) {
+        disconnect(d->m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));
+        //d->m_person is QSharedPointer and will get deleted automagically when out of scope
     }
 
-    m_person = person;
-    connect(m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));
+    d->m_person = person;
+    connect(d->m_person.data(), SIGNAL(dataChanged()), this, SLOT(reload()));
     reload();
 }
 
 void PersonDetailsView::setPersonsModel(PersonsModel *model)
 {
-    Q_FOREACH (AbstractPersonDetailsWidget *detailsWidget, m_detailWidgets) {
+    Q_D(PersonDetailsView);
+    Q_FOREACH (AbstractPersonDetailsWidget *detailsWidget, d->m_detailWidgets) {
         detailsWidget->setPersonsModel(model);
     }
 }
 
 void PersonDetailsView::reload()
 {
+    Q_D(PersonDetailsView);
     kDebug();
     QPixmap avatar;
-    QString avatarPath = m_person->avatar().toLocalFile();
+    QString avatarPath = d->m_person->avatar().toLocalFile();
     if (!avatarPath.isEmpty()) {
         avatar.load(avatarPath);
     }
@@ -181,17 +209,17 @@ void PersonDetailsView::reload()
         //FIXME (also move inside PersonData?)
         avatar.load(KStandardDirs::locate("data", "person-viewer/dummy_avatar.png"));
     }
-    m_contactPixmap->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    m_contactNameLabel->setText(m_person->name());
-    m_contactStatusLabel->setPixmap(iconForPresence(m_person->status()));
-    m_contactBirthdayLabel->setText(m_person->groups().join(", "));
+    d->m_contactPixmap->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    d->m_contactNameLabel->setText(d->m_person->name());
+    d->m_contactStatusLabel->setPixmap(d->iconForPresence(d->m_person->status()));
+    d->m_contactBirthdayLabel->setText(d->m_person->groups().join(", "));
 
-    Q_FOREACH (AbstractPersonDetailsWidget* detailsWidget, m_detailWidgets) {
-        detailsWidget->setPerson(m_person.data());
+    Q_FOREACH (AbstractPersonDetailsWidget* detailsWidget, d->m_detailWidgets) {
+        detailsWidget->setPerson(d->m_person.data());
     }
 }
 
-QPixmap PersonDetailsView::iconForPresence(const QString &presenceString)
+QPixmap PersonDetailsViewPrivate::iconForPresence(const QString &presenceString)
 {
     KIconLoader il;
     if (presenceString == "available") {

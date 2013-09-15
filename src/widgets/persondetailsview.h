@@ -34,6 +34,7 @@ class QVBoxLayout;
 namespace KPeople {
 class AbstractPersonDetailsWidget;
 class PersonsModel;
+class PersonDetailsViewPrivate;
 
 
 class KPEOPLE_EXPORT PersonDetailsView : public QWidget
@@ -49,19 +50,11 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void reload();
+
 private:
-    QPixmap iconForPresence(const QString &presenceString);
 
-    PersonDataPtr m_person;
-    QVBoxLayout *m_mainLayout;
-
-    QLabel *m_contactPixmap;
-    QLabel *m_contactNameLabel;
-    QLabel *m_contactBirthdayLabel;
-    QLabel *m_contactStatusLabel;
-    QWidget *m_contactsListWidget;
-
-    QList<AbstractPersonDetailsWidget*> m_detailWidgets;
+    Q_DECLARE_PRIVATE(PersonDetailsView)
+    PersonDetailsViewPrivate* d_ptr;
 };
 }
 

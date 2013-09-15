@@ -17,8 +17,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "matchessolver.h"
-#include "match.h"
+#include "matchessolver_p.h"
+#include "match_p.h"
 #include "personsmodel.h"
 #include <nepomuk2/datamanagement.h>
 #include <QUrl>

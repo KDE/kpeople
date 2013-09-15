@@ -18,10 +18,10 @@
 */
 
 
-#include "resourcewatcherservice.h"
+#include "resourcewatcherservice_p.h"
 #include "personsmodel.h"
-#include "personitem.h"
-#include "contactitem.h"
+#include "personitem_p.h"
+#include "contactitem_p.h"
 #include "personsmodelfeature.h"
 
 #include <Nepomuk2/Resource>

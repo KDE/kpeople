@@ -20,7 +20,7 @@
 #include "personpresentationwidget.h"
 #include "persondata.h"
 #include "personsmodel.h"
-#include "duplicatesfinder.h"
+#include "duplicatesfinder_p.h"
 
 #include <QObject>
 #include <QVBoxLayout>

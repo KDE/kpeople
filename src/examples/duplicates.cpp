@@ -22,8 +22,8 @@
 #include <QTextStream>
 
 #include <personsmodel.h>
-#include <duplicatesfinder.h>
-#include <matchessolver.h>
+#include <duplicatesfinder_p.h>
+#include <matchessolver_p.h>
 #include <personsmodelfeature.h>
 
 #include <cstdio>

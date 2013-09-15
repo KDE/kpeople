@@ -19,8 +19,8 @@
 */
 
 
-#include "personitem.h"
-#include "contactitem.h"
+#include "personitem_p.h"
+#include "contactitem_p.h"
 
 #include <Nepomuk2/Vocabulary/PIMO>
 #include <Nepomuk2/Vocabulary/NCO>

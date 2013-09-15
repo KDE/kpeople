@@ -17,7 +17,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "datasourcewatcher.h"
+#include "datasourcewatcher_p.h"
 
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"

@@ -19,7 +19,7 @@
 
 
 #include "duplicatestests.h"
-#include "duplicatesfinder.h"
+#include "duplicatesfinder_p.h"
 #include "personsmodel.h"
 #include "personsmodelfeature.h"
 

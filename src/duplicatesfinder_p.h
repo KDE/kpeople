@@ -24,7 +24,7 @@
 #include <QVector>
 #include <QUrl>
 #include "kpeople_export.h"
-#include "match.h"
+#include "match_p.h"
 
 namespace KPeople
 {

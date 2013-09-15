@@ -19,10 +19,10 @@
 
 #include "persondata.h"
 #include "personsmodel.h"
-#include "personitem.h"
+#include "personitem_p.h"
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"
-#include "datasourcewatcher.h"
+#include "datasourcewatcher_p.h"
 
 #include <Nepomuk2/Resource>
 #include <Nepomuk2/Query/Query>

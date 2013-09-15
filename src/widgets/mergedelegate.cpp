@@ -20,7 +20,7 @@
 #include "mergedelegate.h"
 #include "personsmodel.h"
 #include "mergedialog.h"
-#include <match.h>
+#include <match_p.h>
 
 #include <QPainter>
 #include <QPixmap>

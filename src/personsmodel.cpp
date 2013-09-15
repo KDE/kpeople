@@ -20,13 +20,13 @@
 */
 
 #include "personsmodel.h"
-#include "personitem.h"
-#include "contactitem.h"
-#include "resourcewatcherservice.h"
+#include "personitem_p.h"
+#include "contactitem_p.h"
+#include "resourcewatcherservice_p.h"
 #include "personsmodelfeature.h"
-#include "duplicatesfinder.h"
+#include "duplicatesfinder_p.h"
 #include "basepersonsdatasource.h"
-#include "datasourcewatcher.h"
+#include "datasourcewatcher_p.h"
 
 #include <Soprano/Query/QueryLanguage>
 #include <Soprano/QueryResultIterator>

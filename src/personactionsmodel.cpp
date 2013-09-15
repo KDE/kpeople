@@ -17,7 +17,7 @@
 */
 
 
-#include "personactionsmodel.h"
+#include "personactionsmodel_p.h"
 #include "personsmodel.h"
 #include "personpluginmanager.h"
 #include "persondata.h"

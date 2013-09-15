@@ -19,10 +19,10 @@
  *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "contactitem.h"
+#include "contactitem_p.h"
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"
-#include "personitem.h"
+#include "personitem_p.h"
 
 #include <QAction>
 

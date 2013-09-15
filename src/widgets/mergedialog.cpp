@@ -19,10 +19,10 @@
 
 #include "mergedialog.h"
 #include "mergedelegate.h"
-#include "duplicatesfinder.h"
+#include "duplicatesfinder_p.h"
 #include "persondata.h"
 #include "personsmodel.h"
-#include "matchessolver.h"
+#include "matchessolver_p.h"
 
 #include <KDebug>
 

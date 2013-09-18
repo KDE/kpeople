@@ -127,6 +127,7 @@ template <class T>
 QList<QStandardItem*> toStandardItems(const QList<T*> &items)
 {
     QList<QStandardItem*> ret;
+    ret.reserve(items.size());
     Q_FOREACH (QStandardItem *it, items) {
         ret += it;
     }

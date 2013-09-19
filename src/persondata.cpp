@@ -310,6 +310,8 @@ QStringList PersonData::groups() const
         }
     }
 
+    groups.removeDuplicates();
+
     return groups;
 }
 

@@ -53,4 +53,4 @@ void EmailPlugin::onEmailTriggered()
 }
 
 K_PLUGIN_FACTORY( EmailPluginFactory, registerPlugin<EmailPlugin>(); )
-K_EXPORT_PLUGIN( EmailPluginFactory("email_kpeople_plugin") )
+K_EXPORT_PLUGIN( EmailPluginFactory("email_kpeople_plugin", "libkpeople") )

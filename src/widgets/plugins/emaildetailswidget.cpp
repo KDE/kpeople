@@ -27,7 +27,7 @@
 #include <KLocalizedString>
 
 K_PLUGIN_FACTORY( EmailDetailsWidgetFactory, registerPlugin<EmailDetailsWidget>(); )
-K_EXPORT_PLUGIN( EmailDetailsWidgetFactory("emaildetailswidgetplugin") )
+K_EXPORT_PLUGIN( EmailDetailsWidgetFactory("emaildetailswidgetplugin", "libkpeople") )
 
 using namespace KPeople;
 

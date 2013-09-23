@@ -29,7 +29,7 @@
 #include <KPluginFactory>
 
 K_PLUGIN_FACTORY( PhoneDetailsWidgetFactory, registerPlugin<PhoneDetailsWidget>(); )
-K_EXPORT_PLUGIN( PhoneDetailsWidgetFactory("phonedetailswidgetplugin"))
+K_EXPORT_PLUGIN( PhoneDetailsWidgetFactory("phonedetailswidgetplugin", "libkpeople"))
 
 using namespace KPeople;
 

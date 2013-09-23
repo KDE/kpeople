@@ -11,6 +11,9 @@ set (CMAKE_MODULE_PATH
 set (KDE_MIN_VERSION "4.10.1")
 set (SDO_MIN_VERSION "0.7.0")
 
+set(KPEOPLE_LIB_VERSION 0.1)
+set(KPEOPLE_LIB_SOVERSION 1)
+
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (SharedDesktopOntologies ${SDO_MIN_VERSION} REQUIRED)
 find_package (NepomukCore REQUIRED)

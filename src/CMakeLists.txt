@@ -36,7 +36,7 @@ target_link_libraries (kpeople
                        ${NEPOMUK_CORE_LIBRARY}
 )
 
-set_target_properties (kpeople PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION})
+set_target_properties (kpeople PROPERTIES VERSION ${KPEOPLE_LIB_VERSION} SOVERSION ${KPEOPLE_LIB_SOVERSION})
 
 if (MSVC)
     set_target_properties (kpeople PROPERTIES

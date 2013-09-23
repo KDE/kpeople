@@ -20,9 +20,9 @@
 
 #include "persondetailsview.h"
 
-#include <Nepomuk/Resource>
-#include <Nepomuk/Vocabulary/NCO>
-#include <Nepomuk/Variant>
+#include <Nepomuk2/Resource>
+#include <Nepomuk2/Vocabulary/NCO>
+#include <Nepomuk2/Variant>
 #include <KDebug>
 #include <KIconLoader>
 #include <KStandardDirs>
@@ -52,7 +52,7 @@
 #include <QList>
 #include "abstractpersonplugin.h"
 
-using namespace Nepomuk::Vocabulary;
+using namespace Nepomuk2::Vocabulary;
 using namespace KPeople;
 
 namespace KPeople {

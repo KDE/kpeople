@@ -44,6 +44,9 @@
 #include <Nepomuk2/StoreResourcesJob>
 
 #include <KDebug>
+#include <kglobal.h>
+
+static const KCatalogLoader loader("libkpeople");
 
 using namespace KPeople;
 

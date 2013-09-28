@@ -241,7 +241,7 @@ void DuplicatesTests::duplicatesSpecificPersonSearch()
 
 void DuplicatesTests::duplicatesSearch()
 {
-    // Test a simple matching case betwee)n two person
+    // Test a simple matching case between two person
     // having contact with the same mail, using general search
 
     // Contact 1 and 1BIS = duplicates : 1 because same email

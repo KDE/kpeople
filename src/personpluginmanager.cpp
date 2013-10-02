@@ -47,7 +47,10 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 
     KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
     Q_FOREACH(const KService::Ptr &service, pluginList) {
-        plugins << service->createInstance<AbstractPersonPlugin>(0);
+        AbstractPersonPlugin *plugin = service->createInstance<AbstractPersonPlugin>(0);
+        if (plugin) {
+            plugins << plugin;
+        }
     }
 
     KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/DataSource");

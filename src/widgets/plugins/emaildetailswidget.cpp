@@ -58,6 +58,7 @@ void EmailDetailsWidget::setPerson(PersonData *person)
 
     Q_FOREACH (const QString &email, person->emails()) {
         QLabel *emailLabel = new QLabel(email, this);
+        emailLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
         layout()->addWidget(emailLabel);
     }
 }

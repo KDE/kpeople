@@ -59,6 +59,7 @@ void PhoneDetailsWidget::setPerson(PersonData *person)
 
     Q_FOREACH (const QString &phone, person->phones()) {
         QLabel *phoneLabel = new QLabel(phone, this);
+        phoneLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
         layout()->addWidget(phoneLabel);
     }
 }

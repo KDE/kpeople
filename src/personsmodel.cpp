@@ -634,6 +634,19 @@ KJob* PersonsModel::createPersonFromUris(const QList<QUrl> &uris)
         kWarning() << "not implemented yet";
     }
 
+    //TODO
+    //This makes the job synchronous, which is bad.. but there's already a synchronous call in this method anyway (line 591).
+    //If Soprano is blocked we already block our UI so this has little real impact
+
+    //we need some changes to make sure that if this method is called twice in quick succession for the same contacts
+    //otherwise we can end up making attaching a single contact to two different PIMO:Person's as we check if the contact is owned by a person whilst a merge
+    //job is happening asyncronously. This effectively breaks the database
+    //This cannot be fixed without a _signifcant_ refactor.
+
+    if (job) {
+        job->exec();
+    }
+
     return job;
 }
 

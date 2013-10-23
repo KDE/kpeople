@@ -61,6 +61,8 @@ public:
      */
     void loadData(KPeople::PersonsModel* m);
 
+    void clear();
+
     void finishLoadingData();
 
 private:

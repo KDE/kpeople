@@ -356,16 +356,21 @@ void PersonsModel::updateContact(const QUrl &uri)
 
     kDebug() << "Updating contact" << uri;
 
-    if (!d->contacts.contains(uri)) {
+    ContactItem *contact = d->contacts[uri];
+
+    if (!contact) {
         kWarning() << "Contact not found! Uri is" << uri;
         return;
     }
+
+    contact->clear();
 
     QString queryString = d->prepareQuery(uri);
 
     Soprano::Model *m = Nepomuk2::ResourceManager::instance()->mainModel();
     Soprano::Util::AsyncQuery *query = Soprano::Util::AsyncQuery::executeQuery(m, queryString, Soprano::Query::QueryLanguageSparql);
     query->setProperty("contactUri", QVariant(uri));
+
 
     connect(query, SIGNAL(nextReady(Soprano::Util::AsyncQuery*)),
             this, SLOT(nextReady(Soprano::Util::AsyncQuery*)));

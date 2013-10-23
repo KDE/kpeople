@@ -229,6 +229,13 @@ void ContactItem::loadData(PersonsModel* m)
     m->updateContact(this);
 }
 
+void ContactItem::clear()
+{
+    Q_D(ContactItem);
+
+    d->data.clear();
+}
+
 void ContactItem::finishLoadingData()
 {
     Q_D(ContactItem);

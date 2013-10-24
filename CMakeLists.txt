@@ -26,8 +26,6 @@ include_directories (${KDE4_INCLUDES}
                      ${NEPOMUK_CORE_INCLUDE_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
                      ${CMAKE_CURRENT_BINARY_DIR}
-                     ${TELEPATHY_QT4_INCLUDE_DIR}
-                     ${KTP_INCLUDE_DIR}
 )
 
 add_subdirectory (src)

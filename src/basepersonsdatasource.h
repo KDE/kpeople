@@ -22,6 +22,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <KABC/Addressee>
 
 #include "kpeople_export.h"
 
@@ -35,7 +36,11 @@ public:
     BasePersonsDataSource(QObject *parent = 0);
     virtual ~BasePersonsDataSource();
 
-    virtual QVariant dataForContact(const QString &contactId, int role) const;
+    //TODO make this async
+    virtual const KABC::AddresseeList allContacts() const;
+
+    //TODO make this async + possibly take a list
+    virtual const KABC::Addressee contact(const QString &contactId) const;
 
 Q_SIGNALS:
     void contactChanged(const QString &contactId);

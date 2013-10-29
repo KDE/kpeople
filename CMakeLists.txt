@@ -12,18 +12,20 @@ set (KDE_MIN_VERSION "4.10.1")
 set (SDO_MIN_VERSION "0.7.0")
 
 set(KPEOPLE_LIB_VERSION 0.1)
-set(KPEOPLE_LIB_SOVERSION 1)
+set(KPEOPLE_LIB_SOVERSION 2)
 
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
-find_package (SharedDesktopOntologies ${SDO_MIN_VERSION} REQUIRED)
-find_package (NepomukCore REQUIRED)
-find_package (Soprano REQUIRED)
+find_package (KdepimLibs REQUIRED)
+
+find_package (SharedDesktopOntologies ${SDO_MIN_VERSION} REQUIRED) #TODO Remove
+find_package (NepomukCore REQUIRED) #TODO Remove
+find_package (Soprano REQUIRED) #TODO Remove
 
 include (KDE4Defaults)
 include (MacroLibrary)
 
 include_directories (${KDE4_INCLUDES}
-                     ${NEPOMUK_CORE_INCLUDE_DIR}
+                     ${NEPOMUK_CORE_INCLUDE_DIR} #TODO, Remove
                      ${CMAKE_CURRENT_SOURCE_DIR}
                      ${CMAKE_CURRENT_BINARY_DIR}
 )

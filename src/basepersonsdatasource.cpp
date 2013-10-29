@@ -28,12 +28,15 @@ BasePersonsDataSource::BasePersonsDataSource(QObject *parent)
 
 BasePersonsDataSource::~BasePersonsDataSource()
 {
+
 }
 
-QVariant BasePersonsDataSource::dataForContact(const QString &contactId, int role) const
+const KABC::AddresseeList BasePersonsDataSource::allContacts() const
 {
-    Q_UNUSED(contactId);
-    Q_UNUSED(role);
+    return KABC::AddresseeList();
+}
 
-    return QVariant();
+const KABC::Addressee BasePersonsDataSource::contact(const QString& contactId) const
+{
+    return KABC::Addressee();
 }

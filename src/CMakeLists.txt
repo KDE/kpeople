@@ -2,38 +2,41 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-if (ENABLE_EXAMPLES)
-  add_subdirectory(examples)
-endif (ENABLE_EXAMPLES)
-if (KDE4_BUILD_TESTS)
-  add_subdirectory(autotests)
-endif (KDE4_BUILD_TESTS)
-add_subdirectory(declarative)
-add_subdirectory(plugins)
-add_subdirectory(widgets)
+# if (ENABLE_EXAMPLES)
+#   add_subdirectory(examples)
+# endif (ENABLE_EXAMPLES)
+# if (KDE4_BUILD_TESTS)
+#   add_subdirectory(autotests)
+# endif (KDE4_BUILD_TESTS)
+# add_subdirectory(declarative)
+# add_subdirectory(plugins)
+# add_subdirectory(widgets)
 
 
-kde4_add_library (kpeople SHARED
-    abstractpersonplugin.cpp
-    personsmodelfeature.cpp
-    contactitem.cpp
-    datasourcewatcher.cpp
-    personitem.cpp
-    personsmodel.cpp
-    persondata.cpp
-    resourcewatcherservice.cpp
-    duplicatesfinder.cpp
-    matchessolver.cpp
-    match.cpp
-    personactionsmodel.cpp
-    personpluginmanager.cpp
+kde4_add_library (kpeople  SHARED
+      metacontact.cpp
+#     abstractpersonplugin.cpp
+#     personsmodelfeature.cpp
+#     contactitem.cpp
+#     datasourcewatcher.cpp
+#     personitem.cpp
+#     personsmodel.cpp
+#     persondata.cpp
+#     resourcewatcherservice.cpp
+#     duplicatesfinder.cpp
+#     matchessolver.cpp
+#     match.cpp
+#     personactionsmodel.cpp
+#     personpluginmanager.cpp
     basepersonsdatasource.cpp
 )
 
 target_link_libraries (kpeople
                        ${QT_QTCORE_LIBRARIES}
                        ${KDE4_KIO_LIBS}
-                       ${NEPOMUK_CORE_LIBRARY}
+                       ${NEPOMUK_CORE_LIBRARY} #TODO
+ #                      ${KDEPIMLIBS_AKONADI_LIBS}
+                       ${KDEPIMLIBS_KABC_LIBS}
 )
 
 set_target_properties (kpeople PROPERTIES VERSION ${KPEOPLE_LIB_VERSION} SOVERSION ${KPEOPLE_LIB_SOVERSION})

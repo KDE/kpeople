@@ -27,14 +27,13 @@ kde4_add_library (kpeople  SHARED
 #     matchessolver.cpp
 #     match.cpp
 #     personactionsmodel.cpp
-#     personpluginmanager.cpp
+    personpluginmanager.cpp
     basepersonsdatasource.cpp
 )
 
 target_link_libraries (kpeople
                        ${QT_QTCORE_LIBRARIES}
                        ${KDE4_KIO_LIBS}
-                       ${NEPOMUK_CORE_LIBRARY} #TODO
  #                      ${KDEPIMLIBS_AKONADI_LIBS}
                        ${KDEPIMLIBS_KABC_LIBS}
 )

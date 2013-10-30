@@ -18,13 +18,12 @@
 
 
 #include "personpluginmanager.h"
-#include "abstractpersonplugin.h"
 #include "basepersonsdatasource.h"
 
-#include <QAction>
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginInfo>
+#include <KDebug>
 
 #include <kdemacros.h>
 
@@ -35,46 +34,30 @@ class PersonPluginManagerPrivate
 public:
     PersonPluginManagerPrivate();
     ~PersonPluginManagerPrivate();
-    QList<AbstractPersonPlugin*> plugins;
-    BasePersonsDataSource *presencePlugin;
+    QList<BasePersonsDataSource*> dataSourcePlugins;
 };
 
 K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 {
-    presencePlugin = 0;
-
-    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
+    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
     Q_FOREACH(const KService::Ptr &service, pluginList) {
-        plugins << service->createInstance<AbstractPersonPlugin>(0);
-    }
-
-    KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/DataSource");
-    if (!imService.isNull()) {
-        presencePlugin = imService->createInstance<BasePersonsDataSource>(0);
-    }
-    if (!presencePlugin) {
-        presencePlugin = new BasePersonsDataSource(0);
+        BasePersonsDataSource* dataSource = service->createInstance<BasePersonsDataSource>(0);
+        if (dataSource) {
+            dataSourcePlugins << dataSource;
+        } else {
+            kWarning() << "Failed to create data source";
+        }
     }
 }
 
 PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 {
-    qDeleteAll(plugins);
-    presencePlugin->deleteLater();
+    qDeleteAll(dataSourcePlugins);
 }
 
-QList<QAction*> PersonPluginManager::actionsForPerson(PersonDataPtr person, QObject *parent)
+QList<BasePersonsDataSource*> PersonPluginManager::dataSourcePlugins()
 {
-    QList<QAction*> actions;
-    Q_FOREACH(AbstractPersonPlugin *plugin, s_instance->plugins) {
-        actions << plugin->actionsForPerson(person, parent);
-    }
-    return actions;
-}
-
-BasePersonsDataSource* PersonPluginManager::presencePlugin()
-{
-    return s_instance->presencePlugin;
+    return s_instance->dataSourcePlugins;
 }

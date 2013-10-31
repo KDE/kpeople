@@ -31,12 +31,12 @@ BasePersonsDataSource::~BasePersonsDataSource()
 
 }
 
-const KABC::AddresseeList BasePersonsDataSource::allContacts() const
+const KABC::AddresseeList BasePersonsDataSource::allContacts()
 {
     return KABC::AddresseeList();
 }
 
-const KABC::Addressee BasePersonsDataSource::contact(const QString& contactId) const
+const KABC::Addressee BasePersonsDataSource::contact(const QString& contactId)
 {
     return KABC::Addressee();
 }

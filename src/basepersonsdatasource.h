@@ -29,6 +29,13 @@
 namespace KPeople
 {
 
+    //later
+//     FetchContactsJob() : public KJob
+// {
+//
+//     QMap<id, KABC::Addressee> contacts();
+// } and the virtual methods return this.
+
 class KPEOPLE_EXPORT BasePersonsDataSource : public QObject
 {
     Q_OBJECT
@@ -37,13 +44,16 @@ public:
     virtual ~BasePersonsDataSource();
 
     //TODO make this async
-    virtual const KABC::AddresseeList allContacts() const;
+    virtual const KABC::AddresseeList allContacts();
 
     //TODO make this async + possibly take a list
-    virtual const KABC::Addressee contact(const QString &contactId) const;
+    virtual const KABC::Addressee contact(const QString &contactId);
 
 Q_SIGNALS:
     void contactChanged(const QString &contactId);
+    void contactAdded(const QString &contactId);
+    void contactRemoved(const QString &contactId);
+
 };
 
 }

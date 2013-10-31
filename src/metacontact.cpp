@@ -104,15 +104,15 @@ void MetaContact::updateContacts(const KABC::AddresseeList& contacts)
         }
 
         if (d->personAddressee.givenName().isEmpty() && !contact.givenName().isEmpty()) {
-            d->personAddressee.givenName(contact.givenName());
+            d->personAddressee.setGivenName(contact.givenName());
         }
 
         if (d->personAddressee.additionalName().isEmpty() && !contact.additionalName().isEmpty()) {
-            d->personAddressee.additionalName(contact.additionalName());
+            d->personAddressee.setAdditionalName(contact.additionalName());
         }
 
         if (d->personAddressee.prefix().isEmpty() && !contact.prefix().isEmpty()) {
-            d->personAddressee.prefix(contact.prefix());
+            d->personAddressee.setPrefix(contact.prefix());
         }
 
         if (d->personAddressee.suffix().isEmpty() && !contact.suffix().isEmpty()) {

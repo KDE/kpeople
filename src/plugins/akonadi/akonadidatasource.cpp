@@ -25,6 +25,15 @@
 #include <Akonadi/Item>
 #include <Akonadi/ItemFetchJob>
 #include <Akonadi/ItemFetchScope>
+#include <Akonadi/Collection>
+#include <Akonadi/CollectionFetchJob>
+#include <Akonadi/CollectionFetchScope>
+
+#include <KABC/Addressee>
+
+#include <QDebug>
+
+using namespace Akonadi;
 
 AkonadiDataSource::AkonadiDataSource(QObject *parent):
     BasePersonsDataSource(parent)
@@ -36,10 +45,35 @@ AkonadiDataSource::~AkonadiDataSource()
 
 }
 
-const KABC::Addressee AkonadiDataSource::contact(const QString& contactId) const
+const KABC::AddresseeList AkonadiDataSource::allContacts()
+{
+    KABC::AddresseeList addressees;
+
+    CollectionFetchJob *fetchJob = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive, this);
+    fetchJob->fetchScope().setContentMimeTypes( QStringList() << "text/directory" );
+    fetchJob->exec();
+    QList<Collection> contactCollections;
+    foreach (const Collection &collection, fetchJob->collections()) {
+        if (collection.contentMimeTypes().contains( KABC::Addressee::mimeType() ) ) {
+            ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
+            itemFetchJob->fetchScope().fetchFullPayload();
+            itemFetchJob->exec();
+            foreach (const Item &item, itemFetchJob->items()) {
+                if (item.hasPayload<KABC::Addressee>()) {
+                    addressees << item.payload<KABC::Addressee>();
+                }
+            }
+        }
+    }
+
+    return addressees;
+}
+
+
+const KABC::Addressee AkonadiDataSource::contact(const QString& contactId)
 {
     Akonadi::Item item = Akonadi::Item::fromUrl(KUrl(contactId));
-    Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(item, 0);
+    Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(item, this);
     fetchJob->fetchScope().fetchFullPayload();
     fetchJob->exec();
     if (fetchJob->items().isEmpty()) {

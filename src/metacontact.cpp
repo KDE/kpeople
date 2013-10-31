@@ -31,11 +31,16 @@ public:
 };
 
 
-MetaContact::MetaContact(const KABC::AddresseeList& contacts)
+MetaContact::MetaContact(const KABC::AddresseeList& contacts):
+d (new MetaContactData)
 {
     updateContacts(contacts);
 }
 
+MetaContact::~MetaContact()
+{
+
+}
 
 KABC::AddresseeList MetaContact::contacts() const
 {
@@ -88,22 +93,40 @@ void MetaContact::updateContacts(const KABC::AddresseeList& contacts)
         }
 
         if (d->personAddressee.formattedName().isEmpty() && !contact.formattedName().isEmpty()) {
-            d->personAddressee.setFamilyName(contact.formattedName());
+            d->personAddressee.setFormattedName(contact.formattedName());
         }
 
         //TODO all the remaining items below.
 
         //Maybe we can use a macro?
+        if (d->personAddressee.familyName().isEmpty() && !contact.familyName().isEmpty()) {
+            d->personAddressee.setFamilyName(contact.familyName());
+        }
 
-//         void setFamilyName( const QString &familyName );
-//         void setGivenName( const QString &givenName );
-//         void setAdditionalName( const QString &additionalName );
-//         void setPrefix( const QString &prefix );
-//         void setSuffix( const QString &suffix );
-//         void setNickName( const QString &nickName );
+        if (d->personAddressee.givenName().isEmpty() && !contact.givenName().isEmpty()) {
+            d->personAddressee.givenName(contact.givenName());
+        }
+
+        if (d->personAddressee.additionalName().isEmpty() && !contact.additionalName().isEmpty()) {
+            d->personAddressee.additionalName(contact.additionalName());
+        }
+
+        if (d->personAddressee.prefix().isEmpty() && !contact.prefix().isEmpty()) {
+            d->personAddressee.prefix(contact.prefix());
+        }
+
+        if (d->personAddressee.suffix().isEmpty() && !contact.suffix().isEmpty()) {
+            d->personAddressee.setSuffix(contact.suffix());
+        }
+
+        if (d->personAddressee.nickName().isEmpty() && !contact.nickName().isEmpty()) {
+            d->personAddressee.setNickName(contact.nickName());
+        }
 
 //TODO merge Mck18's magic code that mixes years and dates
 //         void setBirthday( const QDateTime &birthday );
+
+
 //         void setMailer( const QString &mailer );
 //         void setTimeZone( const TimeZone &timeZone );
 //         void setGeo( const Geo &geo );

@@ -29,7 +29,11 @@ class MetaContactData;
 
 #include <KABC/Addressee>
 
-class MetaContact
+//TODO this is only exported for use in a test temporarily
+
+#include "kpeople_export.h"
+
+class KPEOPLE_EXPORT MetaContact
 {
 public:
     MetaContact(const KABC::AddresseeList &contacts);
@@ -40,12 +44,9 @@ public:
     KABC::AddresseeList contacts() const;
     KABC::Addressee personAddressee() const;
 
-
-private:
     void updateContacts(const KABC::AddresseeList& contacts);
 
     QSharedDataPointer<MetaContactData> d;
-
 };
 
 #endif // METACONTACT_H

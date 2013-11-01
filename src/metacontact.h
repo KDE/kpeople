@@ -36,9 +36,11 @@ class MetaContactData;
 class KPEOPLE_EXPORT MetaContact
 {
 public:
+    MetaContact();
     MetaContact(const KABC::AddresseeList &contacts);
-    MetaContact(const MetaContact& other);
+    MetaContact(const MetaContact &other);
     ~MetaContact();
+
     MetaContact& operator=(const MetaContact& other);
 
     KABC::AddresseeList contacts() const;

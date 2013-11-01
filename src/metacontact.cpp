@@ -30,17 +30,41 @@ public:
     KABC::Addressee personAddressee;
 };
 
+MetaContact::MetaContact():
+d(new MetaContactData)
+{
 
-MetaContact::MetaContact(const KABC::AddresseeList& contacts):
+}
+
+MetaContact::MetaContact(const KABC::AddresseeList &contacts):
 d (new MetaContactData)
 {
     updateContacts(contacts);
+}
+
+MetaContact::MetaContact(const MetaContact &other)
+:d (other.d)
+{
+
+}
+
+MetaContact& MetaContact::operator=( const MetaContact &other )
+{
+  if ( this != &other )
+    d = other.d;
+
+  return *this;
 }
 
 MetaContact::~MetaContact()
 {
 
 }
+
+// MetaContact& MetaContact::operator=(const MetaContact& other)
+// {
+//
+// }
 
 KABC::AddresseeList MetaContact::contacts() const
 {

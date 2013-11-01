@@ -3,7 +3,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 # if (ENABLE_EXAMPLES)
-#   add_subdirectory(examples)
+  add_subdirectory(examples)
 # endif (ENABLE_EXAMPLES)
 # if (KDE4_BUILD_TESTS)
 #   add_subdirectory(autotests)
@@ -26,6 +26,7 @@ kde4_add_library (kpeople  SHARED
 #     duplicatesfinder.cpp
 #     matchessolver.cpp
 #     match.cpp
+    personsmodel.cpp
 #     personactionsmodel.cpp
     personpluginmanager.cpp
     basepersonsdatasource.cpp
@@ -34,7 +35,6 @@ kde4_add_library (kpeople  SHARED
 target_link_libraries (kpeople
                        ${QT_QTCORE_LIBRARIES}
                        ${KDE4_KIO_LIBS}
- #                      ${KDEPIMLIBS_AKONADI_LIBS}
                        ${KDEPIMLIBS_KABC_LIBS}
 )
 

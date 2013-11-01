@@ -50,12 +50,12 @@ int main(int argc, char** argv)
 
     PersonsModel *model = new PersonsModel(&view);
 
-    QList<PersonsModelFeature> features;
-    features << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Optional)
-             << PersonsModelFeature::avatarModelFeature(PersonsModelFeature::Optional)
-             << PersonsModelFeature::imModelFeature(PersonsModelFeature::Optional)
-             << PersonsModelFeature::fullNameModelFeature(PersonsModelFeature::Optional);
-    model->startQuery(features);
+//     QList<PersonsModelFeature> features;
+//     features << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Optional)
+//              << PersonsModelFeature::avatarModelFeature(PersonsModelFeature::Optional)
+//              << PersonsModelFeature::imModelFeature(PersonsModelFeature::Optional)
+//              << PersonsModelFeature::fullNameModelFeature(PersonsModelFeature::Optional);
+//     model->startQuery(features);
 
     view.setModel(model);
     view.setSortingEnabled(true);

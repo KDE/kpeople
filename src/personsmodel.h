@@ -25,13 +25,7 @@
 
 #include "kpeople_export.h"
 
-#include <QStandardItemModel>
-
-class KJob;
-class QUrl;
-
-namespace Nepomuk2 { class Resource; }
-namespace Soprano { namespace Util { class AsyncQuery; } }
+#include <QAbstractListModel>
 
 namespace KPeople
 {
@@ -41,7 +35,7 @@ class PersonItem;
 struct PersonsModelPrivate;
 
 
-class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
+class KPEOPLE_EXPORT PersonsModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_DISABLE_COPY(PersonsModel)
@@ -71,92 +65,49 @@ public:
 
     virtual ~PersonsModel();
 
-    /**
-     * Start querying the database using the supplied features
-     */
-    void startQuery(const QList<PersonsModelFeature> &features);
-
-    /**
-     * Creates PIMO:Person with NCO:PersonContacts as grounding occurances
-     *  The list that it's passed can contain uris of both Person and PersonContacts,
-     *  the method checks their type and does the right thing(tm)
-     *  @param uris list of Person and PersonContact uris
-     */
-    Q_SCRIPTABLE static KJob* createPersonFromUris(const QList<QUrl> &uris);
-
-    /**
-     * Removes the link between contacts and the given person
-     *  @param personUri PIMO:Person uri to unlink the contacts from
-     *  @param contactUris list of NCO:PersonContacts to unlink
-     */
-    Q_SCRIPTABLE static void unlinkContactFromPerson(const QUrl &personUri, const QList<QUrl> &contactUris);
-
-    Q_SCRIPTABLE QModelIndex indexForUri(const QUrl &uri) const;
-
-    Q_SCRIPTABLE QList<QModelIndex> indexesForUris(const QVariantList& uris) const;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
 
 Q_SIGNALS:
     void modelInitialized();
 
 private Q_SLOTS:
-    void jobFinished(KJob *job);
-    void query(const QString &queryString);
-    void nextReady(Soprano::Util::AsyncQuery *query);
-    void queryFinished(Soprano::Util::AsyncQuery *query);
-    void contactChanged(const QUrl &uri);
-    void updateContactFinished(Soprano::Util::AsyncQuery *query);
+    void onContactsFetched();
 
 private:
-    /**
-     * @return actual features used to populate the model
-     */
-    QList<PersonsModelFeature> modelFeatures() const;
-    ContactItem* contactItemForUri(const QUrl &uri) const;
-    PersonItem* personItemForUri(const QUrl &uri) const;
-    QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
-
-    /**
-     * Adds new contact to the model with @param uri as its URI
-     */
-    void addContact(const QUrl &uri);
-
-    /**
-     * Refreshes data of the contact given by @param uri
-     */
-    void updateContact(const QUrl &uri);
-
-    /**
-     * Convenience function
-     */
-    void updateContact(ContactItem *contact);
-
-    /**
-     * Removes contact with @param uri from the model (not Nepomuk)
-     */
-    void removeContact(const QUrl &uri);
-
-    /**
-     * Adds new person to the model with @param uri as its URI
-     */
-    PersonItem* addPerson(const QUrl &uri);
-
-    /**
-     * Removes person with @param uri from the model (not Nepomuk)
-     */
-    void removePerson(const QUrl &uri);
-
-    /**
-     * Adds contacts to existing PIMO:Person
-     */
-    void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-
-    /**
-     * Removes given contacts from existing PIMO:Person
-     */
-    void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-
-    friend class ResourceWatcherService;
-    friend class ContactItem;
+//     /**
+//      * Adds new contact to the model with @param uri as its URI
+//      */
+//     void addContact(const QUrl &uri);
+//
+//     /**
+//      * Refreshes data of the contact given by @param uri
+//      */
+//     void updateContact(const QUrl &uri);
+//
+//     /* Removes contact with @param uri from the model
+//      */
+//     void removeContact(const QUrl &uri);
+//
+//     /**
+//      * Adds new person to the model with @param uri as its URI
+//      */
+//     void addPerson(const QUrl &uri);
+//
+//     /**
+//      * Removes person with @param uri from the model (not Nepomuk)
+//      */
+//     void removePerson(const QUrl &uri);
+//
+//     /**
+//      * Adds contacts to existing PIMO:Person
+//      */
+//     void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
+//
+//     /**
+//      * Removes given contacts from existing PIMO:Person
+//      */
+//     void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);

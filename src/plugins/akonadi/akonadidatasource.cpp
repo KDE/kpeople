@@ -45,9 +45,9 @@ AkonadiDataSource::~AkonadiDataSource()
 
 }
 
-const KABC::AddresseeList AkonadiDataSource::allContacts()
+const KABC::Addressee::Map AkonadiDataSource::allContacts()
 {
-    KABC::AddresseeList addressees;
+    KABC::Addressee::Map addressees;
 
     CollectionFetchJob *fetchJob = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive, this);
     fetchJob->fetchScope().setContentMimeTypes( QStringList() << "text/directory" );
@@ -60,7 +60,7 @@ const KABC::AddresseeList AkonadiDataSource::allContacts()
             itemFetchJob->exec();
             foreach (const Item &item, itemFetchJob->items()) {
                 if (item.hasPayload<KABC::Addressee>()) {
-                    addressees << item.payload<KABC::Addressee>();
+//                     qDebug() << item.url().prettyUrl();
                 }
             }
         }

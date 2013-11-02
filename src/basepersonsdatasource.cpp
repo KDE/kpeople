@@ -31,9 +31,9 @@ BasePersonsDataSource::~BasePersonsDataSource()
 
 }
 
-const KABC::AddresseeList BasePersonsDataSource::allContacts()
+const KABC::Addressee::Map BasePersonsDataSource::allContacts()
 {
-    return KABC::AddresseeList();
+    return KABC::Addressee::Map();
 }
 
 const KABC::Addressee BasePersonsDataSource::contact(const QString& contactId)

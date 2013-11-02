@@ -33,7 +33,7 @@ public:
     AkonadiDataSource(QObject *parent=0);
     virtual ~AkonadiDataSource();
 
-    virtual const KABC::AddresseeList allContacts();
+    virtual const KABC::Addressee::Map allContacts();
     virtual const KABC::Addressee contact(const QString& contactId);
 };
 

@@ -9,7 +9,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 #   add_subdirectory(autotests)
 # endif (KDE4_BUILD_TESTS)
 # add_subdirectory(declarative)
-# add_subdirectory(plugins)
+add_subdirectory(plugins)
 # add_subdirectory(widgets)
 
 
@@ -30,11 +30,15 @@ kde4_add_library (kpeople  SHARED
 #     personactionsmodel.cpp
     personpluginmanager.cpp
     basepersonsdatasource.cpp
+
+    #temp
+    plugins/akonadi/akonadidatasource.cpp
 )
 
 target_link_libraries (kpeople
                        ${QT_QTCORE_LIBRARIES}
                        ${KDE4_KIO_LIBS}
+                       ${KDEPIMLIBS_AKONADI_LIBS} #can be removed when we remove temp bodge above
                        ${KDEPIMLIBS_KABC_LIBS}
 )
 

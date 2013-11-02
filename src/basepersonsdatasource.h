@@ -44,7 +44,7 @@ public:
     virtual ~BasePersonsDataSource();
 
     //TODO make this async
-    virtual const KABC::AddresseeList allContacts();
+    virtual const KABC::Addressee::Map allContacts();
 
     //TODO make this async + possibly take a list
     virtual const KABC::Addressee contact(const QString &contactId);

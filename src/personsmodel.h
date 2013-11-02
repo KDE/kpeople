@@ -40,8 +40,6 @@ struct PersonsModelPrivate;
 class KPEOPLE_EXPORT PersonsModel : public QAbstractListModel
 {
     Q_OBJECT
-    Q_DISABLE_COPY(PersonsModel)
-
 public:
     enum Role {
         UriRole = Qt::UserRole, ///nepomuk URI STRING
@@ -75,9 +73,14 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onContactsFetched();
-    void addPerson(const MetaContact &mc);
 
 private:
+    Q_DISABLE_COPY(PersonsModel)
+
+    //methods that manipulate the model
+    void addPerson(const MetaContact &mc);
+    void removePerson(const QString &id);
+
 //     /**
 //      * Adds new contact to the model with @param uri as its URI
 //      */

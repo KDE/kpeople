@@ -21,6 +21,8 @@
 #include <QTreeView>
 #include <QHeaderView>
 #include <QStyledItemDelegate>
+#include <QSortFilterProxyModel>
+
 #include <qpainter.h>
 
 #include <personsmodel.h>
@@ -57,7 +59,10 @@ int main(int argc, char** argv)
 //              << PersonsModelFeature::fullNameModelFeature(PersonsModelFeature::Optional);
 //     model->startQuery(features);
 
-    view.setModel(model);
+    QSortFilterProxyModel *sortFilter = new QSortFilterProxyModel(&view);
+    sortFilter->setSourceModel(model);
+
+    view.setModel(sortFilter);
     view.setSortingEnabled(true);
     view.show();
 

@@ -25,7 +25,6 @@
 
 #include <QSharedDataPointer>
 
-class MetaContactData;
 
 #include <KABC/Addressee>
 
@@ -33,16 +32,20 @@ class MetaContactData;
 
 #include "kpeople_export.h"
 
+namespace KPeople {
+class MetaContactData;
+
 class KPEOPLE_EXPORT MetaContact
 {
 public:
     MetaContact();
-    MetaContact(const KABC::AddresseeList &contacts);
+    MetaContact(const QString &id, const KABC::AddresseeList &contacts);
     MetaContact(const MetaContact &other);
     ~MetaContact();
 
     MetaContact& operator=(const MetaContact& other);
 
+    QString id() const;
     KABC::AddresseeList contacts() const;
     KABC::Addressee personAddressee() const;
 
@@ -50,5 +53,6 @@ public:
 
     QSharedDataPointer<MetaContactData> d;
 };
+}
 
 #endif // METACONTACT_H

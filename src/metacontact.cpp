@@ -23,12 +23,17 @@
 #include "metacontact.h"
 #include <QSharedData>
 
+namespace KPeople {
 class MetaContactData : public QSharedData
 {
 public:
+    QString id;
     KABC::AddresseeList contacts;
     KABC::Addressee personAddressee;
 };
+}
+
+using namespace KPeople;
 
 MetaContact::MetaContact():
 d(new MetaContactData)
@@ -36,9 +41,10 @@ d(new MetaContactData)
 
 }
 
-MetaContact::MetaContact(const KABC::AddresseeList &contacts):
+MetaContact::MetaContact(const QString& id, const KABC::AddresseeList& contacts):
 d (new MetaContactData)
 {
+    d->id = id;
     updateContacts(contacts);
 }
 
@@ -61,10 +67,12 @@ MetaContact::~MetaContact()
 
 }
 
-// MetaContact& MetaContact::operator=(const MetaContact& other)
-// {
-//
-// }
+QString MetaContact::id() const
+{
+    return d->id;
+}
+
+
 
 KABC::AddresseeList MetaContact::contacts() const
 {

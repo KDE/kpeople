@@ -37,6 +37,7 @@ kde4_add_library (kpeople  SHARED
 
 target_link_libraries (kpeople
                        ${QT_QTCORE_LIBRARIES}
+                       ${QT_QTSQL_LIBRARIES}
                        ${KDE4_KIO_LIBS}
                        ${KDEPIMLIBS_AKONADI_LIBS} #can be removed when we remove temp bodge above
                        ${KDEPIMLIBS_KABC_LIBS}

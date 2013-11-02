@@ -7,11 +7,15 @@
 #include <KABC/Addressee>
 
 #include <QDebug>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 
 namespace KPeople {
 class PersonsModelPrivate{
 public:
+    //hash of person objects indexed by ID
     QHash<QString /*Person ID*/, MetaContact> metacontacts;
+    //a list so we have an order in the model
     QStringList personIds;
 };
 }
@@ -56,10 +60,21 @@ void PersonsModel::onContactsFetched() //TODO async this
     QMultiHash<QString /*PersonID*/, QString /*ContactID*/> contactMapping;
     KABC::Addressee::Map addresseeMap;
 
-    //temp test
-    contactMapping.insertMulti("personA", "akonadi://?item=6743");
-    contactMapping.insertMulti("personA", "akonadi://?item=6727");
-    contactMapping.insertMulti("personA", "akonadi://?item=22");
+    //load persons from DB
+    //TODO make this a separate class whcih also does the dbus stuff
+
+    //TODO create table if not exists persons (contactID varchar(255) unique not null, personID int);
+    QSqlDatabase db= QSqlDatabase::addDatabase("QSQLITE3");
+    db.setDatabaseName("/home/david/persondb");
+    db.open();
+    qDebug() << db.isOpen();
+
+    QSqlQuery query = db.exec("SELECT personID, contactID FROM persons");
+    while (query.next()) {
+        const QString contactID = query.value(1).toString();
+        const QString personId = "kpeople://" + query.value(0).toString(); // we store as ints internally, convert it to a string here
+        contactMapping.insertMulti(personId, contactID);
+    }
 
     //temporary code, fetch data from all plugins
     KABC::AddresseeList contactList;
@@ -101,3 +116,19 @@ void PersonsModel::addPerson(const KPeople::MetaContact& mc)
     d->personIds << id;
     endInsertRows();
 }
+
+void PersonsModel::removePerson(const QString& id)
+{
+    Q_D(PersonsModel);
+
+    int row = d->personIds.indexOf(id);
+    if (row < 0) { //item not found
+        return;
+    }
+
+    beginRemoveRows(QModelIndex(), row, row);
+    d->metacontacts.remove(id);
+    d->personIds.removeOne(id);
+    endRemoveRows();
+}
+

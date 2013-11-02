@@ -24,6 +24,7 @@
 #define PERSONS_MODEL_H
 
 #include "kpeople_export.h"
+#include "metacontact.h" //FIXME
 
 #include <QAbstractListModel>
 
@@ -32,6 +33,7 @@ namespace KPeople
 class PersonsModelFeature;
 class ContactItem;
 class PersonItem;
+class MetaContact;
 struct PersonsModelPrivate;
 
 
@@ -73,6 +75,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void onContactsFetched();
+    void addPerson(const MetaContact &mc);
 
 private:
 //     /**

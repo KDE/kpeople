@@ -39,7 +39,8 @@ QVariant PersonsModel::data(const QModelIndex& index, int role) const
 
     const QString &id = d->personIds[index.row()];
     if (role == Qt::DisplayRole) {
-        return d->metacontacts[id].personAddressee().name();
+//         return id;
+        return d->metacontacts[id].personAddressee().formattedName();
     } //TODO Hash<int, Field>
 
     return QVariant();
@@ -71,8 +72,8 @@ void PersonsModel::onContactsFetched() //TODO async this
 
     QSqlQuery query = db.exec("SELECT personID, contactID FROM persons");
     while (query.next()) {
-        const QString contactID = query.value(1).toString();
         const QString personId = "kpeople://" + query.value(0).toString(); // we store as ints internally, convert it to a string here
+        const QString contactID = query.value(1).toString();
         contactMapping.insertMulti(personId, contactID);
     }
 
@@ -87,19 +88,20 @@ void PersonsModel::onContactsFetched() //TODO async this
         KABC::AddresseeList addressees;
         qDebug() << contactMapping.values(key);
         foreach (const QString &contact, contactMapping.values(key)) {
-            addressees << addresseeMap.take(contact);
+            if (addresseeMap.contains(contact)) {
+                addressees << addresseeMap.take(contact);
+            }
         }
         qDebug() << "adding contact " << key << addressees.size();
-        addPerson(MetaContact(key, addressees));
+        if (!addresseeMap.isEmpty()) {
+            addPerson(MetaContact(key, addressees));
+        }
     }
 
-    qDebug() << addresseeMap.size();
-    qDebug() << addresseeMap["akonadi://?item=6743"].isEmpty();
-
     //add remaining contacts
-    foreach (const KABC::Addressee &addressee, addresseeMap.values()) {
-        //FIXME proper iterator
-        addPerson(MetaContact(addressee.uid(), KABC::AddresseeList() << addressee));
+    KABC::Addressee::Map::const_iterator i;
+    for (i = addresseeMap.constBegin(); i != addresseeMap.constEnd(); ++i) {
+        addPerson(MetaContact(i.key(), KABC::AddresseeList() << i.value()));
     }
 }
 

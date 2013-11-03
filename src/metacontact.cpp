@@ -86,17 +86,17 @@ KABC::Addressee MetaContact::personAddressee() const
 
 void MetaContact::updateContacts(const KABC::AddresseeList& contacts)
 {
-    if (d->contacts == contacts) {
-        return;
-    }
-
     d->contacts = contacts;
     //reset person vcard, then populate it with all the data we have available
     //always favour the first item
 
     //TODO - long term goal: resource priority - local vcards for "people" trumps anything else. So we can set a preferred name etc.
 
-    //TODO - optimisation, if only one contact, simply set d->personAddressee to contacts.first() ?
+    //Optimisation, if only one contact use that for everything
+    if (contacts.size() == 1) {
+        d->personAddressee = contacts.first();
+        return;
+    }
 
     d->personAddressee = KABC::Addressee();
 

@@ -60,6 +60,7 @@ int main(int argc, char** argv)
 //     model->startQuery(features);
 
     QSortFilterProxyModel *sortFilter = new QSortFilterProxyModel(&view);
+    sortFilter->setDynamicSortFilter(true);
     sortFilter->setSourceModel(model);
 
     view.setModel(sortFilter);

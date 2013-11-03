@@ -25,6 +25,8 @@
 
 #include <basepersonsdatasource.h>
 
+#include <Akonadi/Monitor>
+
 class AkonadiDataSource : public KPeople::BasePersonsDataSource
 {
     Q_OBJECT
@@ -35,6 +37,12 @@ public:
 
     virtual const KABC::Addressee::Map allContacts();
     virtual const KABC::Addressee contact(const QString& contactId);
+private Q_SLOTS:
+    void onItemAdded(const Akonadi::Item &item);
+    void onItemChanged(const Akonadi::Item &item);
+    void onItemRemoved(const Akonadi::Item &item);
+private:
+    Akonadi::Monitor *m_monitor;
 };
 
 #endif // AKONADIDATASOURCE_H

@@ -26,6 +26,12 @@ PersonsModel::PersonsModel(QObject *parent):
     QAbstractListModel(parent),
     d_ptr(new PersonsModelPrivate)
 {
+    foreach (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
+        connect(dataSource, SIGNAL(contactAdded(QString)), SLOT(onContactAdded(QString)));
+        connect(dataSource, SIGNAL(contactChanged(QString)), SLOT(onContactChanged(QString)));
+        connect(dataSource, SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
+    }
+
     onContactsFetched();
 }
 
@@ -61,10 +67,9 @@ void PersonsModel::onContactsFetched() //TODO async this
     QMultiHash<QString /*PersonID*/, QString /*ContactID*/> contactMapping;
     KABC::Addressee::Map addresseeMap;
 
-    //load persons from DB
     //TODO make this a separate class whcih also does the dbus stuff
 
-    //TODO create table if not exists persons (contactID varchar(255) unique not null, personID int);
+    //TODO create table if not exists persons (contactID varchar unique not null, personID int not null);
     QSqlDatabase db= QSqlDatabase::addDatabase("QSQLITE3");
     db.setDatabaseName("/home/david/persondb");
     db.open();
@@ -105,6 +110,49 @@ void PersonsModel::onContactsFetched() //TODO async this
     }
 }
 
+void PersonsModel::onContactAdded(const QString &contactId)
+{
+    //TODO map to personId
+    const QString &personId = contactId;
+
+    BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
+
+    //TODO async with an onContactFetched()
+    const KABC::Addressee &contact = dataSource->contact(contactId);
+    addPerson(MetaContact(personId, KABC::AddresseeList() << contact));
+}
+
+void PersonsModel::onContactChanged(const QString &contactId)
+{
+    Q_D(PersonsModel);
+    const QString &personId = contactId;
+
+    //TODO async with an onContactFetched()
+    BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
+    KABC::Addressee contact = dataSource->contact(contactId);
+
+    //FIXME this is broken
+    //what if you had multiple contacts here
+    //we need some sort of update(id, addressee)
+    d->metacontacts[personId].updateContacts(KABC::AddresseeList() << contact);
+
+    //mark as changed
+    int row = d->personIds.indexOf(personId);
+    const QModelIndex contactIndex = index(row);
+    if(row >=0 ) {
+        dataChanged(contactIndex, contactIndex);
+    }
+}
+
+void PersonsModel::onContactRemoved(const QString &contactId)
+{
+    //TODO map to personId
+    const QString &personId = contactId;
+    removePerson(personId);
+}
+
+
+
 void PersonsModel::addPerson(const KPeople::MetaContact& mc)
 {
     Q_D(PersonsModel);
@@ -113,7 +161,7 @@ void PersonsModel::addPerson(const KPeople::MetaContact& mc)
 
     //TODO add to DataSourceWatcher (contactId -> personId)
 
-    beginInsertRows(QModelIndex(), 0, d->personIds.size());
+    beginInsertRows(QModelIndex(), d->personIds.size(), d->personIds.size());
     d->metacontacts[id] = mc;
     d->personIds << id;
     endInsertRows();

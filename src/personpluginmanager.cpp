@@ -20,6 +20,9 @@
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"
 
+//temp
+#include "plugins/akonadi/akonadidatasource.h"
+
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginInfo>
@@ -41,15 +44,17 @@ K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 {
-    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
-    Q_FOREACH(const KService::Ptr &service, pluginList) {
-        BasePersonsDataSource* dataSource = service->createInstance<BasePersonsDataSource>(0);
-        if (dataSource) {
-            dataSourcePlugins << dataSource;
-        } else {
-            kWarning() << "Failed to create data source";
-        }
-    }
+//     KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
+//     Q_FOREACH(const KService::Ptr &service, pluginList) {
+//         BasePersonsDataSource* dataSource = service->createInstance<BasePersonsDataSource>(0);
+//         if (dataSource) {
+//             dataSourcePlugins << dataSource;
+//         } else {
+//             kWarning() << "Failed to create data source";
+//         }
+//     }
+
+    dataSourcePlugins << new AkonadiDataSource();
 }
 
 PersonPluginManagerPrivate::~PersonPluginManagerPrivate()

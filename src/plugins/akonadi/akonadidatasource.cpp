@@ -36,8 +36,12 @@
 using namespace Akonadi;
 
 AkonadiDataSource::AkonadiDataSource(QObject *parent):
-    BasePersonsDataSource(parent)
+    BasePersonsDataSource(parent),
+    m_monitor(new Akonadi::Monitor(this))
 {
+    connect(m_monitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)), SLOT(onItemAdded(Akonadi::Item)));
+    connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onItemChanged(Akonadi::Item)));
+    connect(m_monitor, SIGNAL(itemRemoved(Akonadi::Item)), SLOT(onItemRemoved(Akonadi::Item)));
 }
 
 AkonadiDataSource::~AkonadiDataSource()
@@ -54,6 +58,8 @@ const KABC::Addressee::Map AkonadiDataSource::allContacts()
     fetchJob->exec();
     QList<Collection> contactCollections;
     foreach (const Collection &collection, fetchJob->collections()) {
+        m_monitor->setCollectionMonitored(collection, true);
+
         if (collection.contentMimeTypes().contains( KABC::Addressee::mimeType() ) ) {
             ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
             itemFetchJob->fetchScope().fetchFullPayload();
@@ -61,6 +67,7 @@ const KABC::Addressee::Map AkonadiDataSource::allContacts()
             foreach (const Item &item, itemFetchJob->items()) {
                 if (item.hasPayload<KABC::Addressee>()) {
 //                     qDebug() << item.url().prettyUrl();
+                    addressees[item.url().prettyUrl()] = item.payload<KABC::Addressee>();
                 }
             }
         }
@@ -82,5 +89,21 @@ const KABC::Addressee AkonadiDataSource::contact(const QString& contactId)
 
     return fetchJob->items().first().payload<KABC::Addressee>();
 }
+
+void AkonadiDataSource::onItemAdded(const Item& item)
+{
+    Q_EMIT contactAdded(item.url().prettyUrl());
+}
+
+void AkonadiDataSource::onItemChanged(const Item& item)
+{
+    Q_EMIT contactChanged(item.url().prettyUrl());
+}
+
+void AkonadiDataSource::onItemRemoved(const Item& item)
+{
+    Q_EMIT contactRemoved(item.url().prettyUrl());
+}
+
 
 #include "akonadidatasource.moc"

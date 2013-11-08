@@ -40,7 +40,7 @@ class KPEOPLE_EXPORT BasePersonsDataSource : public QObject
 {
     Q_OBJECT
 public:
-    BasePersonsDataSource(QObject *parent = 0);
+    BasePersonsDataSource(QObject *parent = 0, const QVariantList &args = QVariantList());
     virtual ~BasePersonsDataSource();
 
     //TODO make this async

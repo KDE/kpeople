@@ -21,9 +21,10 @@
 
 using namespace KPeople;
 
-BasePersonsDataSource::BasePersonsDataSource(QObject *parent)
+BasePersonsDataSource::BasePersonsDataSource(QObject *parent, const QVariantList &args)
     : QObject(parent)
 {
+    Q_UNUSED(args)
 }
 
 BasePersonsDataSource::~BasePersonsDataSource()

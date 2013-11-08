@@ -24,7 +24,6 @@
 #define PERSONS_MODEL_H
 
 #include "kpeople_export.h"
-#include "metacontact.h" //FIXME
 
 #include <QAbstractListModel>
 

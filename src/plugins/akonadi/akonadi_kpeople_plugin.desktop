@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Service
+ServiceTypes=KPeople/DataSource
+X-KDE-Library=akonadi_kpeople_plugin
+X-KDE-PluginInfo-Author=David Edmundson
+X-KDE-PluginInfo-Email=davidedmundson@kde.org
+X-KDE-PluginInfo-Name=AkonadiKPeopleSource
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

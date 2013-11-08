@@ -18,7 +18,7 @@ install (TARGETS akonadi_kpeople_plugin
          DESTINATION ${PLUGIN_INSTALL_DIR}
 )
 
-# install (FILES akonadi_kpeople_plugin.desktop
-#          DESTINATION ${SERVICES_INSTALL_DIR}
-# )
+install (FILES akonadi_kpeople_plugin.desktop
+         DESTINATION ${SERVICES_INSTALL_DIR}
+)
 

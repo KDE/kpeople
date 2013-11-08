@@ -31,14 +31,21 @@
 
 #include <KABC/Addressee>
 
+#include <KPluginFactory>
+#include <KPluginLoader>
+
 #include <QDebug>
 
 using namespace Akonadi;
 
-AkonadiDataSource::AkonadiDataSource(QObject *parent):
+AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
     BasePersonsDataSource(parent),
     m_monitor(new Akonadi::Monitor(this))
 {
+
+    //TODO start akonadi
+
+    Q_UNUSED(args);
     connect(m_monitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)), SLOT(onItemAdded(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onItemChanged(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemRemoved(Akonadi::Item)), SLOT(onItemRemoved(Akonadi::Item)));
@@ -66,7 +73,6 @@ const KABC::Addressee::Map AkonadiDataSource::allContacts()
             itemFetchJob->exec();
             foreach (const Item &item, itemFetchJob->items()) {
                 if (item.hasPayload<KABC::Addressee>()) {
-//                     qDebug() << item.url().prettyUrl();
                     addressees[item.url().prettyUrl()] = item.payload<KABC::Addressee>();
                 }
             }
@@ -105,5 +111,7 @@ void AkonadiDataSource::onItemRemoved(const Item& item)
     Q_EMIT contactRemoved(item.url().prettyUrl());
 }
 
+K_PLUGIN_FACTORY( AkonadiDataSourceFactory, registerPlugin<AkonadiDataSource>(); )
+K_EXPORT_PLUGIN( AkonadiDataSourceFactory("akonadi_kpeople_plugin") )
 
 #include "akonadidatasource.moc"

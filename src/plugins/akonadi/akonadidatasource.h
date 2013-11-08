@@ -32,7 +32,7 @@ class AkonadiDataSource : public KPeople::BasePersonsDataSource
     Q_OBJECT
 
 public:
-    AkonadiDataSource(QObject *parent=0);
+    AkonadiDataSource(QObject *parent, const QVariantList &args = QVariantList());
     virtual ~AkonadiDataSource();
 
     virtual const KABC::Addressee::Map allContacts();

@@ -30,26 +30,11 @@
 
 using namespace KPeople;
 
-class ContactDelegate : public QStyledItemDelegate
-{
-    virtual void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-        QStyledItemDelegate::paint(painter, option, index);
-        QRect infoRect(QPoint(option.rect.center().x(), option.rect.top()), option.rect.bottomRight());
-        if (index.parent().isValid()) {
-            painter->drawText(infoRect, index.data(PersonsModel::PresenceTypeRole).toString());
-        } else {
-            painter->drawText(infoRect, QString::number(index.model()->rowCount(index)));
-        }
-    }
-};
-
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
     QTreeView view;
-    view.setItemDelegate(new ContactDelegate);
-
     PersonsModel *model = new PersonsModel(&view);
 
 //     QList<PersonsModelFeature> features;

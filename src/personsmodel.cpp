@@ -3,12 +3,12 @@
 #include "personpluginmanager.h"
 #include "metacontact.h"
 #include "basepersonsdatasource.h"
+#include "personmanager.h"
 
 #include <KABC/Addressee>
 
 #include <QDebug>
-#include <QSqlDatabase>
-#include <QSqlQuery>
+#include <QPixmap>
 
 namespace KPeople {
 class PersonsModelPrivate{
@@ -44,10 +44,17 @@ QVariant PersonsModel::data(const QModelIndex& index, int role) const
     Q_D(const PersonsModel);
 
     const QString &id = d->personIds[index.row()];
+    const KABC::Addressee &person = d->metacontacts[id].personAddressee();
     if (role == Qt::DisplayRole) {
-//         return id;
-        return d->metacontacts[id].personAddressee().formattedName();
+        return person.formattedName();
     } //TODO Hash<int, Field>
+    if (role == Qt::DecorationRole) {
+        if (!person.photo().data().isNull()) {
+            return person.photo().data();
+        } else {
+            return QPixmap(person.photo().url());
+        }
+    }
 
     return QVariant();
 }
@@ -64,23 +71,7 @@ int PersonsModel::rowCount(const QModelIndex& parent) const
 
 void PersonsModel::onContactsFetched() //TODO async this
 {
-    QMultiHash<QString /*PersonID*/, QString /*ContactID*/> contactMapping;
     KABC::Addressee::Map addresseeMap;
-
-    //TODO make this a separate class whcih also does the dbus stuff
-
-    //TODO create table if not exists persons (contactID varchar unique not null, personID int not null);
-    QSqlDatabase db= QSqlDatabase::addDatabase("QSQLITE3");
-    db.setDatabaseName("/home/david/persondb");
-    db.open();
-    qDebug() << db.isOpen();
-
-    QSqlQuery query = db.exec("SELECT personID, contactID FROM persons");
-    while (query.next()) {
-        const QString personId = "kpeople://" + query.value(0).toString(); // we store as ints internally, convert it to a string here
-        const QString contactID = query.value(1).toString();
-        contactMapping.insertMulti(personId, contactID);
-    }
 
     //temporary code, fetch data from all plugins
     KABC::AddresseeList contactList;
@@ -89,15 +80,15 @@ void PersonsModel::onContactsFetched() //TODO async this
     }
 
     //add metacontacts
+
+    QMultiHash<QString, QString> contactMapping = PersonManager::instance()->allPersons();
     foreach (const QString &key, contactMapping.uniqueKeys()) {
         KABC::AddresseeList addressees;
-        qDebug() << contactMapping.values(key);
         foreach (const QString &contact, contactMapping.values(key)) {
             if (addresseeMap.contains(contact)) {
                 addressees << addresseeMap.take(contact);
             }
         }
-        qDebug() << "adding contact " << key << addressees.size();
         if (!addresseeMap.isEmpty()) {
             addPerson(MetaContact(key, addressees));
         }
@@ -112,10 +103,13 @@ void PersonsModel::onContactsFetched() //TODO async this
 
 void PersonsModel::onContactAdded(const QString &contactId)
 {
+    qDebug() << "on contact added" << contactId;
     //TODO map to personId
     const QString &personId = contactId;
 
     BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
+
+    qDebug() << dataSource;
 
     //TODO async with an onContactFetched()
     const KABC::Addressee &contact = dataSource->contact(contactId);

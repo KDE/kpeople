@@ -29,6 +29,7 @@ kde4_add_library (kpeople  SHARED
     personsmodel.cpp
 #     personactionsmodel.cpp
     personpluginmanager.cpp
+    personmanager.cpp
     basepersonsdatasource.cpp
 
     #temp

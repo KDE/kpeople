@@ -67,6 +67,7 @@ QStringList PersonManager::contactsForPersonId(const QString& personId) const
     query.prepare("SELECT contactID FROM persons WHERE personId = ?");
     query.bindValue(0, personId.mid(strlen("kpeople://")));
     query.exec();
+
     while (query.next()) {
         contactIds << query.value(0).toString();
     }
@@ -113,6 +114,7 @@ QString PersonManager::mergeContacts(const QStringList& ids)
         insertQuery.prepare("INSERT INTO persons VALUES (?, ?)");
         insertQuery.bindValue(0, contactId);
         insertQuery.bindValue(1, personId);
+        insertQuery.exec();
         Q_EMIT contactAddedToPerson(contactId, personIdString);
         //emit a DBbus signal for other clients
     }
@@ -123,13 +125,17 @@ QString PersonManager::mergeContacts(const QStringList& ids)
 bool PersonManager::unmergeContact(const QString &id)
 {
     //remove rows from DB
-
     if (id.startsWith("kpeople://")) {
         QSqlQuery query(m_db);
+
+        const QStringList contactIds = contactsForPersonId(id);
         query.prepare("DELETE FROM persons WHERE personId = ?");
         query.bindValue(0, id.mid(strlen("kpeople://")));
         query.exec();
-        //TODO emit contactRemovedFromPerson for every contact in that person..might have to fetch a list beforehand
+
+        Q_FOREACH(const QString &contactId, contactIds) {
+            Q_EMIT contactRemovedFromPerson(contactId);
+        }
         //emit signal(dbus)
     } else {
         QSqlQuery query(m_db);

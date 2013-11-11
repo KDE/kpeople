@@ -36,7 +36,7 @@ PersonsModel::PersonsModel(QObject *parent):
     }
 
     connect(PersonManager::instance(), SIGNAL(contactAddedToPerson(QString,QString)), SLOT(onAddContactToPerson(QString,QString)));
-    connect(PersonManager::instance(), SIGNAL(contactRemovedFromPerson(QString)), SLOT((QString)));
+    connect(PersonManager::instance(), SIGNAL(contactRemovedFromPerson(QString)), SLOT(onRemoveContactsFromPerson(QString)));
 
     onContactsFetched();
 }

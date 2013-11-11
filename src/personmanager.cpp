@@ -26,6 +26,8 @@
 #include <QVariant>
 #include <QDebug>
 #include <QSqlError>
+#include <QDBusConnection>
+#include <QDBusMessage>
 
 PersonManager::PersonManager(QObject* parent):
     QObject(parent),
@@ -35,6 +37,9 @@ PersonManager::PersonManager(QObject* parent):
     m_db.open();
     m_db.exec("CREATE TABLE IF NOT EXISTS PERSONS (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)");
     //TODO ADD INDEX ON BOTH COLUMNS
+
+    QDBusConnection::sessionBus().connect(QString(), QString("/KPeople"), "org.kde.KPeople", "ContactAddedToPerson", this, SIGNAL(contactAddedToPerson(const QString&, const QString&)));
+    QDBusConnection::sessionBus().connect(QString(), QString("/KPeople"), "org.kde.KPeople", "contactRemovedFromPerson", this, SIGNAL(contactRemovedFromPerson(const QString&, const QString&)));
 }
 
 PersonManager::~PersonManager()
@@ -115,8 +120,14 @@ QString PersonManager::mergeContacts(const QStringList& ids)
         insertQuery.bindValue(0, contactId);
         insertQuery.bindValue(1, personId);
         insertQuery.exec();
-        Q_EMIT contactAddedToPerson(contactId, personIdString);
-        //emit a DBbus signal for other clients
+
+        //FUTURE OPTIMISATION - this would be best as one signal, but arguments become complex
+        QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
+                                                    QLatin1String("org.kde.KPeople"),
+                                                    QLatin1String("ContactAddedToPerson"));
+
+        message.setArguments(QVariantList() << contactId << personIdString);
+        QDBusConnection::sessionBus().send(message);
     }
 
     return personIdString;
@@ -134,9 +145,14 @@ bool PersonManager::unmergeContact(const QString &id)
         query.exec();
 
         Q_FOREACH(const QString &contactId, contactIds) {
-            Q_EMIT contactRemovedFromPerson(contactId);
+            //FUTURE OPTIMISATION - this would be best as one signal, but arguments become complex
+            QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
+                                                      QLatin1String("org.kde.KPeople"),
+                                                      QLatin1String("ContactRemovedFromPerson"));
+
+            message.setArguments(QVariantList() << contactId);
+            QDBusConnection::sessionBus().send(message);
         }
-        //emit signal(dbus)
     } else {
         QSqlQuery query(m_db);
         query.prepare("DELETE FROM persons WHERE contactId = ?");

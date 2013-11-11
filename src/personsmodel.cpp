@@ -119,16 +119,22 @@ void PersonsModel::onContactsFetched() //TODO async this
 void PersonsModel::onContactAdded(const QString &contactId)
 {
     Q_D(PersonsModel);
+
+    BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
+
+    //TODO async with an onContactFetched()
+    const KABC::Addressee &contact = dataSource->contact(contactId);
+
     const QString &personId = personIdForContact(contactId);
 
     if (d->personIds.contains(personId)) {
-        //TODO update the MC object for this person
-        //dataChanged(..)
+        d->metacontacts[personId].updateContact(contactId, contact);
+        int row = d->personIds.indexOf(personId);
+        const QModelIndex contactIndex = index(row);
+        if(row >=0 ) {
+            dataChanged(contactIndex, contactIndex);
+        }
     } else { //new contact -> new person
-        BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
-
-        //TODO async with an onContactFetched()
-        const KABC::Addressee &contact = dataSource->contact(contactId);
         addPerson(MetaContact(personId, contact));
     }
 }

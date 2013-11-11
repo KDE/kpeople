@@ -30,6 +30,8 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
+#include "kpeople_export.h"
+
 /**
  * This is a private internal class that manages all the internal mapping of contacts <---> persons
  * It stores the connection to the database as well as signals communicating with other clients
@@ -38,7 +40,7 @@
  *
  */
 
-class PersonManager : public QObject
+class KPEOPLE_EXPORT PersonManager : public QObject
 {
     Q_OBJECT
 
@@ -72,8 +74,8 @@ public Q_SLOTS:
     bool unmergeContact(const QString &id);
 
 Q_SIGNALS:
-    void contactRemovedFromPerson(const QString &contactId, const QString &personId);
-    void contactAddedToPerson(const QString &contactId, const QString &personId);
+    void contactRemovedFromPerson(const QString &contactId);
+    void contactAddedToPerson(const QString &contactId, const QString &newPersonId);
 
 protected:
     explicit PersonManager(QObject* parent = 0);

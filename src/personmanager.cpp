@@ -90,22 +90,28 @@ QString PersonManager::mergeContacts(const QStringList& ids)
     //find personID to use
     QSqlQuery query = m_db.exec(QString("SELECT MAX(personId) FROM persons"));
     if (query.next()) {
-        int personId = query.value(0).toInt();
+        personId = query.value(0).toInt();
     }
 
     personId++;
+    QString personIdString = "kpeople://" + QString::number(personId); //FIXME
 
     //add contacts to insert
     Q_FOREACH(const QString &contactId, ids) {
-        QSqlQuery insertQuery = m_db.exec(QString("INSERT INTO persons VALUES ('%1', %2)").arg(contactId, personId));
-        qDebug() << "INSERTING PERSON" << insertQuery.lastError();
-        Q_EMIT contactAddedToPerson(contactId, "kpeople://"+personId);
+        if (contactId.startsWith("kpeople://")) {
+            qDebug() << "WARNING: Trying to merge a person into a person. Client is sending bad data.";
+            continue;
+        }
+
+        QSqlQuery insertQuery(m_db);
+        insertQuery.prepare("INSERT INTO persons VALUES (?, ?)");
+        insertQuery.bindValue(0, contactId);
+        insertQuery.bindValue(1, personId);
+        Q_EMIT contactAddedToPerson(contactId, personIdString);
+        //emit a DBbus signal for other clients
     }
 
-    //emit a DBbus signal for other clients
-    //and a regular signal..
-
-    return QString();
+    return personIdString;
 }
 
 bool PersonManager::unmergeContact(const QString &id)
@@ -113,15 +119,23 @@ bool PersonManager::unmergeContact(const QString &id)
     //remove rows from DB
 
     if (id.startsWith("kpeople://")) {
-        QSqlQuery query = m_db.exec(QString("DELETE FROM persons WHERE personId = '%1'").arg(id.mid(strlen("kpeople://")))); //TODO make this a method
+        QSqlQuery query(m_db);
+        query.prepare("DELETE FROM persons WHERE personId = ?");
+        query.bindValue(0, id.mid(strlen("kpeople://")));
+        query.exec();
+        //TODO emit contactRemovedFromPerson for every contact in that person..might have to fetch a list beforehand
+        //emit signal(dbus)
     } else {
-        QSqlQuery query = m_db.exec(QString("DELETE FROM persons WHERE contactId = '%1'").arg(id));
+        QSqlQuery query(m_db);
+        query.prepare("DELETE FROM persons WHERE contactId = ?");
+        query.bindValue(0, id);
+        query.exec();
+        //emit signal(dbus)
+        Q_EMIT contactRemovedFromPerson(id);
     }
-    //emit signal(dbus)
-
 
     //TODO return if removing rows worked
-    return false;
+    return true;
 }
 
 PersonManager* PersonManager::instance()

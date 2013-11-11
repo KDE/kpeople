@@ -27,6 +27,8 @@
 
 #include <QAbstractListModel>
 
+#include <KABC/AddresseeList>
+
 namespace KPeople
 {
 class PersonsModelFeature;
@@ -41,23 +43,15 @@ class KPEOPLE_EXPORT PersonsModel : public QAbstractListModel
     Q_OBJECT
 public:
     enum Role {
-        UriRole = Qt::UserRole, ///nepomuk URI STRING
-        ChildContactsUriRole, ///returns list of child contact roles STRINGLIST
-        FullNamesRole, ///nco:fullname STRINGLIST
-        EmailsRole, ///nco:email STRINGLIST
-        NicknamesRole, ///nco:imNickName STRINGLIST
-        PhonesRole, ///nco:phones STRINGLIST
-        IMsRole, ///STRINGLIST
-        PhotosRole, ///nie:url of the photo STRINGLIST
+        FormattedNameRole = Qt::DisplayRole,//QString best name for this person
+        PhotoRole = Qt::DecorationRole, //QPixmap best photo for this person
+        PersonIdRole = Qt::UserRole, //QString ID of this person
+        PersonVCardRole, //KABC::Addressee
+        ContactsVCardRole, //KABC::AddresseeList (FIXME or map?)
 
-        PresenceTypeRole, ///QString containing most online presence type
-        PresenceDisplayRole, ///QString containing displayable name for most online presence
-        PresenceDecorationRole, ///KIcon displaying current presence
-        PresenceIconNameRole, ///QString with icon name of the current presence
+        GroupsRole, ///groups QStringList
 
-        GroupsRole, ///groups STRINGLIST
-
-        UserRole = Qt::UserRole + 100 ///< in case it's needed to extend, use this one to start from
+        UserRole = Qt::UserRole + 0x1000 ///< in case it's needed to extend, use this one to start from
     };
 
     PersonsModel(QObject *parent = 0);
@@ -73,11 +67,14 @@ Q_SIGNALS:
 private Q_SLOTS:
     void onContactsFetched();
 
+    //update when a resource signals a contact has changed
     void onContactAdded(const QString &contactId);
     void onContactChanged(const QString &contactId);
     void onContactRemoved(const QString &contactId);
 
-    void onAddContactToPerson(const QString &contactId, const QString &personId);
+    //update on metadata changes
+    void onAddContactToPerson(const QString &contactId, const QString &newPersonId);
+    void onRemoveContactsFromPerson(const QString &contactId);
     
 
 private:
@@ -87,44 +84,14 @@ private:
     void addPerson(const MetaContact &mc);
     void removePerson(const QString &id);
 
-//     /**
-//      * Adds new contact to the model with @param uri as its URI
-//      */
-//     void addContact(const QUrl &uri);
-//
-//     /**
-//      * Refreshes data of the contact given by @param uri
-//      */
-//     void updateContact(const QUrl &uri);
-//
-//     /* Removes contact with @param uri from the model
-//      */
-//     void removeContact(const QUrl &uri);
-//
-//     /**
-//      * Adds new person to the model with @param uri as its URI
-//      */
-//     void addPerson(const QUrl &uri);
-//
-//     /**
-//      * Removes person with @param uri from the model (not Nepomuk)
-//      */
-//     void removePerson(const QUrl &uri);
-//
-//     /**
-//      * Adds contacts to existing PIMO:Person
-//      */
-//     void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-//
-//     /**
-//      * Removes given contacts from existing PIMO:Person
-//      */
-//     void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
+    QString personIdForContact(const QString &contactId);
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);
 };
 }
 
+// Q_DECLARE_METATYPE(KABC::Addressee)
+Q_DECLARE_METATYPE(KABC::AddresseeList)
 
 #endif // PERSONS_MODEL_H

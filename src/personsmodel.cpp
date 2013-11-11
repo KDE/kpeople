@@ -13,6 +13,9 @@
 namespace KPeople {
 class PersonsModelPrivate{
 public:
+    //NOTE This is the opposite way round to the return value from contactMapping() for easier lookups
+    QHash<QString /*contactId*/, QString /*PersonId*/> contactToPersons;
+
     //hash of person objects indexed by ID
     QHash<QString /*Person ID*/, MetaContact> metacontacts;
     //a list so we have an order in the model
@@ -26,11 +29,14 @@ PersonsModel::PersonsModel(QObject *parent):
     QAbstractListModel(parent),
     d_ptr(new PersonsModelPrivate)
 {
-    foreach (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
+    Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
         connect(dataSource, SIGNAL(contactAdded(QString)), SLOT(onContactAdded(QString)));
         connect(dataSource, SIGNAL(contactChanged(QString)), SLOT(onContactChanged(QString)));
         connect(dataSource, SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
     }
+
+    connect(PersonManager::instance(), SIGNAL(contactAddedToPerson(QString,QString)), SLOT(onAddContactToPerson(QString,QString)));
+    connect(PersonManager::instance(), SIGNAL(contactRemovedFromPerson(QString)), SLOT((QString)));
 
     onContactsFetched();
 }
@@ -43,19 +49,25 @@ QVariant PersonsModel::data(const QModelIndex& index, int role) const
 {
     Q_D(const PersonsModel);
 
-    const QString &id = d->personIds[index.row()];
-    const KABC::Addressee &person = d->metacontacts[id].personAddressee();
-    if (role == Qt::DisplayRole) {
-        return person.formattedName();
-    } //TODO Hash<int, Field>
-    if (role == Qt::DecorationRole) {
+    const QString &personId = d->personIds[index.row()];
+    const KABC::Addressee &person = d->metacontacts[personId].personAddressee();
+
+    switch(role) {
+    case FormattedNameRole:
+            return person.formattedName();
+    case PhotoRole:
         if (!person.photo().data().isNull()) {
             return person.photo().data();
         } else {
             return QPixmap(person.photo().url());
         }
+    case PersonIdRole:
+        return personId;
+    case PersonVCardRole:
+        return QVariant::fromValue<KABC::Addressee>(person);
+    case ContactsVCardRole:
+        return QVariant::fromValue<KABC::AddresseeList>(d->metacontacts[personId].contacts());
     }
-
     return QVariant();
 }
 
@@ -71,11 +83,12 @@ int PersonsModel::rowCount(const QModelIndex& parent) const
 
 void PersonsModel::onContactsFetched() //TODO async this
 {
+    Q_D(PersonsModel);
     KABC::Addressee::Map addresseeMap;
 
     //temporary code, fetch data from all plugins
     KABC::AddresseeList contactList;
-    foreach (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
+    Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
         addresseeMap.unite(dataSource->allContacts());
     }
 
@@ -83,9 +96,10 @@ void PersonsModel::onContactsFetched() //TODO async this
 
     QMultiHash<QString, QString> contactMapping = PersonManager::instance()->allPersons();
 
-    foreach (const QString &key, contactMapping.uniqueKeys()) {
+    Q_FOREACH (const QString &key, contactMapping.uniqueKeys()) {
         KABC::Addressee::Map contacts;
-        foreach (const QString &contact, contactMapping.values(key)) {
+        Q_FOREACH (const QString &contact, contactMapping.values(key)) {
+            d->contactToPersons[contact] = key;
             if (addresseeMap.contains(contact)) {
                 contacts[contact] = addresseeMap.take(contact);
             }
@@ -105,8 +119,7 @@ void PersonsModel::onContactsFetched() //TODO async this
 void PersonsModel::onContactAdded(const QString &contactId)
 {
     Q_D(PersonsModel);
-    //TODO map to personId properly
-    const QString &personId = contactId;
+    const QString &personId = personIdForContact(contactId);
 
     if (d->personIds.contains(personId)) {
         //TODO update the MC object for this person
@@ -123,7 +136,7 @@ void PersonsModel::onContactAdded(const QString &contactId)
 void PersonsModel::onContactChanged(const QString &contactId)
 {
     Q_D(PersonsModel);
-    const QString &personId = contactId;
+    const QString &personId = personIdForContact(contactId);
 
     //TODO async with an onContactFetched()
     BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
@@ -141,39 +154,64 @@ void PersonsModel::onContactChanged(const QString &contactId)
 
 void PersonsModel::onContactRemoved(const QString &contactId)
 {
-    //TODO map to personId
-    const QString &personId = contactId;
+    Q_D(PersonsModel);
 
-    //TODO remove contact from MC object
+    const QString &personId = personIdForContact(contactId);
+
+    d->metacontacts[personId].removeContact(personId);
+
+
 
     //TODO if MC object is now invalid remove the person from the list
     removePerson(personId);
 }
 
-void PersonsModel::onAddContactToPerson(const QString& contactId, const QString& personId)
+void PersonsModel::onAddContactToPerson(const QString& contactId, const QString& newPersonId)
 {
     Q_D(PersonsModel);
 
-    //get contact already in the model
-    KABC::Addressee contact;
-    removePerson(contactId);
+    const QString oldPersonId = personIdForContact(contactId);
+    d->contactToPersons.insert(contactId, newPersonId);
+
+    //get contact already in the model, remove it from the previous contact
+    KABC::Addressee contact = d->metacontacts[oldPersonId].contact(contactId);
+    d->metacontacts[oldPersonId].removeContact(contactId);
+    if (!d->metacontacts[oldPersonId].isValid()) {
+        removePerson(oldPersonId);
+    }
 
     //if the person is already in the model, add the contact to it
-    if (d->personIds.contains(personId)) {
-        d->metacontacts[contactId].updateContact(contactId, contact);
+    if (d->personIds.contains(newPersonId)) {
+        d->metacontacts[newPersonId].updateContact(contactId, contact);
     } else { //if the person is not in the model, create a new person and insert it
-        addPerson(MetaContact(contactId, contact));
+        addPerson(MetaContact(newPersonId, contact));
     }
 }
 
+void PersonsModel::onRemoveContactsFromPerson(const QString& contactId)
+{
+    Q_D(PersonsModel);
+
+    const QString personId = personIdForContact(contactId);
+    const KABC::Addressee contact = d->metacontacts[personId].contact(contactId);
+    d->metacontacts[personId].removeContact(contactId);
+    d->contactToPersons.remove(contactId);
+
+    //if we don't want the person object anymore
+    if (!d->metacontacts[personId].isValid()) {
+        removePerson(personId);
+    }
+
+    //now re-insert as a new contact
+    //we know it's not part of a metacontact anymore so reinsert as a contact
+    addPerson(MetaContact(contactId, contact));
+}
 
 void PersonsModel::addPerson(const KPeople::MetaContact& mc)
 {
     Q_D(PersonsModel);
 
     const QString &id = mc.id();
-
-    //TODO add to DataSourceWatcher (contactId -> personId)
 
     beginInsertRows(QModelIndex(), d->personIds.size(), d->personIds.size());
     d->metacontacts[id] = mc;
@@ -194,5 +232,16 @@ void PersonsModel::removePerson(const QString& id)
     d->metacontacts.remove(id);
     d->personIds.removeOne(id);
     endRemoveRows();
+}
+
+QString PersonsModel::personIdForContact(const QString& contactId)
+{
+    Q_D(const PersonsModel);
+    //TODO optimise with constFind()
+    if (d->contactToPersons.contains(contactId)) {
+        return d->contactToPersons[contactId];
+    } else {
+        return contactId;
+    }
 }
 

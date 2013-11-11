@@ -158,12 +158,13 @@ void PersonsModel::onContactRemoved(const QString &contactId)
 
     const QString &personId = personIdForContact(contactId);
 
-    d->metacontacts[personId].removeContact(personId);
+    MetaContact &mc = d->metacontacts[personId];
+    mc.removeContact(personId);
 
-
-
-    //TODO if MC object is now invalid remove the person from the list
-    removePerson(personId);
+    //if MC object is now invalid remove the person from the list
+    if (!mc.isValid()) {
+        removePerson(personId);
+    }
 }
 
 void PersonsModel::onAddContactToPerson(const QString& contactId, const QString& newPersonId)

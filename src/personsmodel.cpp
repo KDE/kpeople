@@ -29,6 +29,9 @@ PersonsModel::PersonsModel(QObject *parent):
     QAbstractListModel(parent),
     d_ptr(new PersonsModelPrivate)
 {
+
+    onContactsFetched();
+
     Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
         connect(dataSource, SIGNAL(contactAdded(QString)), SLOT(onContactAdded(QString)));
         connect(dataSource, SIGNAL(contactChanged(QString)), SLOT(onContactChanged(QString)));
@@ -37,8 +40,6 @@ PersonsModel::PersonsModel(QObject *parent):
 
     connect(PersonManager::instance(), SIGNAL(contactAddedToPerson(QString,QString)), SLOT(onAddContactToPerson(QString,QString)));
     connect(PersonManager::instance(), SIGNAL(contactRemovedFromPerson(QString)), SLOT(onRemoveContactsFromPerson(QString)));
-
-    onContactsFetched();
 }
 
 PersonsModel::~PersonsModel()

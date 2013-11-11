@@ -19,38 +19,83 @@
 
 #include <QApplication>
 #include <QTreeView>
-#include <QHeaderView>
-#include <QStyledItemDelegate>
 #include <QSortFilterProxyModel>
 
-#include <qpainter.h>
+#include <QVBoxLayout>
+#include <QPushButton>
 
 #include <personsmodel.h>
 #include <personsmodelfeature.h>
+#include <personmanager.h>
 
 using namespace KPeople;
+
+class ContactListApp : public QWidget
+{
+    Q_OBJECT
+public:
+    ContactListApp();
+private Q_SLOTS:
+    void onMergeClicked();
+    void onUnmergeClicked();
+private:
+    PersonsModel *m_model;
+    QTreeView *m_view;
+};
+
+ContactListApp::ContactListApp()
+{
+    m_view = new QTreeView(this);
+    m_model = new PersonsModel(this);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    QSortFilterProxyModel *sortFilter = new QSortFilterProxyModel(m_view);
+    sortFilter->setDynamicSortFilter(true);
+    sortFilter->setSourceModel(m_model);
+    sortFilter->sort(0);
+    m_view->setModel(sortFilter);
+    m_view->setSelectionMode(QAbstractItemView::MultiSelection);
+
+    layout->addWidget(m_view);
+    QPushButton *mergeButton = new QPushButton("Merge", this);
+    connect(mergeButton, SIGNAL(released()), SLOT(onMergeClicked()));
+    layout->addWidget(mergeButton);
+
+    QPushButton *unmergeButton = new QPushButton("Unmerge", this);
+    connect(unmergeButton, SIGNAL(released()), SLOT(onUnmergeClicked()));
+    layout->addWidget(unmergeButton);
+}
+
+void ContactListApp::onMergeClicked()
+{
+    QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
+    QStringList ids;
+    Q_FOREACH(const QModelIndex &index, indexes) {
+        ids << index.data(PersonsModel::PersonIdRole).toString();
+    }
+
+    if (!ids.isEmpty()) {
+        PersonManager::instance()->mergeContacts(ids);
+    }
+}
+
+void ContactListApp::onUnmergeClicked()
+{
+    QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
+    if (indexes.size()) {
+        QString id = indexes.first().data(PersonsModel::PersonIdRole).toString();
+        PersonManager::instance()->unmergeContact(id);
+    }
+}
+
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
 
-    QTreeView view;
-    PersonsModel *model = new PersonsModel(&view);
-
-//     QList<PersonsModelFeature> features;
-//     features << PersonsModelFeature::emailModelFeature(PersonsModelFeature::Optional)
-//              << PersonsModelFeature::avatarModelFeature(PersonsModelFeature::Optional)
-//              << PersonsModelFeature::imModelFeature(PersonsModelFeature::Optional)
-//              << PersonsModelFeature::fullNameModelFeature(PersonsModelFeature::Optional);
-//     model->startQuery(features);
-
-    QSortFilterProxyModel *sortFilter = new QSortFilterProxyModel(&view);
-    sortFilter->setDynamicSortFilter(true);
-    sortFilter->setSourceModel(model);
-
-    view.setModel(sortFilter);
-    view.setSortingEnabled(true);
-    view.show();
-
+    ContactListApp widget;
+    widget.show();
     app.exec();
 }
+
+#include "contactlistwidgets.moc"

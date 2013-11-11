@@ -87,6 +87,11 @@ bool MetaContact::isValid() const
     return !d->contacts.isEmpty();
 }
 
+KABC::Addressee MetaContact::contact(const QString& contactId)
+{
+    return d->contacts[contactId];
+}
+
 KABC::AddresseeList MetaContact::contacts() const
 {
     return d->contacts.values();

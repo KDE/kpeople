@@ -42,7 +42,7 @@ PersonManager::PersonManager(QObject* parent):
     m_db.exec("create index if not exists personIdIndex ON persons (personId)");
 
     QDBusConnection::sessionBus().connect(QString(), QString("/KPeople"), "org.kde.KPeople", "ContactAddedToPerson", this, SIGNAL(contactAddedToPerson(const QString&, const QString&)));
-    QDBusConnection::sessionBus().connect(QString(), QString("/KPeople"), "org.kde.KPeople", "contactRemovedFromPerson", this, SIGNAL(contactRemovedFromPerson(const QString&, const QString&)));
+    QDBusConnection::sessionBus().connect(QString(), QString("/KPeople"), "org.kde.KPeople", "ContactRemovedFromPerson", this, SIGNAL(contactRemovedFromPerson(const QString&)));
 }
 
 PersonManager::~PersonManager()

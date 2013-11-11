@@ -28,12 +28,14 @@
 #include <QSqlError>
 #include <QDBusConnection>
 #include <QDBusMessage>
+#include <KStandardDirs>
 
 PersonManager::PersonManager(QObject* parent):
     QObject(parent),
     m_db(QSqlDatabase::addDatabase("QSQLITE3"))
 {
-    m_db.setDatabaseName("/home/david/persondb");
+    const QString personDbFilePath = KGlobal::dirs()->locateLocal("data","kpeople/persondb");
+    m_db.setDatabaseName(personDbFilePath);
     m_db.open();
     m_db.exec("CREATE TABLE IF NOT EXISTS PERSONS (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)");
     //TODO ADD INDEX ON BOTH COLUMNS

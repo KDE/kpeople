@@ -63,7 +63,10 @@ QStringList PersonManager::contactsForPersonId(const QString& personId) const
 
     QStringList contactIds;
     //TODO port to the proper qsql method for args
-    QSqlQuery query = m_db.exec(QString("SELECT contactID FROM persons WHERE personId = %1").arg(personId.mid(strlen("kpeople://"))));
+    QSqlQuery query(m_db);
+    query.prepare("SELECT contactID FROM persons WHERE personId = ?");
+    query.bindValue(0, personId.mid(strlen("kpeople://")));
+    query.exec();
     while (query.next()) {
         contactIds << query.value(0).toString();
     }
@@ -72,7 +75,10 @@ QStringList PersonManager::contactsForPersonId(const QString& personId) const
 
 QString PersonManager::personIdForContact(const QString& contactId) const
 {
-    QSqlQuery query = m_db.exec(QString("SELECT personId FROM persons WHERE contactId = '%1'").arg(contactId));
+    QSqlQuery query(m_db);
+    query.prepare("SELECT personId FROM persons WHERE contactId = ?");
+    query.bindValue(0, contactId);
+    query.exec();
     if (query.next()) {
         return "kpeople://"+query.value(0).toString();
     }

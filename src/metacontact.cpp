@@ -28,7 +28,7 @@ class MetaContactData : public QSharedData
 {
 public:
     QString id;
-    KABC::AddresseeList contacts;
+    KABC::Addressee::Map contacts;
     KABC::Addressee personAddressee;
 };
 }
@@ -41,12 +41,22 @@ d(new MetaContactData)
 
 }
 
-MetaContact::MetaContact(const QString& id, const KABC::AddresseeList& contacts):
+MetaContact::MetaContact(const QString& id, const KABC::Addressee::Map& contacts):
 d (new MetaContactData)
 {
     d->id = id;
-    updateContacts(contacts);
+    d->contacts = contacts;
+    reload();
 }
+
+MetaContact::MetaContact(const QString& contactId, const KABC::Addressee contact):
+d (new MetaContactData)
+{
+    d->id = contactId;
+    d->contacts[contactId] = contact;
+    reload();
+}
+
 
 MetaContact::MetaContact(const MetaContact &other)
 :d (other.d)
@@ -72,11 +82,14 @@ QString MetaContact::id() const
     return d->id;
 }
 
-
+bool MetaContact::isValid() const
+{
+    return !d->contacts.isEmpty();
+}
 
 KABC::AddresseeList MetaContact::contacts() const
 {
-    return d->contacts;
+    return d->contacts.values();
 }
 
 KABC::Addressee MetaContact::personAddressee() const
@@ -84,23 +97,33 @@ KABC::Addressee MetaContact::personAddressee() const
     return d->personAddressee;
 }
 
-void MetaContact::updateContacts(const KABC::AddresseeList& contacts)
+void MetaContact::updateContact(const QString& contactId, const KABC::Addressee& contact)
 {
-    d->contacts = contacts;
-    //reset person vcard, then populate it with all the data we have available
+    d->contacts[contactId] = contact;
+    reload();
+}
+
+void MetaContact::removeContact(const QString& contactId)
+{
+    d->contacts.remove(contactId);
+    reload();
+}
+
+void MetaContact::reload()
+{
     //always favour the first item
 
     //TODO - long term goal: resource priority - local vcards for "people" trumps anything else. So we can set a preferred name etc.
 
     //Optimisation, if only one contact use that for everything
-    if (contacts.size() == 1) {
-        d->personAddressee = contacts.first();
+    if (d->contacts.size() == 1) {
+        d->personAddressee = d->contacts.values().first();
         return;
     }
 
     d->personAddressee = KABC::Addressee();
 
-    Q_FOREACH(const KABC::Addressee &contact, d->contacts) {
+    Q_FOREACH(const KABC::Addressee &contact, d->contacts.values()) {
         //set items with multiple cardinality
         Q_FOREACH(const KABC::Address &address, contact.addresses()) {
             d->personAddressee.insertAddress(address);

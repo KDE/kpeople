@@ -82,38 +82,42 @@ void PersonsModel::onContactsFetched() //TODO async this
     //add metacontacts
 
     QMultiHash<QString, QString> contactMapping = PersonManager::instance()->allPersons();
+
     foreach (const QString &key, contactMapping.uniqueKeys()) {
-        KABC::AddresseeList addressees;
+        KABC::Addressee::Map contacts;
         foreach (const QString &contact, contactMapping.values(key)) {
             if (addresseeMap.contains(contact)) {
-                addressees << addresseeMap.take(contact);
+                contacts[contact] = addresseeMap.take(contact);
             }
         }
         if (!addresseeMap.isEmpty()) {
-            addPerson(MetaContact(key, addressees));
+            addPerson(MetaContact(key, contacts));
         }
     }
 
     //add remaining contacts
     KABC::Addressee::Map::const_iterator i;
     for (i = addresseeMap.constBegin(); i != addresseeMap.constEnd(); ++i) {
-        addPerson(MetaContact(i.key(), KABC::AddresseeList() << i.value()));
+        addPerson(MetaContact(i.key(), i.value()));
     }
 }
 
 void PersonsModel::onContactAdded(const QString &contactId)
 {
-    qDebug() << "on contact added" << contactId;
-    //TODO map to personId
+    Q_D(PersonsModel);
+    //TODO map to personId properly
     const QString &personId = contactId;
 
-    BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
+    if (d->personIds.contains(personId)) {
+        //TODO update the MC object for this person
+        //dataChanged(..)
+    } else { //new contact -> new person
+        BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
 
-    qDebug() << dataSource;
-
-    //TODO async with an onContactFetched()
-    const KABC::Addressee &contact = dataSource->contact(contactId);
-    addPerson(MetaContact(personId, KABC::AddresseeList() << contact));
+        //TODO async with an onContactFetched()
+        const KABC::Addressee &contact = dataSource->contact(contactId);
+        addPerson(MetaContact(personId, contact));
+    }
 }
 
 void PersonsModel::onContactChanged(const QString &contactId)
@@ -125,10 +129,7 @@ void PersonsModel::onContactChanged(const QString &contactId)
     BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
     KABC::Addressee contact = dataSource->contact(contactId);
 
-    //FIXME this is broken
-    //what if you had multiple contacts here
-    //we need some sort of update(id, addressee)
-    d->metacontacts[personId].updateContacts(KABC::AddresseeList() << contact);
+    d->metacontacts[personId].updateContact(contactId, contact);
 
     //mark as changed
     int row = d->personIds.indexOf(personId);
@@ -142,9 +143,28 @@ void PersonsModel::onContactRemoved(const QString &contactId)
 {
     //TODO map to personId
     const QString &personId = contactId;
+
+    //TODO remove contact from MC object
+
+    //TODO if MC object is now invalid remove the person from the list
     removePerson(personId);
 }
 
+void PersonsModel::onAddContactToPerson(const QString& contactId, const QString& personId)
+{
+    Q_D(PersonsModel);
+
+    //get contact already in the model
+    KABC::Addressee contact;
+    removePerson(contactId);
+
+    //if the person is already in the model, add the contact to it
+    if (d->personIds.contains(personId)) {
+        d->metacontacts[contactId].updateContact(contactId, contact);
+    } else { //if the person is not in the model, create a new person and insert it
+        addPerson(MetaContact(contactId, contact));
+    }
+}
 
 
 void PersonsModel::addPerson(const KPeople::MetaContact& mc)

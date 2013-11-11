@@ -39,17 +39,27 @@ class KPEOPLE_EXPORT MetaContact
 {
 public:
     MetaContact();
-    MetaContact(const QString &id, const KABC::AddresseeList &contacts);
+    /** Create a 'MetaContact' from a single contact*/
+    MetaContact(const QString &contactId, const KABC::Addressee contact);
+
+    /** Create a MetaContact with a given person ID and a map of all associated contacts*/
+    MetaContact(const QString &personId, const KABC::Addressee::Map& contacts);
     MetaContact(const MetaContact &other);
     ~MetaContact();
 
     MetaContact& operator=(const MetaContact& other);
 
     QString id() const;
+    bool isValid() const;
     KABC::AddresseeList contacts() const;
     KABC::Addressee personAddressee() const;
 
-    void updateContacts(const KABC::AddresseeList& contacts);
+    //update one of the stored contacts in this metacontact object
+    void updateContact(const QString &contactId, const KABC::Addressee &contact);
+    void removeContact(const QString &contactId);
+
+private:
+    void reload();
 
     QSharedDataPointer<MetaContactData> d;
 };

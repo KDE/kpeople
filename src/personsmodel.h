@@ -77,6 +77,9 @@ private Q_SLOTS:
     void onContactChanged(const QString &contactId);
     void onContactRemoved(const QString &contactId);
 
+    void onAddContactToPerson(const QString &contactId, const QString &personId);
+    
+
 private:
     Q_DISABLE_COPY(PersonsModel)
 

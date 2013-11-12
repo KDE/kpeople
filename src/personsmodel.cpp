@@ -134,11 +134,7 @@ void PersonsModel::onContactAdded(const QString &contactId)
 
     if (d->personIds.contains(personId)) {
         d->metacontacts[personId].updateContact(contactId, contact);
-        int row = d->personIds.indexOf(personId);
-        const QModelIndex contactIndex = index(row);
-        if(row >=0 ) {
-            dataChanged(contactIndex, contactIndex);
-        }
+        personChanged(personId);
     } else { //new contact -> new person
         addPerson(MetaContact(personId, contact));
     }
@@ -155,12 +151,7 @@ void PersonsModel::onContactChanged(const QString &contactId)
 
     d->metacontacts[personId].updateContact(contactId, contact);
 
-    //mark as changed
-    int row = d->personIds.indexOf(personId);
-    const QModelIndex contactIndex = index(row);
-    if(row >=0 ) {
-        dataChanged(contactIndex, contactIndex);
-    }
+    personChanged(personId);
 }
 
 void PersonsModel::onContactRemoved(const QString &contactId)
@@ -190,6 +181,8 @@ void PersonsModel::onAddContactToPerson(const QString& contactId, const QString&
     d->metacontacts[oldPersonId].removeContact(contactId);
     if (!d->metacontacts[oldPersonId].isValid()) {
         removePerson(oldPersonId);
+    } else {
+        personChanged(oldPersonId);
     }
 
     //if the person is already in the model, add the contact to it
@@ -244,6 +237,16 @@ void PersonsModel::removePerson(const QString& id)
     d->metacontacts.remove(id);
     d->personIds.removeOne(id);
     endRemoveRows();
+}
+
+void PersonsModel::personChanged(const QString &personId)
+{
+    Q_D(const PersonsModel);
+    int row = d->personIds.indexOf(personId);
+    const QModelIndex contactIndex = index(row);
+    if(row >=0 ) {
+        dataChanged(contactIndex, contactIndex);
+    }
 }
 
 QString PersonsModel::personIdForContact(const QString& contactId)

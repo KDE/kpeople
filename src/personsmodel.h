@@ -83,6 +83,7 @@ private:
     //methods that manipulate the model
     void addPerson(const MetaContact &mc);
     void removePerson(const QString &id);
+    void personChanged(const QString &personId);
 
     QString personIdForContact(const QString &contactId);
 

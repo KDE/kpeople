@@ -123,7 +123,7 @@ ContactListApp::ContactListApp()
     m_view->setRootIsDecorated(false);
     m_view->setModel(sortFilter);
     m_view->setItemDelegate(new PersonsDelegate(this));
-    m_view->setSelectionMode(QAbstractItemView::MultiSelection);
+    m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     layout->addWidget(m_view);
     QPushButton *mergeButton = new QPushButton("Merge", this);

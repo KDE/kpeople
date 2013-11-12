@@ -187,12 +187,29 @@ void MetaContact::reload()
 //         void setBirthday( const QDateTime &birthday );
 
 
-//         void setMailer( const QString &mailer );
-//         void setTimeZone( const TimeZone &timeZone );
-//         void setGeo( const Geo &geo );
-//         void setTitle( const QString &title );
-//         void setRole( const QString &role );
-//         void setOrganization( const QString &organization );
+        if (d->personAddressee.mailer().isEmpty() && !contact.mailer().isEmpty()) {
+            d->personAddressee.setMailer(contact.mailer());
+        }
+
+        if (!d->personAddressee.timeZone().isValid() && contact.timeZone().isValid()) {
+            d->personAddressee.setTimeZone(contact.timeZone());
+        }
+
+        if (!d->personAddressee.geo().isValid() && contact.timeZone().isValid()) {
+            d->personAddressee.setGeo(contact.geo());
+        }
+
+        if (d->personAddressee.title().isEmpty() && !contact.title().isEmpty()) {
+            d->personAddressee.setTitle(contact.title());
+        }
+
+        if (d->personAddressee.role().isEmpty() && !contact.role().isEmpty()) {
+            d->personAddressee.setRole(contact.role());
+        }
+
+        if (d->personAddressee.organization().isEmpty() && !contact.organization().isEmpty()) {
+            d->personAddressee.setOrganization(contact.organization());
+        }
 //         void setDepartment( const QString &department );
 //         void setNote( const QString &note );
 
@@ -202,7 +219,6 @@ void MetaContact::reload()
 //         void setUrl( const KUrl &url );
 //         void setSecrecy( const Secrecy &secrecy );
 //         void setLogo( const Picture &logo );
-//         void setPhoto( const Picture &photo );
 
         if (d->personAddressee.photo().isEmpty() && !contact.photo().isEmpty()) {
             d->personAddressee.setPhoto(contact.photo());

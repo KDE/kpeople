@@ -6,6 +6,7 @@
 #include "personmanager.h"
 
 #include <KABC/Addressee>
+#include <KStandardDirs>
 
 #include <QDebug>
 #include <QPixmap>
@@ -59,8 +60,11 @@ QVariant PersonsModel::data(const QModelIndex& index, int role) const
     case PhotoRole:
         if (!person.photo().data().isNull()) {
             return person.photo().data();
+        } else if (!person.photo().url().isEmpty()) {
+            return QImage(person.photo().url());
         } else {
-            return QPixmap(person.photo().url());
+            const QString avatarImagePath = KStandardDirs::locate("data", "person-viewer/dummy_avatar.png");
+            return QImage(avatarImagePath);
         }
     case PersonIdRole:
         return personId;

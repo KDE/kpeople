@@ -24,11 +24,78 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
+#include <QStyledItemDelegate>
+#include <QPainter>
+
 #include <personsmodel.h>
 #include <personsmodelfeature.h>
 #include <personmanager.h>
 
 using namespace KPeople;
+
+const int SPACING = 8;
+const int PHOTO_SIZE = 32;
+
+class PersonsDelegate : public QStyledItemDelegate
+{
+public:
+    PersonsDelegate(QObject *parent = 0);
+    ~PersonsDelegate();
+
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+};
+
+PersonsDelegate::PersonsDelegate(QObject *parent)
+:QStyledItemDelegate(parent)
+{
+}
+
+PersonsDelegate::~PersonsDelegate()
+{
+}
+
+void PersonsDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+{
+    QStyleOptionViewItemV4 optV4 = option;
+    initStyleOption(&optV4, index);
+
+    painter->save();
+
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
+    painter->setClipRect(optV4.rect);
+
+    QStyle *style = QApplication::style();
+    style->drawPrimitive(QStyle::PE_PanelItemViewItem, &option, painter);
+
+    QRect contactPhotoRect = optV4.rect;
+    contactPhotoRect.adjust(SPACING, SPACING, SPACING, SPACING);
+    contactPhotoRect.setWidth(PHOTO_SIZE);
+    contactPhotoRect.setHeight(PHOTO_SIZE);
+
+    QImage avatar = index.data(Qt::DecorationRole).value<QImage>();
+    painter->drawImage(contactPhotoRect, avatar);
+
+    painter->drawRect(contactPhotoRect);
+
+    QRect nameRect = optV4.rect;
+    nameRect.adjust(SPACING + PHOTO_SIZE + SPACING, SPACING, 0, 0);
+
+    painter->drawText(nameRect, index.data(Qt::DisplayRole).toString());
+
+    QRect idRect = optV4.rect;
+    idRect.adjust(SPACING + PHOTO_SIZE + SPACING, SPACING + 15, 0, 0);
+    painter->drawText(idRect, index.data(PersonsModel::PersonIdRole).toString());
+
+    painter->restore();
+}
+
+QSize PersonsDelegate::sizeHint (const QStyleOptionViewItem& option, const QModelIndex& index) const
+{
+    return QSize(128, 48);
+}
+
+
 
 class ContactListApp : public QWidget
 {
@@ -53,7 +120,9 @@ ContactListApp::ContactListApp()
     sortFilter->setDynamicSortFilter(true);
     sortFilter->setSourceModel(m_model);
     sortFilter->sort(0);
+    m_view->setRootIsDecorated(false);
     m_view->setModel(sortFilter);
+    m_view->setItemDelegate(new PersonsDelegate(this));
     m_view->setSelectionMode(QAbstractItemView::MultiSelection);
 
     layout->addWidget(m_view);

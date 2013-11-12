@@ -26,8 +26,7 @@
 #include <QUrl>
 #include <QStringList>
 #include <KDateTime>
-
-#include "metacontact.h"
+#include <KABC/Addressee>
 
 namespace KPeople
 {
@@ -44,7 +43,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
 //         PersonData(const MetaContact &mc, QObject *parent=0);
 
         virtual ~PersonData();
-        MetaContact metacontact() const;
+        KABC::Addressee person() const;
 
     Q_SIGNALS:
         /** Some of the person's data we're offering has changed */

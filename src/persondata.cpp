@@ -49,10 +49,15 @@ PersonData::~PersonData()
     delete d_ptr;
 }
 
+KABC::Addressee PersonData::person() const
+{
+    return d->metaContact.person();
+}
+
 MetaContact PersonData::metacontact() const
 {
     Q_D(const PersonData);
-    d->metaContact;
+    d->metaContact.personAddressee();
 }
 
 

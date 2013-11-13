@@ -48,10 +48,12 @@ KPeople::PersonData::PersonData(const QString &personId, QObject* parent):
         d->contactIds << personId;
     }
 
-    //setup watchers
     KABC::Addressee::Map contacts;
     Q_FOREACH(BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {
         Q_FOREACH(const QString &contactId, d->contactIds) {
+            //FIXME this is terrible.. we have to ask every datasource for the contact
+            //future idea: plugins have a method of what their URIs will start with
+            //then we keep plugins as a map
             const KABC::Addressee addressee = dataSource->contact(contactId);
             if (!addressee.isEmpty()) {
                 contacts[contactId] = addressee;
@@ -85,7 +87,10 @@ void PersonData::onContactChanged(const QString &id)
     Q_D(PersonData);
 
     if (d->contactIds.contains(id)) {
-//         d->metaContact.updateContact(id, FIXME);
+        //FIXME
+        BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
+        const KABC::Addressee contact = dataSource->contact(id);
+        d->metaContact.updateContact(id, contact);
         Q_EMIT dataChanged();
     }
 }

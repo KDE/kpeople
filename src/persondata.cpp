@@ -19,29 +19,48 @@
 #include "persondata.h"
 
 #include "datasourcewatcher_p.h"
+#include "metacontact.h"
+#include "personmanager.h"
+#include "personpluginmanager.h"
+#include "basepersonsdatasource.h"
 
 namespace KPeople {
     class PersonDataPrivate {
+    public:
+        QStringList contactIds;
         MetaContact metaContact;
     };
 }
 
 using namespace KPeople;
 
-KPeople::PersonData::PersonData(const QString& contactId, QObject* parent):
+KPeople::PersonData::PersonData(const QString &personId, QObject* parent):
     QObject(parent),
     d_ptr(new PersonDataPrivate)
 {
-    //TODO
+    Q_D(PersonData);
+
     //query DB
-
-    //load contacts
-
-    //create mc
+    const QStringList contactIds;
+    if (personId.startsWith("kpeople://")) {
+        d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
+    } else {
+        d->contactIds << personId;
+    }
 
     //setup watchers
+    KABC::Addressee::Map contacts;
+    Q_FOREACH(BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {
+        Q_FOREACH(const QString &contactId, d->contactIds) {
+            const KABC::Addressee addressee = dataSource->contact(contactId);
+            if (!addressee.isEmpty()) {
+                contacts[contactId] = addressee;
+            }
+        }
+        connect(dataSource, SIGNAL(contactChanged(QString)), SLOT(onContactChanged(QString)));
+    }
 
-    //TODO async me
+    d->metaContact = MetaContact(personId, contacts);
 }
 
 PersonData::~PersonData()
@@ -51,13 +70,22 @@ PersonData::~PersonData()
 
 KABC::Addressee PersonData::person() const
 {
-    return d->metaContact.person();
+    Q_D(const PersonData);
+    return d->metaContact.personAddressee();
 }
 
-MetaContact PersonData::metacontact() const
+KABC::AddresseeList PersonData::contacts() const
 {
     Q_D(const PersonData);
-    d->metaContact.personAddressee();
+    return d->metaContact.contacts();
 }
 
+void PersonData::onContactChanged(const QString &id)
+{
+    Q_D(PersonData);
 
+    if (d->contactIds.contains(id)) {
+//         d->metaContact.updateContact(id, FIXME);
+        Q_EMIT dataChanged();
+    }
+}

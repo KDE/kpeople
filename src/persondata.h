@@ -44,12 +44,16 @@ class KPEOPLE_EXPORT PersonData : public QObject
 
         virtual ~PersonData();
         KABC::Addressee person() const;
+        KABC::AddresseeList contacts() const;
 
     Q_SIGNALS:
         /** Some of the person's data we're offering has changed */
         void dataChanged();
 
     protected:
+
+    private Q_SLOTS:
+        void onContactChanged(const QString &id);
 
     private:
         Q_DISABLE_COPY(PersonData)

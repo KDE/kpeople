@@ -28,7 +28,6 @@
 #include <QPainter>
 
 #include <personsmodel.h>
-#include <personsmodelfeature.h>
 #include <personmanager.h>
 
 using namespace KPeople;

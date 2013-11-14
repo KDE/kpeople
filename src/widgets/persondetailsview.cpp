@@ -100,8 +100,11 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 {
     Q_D(PersonDetailsView);
     setLayout(new QVBoxLayout(this));
+<<<<<<< HEAD
     d->m_mainLayout = new QFormLayout(this);
     d->m_mainLayout->setSpacing(4);
+=======
+>>>>>>> Don't crash on contact change
     d->m_person = 0;
 
     QWidget *details = new QWidget();
@@ -154,6 +157,21 @@ void PersonDetailsView::reload()
 
     //update header information
     //FIXME - possibly split this out into a new class with a nice setPerson method
+
+    //delete everything currently in the layout
+    QLayoutItem *child;
+    while ((child = layout()->takeAt(0)) != 0) {
+        delete child->widget();
+        delete child;
+    }
+
+    d->m_mainLayout = new QFormLayout(this);
+
+    QWidget *details = new QWidget();
+    d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
+    d->m_personDetailsPresentation->setupUi(details);
+    layout()->addWidget(details);
+
     QPixmap avatar;
 
     if (!d->m_person->person().photo().data().isNull()) {

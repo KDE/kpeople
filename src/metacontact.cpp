@@ -235,6 +235,9 @@ void MetaContact::reload()
             d->personAddressee.setPhoto(contact.photo());
         }
 
+        QStringList tmp = d->personAddressee.customs();
+        d->personAddressee.setCustoms(tmp << contact.customs());
+
 //         void setSound( const Sound &sound );
 
         //TODO something clever here

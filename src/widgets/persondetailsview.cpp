@@ -166,6 +166,8 @@ void PersonDetailsView::reload()
     }
 
     d->m_personDetailsPresentation->avatarPixmapLabel->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio)); //FIXME
+    d->m_personDetailsPresentation->presencePixmapLabel->setText(
+            d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence")));
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {

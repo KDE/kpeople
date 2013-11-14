@@ -102,6 +102,13 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     d->m_mainLayout = new QFormLayout(this);
     d->m_person = 0;
 
+    QWidget *details = new QWidget();
+    d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
+    d->m_personDetailsPresentation->setupUi(details);
+    layout()->addWidget(details);
+    layout()->addItem(d->m_mainLayout);
+    layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
+
     //create plugins
     Q_FOREACH(KABC::Field *field, KABC::Field::allFields()) {
         d->m_plugins << new CoreFieldsPlugin(field);
@@ -143,18 +150,8 @@ void PersonDetailsView::reload()
 {
     Q_D(PersonDetailsView);
 
-    //delete everything currently in the layout
-    QLayoutItem *child;
-    while ((child = layout()->takeAt(0)) != 0) {
-        delete child->widget();
-        delete child;
-    }
-
-    QWidget *details = new QWidget();
-    d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
-    d->m_personDetailsPresentation->setupUi(details);
-    layout()->addWidget(details);
-
+    //update header information
+    //FIXME - possibly split this out into a new class with a nice setPerson method
     QPixmap avatar;
 
     if (!d->m_person->person().photo().data().isNull()) {
@@ -170,6 +167,13 @@ void PersonDetailsView::reload()
             d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence")));
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
 
+    //delete all generated plugin widgets
+    QLayoutItem *child;
+    while ((child = d->m_mainLayout->takeAt(0)) != 0) {
+        delete child->widget();
+        delete child;
+    }
+
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + ':';
         QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->person(), this);
@@ -182,7 +186,4 @@ void PersonDetailsView::reload()
             d->m_mainLayout->addRow(widgetLabel, widget);
         }
     }
-
-    layout()->addItem(d->m_mainLayout);
-    layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }

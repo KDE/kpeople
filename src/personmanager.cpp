@@ -129,22 +129,15 @@ QString PersonManager::personIdForContact(const QString& contactId) const
 
 QString PersonManager::mergeContacts(const QStringList& ids)
 {
-    //TODO, ask mck182 about the logic here
-    //for now assume all input is unmerged contacts
+    // no merging if we have only 0 || 1 ids
+    if (ids.size() < 2) {
+        return QString();
+    }
 
-    int personId = 0;
-    
     QStringList metacontacts;
     QStringList contacts;
 
-    //find personID to use
-    QSqlQuery query = m_db.exec(QString("SELECT MAX(personID) FROM persons"));
-    if (query.next()) {
-        personId = query.value(0).toInt();
-    }
-
-    personId++;
-
+    // separate the passed ids to metacontacts and simple contacts
     Q_FOREACH (const QString &id, ids) {
         if (id.startsWith(QLatin1String("kpeople://"))) {
             metacontacts << id;
@@ -153,25 +146,39 @@ QString PersonManager::mergeContacts(const QStringList& ids)
         }
     }
 
-    if (contacts.count() + metacontacts.count() < 2) {
-        return QString();
+    // create new personIdString
+    //   - if we're merging two simple contacts, create completely new id
+    //   - if we're merging an existing metacontact, take the first id and use it
+    QString personIdString;
+    if (metacontacts.count() == 0) {
+        // query for the highest existing ID in the database and +1 it
+        int personId = 0;
+        QSqlQuery query = m_db.exec(QString("SELECT MAX(personID) FROM persons"));
+        if (query.next()) {
+            personId = query.value(0).toInt();
+            personId++;
+        }
+
+        personIdString = "kpeople://" + QString::number(personId);
+    } else {
+        personIdString = metacontacts.first();
     }
 
-    QString personIdString;
-    personIdString = metacontacts.count() == 0 ? "kpeople://" + QString::number(personId)
-                                               : metacontacts.first();
-
+    // start a db transaction (ends automatically on destruction)
     Transaction t(m_db);
 
-    if (metacontacts.count() > 1 && contacts.count() == 0) {
-
+    // processed passed metacontacts
+    if (metacontacts.count() > 1) {
+        // collect all the contacts from other persons
+        QStringList personContacts;
         Q_FOREACH (const QString &id, metacontacts) {
             if (id != personIdString) {
-                contacts << contactsForPersonId(id);
+                personContacts << contactsForPersonId(id);
             }
         }
 
-        Q_FOREACH (const QString &id, contacts) {
+        // iterate over all of the contacts and change their personID to the new personIdString
+        Q_FOREACH (const QString &id, personContacts) {
             QSqlQuery updateQuery(m_db);
             updateQuery.prepare("UPDATE persons SET personID = ? WHERE contactID = ?");
             updateQuery.bindValue(0, personIdString.mid(strlen("kpeople://")));
@@ -192,24 +199,25 @@ QString PersonManager::mergeContacts(const QStringList& ids)
             message.setArguments(QVariantList() << id << personIdString);
             QDBusConnection::sessionBus().send(message);
         }
-
-        return personIdString;
     }
 
-    Q_FOREACH (const QString &id, contacts) {
-        QSqlQuery insertQuery(m_db);
-        insertQuery.prepare("INSERT INTO persons VALUES (?, ?)");
-        insertQuery.bindValue(0, id);
-        insertQuery.bindValue(1, personIdString.mid(strlen("kpeople://"))); //strip kpeople://
-        insertQuery.exec();
+    // process passed contacts
+    if (contacts.size() > 0) {
+        Q_FOREACH (const QString &id, contacts) {
+            QSqlQuery insertQuery(m_db);
+            insertQuery.prepare("INSERT INTO persons VALUES (?, ?)");
+            insertQuery.bindValue(0, id);
+            insertQuery.bindValue(1, personIdString.mid(strlen("kpeople://"))); //strip kpeople://
+            insertQuery.exec();
 
-        //FUTURE OPTIMISATION - this would be best as one signal, but arguments become complex
-        QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                                    QLatin1String("org.kde.KPeople"),
-                                                    QLatin1String("ContactAddedToPerson"));
+            //FUTURE OPTIMISATION - this would be best as one signal, but arguments become complex
+            QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
+                                                        QLatin1String("org.kde.KPeople"),
+                                                        QLatin1String("ContactAddedToPerson"));
 
-        message.setArguments(QVariantList() << id << personIdString);
-        QDBusConnection::sessionBus().send(message);
+            message.setArguments(QVariantList() << id << personIdString);
+            QDBusConnection::sessionBus().send(message);
+        }
     }
 
     return personIdString;

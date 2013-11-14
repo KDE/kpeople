@@ -246,7 +246,6 @@ void MetaContact::reload()
             }
         }
 
-
 //         void setSound( const Sound &sound );
 
         //TODO something clever here

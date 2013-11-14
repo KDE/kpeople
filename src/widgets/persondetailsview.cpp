@@ -100,11 +100,6 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 {
     Q_D(PersonDetailsView);
     setLayout(new QVBoxLayout(this));
-<<<<<<< HEAD
-    d->m_mainLayout = new QFormLayout(this);
-    d->m_mainLayout->setSpacing(4);
-=======
->>>>>>> Don't crash on contact change
     d->m_person = 0;
 
     QWidget *details = new QWidget();
@@ -166,6 +161,7 @@ void PersonDetailsView::reload()
     }
 
     d->m_mainLayout = new QFormLayout(this);
+    d->m_mainLayout->setSpacing(4);
 
     QWidget *details = new QWidget();
     d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
@@ -187,15 +183,6 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation->avatarPixmapLabel->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio)); //FIXME
     d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(KPeople::iconForPresenceString(contactPresence));
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
-
-    //delete all generated plugin widgets
-    if (d->m_mainLayout->count()) {
-        QLayoutItem *child;
-        while ((child = d->m_mainLayout->takeAt(0)) != 0) {
-            delete child->widget();
-            delete child;
-        }
-    }
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + ':';

@@ -14,6 +14,7 @@ add_subdirectory(widgets)
 
 
 kde4_add_library (kpeople  SHARED
+      global.cpp
       metacontact.cpp
 #     abstractpersonplugin.cpp
 #     personsmodelfeature.cpp
@@ -58,6 +59,7 @@ install (TARGETS kpeople
 )
 
 install (FILES
+            global.h
             personsmodel.h
             persondata.h
             kpeople_export.h

@@ -31,6 +31,37 @@
 #include <QDBusMessage>
 #include <KStandardDirs>
 
+class Transaction
+{
+public:
+    Transaction(const QSqlDatabase &db);
+    void cancel();
+    ~Transaction();
+private:
+    QSqlDatabase m_db;
+    bool m_cancelled;
+};
+
+Transaction::Transaction(const QSqlDatabase& db) :
+    m_db(db),
+    m_cancelled(false)
+{
+    m_db.exec("BEGIN TRANSACTION");
+}
+
+void Transaction::cancel()
+{
+    m_db.exec("ROLLBACK");
+    m_cancelled = true;
+}
+
+Transaction::~Transaction()
+{
+    if (!m_cancelled) {
+        m_db.exec("END TRANSACTION");
+    }
+}
+
 PersonManager::PersonManager(QObject* parent):
     QObject(parent),
     m_db(QSqlDatabase::addDatabase("QSQLITE3"))
@@ -130,7 +161,7 @@ QString PersonManager::mergeContacts(const QStringList& ids)
     personIdString = metacontacts.count() == 0 ? "kpeople://" + QString::number(personId)
                                                : metacontacts.first();
 
-    m_db.exec("BEGIN TRANSACTION");
+    Transaction t(m_db);
 
     if (metacontacts.count() > 1 && contacts.count() == 0) {
 
@@ -162,8 +193,6 @@ QString PersonManager::mergeContacts(const QStringList& ids)
             QDBusConnection::sessionBus().send(message);
         }
 
-        m_db.exec("END TRANSACTION");
-
         return personIdString;
     }
 
@@ -182,8 +211,6 @@ QString PersonManager::mergeContacts(const QStringList& ids)
         message.setArguments(QVariantList() << id << personIdString);
         QDBusConnection::sessionBus().send(message);
     }
-
-    m_db.exec("END TRANSACTION");
 
     return personIdString;
 }

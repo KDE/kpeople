@@ -37,7 +37,7 @@ install (TARGETS kpeoplewidgets
 
 
 install (FILES
-            abstractpersondetailswidget.h
+#            abstractpersondetailswidget.h
             persondetailsview.h
 #             mergedialog.h
             persondetailsdialog.h

@@ -26,6 +26,7 @@
 #include <QList>
 
 #include <KLocalizedString>
+#include <KStandardDirs>
 
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaildetailswidget.h"
@@ -153,6 +154,18 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
     d->m_personDetailsPresentation->setupUi(details);
     layout()->addWidget(details);
+
+    QPixmap avatar;
+
+    if (!d->m_person->person().photo().data().isNull()) {
+        avatar = QPixmap::fromImage(d->m_person->person().photo().data());
+    } else if (!d->m_person->person().photo().url().isEmpty()) {
+        avatar = QPixmap(d->m_person->person().photo().url());
+    } else {
+        avatar = QPixmap(KStandardDirs::locate("data", "person-viewer/dummy_avatar.png"));
+    }
+
+    d->m_personDetailsPresentation->avatarPixmapLabel->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio)); //FIXME
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {

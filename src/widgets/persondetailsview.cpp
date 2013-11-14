@@ -152,7 +152,8 @@ void PersonDetailsView::reload()
             QFont font = widget->font();
             font.setBold(true);
             widget->setFont(font);
-            d->m_mainLayout->addRow(label, widget);
+            QLabel *widgetLabel = new QLabel(label, this);
+            d->m_mainLayout->addRow(widgetLabel, widget);
         }
     }
 }

@@ -57,7 +57,7 @@ PersonDetailsDialog::~PersonDetailsDialog()
     delete d_ptr;
 }
 
-void PersonDetailsDialog::setPerson(const PersonDataPtr &person)
+void PersonDetailsDialog::setPerson(PersonData *person)
 {
     Q_D(PersonDetailsDialog);
     d->view->setPerson(person);

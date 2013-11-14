@@ -10,7 +10,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 # endif (KDE4_BUILD_TESTS)
 # add_subdirectory(declarative)
 add_subdirectory(plugins)
-# add_subdirectory(widgets)
+add_subdirectory(widgets)
 
 
 kde4_add_library (kpeople  SHARED

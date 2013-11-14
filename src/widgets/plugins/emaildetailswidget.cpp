@@ -17,48 +17,41 @@
 */
 
 #include "emaildetailswidget.h"
-#include "persondata.h"
 
-#include <QGridLayout>
 #include <QVBoxLayout>
 #include <QLabel>
 
 #include <KPluginFactory>
 #include <KLocalizedString>
 
-K_PLUGIN_FACTORY( EmailDetailsWidgetFactory, registerPlugin<EmailDetailsWidget>(); )
-K_EXPORT_PLUGIN( EmailDetailsWidgetFactory("emaildetailswidgetplugin", "libkpeople") )
+// K_PLUGIN_FACTORY( EmailDetailsWidgetFactory, registerPlugin<EmailDetailsWidget>(); )
+// K_EXPORT_PLUGIN( EmailDetailsWidgetFactory("emaildetailswidgetplugin", "libkpeople") )
 
 using namespace KPeople;
 
-EmailDetailsWidget::EmailDetailsWidget(QWidget *parent, const QVariantList &args)
-    : AbstractPersonDetailsWidget(parent)
+
+QWidget* EmailFieldsPlugin::createDetailsWidget(const KABC::Addressee& person, QWidget* parent) const
 {
-    Q_UNUSED(args);
-    setTitle(i18n("Email"));
-    setIcon(QIcon::fromTheme("mail-message"));
-    QVBoxLayout *newLayout = new QVBoxLayout(this);
-    newLayout->setContentsMargins(0,0,0,0);
-    setLayout(newLayout);
+    if (person.emails().isEmpty()) {
+        return 0;
+    }
+    QWidget *widget = new QWidget(parent);
+    QVBoxLayout *layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    Q_FOREACH(const QString &email, person.emails()) {
+        layout->addWidget(new QLabel(email));
+    }
+    widget->setLayout(layout);
+    return widget;
 }
 
-void EmailDetailsWidget::setPerson(PersonData *person)
+QString EmailFieldsPlugin::label() const
 {
-    if(person->emails().size() == 0) {
-        setActive(false);
-    } else {
-        setActive(true);
-    }
-
-    QLayoutItem *child;
-    while ((child = layout()->takeAt(0)) != 0) {
-        delete child->widget();
-        delete child;
-    }
-
-    Q_FOREACH (const QString &email, person->emails()) {
-        QLabel *emailLabel = new QLabel(email, this);
-        emailLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
-        layout()->addWidget(emailLabel);
-    }
+    return i18n("Email");
 }
+
+int EmailFieldsPlugin::sortWeight() const
+{
+    return 50;
+}
+

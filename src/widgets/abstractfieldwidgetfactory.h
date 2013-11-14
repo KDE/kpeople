@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2011  Martin Klapetek <mklapetek@kde.org>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -18,40 +18,31 @@
 
 
 
-#ifndef PERSON_DETAILS_VIEW_H
-#define PERSON_DETAILS_VIEW_H
+#ifndef ABSTRACTFIELDWIDGETFACTORY_H
+#define ABSTRACTFIELDWIDGETFACTORY_H
 
 #include <QWidget>
-#include <QVariantList>
+#include <QIcon>
+
+#include <KABC/Field>
+#include <KABC/Addressee>
 
 #include "../kpeople_export.h"
 
-#include "../persondata.h"
-
-class QLabel;
-class QVBoxLayout;
-
-namespace KPeople {
-class PersonDetailsViewPrivate;
-
-class KPEOPLE_EXPORT PersonDetailsView : public QWidget
+namespace KPeople
 {
-    Q_OBJECT
+class AbstractFieldWidgetFactoryPrivate;
+
+class KPEOPLE_EXPORT AbstractFieldWidgetFactory
+{
 public:
-    PersonDetailsView(QWidget *parent = 0);
-    virtual ~PersonDetailsView();
+    explicit AbstractFieldWidgetFactory() {};
+    virtual ~AbstractFieldWidgetFactory() {};
 
-public Q_SLOTS:
-    void setPerson(PersonData *person);
-//     void setPersonsModel(PersonsModel *model);
-
-private Q_SLOTS:
-    void reload();
-
-private:
-    Q_DECLARE_PRIVATE(PersonDetailsView)
-    PersonDetailsViewPrivate* d_ptr;
+    virtual QString label() const = 0;
+    virtual int sortWeight() const {return 100;}
+    virtual QWidget *createDetailsWidget(const KABC::Addressee &person, QWidget *parent) const = 0;
 };
 }
 
-#endif // PERSON_DETAILS_VIEW_H
+#endif // ABSTRACTFIELDWIDGETFACTORY_H

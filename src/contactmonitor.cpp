@@ -36,6 +36,7 @@ ContactMonitor::~ContactMonitor()
 void ContactMonitor::setContact(const KABC::Addressee& contact)
 {
     m_contact = contact;
+    Q_EMIT contactChanged();
 }
 
 KABC::Addressee ContactMonitor::contact() const

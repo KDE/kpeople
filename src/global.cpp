@@ -23,6 +23,8 @@
 
 #include "personmanager.h"
 
+#include <KIconLoader>
+
 //these namespace members expose the useful bits of PersonManager
 //global.h should be included from every exported header file so namespace members are always visible
 
@@ -34,4 +36,29 @@ QString KPeople::mergeContacts(const QStringList &ids)
 bool KPeople::unmergeContact(const QString &id)
 {
     return PersonManager::instance()->unmergeContact(id);
+}
+
+QPixmap KPeople::iconForPresenceString(const QString &presenceName)
+{
+    if (presenceName == QLatin1String("available")) {
+        return KIconLoader::global()->loadIcon("user-online", KIconLoader::MainToolbar, KIconLoader::SizeSmallMedium);
+    }
+
+    if (presenceName == QLatin1String("away")) {
+        return KIconLoader::global()->loadIcon("user-away", KIconLoader::MainToolbar, KIconLoader::SizeSmallMedium);
+    }
+
+    if (presenceName == QLatin1String("busy") || presenceName == QLatin1String("dnd")) {
+        return KIconLoader::global()->loadIcon("user-busy", KIconLoader::MainToolbar, KIconLoader::SizeSmallMedium);
+    }
+
+    if (presenceName == QLatin1String("xa")) {
+        return KIconLoader::global()->loadIcon("user-away-extended", KIconLoader::MainToolbar, KIconLoader::SizeSmallMedium);
+    }
+
+    if (presenceName == QLatin1String("hidden")) {
+        return KIconLoader::global()->loadIcon("user-invisible", KIconLoader::MainToolbar, KIconLoader::SizeSmallMedium);
+    }
+
+    return KIconLoader::global()->loadIcon("user-offline", KIconLoader::MainToolbar, KIconLoader::SizeSmallMedium);
 }

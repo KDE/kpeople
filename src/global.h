@@ -22,6 +22,7 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
+#include <QPixmap>
 #include <QString>
 #include <QStringList>
 
@@ -44,6 +45,13 @@ namespace KPeople
      * @return Whether the unmerge was successful
      */
     KPEOPLE_EXPORT bool unmergeContact(const QString &id);
+
+    /**
+     * Return a QPixmap for a TP presence string
+     *
+     * @return QPixmap with the Tp presence icon
+     */
+    KPEOPLE_EXPORT QPixmap iconForPresenceString(const QString &presenceName);
 };
 
 #endif // GLOBAL_H

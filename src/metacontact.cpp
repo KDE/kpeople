@@ -21,6 +21,7 @@
  */
 
 #include "metacontact.h"
+#include "global.h"
 #include <QSharedData>
 
 namespace KPeople {
@@ -235,8 +236,16 @@ void MetaContact::reload()
             d->personAddressee.setPhoto(contact.photo());
         }
 
-        QStringList tmp = d->personAddressee.customs();
-        d->personAddressee.setCustoms(tmp << contact.customs());
+        // find most online presence
+        QString contactPresence = contact.custom("telepathy", "presence");
+        QString currentPersonPresence = d->personAddressee.custom("telepathy", "presence");
+
+        if (!contactPresence.isEmpty()) {
+            if (KPeople::presenceSortPriority(contactPresence) < KPeople::presenceSortPriority(currentPersonPresence)) {
+                d->personAddressee.insertCustom("telepathy", "presence", contactPresence);
+            }
+        }
+
 
 //         void setSound( const Sound &sound );
 

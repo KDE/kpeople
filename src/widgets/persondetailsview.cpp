@@ -144,9 +144,9 @@ void PersonDetailsView::reload()
         delete child;
     }
 
-    Q_FOREACH(AbstractFieldWidgetFactory *widgetFactor, d->m_plugins) {
-        const QString label = widgetFactor->label() + ':';
-        QWidget *widget = widgetFactor->createDetailsWidget(d->m_person->person(), this);
+    Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
+        const QString label = widgetFactory->label() + ':';
+        QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->person(), this);
 
         if (widget) {
             QFont font = widget->font();

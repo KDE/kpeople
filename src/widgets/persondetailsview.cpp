@@ -100,6 +100,8 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 {
     Q_D(PersonDetailsView);
     setLayout(new QVBoxLayout(this));
+    d->m_mainLayout = new QFormLayout(this);
+    d->m_mainLayout->setSpacing(4);
     d->m_person = 0;
 
     QWidget *details = new QWidget();
@@ -153,21 +155,6 @@ void PersonDetailsView::reload()
     //update header information
     //FIXME - possibly split this out into a new class with a nice setPerson method
 
-    //delete everything currently in the layout
-    QLayoutItem *child;
-    while ((child = layout()->takeAt(0)) != 0) {
-        delete child->widget();
-        delete child;
-    }
-
-    d->m_mainLayout = new QFormLayout(this);
-    d->m_mainLayout->setSpacing(4);
-
-    QWidget *details = new QWidget();
-    d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
-    d->m_personDetailsPresentation->setupUi(details);
-    layout()->addWidget(details);
-
     QPixmap avatar;
 
     if (!d->m_person->person().photo().data().isNull()) {
@@ -183,6 +170,15 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation->avatarPixmapLabel->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio)); //FIXME
     d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(KPeople::iconForPresenceString(contactPresence));
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
+
+    //delete all generated plugin widgets
+    if (d->m_mainLayout->count()) {
+        QLayoutItem *child;
+        while ((child = d->m_mainLayout->takeAt(0)) != 0) {
+            delete child->widget();
+            delete child;
+        }
+    }
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + ':';

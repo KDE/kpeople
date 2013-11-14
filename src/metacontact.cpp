@@ -186,6 +186,9 @@ void MetaContact::reload()
 //TODO merge Mck18's magic code that mixes years and dates
 //         void setBirthday( const QDateTime &birthday );
 
+        if (d->personAddressee.birthday().isNull() && !contact.birthday().isNull()) {
+            d->personAddressee.setBirthday(contact.birthday());
+        }
 
         if (d->personAddressee.mailer().isEmpty() && !contact.mailer().isEmpty()) {
             d->personAddressee.setMailer(contact.mailer());
@@ -210,22 +213,31 @@ void MetaContact::reload()
         if (d->personAddressee.organization().isEmpty() && !contact.organization().isEmpty()) {
             d->personAddressee.setOrganization(contact.organization());
         }
-//         void setDepartment( const QString &department );
+
+        if (d->personAddressee.department().isEmpty() && !contact.department().isEmpty()) {
+            d->personAddressee.setDepartment(contact.department());
+        }
+
+
 //         void setNote( const QString &note );
 
 //         void setProductId( const QString &productId );
-//         void setRevision( const QDateTime &revision );
-//         void setSortString( const QString &sortString );
-//         void setUrl( const KUrl &url );
-//         void setSecrecy( const Secrecy &secrecy );
-//         void setLogo( const Picture &logo );
+
+//         don't handle revision - it's useless in this context
+//         don't handle URL - it's not for websites, it's for a remote ID
+
+
+        if (!d->personAddressee.secrecy().isValid() && !contact.secrecy().isValid()) {
+            d->personAddressee.setSecrecy(contact.secrecy());
+        }
 
         if (d->personAddressee.photo().isEmpty() && !contact.photo().isEmpty()) {
             d->personAddressee.setPhoto(contact.photo());
         }
 
 //         void setSound( const Sound &sound );
-//except maybe not this
+
+        //TODO something clever here
 //         void setCustoms( const QStringList & );
     }
 }

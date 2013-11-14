@@ -27,7 +27,7 @@ namespace KPeople {
 class MetaContactData : public QSharedData
 {
 public:
-    QString id;
+    QString personId;
     KABC::Addressee::Map contacts;
     KABC::Addressee personAddressee;
 };
@@ -41,10 +41,10 @@ d(new MetaContactData)
 
 }
 
-MetaContact::MetaContact(const QString& id, const KABC::Addressee::Map& contacts):
+MetaContact::MetaContact(const QString& personId, const KABC::Addressee::Map& contacts):
 d (new MetaContactData)
 {
-    d->id = id;
+    d->personId = personId;
     d->contacts = contacts;
     reload();
 }
@@ -52,7 +52,7 @@ d (new MetaContactData)
 MetaContact::MetaContact(const QString& contactId, const KABC::Addressee contact):
 d (new MetaContactData)
 {
-    d->id = contactId;
+    d->personId = contactId;
     d->contacts[contactId] = contact;
     reload();
 }
@@ -79,7 +79,7 @@ MetaContact::~MetaContact()
 
 QString MetaContact::id() const
 {
-    return d->id;
+    return d->personId;
 }
 
 bool MetaContact::isValid() const

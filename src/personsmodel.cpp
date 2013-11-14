@@ -189,7 +189,9 @@ void PersonsModel::onAddContactToPerson(const QString& contactId, const QString&
     if (d->personIds.contains(newPersonId)) {
         d->metacontacts[newPersonId].updateContact(contactId, contact);
     } else { //if the person is not in the model, create a new person and insert it
-        addPerson(MetaContact(newPersonId, contact));
+        KABC::Addressee::Map contacts;
+        contacts[contactId] = contact;
+        addPerson(MetaContact(newPersonId, contacts));
     }
 }
 

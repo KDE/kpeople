@@ -130,7 +130,7 @@ PersonDetailsView::~PersonDetailsView()
 void PersonDetailsView::setPerson(PersonData *person)
 {
     Q_D(PersonDetailsView);
-    if (!d->m_person) {
+    if (d->m_person) {
         disconnect(d->m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
     }
 
@@ -169,10 +169,12 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
 
     //delete all generated plugin widgets
-    QLayoutItem *child;
-    while ((child = d->m_mainLayout->takeAt(0)) != 0) {
-        delete child->widget();
-        delete child;
+    if (d->m_mainLayout->count()) {
+        QLayoutItem *child;
+        while ((child = d->m_mainLayout->takeAt(0)) != 0) {
+            delete child->widget();
+            delete child;
+        }
     }
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {

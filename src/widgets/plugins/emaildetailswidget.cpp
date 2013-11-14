@@ -30,7 +30,7 @@
 using namespace KPeople;
 
 
-QWidget* EmailFieldsPlugin::createDetailsWidget(const KABC::Addressee& person, QWidget* parent) const
+QWidget* EmailFieldsPlugin::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
 {
     if (person.emails().isEmpty()) {
         return 0;

@@ -33,15 +33,16 @@ namespace KPeople
 {
 class AbstractFieldWidgetFactoryPrivate;
 
-class KPEOPLE_EXPORT AbstractFieldWidgetFactory
+class KPEOPLE_EXPORT AbstractFieldWidgetFactory : public QObject
 {
+    Q_OBJECT
 public:
-    explicit AbstractFieldWidgetFactory() {};
-    virtual ~AbstractFieldWidgetFactory() {};
+    explicit AbstractFieldWidgetFactory(QObject *parent=0);
+    virtual ~AbstractFieldWidgetFactory();
 
     virtual QString label() const = 0;
     virtual int sortWeight() const {return 100;}
-    virtual QWidget *createDetailsWidget(const KABC::Addressee &person, QWidget *parent) const = 0;
+    virtual QWidget *createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const = 0;
 };
 }
 

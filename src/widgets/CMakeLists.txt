@@ -8,6 +8,8 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp
     plugins/emaildetailswidget.cpp
+    abstractfieldwidgetfactory.cpp
+
 #     mergedialog.cpp
 #     mergedelegate.cpp
 )
@@ -41,7 +43,7 @@ install (TARGETS kpeoplewidgets
 
 
 install (FILES
-#            abstractpersondetailswidget.h
+            abstractfieldwidgetfactory.h
             persondetailsview.h
 #             mergedialog.h
             persondetailsdialog.h

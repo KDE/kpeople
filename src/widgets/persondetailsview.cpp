@@ -27,6 +27,11 @@
 
 #include <KLocalizedString>
 #include <KStandardDirs>
+#include <KService>
+#include <KServiceTypeTrader>
+#include <KPluginInfo>
+#include <KPluginLoader>
+#include <KPluginFactory>
 
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaildetailswidget.h"
@@ -54,7 +59,7 @@ public:
     virtual ~CoreFieldsPlugin();
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee &person, QWidget *parent) const;
+    virtual QWidget* createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const;
 private:
     KABC::Field* m_field;
 };
@@ -79,7 +84,7 @@ int CoreFieldsPlugin::sortWeight() const
     return m_field->category()*10;
 }
 
-QWidget* CoreFieldsPlugin::createDetailsWidget(const KABC::Addressee &person, QWidget *parent) const
+QWidget* CoreFieldsPlugin::createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const
 {
     //don't handle emails here - KABC::Field just lists one which is rubbish. Instead use a custom plugin that lists everything
     if (m_field->category() == KABC::Field::Email) {
@@ -118,13 +123,27 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 
     d->m_plugins << new EmailFieldsPlugin();
 
+    // load every KPeopleWidgets Plugin
+    KService::List pluginList = KServiceTypeTrader::self()->query( QLatin1String("KPeopleWidgets/Plugin"));
+
+    QList<KPluginInfo> plugins = KPluginInfo::fromServices(pluginList);
+
+    Q_FOREACH(const KPluginInfo &p, plugins) {
+        QString error;
+        AbstractFieldWidgetFactory *f = p.service()->createInstance<AbstractFieldWidgetFactory>(this, QVariantList(), &error);
+        if (f) {
+            d->m_plugins << f;
+        }
+    }
+
+
+
     //TODO Sort plugins
 }
 
 PersonDetailsView::~PersonDetailsView()
 {
     Q_D(PersonDetailsView);
-//     qDeleteAll<AbstractFieldWidgetFactory>(d->m_plugins);
     delete d_ptr;
 }
 
@@ -182,7 +201,7 @@ void PersonDetailsView::reload()
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + ':';
-        QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->person(), this);
+        QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->person(), d->m_person->contacts(), this);
 
         if (widget) {
             QFont font = widget->font();

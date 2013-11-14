@@ -13,7 +13,7 @@ add_subdirectory(plugins)
 add_subdirectory(widgets)
 
 
-kde4_add_library (kpeople  SHARED
+kde4_add_library (kpeople    SHARED
       global.cpp
       metacontact.cpp
 #     abstractpersonplugin.cpp
@@ -32,7 +32,9 @@ kde4_add_library (kpeople  SHARED
     personpluginmanager.cpp
     personmanager.cpp
     basepersonsdatasource.cpp
-
+    allcontactsmonitor.cpp
+    contactmonitor.cpp
+    defaultcontactmonitor.cpp
     #temp
     plugins/akonadi/akonadidatasource.cpp
 )
@@ -65,7 +67,8 @@ install (FILES
             kpeople_export.h
             abstractpersonplugin.h
             basepersonsdatasource.h
-            personsmodelfeature.h
+            allcontactsmonitor.h
+            contactmonitor.h
             personpluginmanager.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/
          COMPONENT Devel

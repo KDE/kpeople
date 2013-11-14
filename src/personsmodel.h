@@ -68,9 +68,9 @@ private Q_SLOTS:
     void onContactsFetched();
 
     //update when a resource signals a contact has changed
-    void onContactAdded(const QString &contactId);
-    void onContactChanged(const QString &contactId);
-    void onContactRemoved(const QString &contactId);
+    void onContactAdded(const QString &contactId, const KABC::Addressee& contact);
+    void onContactChanged(const QString& contactId, const KABC::Addressee& contact);
+    void onContactRemoved(const QString& contactId);
 
     //update on metadata changes
     void onAddContactToPerson(const QString &contactId, const QString &newPersonId);

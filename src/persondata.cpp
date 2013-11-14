@@ -18,17 +18,20 @@
 
 #include "persondata.h"
 
-#include "datasourcewatcher_p.h"
 #include "metacontact.h"
 #include "personmanager.h"
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"
+#include "contactmonitor.h"
+
+#include <QDebug>
 
 namespace KPeople {
     class PersonDataPrivate {
     public:
         QStringList contactIds;
         MetaContact metaContact;
+        QList<ContactMonitorPtr> watchers;
     };
 }
 
@@ -47,19 +50,19 @@ KPeople::PersonData::PersonData(const QString &personId, QObject* parent):
     } else {
         d->contactIds << personId;
     }
-
     KABC::Addressee::Map contacts;
     Q_FOREACH(BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {
         Q_FOREACH(const QString &contactId, d->contactIds) {
             //FIXME this is terrible.. we have to ask every datasource for the contact
             //future idea: plugins have a method of what their URIs will start with
             //then we keep plugins as a map
-            const KABC::Addressee addressee = dataSource->contact(contactId);
-            if (!addressee.isEmpty()) {
-                contacts[contactId] = addressee;
+            ContactMonitorPtr cw = dataSource->contactMonitor(contactId);
+            d->watchers << cw;
+            if (!cw->contact().isEmpty()) {
+                contacts[contactId] = cw->contact();
             }
+            connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
         }
-        connect(dataSource, SIGNAL(contactChanged(QString)), SLOT(onContactChanged(QString)));
     }
 
     d->metaContact = MetaContact(personId, contacts);
@@ -82,15 +85,12 @@ KABC::AddresseeList PersonData::contacts() const
     return d->metaContact.contacts();
 }
 
-void PersonData::onContactChanged(const QString &id)
+void PersonData::onContactChanged()
 {
     Q_D(PersonData);
 
-    if (d->contactIds.contains(id)) {
-        //FIXME
-        BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
-        const KABC::Addressee contact = dataSource->contact(id);
-        d->metaContact.updateContact(id, contact);
-        Q_EMIT dataChanged();
-    }
+
+    ContactMonitor *watcher = qobject_cast<ContactMonitor*>(sender());
+    d->metaContact.updateContact(watcher->contactId(), watcher->contact());
+    Q_EMIT dataChanged();
 }

@@ -53,7 +53,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
     protected:
 
     private Q_SLOTS:
-        void onContactChanged(const QString &id);
+        void onContactChanged();
 
     private:
         Q_DISABLE_COPY(PersonData)

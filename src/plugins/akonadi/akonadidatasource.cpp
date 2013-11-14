@@ -38,18 +38,107 @@
 
 using namespace Akonadi;
 
-AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
-    BasePersonsDataSource(parent),
+class AkonadiAllContacts : public AllContactsMonitor
+{
+    Q_OBJECT
+public:
+    AkonadiAllContacts();
+    ~AkonadiAllContacts();
+    virtual KABC::Addressee::Map contacts();
+private Q_SLOTS:
+    void onCollectionsFetched(KJob* job);
+    void onItemsFetched(KJob* job);
+    void onItemAdded(const Akonadi::Item &item);
+    void onItemChanged(const Akonadi::Item &item);
+    void onItemRemoved(const Akonadi::Item &item);
+private:
+    Akonadi::Monitor *m_monitor;
+    KABC::Addressee::Map m_contacts;
+};
+
+AkonadiAllContacts::AkonadiAllContacts():
     m_monitor(new Akonadi::Monitor(this))
 {
-    //TODO start akonadi
-
-    Q_UNUSED(args);
     connect(m_monitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)), SLOT(onItemAdded(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onItemChanged(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemRemoved(Akonadi::Item)), SLOT(onItemRemoved(Akonadi::Item)));
 
     m_monitor->setMimeTypeMonitored("text/directory");
+    m_monitor->itemFetchScope().fetchFullPayload();
+
+    CollectionFetchJob *fetchJob = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive, this);
+    fetchJob->fetchScope().setContentMimeTypes( QStringList() << "text/directory" );
+    connect(fetchJob, SIGNAL(finished(KJob*)), SLOT(onCollectionsFetched(KJob*)));
+}
+
+AkonadiAllContacts::~AkonadiAllContacts()
+{
+}
+
+KABC::Addressee::Map AkonadiAllContacts::contacts()
+{
+    return m_contacts;
+}
+
+void AkonadiAllContacts::onItemAdded(const Item& item)
+{
+    if(!item.hasPayload<KABC::Addressee>()) {
+        return;
+    }
+    const QString id = item.url().prettyUrl();
+    const KABC::Addressee contact = item.payload<KABC::Addressee>();
+    m_contacts[id] = contact;
+    Q_EMIT contactAdded(item.url().prettyUrl(), contact);
+}
+
+void AkonadiAllContacts::onItemChanged(const Item& item)
+{
+    if(!item.hasPayload<KABC::Addressee>()) {
+        return;
+    }
+    const QString id = item.url().prettyUrl();
+    const KABC::Addressee contact = item.payload<KABC::Addressee>();
+    m_contacts[id] = contact;
+    Q_EMIT contactChanged(item.url().prettyUrl(), contact);
+}
+
+void AkonadiAllContacts::onItemRemoved(const Item& item)
+{
+    if(!item.hasPayload<KABC::Addressee>()) {
+        return;
+    }
+    const QString id = item.url().prettyUrl();
+    m_contacts.remove(id);
+    Q_EMIT contactRemoved(id);
+}
+
+//or we could add items as we go along...
+void AkonadiAllContacts::onItemsFetched(KJob *job)
+{
+    ItemFetchJob *itemFetchJob = qobject_cast<ItemFetchJob*>(job);
+    foreach (const Item &item, itemFetchJob->items()) {
+        onItemAdded(item);
+    }
+}
+
+void AkonadiAllContacts::onCollectionsFetched(KJob* job)
+{
+    CollectionFetchJob *fetchJob = qobject_cast<CollectionFetchJob*>(job);
+    QList<Collection> contactCollections;
+    foreach (const Collection &collection, fetchJob->collections()) {
+        if (collection.contentMimeTypes().contains( KABC::Addressee::mimeType() ) ) {
+            ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
+            itemFetchJob->fetchScope().fetchFullPayload();
+            connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onItemsFetched(KJob*)));
+        }
+    }
+}
+
+AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
+    BasePersonsDataSource(parent)
+{
+    Q_UNUSED(args);
+
 }
 
 AkonadiDataSource::~AkonadiDataSource()
@@ -57,57 +146,9 @@ AkonadiDataSource::~AkonadiDataSource()
 
 }
 
-const KABC::Addressee::Map AkonadiDataSource::allContacts()
+AllContactsMonitor* AkonadiDataSource::createAllContactsMonitor()
 {
-    KABC::Addressee::Map addressees;
-
-    CollectionFetchJob *fetchJob = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive, this);
-    fetchJob->fetchScope().setContentMimeTypes( QStringList() << "text/directory" );
-    fetchJob->exec();
-    QList<Collection> contactCollections;
-    foreach (const Collection &collection, fetchJob->collections()) {
-        if (collection.contentMimeTypes().contains( KABC::Addressee::mimeType() ) ) {
-            ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
-            itemFetchJob->fetchScope().fetchFullPayload();
-            itemFetchJob->exec();
-            foreach (const Item &item, itemFetchJob->items()) {
-                if (item.hasPayload<KABC::Addressee>()) {
-                    addressees[item.url().prettyUrl()] = item.payload<KABC::Addressee>();
-                }
-            }
-        }
-    }
-
-    return addressees;
-}
-
-
-const KABC::Addressee AkonadiDataSource::contact(const QString& contactId)
-{
-    Akonadi::Item item = Akonadi::Item::fromUrl(KUrl(contactId));
-    Akonadi::ItemFetchJob *fetchJob = new Akonadi::ItemFetchJob(item, this);
-    fetchJob->fetchScope().fetchFullPayload();
-    fetchJob->exec();
-    if (fetchJob->items().isEmpty()) {
-        return KABC::Addressee();
-    }
-
-    return fetchJob->items().first().payload<KABC::Addressee>();
-}
-
-void AkonadiDataSource::onItemAdded(const Item& item)
-{
-    Q_EMIT contactAdded(item.url().prettyUrl());
-}
-
-void AkonadiDataSource::onItemChanged(const Item& item)
-{
-    Q_EMIT contactChanged(item.url().prettyUrl());
-}
-
-void AkonadiDataSource::onItemRemoved(const Item& item)
-{
-    Q_EMIT contactRemoved(item.url().prettyUrl());
+    return new AkonadiAllContacts();
 }
 
 K_PLUGIN_FACTORY( AkonadiDataSourceFactory, registerPlugin<AkonadiDataSource>(); )

@@ -1,6 +1,6 @@
 /*
  * <one line to give the library's name and an idea of what it does.>
- * Copyright 2013  David Edmundson <davidedmundson@kde.org>
+ * Copyright 2013  David Edmundson <d.edmundson@lboro.ac.uk>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,20 +20,32 @@
  *
  */
 
-#ifndef AKONADIDATASOURCE_H
-#define AKONADIDATASOURCE_H
+#ifndef CONTACTMONITOR_H
+#define CONTACTMONITOR_H
 
-#include <basepersonsdatasource.h>
+#include <QObject>
 
-#include <Akonadi/Monitor>
+#include "kpeople_export.h"
 
-class AkonadiDataSource : public KPeople::BasePersonsDataSource
+#include <KABC/Addressee>
+
+class KPEOPLE_EXPORT ContactMonitor: public QObject
 {
+Q_OBJECT
 public:
-    AkonadiDataSource(QObject *parent, const QVariantList &args = QVariantList());
-    virtual ~AkonadiDataSource();
-    virtual AllContactsMonitor* createAllContactsMonitor();
-
+    ContactMonitor(const QString &contactId);
+    virtual ~ContactMonitor();
+    QString contactId() const;
+    KABC::Addressee contact() const;
+Q_SIGNALS:
+    void contactChanged();
+protected:
+    void setContact(const KABC::Addressee &contact);
+private:
+    QString m_contactId;
+    KABC::Addressee m_contact;
 };
 
-#endif // AKONADIDATASOURCE_H
+typedef QSharedPointer<ContactMonitor> ContactMonitorPtr;
+
+#endif // CONTACTMONITOR_H

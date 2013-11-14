@@ -1,6 +1,6 @@
 /*
  * <one line to give the library's name and an idea of what it does.>
- * Copyright 2013  David Edmundson <davidedmundson@kde.org>
+ * Copyright 2013  David Edmundson <d.edmundson@lboro.ac.uk>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,20 +20,33 @@
  *
  */
 
-#ifndef AKONADIDATASOURCE_H
-#define AKONADIDATASOURCE_H
+#ifndef ALLCONTACTSMONITOR_H
+#define ALLCONTACTSMONITOR_H
 
-#include <basepersonsdatasource.h>
+#include <QObject>
 
-#include <Akonadi/Monitor>
+#include "kpeople_export.h"
 
-class AkonadiDataSource : public KPeople::BasePersonsDataSource
+#include <KABC/Addressee>
+
+class KPEOPLE_EXPORT AllContactsMonitor : public QObject
 {
+    Q_OBJECT
 public:
-    AkonadiDataSource(QObject *parent, const QVariantList &args = QVariantList());
-    virtual ~AkonadiDataSource();
-    virtual AllContactsMonitor* createAllContactsMonitor();
+    explicit AllContactsMonitor(); //TODO make protected? this isn't useful unless subclassed
+    virtual ~AllContactsMonitor();
+    virtual KABC::Addressee::Map contacts();
+//     bool isInitialFetchComplete(); //make pure virtual or have a protected setter?
 
+Q_SIGNALS:
+//     void initialFetchComplete();
+    void contactChanged(const QString &contactId, const KABC::Addressee &contact);
+    void contactAdded(const QString &contactId, const KABC::Addressee &contact);
+    void contactRemoved(const QString &contactId);
+
+//     bool m_initialFetchComplete;
 };
 
-#endif // AKONADIDATASOURCE_H
+typedef QSharedPointer<AllContactsMonitor> AllContactsMonitorPtr;
+
+#endif // ALLCONTACTSMONITOR_H

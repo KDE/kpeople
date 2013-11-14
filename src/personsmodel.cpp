@@ -23,6 +23,7 @@ public:
     QStringList personIds;
 
     QString genericAvatarImagePath;
+    QList<AllContactsMonitorPtr> m_sourceMonitors;
 };
 }
 
@@ -35,13 +36,16 @@ PersonsModel::PersonsModel(QObject *parent):
     Q_D(PersonsModel);
 
     d->genericAvatarImagePath = KStandardDirs::locate("data", "person-viewer/dummy_avatar.png");
+    Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
+        d->m_sourceMonitors << dataSource->allContactsMonitor();
+    }
 
     onContactsFetched();
 
-    Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
-        connect(dataSource, SIGNAL(contactAdded(QString)), SLOT(onContactAdded(QString)));
-        connect(dataSource, SIGNAL(contactChanged(QString)), SLOT(onContactChanged(QString)));
-        connect(dataSource, SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
+    Q_FOREACH(const AllContactsMonitorPtr monitor, d->m_sourceMonitors) {
+        connect(monitor.data(), SIGNAL(contactAdded(QString,KABC::Addressee)), SLOT(onContactAdded(QString,KABC::Addressee)));
+        connect(monitor.data(), SIGNAL(contactChanged(QString,KABC::Addressee)), SLOT(onContactChanged(QString,KABC::Addressee)));
+        connect(monitor.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
     }
 
     connect(PersonManager::instance(), SIGNAL(contactAddedToPerson(QString,QString)), SLOT(onAddContactToPerson(QString,QString)));
@@ -90,19 +94,18 @@ int PersonsModel::rowCount(const QModelIndex& parent) const
     return d->personIds.size();
 }
 
-void PersonsModel::onContactsFetched() //TODO async this
+void PersonsModel::onContactsFetched()
 {
     Q_D(PersonsModel);
     KABC::Addressee::Map addresseeMap;
 
-    //temporary code, fetch data from all plugins
+    //fetch all already loaded contacts from plugins
     KABC::AddresseeList contactList;
-    Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
-        addresseeMap.unite(dataSource->allContacts());
+    Q_FOREACH (const AllContactsMonitorPtr &contactWatcher, d->m_sourceMonitors) {
+        addresseeMap.unite(contactWatcher->contacts());
     }
 
     //add metacontacts
-
     QMultiHash<QString, QString> contactMapping = PersonManager::instance()->allPersons();
 
     Q_FOREACH (const QString &key, contactMapping.uniqueKeys()) {
@@ -125,14 +128,9 @@ void PersonsModel::onContactsFetched() //TODO async this
     }
 }
 
-void PersonsModel::onContactAdded(const QString &contactId)
+void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addressee &contact)
 {
     Q_D(PersonsModel);
-
-    BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
-
-    //TODO async with an onContactFetched()
-    const KABC::Addressee &contact = dataSource->contact(contactId);
 
     const QString &personId = personIdForContact(contactId);
 
@@ -144,15 +142,10 @@ void PersonsModel::onContactAdded(const QString &contactId)
     }
 }
 
-void PersonsModel::onContactChanged(const QString &contactId)
+void PersonsModel::onContactChanged(const QString &contactId, const KABC::Addressee &contact)
 {
     Q_D(PersonsModel);
     const QString &personId = personIdForContact(contactId);
-
-    //TODO async with an onContactFetched()
-    BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(sender());
-    KABC::Addressee contact = dataSource->contact(contactId);
-
     d->metacontacts[personId].updateContact(contactId, contact);
 
     personChanged(personId);

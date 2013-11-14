@@ -1,6 +1,6 @@
 /*
  * <one line to give the library's name and an idea of what it does.>
- * Copyright 2013  David Edmundson <davidedmundson@kde.org>
+ * Copyright 2013  David Edmundson <d.edmundson@lboro.ac.uk>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -20,20 +20,27 @@
  *
  */
 
-#ifndef AKONADIDATASOURCE_H
-#define AKONADIDATASOURCE_H
+#ifndef DEFAULTCONTACTMONITOR_H
+#define DEFAULTCONTACTMONITOR_H
 
-#include <basepersonsdatasource.h>
+#include <QObject>
 
-#include <Akonadi/Monitor>
+#include "contactmonitor.h"
+#include "allcontactsmonitor.h"
 
-class AkonadiDataSource : public KPeople::BasePersonsDataSource
+// if plugins don't implement a ContactWatcher, we repurpose the whole model, and single out changes for one contact
+// ideally plugins (especially slow ones) will implement their own contact monitor which fetches just the one contact
+class DefaultContactMonitor : public ContactMonitor
 {
+    Q_OBJECT
 public:
-    AkonadiDataSource(QObject *parent, const QVariantList &args = QVariantList());
-    virtual ~AkonadiDataSource();
-    virtual AllContactsMonitor* createAllContactsMonitor();
-
+    DefaultContactMonitor(const QString &contactId, const AllContactsMonitorPtr &allContactsWatcher);
+private Q_SLOTS:
+    void onContactAdded(const QString &contactId, const KABC::Addressee &contact);
+    void onContactChanged(const QString &contactId, const KABC::Addressee &contact);
+    void onContactRemoved(const QString &contactId);
+private:
+    AllContactsMonitorPtr m_allContactsMonitor;
 };
 
-#endif // AKONADIDATASOURCE_H
+#endif // DEFAULTCONTACTMONITOR_H

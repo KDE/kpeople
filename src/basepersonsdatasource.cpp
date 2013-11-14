@@ -19,7 +19,13 @@
 
 #include "basepersonsdatasource.h"
 
+#include <QDebug>
+
 using namespace KPeople;
+
+#include "defaultcontactmonitor_p.h"
+
+//TODO d pointer this
 
 BasePersonsDataSource::BasePersonsDataSource(QObject *parent, const QVariantList &args)
     : QObject(parent)
@@ -32,12 +38,29 @@ BasePersonsDataSource::~BasePersonsDataSource()
 
 }
 
-const KABC::Addressee::Map BasePersonsDataSource::allContacts()
+AllContactsMonitorPtr BasePersonsDataSource::allContactsMonitor()
 {
-    return KABC::Addressee::Map();
+    //if there is currently no watcher, create one
+    AllContactsMonitorPtr c;
+    if (!m_allContactsMonitor.toStrongRef()) {
+        c = AllContactsMonitorPtr(createAllContactsMonitor());
+        m_allContactsMonitor = c;
+    }
+
+    return m_allContactsMonitor.toStrongRef();
 }
 
-const KABC::Addressee BasePersonsDataSource::contact(const QString& contactId)
+ContactMonitorPtr BasePersonsDataSource::contactMonitor(const QString& contactId)
 {
-    return KABC::Addressee();
+    ContactMonitorPtr c;
+    if (!m_contactMonitors[contactId].toStrongRef()) {
+        c = ContactMonitorPtr(createContactMonitor(contactId));
+        m_contactMonitors[contactId] = c;
+    }
+    return m_contactMonitors[contactId].toStrongRef();
+}
+
+ContactMonitor* BasePersonsDataSource::createContactMonitor(const QString &contactId)
+{
+    return new DefaultContactMonitor(contactId, m_allContactsMonitor);
 }

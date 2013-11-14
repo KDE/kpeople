@@ -12,6 +12,10 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
 #     mergedelegate.cpp
 )
 
+kde4_add_ui_files (kpeople_widgets_SRCS
+                   person-details-presentation.ui
+)
+
 kde4_add_library (kpeoplewidgets SHARED ${kpeople_widgets_SRCS} )
 
 target_link_libraries (kpeoplewidgets

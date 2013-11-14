@@ -1,6 +1,7 @@
 /*
  * <one line to give the library's name and an idea of what it does.>
  * Copyright 2013  David Edmundson <davidedmundson@kde.org>
+ * Copyright 2013  Martin Klapetek <mklapetek@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -101,27 +102,76 @@ QString PersonManager::mergeContacts(const QStringList& ids)
     //for now assume all input is unmerged contacts
 
     int personId = 0;
+    
+    QStringList metacontacts;
+    QStringList contacts;
 
     //find personID to use
-    QSqlQuery query = m_db.exec(QString("SELECT MAX(personId) FROM persons"));
+    QSqlQuery query = m_db.exec(QString("SELECT MAX(personID) FROM persons"));
     if (query.next()) {
         personId = query.value(0).toInt();
     }
 
     personId++;
-    QString personIdString = "kpeople://" + QString::number(personId); //FIXME
 
-    //add contacts to insert
-    Q_FOREACH(const QString &contactId, ids) {
-        if (contactId.startsWith("kpeople://")) {
-            qDebug() << "WARNING: Trying to merge a person into a person. Client is sending bad data.";
-            continue;
+    Q_FOREACH (const QString &id, ids) {
+        if (id.startsWith(QLatin1String("kpeople://"))) {
+            metacontacts << id;
+        } else {
+            contacts << id;
+        }
+    }
+
+    if (contacts.count() + metacontacts.count() < 2) {
+        return QString();
+    }
+
+    QString personIdString;
+    personIdString = metacontacts.count() == 0 ? "kpeople://" + QString::number(personId)
+                                               : metacontacts.first();
+
+    m_db.exec("BEGIN TRANSACTION");
+
+    if (metacontacts.count() > 1 && contacts.count() == 0) {
+
+        Q_FOREACH (const QString &id, metacontacts) {
+            if (id != personIdString) {
+                contacts << contactsForPersonId(id);
+            }
         }
 
+        Q_FOREACH (const QString &id, contacts) {
+            QSqlQuery updateQuery(m_db);
+            updateQuery.prepare("UPDATE persons SET personID = ? WHERE contactID = ?");
+            updateQuery.bindValue(0, personIdString.mid(strlen("kpeople://")));
+            updateQuery.bindValue(1, id);
+            updateQuery.exec();
+
+            QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
+                                                              QLatin1String("org.kde.KPeople"),
+                                                              QLatin1String("ContactRemovedFromPerson"));
+
+            message.setArguments(QVariantList() << id);
+            QDBusConnection::sessionBus().send(message);
+
+            message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
+                                                              QLatin1String("org.kde.KPeople"),
+                                                              QLatin1String("ContactAddedToPerson"));
+
+            message.setArguments(QVariantList() << id << personIdString);
+            QDBusConnection::sessionBus().send(message);
+        }
+
+        m_db.exec("END TRANSACTION");
+
+        return personIdString;
+    }
+
+    Q_FOREACH (const QString &id, contacts) {
         QSqlQuery insertQuery(m_db);
         insertQuery.prepare("INSERT INTO persons VALUES (?, ?)");
-        insertQuery.bindValue(0, contactId);
-        insertQuery.bindValue(1, personId);
+        insertQuery.bindValue(0, id);
+        insertQuery.bindValue(1, personIdString.mid(strlen("kpeople://"))); //strip kpeople://
         insertQuery.exec();
 
         //FUTURE OPTIMISATION - this would be best as one signal, but arguments become complex
@@ -129,9 +179,11 @@ QString PersonManager::mergeContacts(const QStringList& ids)
                                                     QLatin1String("org.kde.KPeople"),
                                                     QLatin1String("ContactAddedToPerson"));
 
-        message.setArguments(QVariantList() << contactId << personIdString);
+        message.setArguments(QVariantList() << id << personIdString);
         QDBusConnection::sessionBus().send(message);
     }
+
+    m_db.exec("END TRANSACTION");
 
     return personIdString;
 }

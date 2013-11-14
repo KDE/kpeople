@@ -42,13 +42,14 @@ AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
     BasePersonsDataSource(parent),
     m_monitor(new Akonadi::Monitor(this))
 {
-
     //TODO start akonadi
 
     Q_UNUSED(args);
     connect(m_monitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)), SLOT(onItemAdded(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onItemChanged(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemRemoved(Akonadi::Item)), SLOT(onItemRemoved(Akonadi::Item)));
+
+    m_monitor->setMimeTypeMonitored("text/directory");
 }
 
 AkonadiDataSource::~AkonadiDataSource()
@@ -65,8 +66,6 @@ const KABC::Addressee::Map AkonadiDataSource::allContacts()
     fetchJob->exec();
     QList<Collection> contactCollections;
     foreach (const Collection &collection, fetchJob->collections()) {
-        m_monitor->setCollectionMonitored(collection, true);
-
         if (collection.contentMimeTypes().contains( KABC::Addressee::mimeType() ) ) {
             ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
             itemFetchJob->fetchScope().fetchFullPayload();

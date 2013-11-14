@@ -52,6 +52,14 @@ namespace KPeople
      * @return QPixmap with the Tp presence icon
      */
     KPEOPLE_EXPORT QPixmap iconForPresenceString(const QString &presenceName);
+
+    /**
+     * Returns a sort priority for the given presenceName
+     *
+     * @return sort priority of the given presence
+     */
+    KPEOPLE_EXPORT int presenceSortPriority(const QString &presenceName);
+
 };
 
 #endif // GLOBAL_H

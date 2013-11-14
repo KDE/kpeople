@@ -62,3 +62,32 @@ QPixmap KPeople::iconForPresenceString(const QString &presenceName)
 
     return KIconLoader::global()->loadIcon("user-offline", KIconLoader::MainToolbar, KIconLoader::SizeSmallMedium);
 }
+
+int KPeople::presenceSortPriority(const QString& presenceName)
+{
+    if (presenceName == QLatin1String("available")) {
+        return 0;
+    }
+
+    if (presenceName == QLatin1String("busy") || presenceName == QLatin1String("dnd")) {
+        return 1;
+    }
+
+    if (presenceName == QLatin1String("hidden")) {
+        return 2;
+    }
+
+    if (presenceName == QLatin1String("away")) {
+        return 3;
+    }
+
+    if (presenceName == QLatin1String("xa")) {
+        return 4;
+    }
+
+    if (presenceName == QLatin1String("unknown")) {
+        return 5;
+    }
+
+    return 6;
+}

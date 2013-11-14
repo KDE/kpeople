@@ -21,6 +21,7 @@
 
 #include <QFormLayout>
 #include <QLabel>
+#include <QVBoxLayout>
 #include <QDebug>
 #include <QList>
 
@@ -96,6 +97,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
       d_ptr(new PersonDetailsViewPrivate())
 {
     Q_D(PersonDetailsView);
+    setLayout(new QVBoxLayout(this));
     d->m_mainLayout = new QFormLayout(this);
     d->m_person = 0;
 
@@ -165,4 +167,7 @@ void PersonDetailsView::reload()
             d->m_mainLayout->addRow(widgetLabel, widget);
         }
     }
+
+    layout()->addItem(d->m_mainLayout);
+    layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 }

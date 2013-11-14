@@ -30,6 +30,7 @@
 
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaildetailswidget.h"
+#include "global.h"
 
 #include "ui_person-details-presentation.h"
 
@@ -163,9 +164,10 @@ void PersonDetailsView::reload()
         avatar = QPixmap(KStandardDirs::locate("data", "person-viewer/dummy_avatar.png"));
     }
 
+    QString contactPresence = d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence"));
+
     d->m_personDetailsPresentation->avatarPixmapLabel->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio)); //FIXME
-    d->m_personDetailsPresentation->presencePixmapLabel->setText(
-            d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence")));
+    d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(KPeople::iconForPresenceString(contactPresence));
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
 
     //delete all generated plugin widgets

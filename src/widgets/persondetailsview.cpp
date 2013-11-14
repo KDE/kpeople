@@ -29,11 +29,14 @@
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaildetailswidget.h"
 
+#include "ui_person-details-presentation.h"
+
 namespace KPeople {
 
 class PersonDetailsViewPrivate{
 public:
     PersonData  *m_person;
+    Ui::PersonDetailsPresentation *m_personDetailsPresentation;
     QFormLayout *m_mainLayout;
     QList<AbstractFieldWidgetFactory*> m_plugins;
 };
@@ -143,6 +146,12 @@ void PersonDetailsView::reload()
         delete child->widget();
         delete child;
     }
+
+    QWidget *details = new QWidget();
+    d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
+    d->m_personDetailsPresentation->setupUi(details);
+    layout()->addWidget(details);
+    d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + ':';

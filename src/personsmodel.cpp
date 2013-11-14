@@ -21,6 +21,8 @@ public:
     QHash<QString /*Person ID*/, MetaContact> metacontacts;
     //a list so we have an order in the model
     QStringList personIds;
+
+    QString genericAvatarImagePath;
 };
 }
 
@@ -30,6 +32,9 @@ PersonsModel::PersonsModel(QObject *parent):
     QAbstractListModel(parent),
     d_ptr(new PersonsModelPrivate)
 {
+    Q_D(PersonsModel);
+
+    d->genericAvatarImagePath = KStandardDirs::locate("data", "person-viewer/dummy_avatar.png");
 
     onContactsFetched();
 
@@ -63,8 +68,7 @@ QVariant PersonsModel::data(const QModelIndex& index, int role) const
         } else if (!person.photo().url().isEmpty()) {
             return QImage(person.photo().url());
         } else {
-            const QString avatarImagePath = KStandardDirs::locate("data", "person-viewer/dummy_avatar.png");
-            return QImage(avatarImagePath);
+            return QImage(d->genericAvatarImagePath);
         }
     case PersonIdRole:
         return personId;

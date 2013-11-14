@@ -46,19 +46,19 @@ Transaction::Transaction(const QSqlDatabase& db) :
     m_db(db),
     m_cancelled(false)
 {
-    m_db.exec("BEGIN TRANSACTION");
+    m_db.transaction();
 }
 
 void Transaction::cancel()
 {
-    m_db.exec("ROLLBACK");
+    m_db.rollback();
     m_cancelled = true;
 }
 
 Transaction::~Transaction()
 {
     if (!m_cancelled) {
-        m_db.exec("END TRANSACTION");
+        m_db.commit();
     }
 }
 

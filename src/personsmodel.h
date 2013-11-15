@@ -25,7 +25,7 @@
 
 #include "kpeople_export.h"
 
-#include <QAbstractListModel>
+#include <QAbstractItemModel>
 
 #include <KABC/AddresseeList>
 
@@ -38,7 +38,7 @@ class MetaContact;
 struct PersonsModelPrivate;
 
 
-class KPEOPLE_EXPORT PersonsModel : public QAbstractListModel
+class KPEOPLE_EXPORT PersonsModel : public QAbstractItemModel
 {
     Q_OBJECT
 public:
@@ -58,8 +58,11 @@ public:
 
     virtual ~PersonsModel();
 
+    virtual int columnCount (const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
+    virtual QModelIndex parent(const QModelIndex &index) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
 
 Q_SIGNALS:
     void modelInitialized();
@@ -68,9 +71,9 @@ private Q_SLOTS:
     void onContactsFetched();
 
     //update when a resource signals a contact has changed
-    void onContactAdded(const QString &contactId, const KABC::Addressee& contact);
-    void onContactChanged(const QString& contactId, const KABC::Addressee& contact);
-    void onContactRemoved(const QString& contactId);
+    void onContactAdded(const QString &contactId, const KABC::Addressee &contact);
+    void onContactChanged(const QString &contactId, const KABC::Addressee &contact);
+    void onContactRemoved(const QString &contactId);
 
     //update on metadata changes
     void onAddContactToPerson(const QString &contactId, const QString &newPersonId);

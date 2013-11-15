@@ -190,7 +190,7 @@ void PersonsModel::onContactChanged(const QString &contactId, const KABC::Addres
     const QString &personId = personIdForContact(contactId);
     d->metacontacts[personId].updateContact(contactId, contact);
 
-    const QModelIndex contactIndex = index(d->metacontacts[personId].contacts().indexOf(contactId),
+    const QModelIndex contactIndex = index(d->metacontacts[personId].contacts().indexOf(contact),
                                            0,
                                            index(d->personIds.indexOf(personId), 0));
 

@@ -247,7 +247,7 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
     }
 }
 
-void PersonsModel::onRemoveContactsFromPerson(const QString& contactId)
+void PersonsModel::onRemoveContactsFromPerson(const QString &contactId)
 {
     Q_D(PersonsModel);
 
@@ -266,7 +266,7 @@ void PersonsModel::onRemoveContactsFromPerson(const QString& contactId)
     addPerson(MetaContact(contactId, contact));
 }
 
-void PersonsModel::addPerson(const KPeople::MetaContact& mc)
+void PersonsModel::addPerson(const KPeople::MetaContact &mc)
 {
     Q_D(PersonsModel);
 
@@ -303,7 +303,7 @@ void PersonsModel::personChanged(const QString &personId)
     }
 }
 
-QString PersonsModel::personIdForContact(const QString& contactId)
+QString PersonsModel::personIdForContact(const QString &contactId)
 {
     Q_D(const PersonsModel);
     //TODO optimise with constFind()

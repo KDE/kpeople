@@ -50,7 +50,7 @@ d (new MetaContactData)
     reload();
 }
 
-MetaContact::MetaContact(const QString& contactId, const KABC::Addressee contact):
+MetaContact::MetaContact(const QString &contactId, const KABC::Addressee &contact):
 d (new MetaContactData)
 {
     d->personId = contactId;

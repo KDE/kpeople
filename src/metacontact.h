@@ -40,7 +40,7 @@ class KPEOPLE_EXPORT MetaContact
 public:
     MetaContact();
     /** Create a 'MetaContact' from a single contact*/
-    MetaContact(const QString &contactId, const KABC::Addressee contact);
+    MetaContact(const QString &contactId, const KABC::Addressee &contact);
 
     /** Create a MetaContact with a given person ID and a map of all associated contacts*/
     MetaContact(const QString &personId, const KABC::Addressee::Map& contacts);

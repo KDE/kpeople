@@ -237,7 +237,7 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
     d->contactToPersons.insert(contactId, newPersonId);
 
     //get contact already in the model, remove it from the previous contact
-    KABC::Addressee contact = d->metacontacts[oldPersonId].contact(contactId);
+    const KABC::Addressee &contact = d->metacontacts[oldPersonId].contact(contactId);
     int contactPosition = d->metacontacts[oldPersonId].contacts().indexOf(contact);
     beginRemoveRows(index(d->personIds.indexOf(oldPersonId), 0), contactPosition, contactPosition);
     d->metacontacts[oldPersonId].removeContact(contactId);
@@ -268,7 +268,7 @@ void PersonsModel::onRemoveContactsFromPerson(const QString &contactId)
     Q_D(PersonsModel);
 
     const QString personId = personIdForContact(contactId);
-    const KABC::Addressee contact = d->metacontacts[personId].contact(contactId);
+    const KABC::Addressee &contact = d->metacontacts[personId].contact(contactId);
     d->metacontacts[personId].removeContact(contactId);
     d->contactToPersons.remove(contactId);
 

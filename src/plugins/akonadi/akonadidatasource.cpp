@@ -134,6 +134,62 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
     }
 }
 
+
+
+
+class AkonadiContact: public ContactMonitor
+{
+    Q_OBJECT
+public:
+    AkonadiContact(const QString &contactId);
+private Q_SLOTS:
+    void onContactFetched(KJob*);
+    void onContactChanged(const Akonadi::Item &);
+private:
+    Akonadi::Monitor *m_monitor;
+};
+
+AkonadiContact::AkonadiContact(const QString& contactId):
+    ContactMonitor(contactId),
+    m_monitor(new Akonadi::Monitor(this))
+{
+    //optimisation, base class could copy across from the model if the model exists
+    //then we should check if contact is already set to something and avoid the initial fetch
+
+    //FIXME This is a bug in the sending code. See Fixme in PersonData
+    if (contactId.startsWith("akonadi://")) {
+
+        Item item = Item::fromUrl(QUrl(contactId));
+        ItemFetchJob* itemFetchJob = new ItemFetchJob(item);
+        itemFetchJob->fetchScope().fetchFullPayload();
+        connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
+
+        itemFetchJob->exec();//HACK because something isn't working FIXME FIXME FIXME!!!!
+
+        //monitor here too
+        m_monitor->setItemMonitored(item, true);
+        connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onContactChanged(Akonadi::Item)));
+        m_monitor->itemFetchScope().fetchFullPayload();
+    }
+}
+
+void AkonadiContact::onContactFetched(KJob *job)
+{
+    ItemFetchJob* fetchJob = qobject_cast<ItemFetchJob*>(job);
+    if (fetchJob->items().count() && fetchJob->items().first().hasPayload<KABC::Addressee>()) {
+        setContact(fetchJob->items().first().payload<KABC::Addressee>());
+    }
+}
+
+void AkonadiContact::onContactChanged(const Item &item)
+{
+    if(!item.hasPayload<KABC::Addressee>()) {
+        return;
+    }
+    setContact(item.payload<KABC::Addressee>());
+}
+
+
 AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
     BasePersonsDataSource(parent)
 {
@@ -149,6 +205,11 @@ AkonadiDataSource::~AkonadiDataSource()
 AllContactsMonitor* AkonadiDataSource::createAllContactsMonitor()
 {
     return new AkonadiAllContacts();
+}
+
+ContactMonitor* AkonadiDataSource::createContactMonitor(const QString& contactId)
+{
+    return new AkonadiContact(contactId);
 }
 
 K_PLUGIN_FACTORY( AkonadiDataSourceFactory, registerPlugin<AkonadiDataSource>(); )

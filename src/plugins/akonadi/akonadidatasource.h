@@ -33,7 +33,7 @@ public:
     AkonadiDataSource(QObject *parent, const QVariantList &args = QVariantList());
     virtual ~AkonadiDataSource();
     virtual AllContactsMonitor* createAllContactsMonitor();
-
+    virtual ContactMonitor* createContactMonitor(const QString& contactId);
 };
 
 #endif // AKONADIDATASOURCE_H

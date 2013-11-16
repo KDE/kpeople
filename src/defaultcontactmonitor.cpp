@@ -30,9 +30,10 @@ DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const All
     connect(allContactsWatcher.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
     connect(allContactsWatcher.data(), SIGNAL(contactChanged(QString,KABC::Addressee)), SLOT(onContactChanged(QString,KABC::Addressee)));
 
-    KABC::Addressee::Map::const_iterator it = m_allContactsMonitor->contacts().constFind(contactId);
-    if (it != m_allContactsMonitor->contacts().constEnd()) {
-        setContact(*it);
+    const KABC::Addressee::Map &contacts = m_allContactsMonitor->contacts();
+    KABC::Addressee::Map::const_iterator it = contacts.constFind(contactId);
+    if (it != contacts.constEnd()) {
+        setContact(it.value());
     }
 }
 

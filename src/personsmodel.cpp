@@ -100,6 +100,8 @@ QVariant PersonsModel::dataForAddressee(const QString &personId, const KABC::Add
         return QVariant::fromValue<KABC::Addressee>(person);
     case ContactsVCardRole:
         return QVariant::fromValue<KABC::AddresseeList>(d->metacontacts[personId].contacts());
+    case GroupsRole:
+        return person.categories();
     }
     return QVariant();
 }

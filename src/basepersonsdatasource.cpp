@@ -62,5 +62,5 @@ ContactMonitorPtr BasePersonsDataSource::contactMonitor(const QString& contactId
 
 ContactMonitor* BasePersonsDataSource::createContactMonitor(const QString &contactId)
 {
-    return new DefaultContactMonitor(contactId, m_allContactsMonitor);
+    return new DefaultContactMonitor(contactId, allContactsMonitor());
 }

@@ -53,7 +53,7 @@ public:
     bool isValid() const;
     KABC::AddresseeList contacts() const;
     KABC::Addressee contact(const QString &contactId);
-    KABC::Addressee personAddressee() const;
+    const KABC::Addressee& personAddressee() const;
 
     //update one of the stored contacts in this metacontact object
     void updateContact(const QString &contactId, const KABC::Addressee &contact);

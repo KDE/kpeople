@@ -60,20 +60,24 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
 {
     Q_D(const PersonsModel);
 
-    KABC::Addressee person;
     QString personId;
 
     if (index.parent().isValid()) {
         personId = d->personIds[index.parent().row()];
-        person = d->metacontacts[personId].contacts().at(index.row());
+        return dataForAddressee(personId, d->metacontacts[personId].contacts().at(index.row()), role);
     } else {
         personId = d->personIds[index.row()];
-        person = d->metacontacts[personId].personAddressee();
+        return dataForAddressee(personId, d->metacontacts[personId].personAddressee(), role);
     }
+}
+
+QVariant PersonsModel::dataForAddressee(const QString &personId, const KABC::Addressee &person, int role) const
+{
+    Q_D(const PersonsModel);
 
     switch(role) {
     case FormattedNameRole:
-            return person.formattedName();
+        return person.formattedName();
     case PhotoRole:
         if (!person.photo().data().isNull()) {
             return person.photo().data();

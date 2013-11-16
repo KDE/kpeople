@@ -98,7 +98,7 @@ KABC::AddresseeList MetaContact::contacts() const
     return d->contacts.values();
 }
 
-KABC::Addressee MetaContact::personAddressee() const
+const KABC::Addressee& MetaContact::personAddressee() const
 {
     return d->personAddressee;
 }

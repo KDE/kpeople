@@ -89,6 +89,7 @@ private:
     void personChanged(const QString &personId);
 
     QString personIdForContact(const QString &contactId);
+    QVariant dataForAddressee(const QString &personId, const KABC::Addressee &contact, int role) const;
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);

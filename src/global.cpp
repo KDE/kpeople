@@ -54,7 +54,7 @@ QString KPeople::iconNameForPresenceString(const QString& presenceName)
     }
 
     if (presenceName == QLatin1String("xa")) {
-        return "user-extended-away";
+        return "user-away-extended";
     }
 
     if (presenceName == QLatin1String("hidden")) {

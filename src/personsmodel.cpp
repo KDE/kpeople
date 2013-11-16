@@ -56,6 +56,11 @@ PersonsModel::~PersonsModel()
 {
 }
 
+// QVariant dataForPerson(const KABC::Person &person)
+// {
+//
+// }
+
 QVariant PersonsModel::data(const QModelIndex &index, int role) const
 {
     Q_D(const PersonsModel);
@@ -251,6 +256,7 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
         addPerson(MetaContact(newPersonId, contacts));
     }
 }
+
 
 void PersonsModel::onRemoveContactsFromPerson(const QString &contactId)
 {

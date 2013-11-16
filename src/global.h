@@ -22,9 +22,9 @@
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
-#include <QPixmap>
 #include <QString>
 #include <QStringList>
+#include <QIcon>
 
 #include "kpeople_export.h"
 
@@ -51,7 +51,7 @@ namespace KPeople
      *
      * @return QPixmap with the Tp presence icon
      */
-    KPEOPLE_EXPORT QPixmap iconForPresenceString(const QString &presenceName);
+    KPEOPLE_EXPORT QString iconNameForPresenceString(const QString &presenceName);
 
     /**
      * Returns a sort priority for the given presenceName

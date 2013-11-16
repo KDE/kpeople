@@ -65,13 +65,16 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
 {
     Q_D(const PersonsModel);
 
-    QString personId;
+    //optimisation - if we don't cover this role, ignore it
+    if (role < Qt::UserRole && role != Qt::DisplayRole && role != Qt::DecorationRole) {
+        return QVariant();
+    }
 
     if (index.parent().isValid()) {
-        personId = d->personIds[index.parent().row()];
+        const QString &personId = d->personIds[index.parent().row()];
         return dataForAddressee(personId, d->metacontacts[personId].contacts().at(index.row()), role);
     } else {
-        personId = d->personIds[index.row()];
+        const QString &personId = d->personIds[index.row()];
         return dataForAddressee(personId, d->metacontacts[personId].personAddressee(), role);
     }
 }

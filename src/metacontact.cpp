@@ -237,8 +237,8 @@ void MetaContact::reload()
         }
 
         // find most online presence
-        QString contactPresence = contact.custom("telepathy", "presence");
-        QString currentPersonPresence = d->personAddressee.custom("telepathy", "presence");
+        const QString &contactPresence = contact.custom("telepathy", "presence");
+        const QString &currentPersonPresence = d->personAddressee.custom("telepathy", "presence");
 
         if (!contactPresence.isEmpty()) {
             if (KPeople::presenceSortPriority(contactPresence) < KPeople::presenceSortPriority(currentPersonPresence)) {

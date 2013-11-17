@@ -70,6 +70,10 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
+    if (index.row() < 0 || index.row() >= rowCount(index.parent())) {
+        return QVariant();
+    }
+
     if (index.parent().isValid()) {
         if (role == ContactsVCardRole) {
             return QVariant::fromValue<KABC::AddresseeList>(KABC::AddresseeList());
@@ -77,12 +81,6 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
         const QString &personId = d->personIds[index.parent().row()];
         const MetaContact &mc = d->metacontacts[personId];
 
-        //FIXME - this is a hack guard round something that shouldn't be happening
-        //Someone is calling an invalid index. It appears to be QSortFilterProxyModel
-        //Try removing and see if PersonsViewer crashes
-        if (index.row() >= mc.contacts().size()) {
-            return QVariant();
-        }
         return dataForAddressee(personId, mc.contacts().at(index.row()), role);
     } else {
         const QString &personId = d->personIds[index.row()];

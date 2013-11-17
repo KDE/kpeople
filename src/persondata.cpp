@@ -37,18 +37,21 @@ namespace KPeople {
 
 using namespace KPeople;
 
-KPeople::PersonData::PersonData(const QString &personId, QObject* parent):
+KPeople::PersonData::PersonData(const QString &id, QObject* parent):
     QObject(parent),
     d_ptr(new PersonDataPrivate)
 {
     Q_D(PersonData);
 
+    const QString personId;
     //query DB
     const QStringList contactIds;
-    if (personId.startsWith("kpeople://")) {
+    if (id.startsWith("kpeople://")) {
+        personId = id;
         d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
     } else {
-        d->contactIds << personId;
+        personId = PersonManager::instance()->personIdForContact(personId); //TODO merge into one method + query
+        d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
     }
     KABC::Addressee::Map contacts;
     Q_FOREACH(BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {

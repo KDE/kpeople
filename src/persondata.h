@@ -39,7 +39,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_OBJECT
 
     public:
-        PersonData(const QString &contactId, QObject *parent=0);
+        PersonData(const QString &id, QObject *parent=0);
 //         PersonData(const MetaContact &mc, QObject *parent=0);
 
         virtual ~PersonData();

@@ -22,6 +22,8 @@
 #include "global.h"
 
 #include "personmanager.h"
+#include "personpluginmanager.h"
+#include "abstractpersonplugin.h"
 
 #include <KIconLoader>
 #include <QIcon>
@@ -37,6 +39,18 @@ QString KPeople::mergeContacts(const QStringList &ids)
 bool KPeople::unmergeContact(const QString &id)
 {
     return PersonManager::instance()->unmergeContact(id);
+}
+
+QList<QAction*> KPeople::actionsForPerson(const KABC::Addressee &person,
+                                          const KABC::AddresseeList &contacts,
+                                          QObject *parent)
+{
+    QList<QAction*> actions;
+    Q_FOREACH(KPeople::AbstractPersonPlugin *plugin, PersonPluginManager::personPlugins()) {
+        actions << plugin->actionsForPerson(person, contacts, parent);
+    }
+
+    return actions;
 }
 
 QString KPeople::iconNameForPresenceString(const QString& presenceName)

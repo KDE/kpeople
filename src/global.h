@@ -28,6 +28,9 @@
 
 #include "kpeople_export.h"
 
+#include <KABC/Addressee>
+
+class QAction;
 namespace KPeople
 {
     /**
@@ -45,6 +48,10 @@ namespace KPeople
      * @return Whether the unmerge was successful
      */
     KPEOPLE_EXPORT bool unmergeContact(const QString &id);
+
+    KPEOPLE_EXPORT QList<QAction*> actionsForPerson(const KABC::Addressee &person,
+                                                    const KABC::AddresseeList &contacts,
+                                                    QObject *parent);
 
     /**
      * Return a QPixmap for a TP presence string

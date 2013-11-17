@@ -16,7 +16,7 @@ add_subdirectory(widgets)
 kde4_add_library (kpeople    SHARED
       global.cpp
       metacontact.cpp
-#     abstractpersonplugin.cpp
+    abstractpersonplugin.cpp
 #     personsmodelfeature.cpp
 #     contactitem.cpp
 #     datasourcewatcher.cpp

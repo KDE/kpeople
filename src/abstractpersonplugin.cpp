@@ -28,9 +28,12 @@ AbstractPersonPlugin::AbstractPersonPlugin(QObject *parent) : QObject (parent)
 {
 }
 
-QList< QAction* > AbstractPersonPlugin::actionsForPerson(const PersonDataPtr &personData, QObject* parent)
+QList< QAction* > AbstractPersonPlugin::actionsForPerson(const KABC::Addressee &person,
+                                                         const KABC::AddresseeList &contacts,
+                                                         QObject *parent) const
 {
-    Q_UNUSED(personData);
+    Q_UNUSED(person);
+    Q_UNUSED(contacts);
     Q_UNUSED(parent);
     return QList<QAction*>();
 }

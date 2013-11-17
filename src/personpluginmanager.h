@@ -27,12 +27,15 @@
 
 namespace KPeople
 {
+
+class AbstractPersonPlugin;
 class BasePersonsDataSource;
 
 class KPEOPLE_EXPORT PersonPluginManager
 {
 public:
     static QList<BasePersonsDataSource*> dataSourcePlugins();
+    static QList<AbstractPersonPlugin*> personPlugins();
 };
 }
 

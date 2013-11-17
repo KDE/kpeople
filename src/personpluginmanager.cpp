@@ -22,6 +22,7 @@
 
 //temp
 #include "plugins/akonadi/akonadidatasource.h"
+#include "abstractpersonplugin.h"
 
 #include <KService>
 #include <KServiceTypeTrader>
@@ -37,6 +38,7 @@ class PersonPluginManagerPrivate
 public:
     PersonPluginManagerPrivate();
     ~PersonPluginManagerPrivate();
+    QList<AbstractPersonPlugin*> personPlugins;
     QList<BasePersonsDataSource*> dataSourcePlugins;
 };
 
@@ -54,14 +56,29 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
             kWarning() << "Failed to create data source";
         }
     }
+
+    KService::List personPluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
+    Q_FOREACH(const KService::Ptr &service, personPluginList) {
+        AbstractPersonPlugin *plugin = service->createInstance<AbstractPersonPlugin>(0);
+        if (plugin) {
+            qDebug() << "found plugin" << service->name();
+            personPlugins << plugin;
+        }
+    }
 }
 
 PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 {
     qDeleteAll(dataSourcePlugins);
+    qDeleteAll(personPlugins);
 }
 
 QList<BasePersonsDataSource*> PersonPluginManager::dataSourcePlugins()
 {
     return s_instance->dataSourcePlugins;
+}
+
+QList<AbstractPersonPlugin*> PersonPluginManager::personPlugins()
+{
+    return s_instance->personPlugins;
 }

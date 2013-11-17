@@ -71,6 +71,9 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
     }
 
     if (index.parent().isValid()) {
+        if (role == ContactsVCardRole) {
+            return QVariant::fromValue<KABC::AddresseeList>(KABC::AddresseeList());
+        }
         const QString &personId = d->personIds[index.parent().row()];
         const MetaContact &mc = d->metacontacts[personId];
 

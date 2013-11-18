@@ -43,9 +43,8 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
 {
     Q_D(PersonData);
 
-    const QString personId;
+    QString personId;
     //query DB
-    const QStringList contactIds;
     if (id.startsWith("kpeople://")) {
         personId = id;
         d->contactIds = PersonManager::instance()->contactsForPersonId(personId);

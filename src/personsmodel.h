@@ -27,7 +27,9 @@
 
 #include <QAbstractItemModel>
 
+
 #include <KABC/AddresseeList>
+#include "global.h"
 
 namespace KPeople
 {

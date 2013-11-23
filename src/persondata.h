@@ -28,6 +28,8 @@
 #include <KDateTime>
 #include <KABC/Addressee>
 
+#include "global.h"
+
 namespace KPeople
 {
 struct PersonDataPrivate;

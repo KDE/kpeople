@@ -28,7 +28,6 @@
 #include <QPainter>
 
 #include <personsmodel.h>
-#include <personmanager.h>
 
 using namespace KPeople;
 
@@ -143,7 +142,7 @@ void ContactListApp::onMergeClicked()
     }
 
     if (!ids.isEmpty()) {
-        PersonManager::instance()->mergeContacts(ids);
+        KPeople::mergeContacts(ids);
     }
 }
 
@@ -152,7 +151,7 @@ void ContactListApp::onUnmergeClicked()
     QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
     if (indexes.size()) {
         QString id = indexes.first().data(PersonsModel::PersonIdRole).toString();
-        PersonManager::instance()->unmergeContact(id);
+        KPeople::unmergeContact(id);
     }
 }
 

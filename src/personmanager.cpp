@@ -21,7 +21,7 @@
  *
  */
 
-#include "personmanager.h"
+#include "personmanager_p.h"
 
 // #include "personmanager.moc"
 #include <QVariant>

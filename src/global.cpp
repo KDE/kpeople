@@ -21,7 +21,7 @@
 
 #include "global.h"
 
-#include "personmanager.h"
+#include "personmanager_p.h"
 #include "personpluginmanager.h"
 #include "abstractpersonplugin.h"
 

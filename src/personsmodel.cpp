@@ -3,7 +3,7 @@
 #include "personpluginmanager.h"
 #include "metacontact.h"
 #include "basepersonsdatasource.h"
-#include "personmanager.h"
+#include "personmanager_p.h"
 
 #include <KABC/Addressee>
 #include <KStandardDirs>

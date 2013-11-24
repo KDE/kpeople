@@ -20,7 +20,7 @@
  *
  */
 
-#include "metacontact.h"
+#include "metacontact_p.h"
 #include "global.h"
 #include <QSharedData>
 

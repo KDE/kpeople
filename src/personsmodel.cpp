@@ -1,7 +1,7 @@
 #include "personsmodel.h"
 
 #include "personpluginmanager.h"
-#include "metacontact.h"
+#include "metacontact_p.h"
 #include "basepersonsdatasource.h"
 #include "personmanager_p.h"
 

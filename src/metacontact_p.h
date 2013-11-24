@@ -28,14 +28,12 @@
 
 #include <KABC/Addressee>
 
-//TODO this is only exported for use in a test temporarily
-
 #include "kpeople_export.h"
 
 namespace KPeople {
 class MetaContactData;
 
-class KPEOPLE_EXPORT MetaContact
+class MetaContact
 {
 public:
     MetaContact();

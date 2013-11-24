@@ -41,18 +41,29 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_OBJECT
 
     public:
+        /** Creates a Person object from a given ID.
+         * The ID can be either a local application specific ID (such as akonadi://?item=15)
+         * or a kpeople ID in the form kpeople://15
+         */
         PersonData(const QString &id, QObject *parent=0);
-//         PersonData(const MetaContact &mc, QObject *parent=0);
 
         virtual ~PersonData();
+
+        /**
+         * Returns the aggregated contact information from all sources
+         */
         KABC::Addressee person() const;
+
+        /**
+         * Returns information from each contact source
+         */
         KABC::AddresseeList contacts() const;
 
     Q_SIGNALS:
-        /** Some of the person's data we're offering has changed */
+        /**
+         * One of the contact sources has changed
+         */
         void dataChanged();
-
-    protected:
 
     private Q_SLOTS:
         void onContactChanged();

@@ -23,9 +23,6 @@
 #include "kpeople_export.h"
 
 #include <QObject>
-#include <QUrl>
-#include <QStringList>
-#include <KDateTime>
 #include <KABC/Addressee>
 
 #include "global.h"

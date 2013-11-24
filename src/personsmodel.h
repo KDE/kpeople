@@ -39,7 +39,11 @@ class PersonItem;
 class MetaContact;
 struct PersonsModelPrivate;
 
-
+/**
+ * This class creates a model of all known contacts from all sources
+ * Contacts are represented as a tree where the top level represents a "person" which is an
+ * amalgamation of all the sub-contacts
+ */
 class KPEOPLE_EXPORT PersonsModel : public QAbstractItemModel
 {
     Q_OBJECT

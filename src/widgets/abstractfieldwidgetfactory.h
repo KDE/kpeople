@@ -1,7 +1,5 @@
 /*
-    Persons Model Item
-    Represents one person in the model
-    Copyright (C) 2012  Martin Klapetek <martin.klapetek@gmail.com>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -19,37 +17,33 @@
 */
 
 
-#ifndef PERSONS_MODEL_ITEM_H
-#define PERSONS_MODEL_ITEM_H
 
-#include "kpeople_export.h"
-#include <qstandarditemmodel.h>
+#ifndef ABSTRACTFIELDWIDGETFACTORY_H
+#define ABSTRACTFIELDWIDGETFACTORY_H
 
-namespace Nepomuk2 {
-}
+#include <QWidget>
+#include <QIcon>
 
-class QUrl;
+#include <KABC/Field>
+#include <KABC/Addressee>
+
+#include "../kpeople_export.h"
 
 namespace KPeople
 {
+class AbstractFieldWidgetFactoryPrivate;
 
-class KPEOPLE_EXPORT PersonItem : public QStandardItem
+class KPEOPLE_EXPORT AbstractFieldWidgetFactory : public QObject
 {
+    Q_OBJECT
 public:
-    PersonItem(const QUrl &personUri);
+    explicit AbstractFieldWidgetFactory(QObject *parent=0);
+    virtual ~AbstractFieldWidgetFactory();
 
-    virtual QVariant data(int role) const;
-    QUrl uri() const;
-
-    void contactDataChanged();
-
-private:
-    QVariant queryChildrenForRole(int role) const;
-    QVariantList queryChildrenForRoleList(int role) const;
-    int presenceSortPriority(const QString &presenceName) const;
+    virtual QString label() const = 0;
+    virtual int sortWeight() const {return 100;}
+    virtual QWidget *createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const = 0;
 };
 }
 
-Q_DECLARE_METATYPE(KPeople::PersonItem*);
-
-#endif // PERSONS_MODEL_ITEM_H
+#endif // ABSTRACTFIELDWIDGETFACTORY_H

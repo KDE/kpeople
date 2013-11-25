@@ -22,23 +22,42 @@
 
 #include <QObject>
 #include <QVariant>
+#include <KABC/Addressee>
 
 #include "kpeople_export.h"
+
+#include "allcontactsmonitor.h"
+#include "contactmonitor.h"
 
 namespace KPeople
 {
 
+//This is a QObject for KPluginFactory
 class KPEOPLE_EXPORT BasePersonsDataSource : public QObject
 {
     Q_OBJECT
 public:
-    BasePersonsDataSource(QObject *parent = 0);
+    BasePersonsDataSource(QObject *parent, const QVariantList &args = QVariantList());
     virtual ~BasePersonsDataSource();
 
-    virtual QVariant dataForContact(const QString &contactId, int role) const;
+    //fetch and monitor all contacts
+    AllContactsMonitorPtr   allContactsMonitor();
 
-Q_SIGNALS:
-    void contactChanged(const QString &contactId);
+    //fetch and monitor a single contact
+    ContactMonitorPtr      contactMonitor(const QString &contactId);
+
+protected:
+    virtual AllContactsMonitor* createAllContactsMonitor() = 0;
+
+    /**
+     * Base classes can implement this in order to not load every contact
+     * otherwise the AllContactWatcher will be used and filtered.
+     */
+    virtual ContactMonitor* createContactMonitor(const QString &contactId);
+
+private:
+    QWeakPointer<AllContactsMonitor> m_allContactsMonitor;
+    QHash<QString, QWeakPointer<ContactMonitor> > m_contactMonitors;
 };
 
 }

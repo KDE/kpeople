@@ -21,16 +21,16 @@
 #ifndef EMAIL_DETAILS_WIDGET_H
 #define EMAIL_DETAILS_WIDGET_H
 
-#include "abstractpersondetailswidget.h"
-#include <QVariantList>
+#include "abstractfieldwidgetfactory.h"
 
+using namespace KPeople;
 
-class EmailDetailsWidget : public KPeople::AbstractPersonDetailsWidget
+class EmailFieldsPlugin : public AbstractFieldWidgetFactory
 {
-    Q_OBJECT
 public:
-    explicit EmailDetailsWidget(QWidget *p, const QVariantList &args);
-    void setPerson(KPeople::PersonData *person);
+    virtual QString label() const;
+    virtual int sortWeight() const;
+    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
 };
 
 #endif // EMAIL_DETAILS_WIDGET_H

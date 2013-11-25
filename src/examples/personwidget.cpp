@@ -18,11 +18,7 @@
 */
 #include <QApplication>
 #include <QWidget>
-#include <QFormLayout>
-#include <QLabel>
 #include <QDebug>
-#include <QToolButton>
-#include <QMenu>
 
 #include <persondata.h>
 #include <widgets/persondetailsview.h>
@@ -35,7 +31,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    KPeople::PersonDataPtr person(KPeople::PersonData::createFromContactId(app.arguments()[1]));
+    KPeople::PersonData *person = new KPeople::PersonData(app.arguments()[1]);
 
     KPeople::PersonDetailsView w;
     w.setPerson(person);

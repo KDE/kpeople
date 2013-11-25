@@ -25,143 +25,84 @@
 
 #include "kpeople_export.h"
 
-#include <QStandardItemModel>
+#include <QAbstractItemModel>
 
-class KJob;
-class QUrl;
 
-namespace Nepomuk2 { class Resource; }
-namespace Soprano { namespace Util { class AsyncQuery; } }
+#include <KABC/AddresseeList>
+#include "global.h"
 
 namespace KPeople
 {
 class PersonsModelFeature;
 class ContactItem;
 class PersonItem;
+class MetaContact;
 struct PersonsModelPrivate;
 
-
-class KPEOPLE_EXPORT PersonsModel : public QStandardItemModel
+/**
+ * This class creates a model of all known contacts from all sources
+ * Contacts are represented as a tree where the top level represents a "person" which is an
+ * amalgamation of all the sub-contacts
+ */
+class KPEOPLE_EXPORT PersonsModel : public QAbstractItemModel
 {
     Q_OBJECT
-    Q_DISABLE_COPY(PersonsModel)
-
 public:
     enum Role {
-        UriRole = Qt::UserRole, ///nepomuk URI STRING
-        ChildContactsUriRole, ///returns list of child contact roles STRINGLIST
-        FullNamesRole, ///nco:fullname STRINGLIST
-        EmailsRole, ///nco:email STRINGLIST
-        NicknamesRole, ///nco:imNickName STRINGLIST
-        PhonesRole, ///nco:phones STRINGLIST
-        IMsRole, ///STRINGLIST
-        PhotosRole, ///nie:url of the photo STRINGLIST
+        FormattedNameRole = Qt::DisplayRole,//QString best name for this person
+        PhotoRole = Qt::DecorationRole, //QPixmap best photo for this person
+        PersonIdRole = Qt::UserRole, //QString ID of this person
+        PersonVCardRole, //KABC::Addressee
+        ContactsVCardRole, //KABC::AddresseeList (FIXME or map?)
 
-        PresenceTypeRole, ///QString containing most online presence type
-        PresenceDisplayRole, ///QString containing displayable name for most online presence
-        PresenceDecorationRole, ///KIcon displaying current presence
-        PresenceIconNameRole, ///QString with icon name of the current presence
+        GroupsRole, ///groups QStringList
 
-        GroupsRole, ///groups STRINGLIST
-
-        UserRole = Qt::UserRole + 100 ///< in case it's needed to extend, use this one to start from
+        UserRole = Qt::UserRole + 0x1000 ///< in case it's needed to extend, use this one to start from
     };
 
     PersonsModel(QObject *parent = 0);
 
     virtual ~PersonsModel();
 
-    /**
-     * Start querying the database using the supplied features
-     */
-    void startQuery(const QList<PersonsModelFeature> &features);
-
-    /**
-     * Creates PIMO:Person with NCO:PersonContacts as grounding occurances
-     *  The list that it's passed can contain uris of both Person and PersonContacts,
-     *  the method checks their type and does the right thing(tm)
-     *  @param uris list of Person and PersonContact uris
-     */
-    Q_SCRIPTABLE static KJob* createPersonFromUris(const QList<QUrl> &uris);
-
-    /**
-     * Removes the link between contacts and the given person
-     *  @param personUri PIMO:Person uri to unlink the contacts from
-     *  @param contactUris list of NCO:PersonContacts to unlink
-     */
-    Q_SCRIPTABLE static void unlinkContactFromPerson(const QUrl &personUri, const QList<QUrl> &contactUris);
-
-    Q_SCRIPTABLE QModelIndex indexForUri(const QUrl &uri) const;
-
-    Q_SCRIPTABLE QList<QModelIndex> indexesForUris(const QVariantList& uris) const;
+    virtual int columnCount (const QModelIndex &parent = QModelIndex()) const;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
+    virtual QModelIndex parent(const QModelIndex &index) const;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
 Q_SIGNALS:
     void modelInitialized();
 
 private Q_SLOTS:
-    void jobFinished(KJob *job);
-    void query(const QString &queryString);
-    void nextReady(Soprano::Util::AsyncQuery *query);
-    void queryFinished(Soprano::Util::AsyncQuery *query);
-    void contactChanged(const QUrl &uri);
-    void updateContactFinished(Soprano::Util::AsyncQuery *query);
+    void onContactsFetched();
+
+    //update when a resource signals a contact has changed
+    void onContactAdded(const QString &contactId, const KABC::Addressee &contact);
+    void onContactChanged(const QString &contactId, const KABC::Addressee &contact);
+    void onContactRemoved(const QString &contactId);
+
+    //update on metadata changes
+    void onAddContactToPerson(const QString &contactId, const QString &newPersonId);
+    void onRemoveContactsFromPerson(const QString &contactId);
+    
 
 private:
-    /**
-     * @return actual features used to populate the model
-     */
-    QList<PersonsModelFeature> modelFeatures() const;
-    ContactItem* contactItemForUri(const QUrl &uri) const;
-    PersonItem* personItemForUri(const QUrl &uri) const;
-    QModelIndex findRecursively(int role, const QVariant &value, const QModelIndex &idx = QModelIndex()) const;
+    Q_DISABLE_COPY(PersonsModel)
 
-    /**
-     * Adds new contact to the model with @param uri as its URI
-     */
-    void addContact(const QUrl &uri);
+    //methods that manipulate the model
+    void addPerson(const MetaContact &mc);
+    void removePerson(const QString &id);
+    void personChanged(const QString &personId);
 
-    /**
-     * Refreshes data of the contact given by @param uri
-     */
-    void updateContact(const QUrl &uri);
-
-    /**
-     * Convenience function
-     */
-    void updateContact(ContactItem *contact);
-
-    /**
-     * Removes contact with @param uri from the model (not Nepomuk)
-     */
-    void removeContact(const QUrl &uri);
-
-    /**
-     * Adds new person to the model with @param uri as its URI
-     */
-    PersonItem* addPerson(const QUrl &uri);
-
-    /**
-     * Removes person with @param uri from the model (not Nepomuk)
-     */
-    void removePerson(const QUrl &uri);
-
-    /**
-     * Adds contacts to existing PIMO:Person
-     */
-    void addContactsToPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-
-    /**
-     * Removes given contacts from existing PIMO:Person
-     */
-    void removeContactsFromPerson(const QUrl &personUri, const QList<QUrl> &contacts);
-
-    friend class ResourceWatcherService;
-    friend class ContactItem;
+    QString personIdForContact(const QString &contactId);
+    QVariant dataForAddressee(const QString &personId, const KABC::Addressee &contact, int role) const;
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);
 };
 }
 
+// Q_DECLARE_METATYPE(KABC::Addressee)
+Q_DECLARE_METATYPE(KABC::AddresseeList)
 
 #endif // PERSONS_MODEL_H

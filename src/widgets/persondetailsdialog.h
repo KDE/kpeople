@@ -38,7 +38,7 @@ public:
     explicit PersonDetailsDialog(QWidget *parent=0, Qt::WindowFlags f=0);
     virtual ~PersonDetailsDialog();
 
-    void setPerson(const PersonDataPtr &person);
+    void setPerson(PersonData *person);
 
 private:
     Q_DECLARE_PRIVATE(PersonDetailsDialog)

@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013  David Edmundson <D.Edmundson@lboro.ac.uk>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -16,23 +16,16 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "abstractfieldwidgetfactory.h"
 
+using namespace KPeople;
 
-#ifndef EMAIL_PLUGIN_H
-#define EMAIL_PLUGIN_H
-
-#include "abstractpersonplugin.h"
-
-class EmailPlugin : public KPeople::AbstractPersonPlugin
+AbstractFieldWidgetFactory::AbstractFieldWidgetFactory(QObject *parent):
+    QObject(parent)
 {
-    Q_OBJECT
-public:
-    EmailPlugin(QObject *parent, const QVariantList &args);
+}
 
-    virtual QList<QAction*> actionsForPerson(const KPeople::PersonDataPtr &personData, QObject *parent);
+AbstractFieldWidgetFactory::~AbstractFieldWidgetFactory()
+{
 
-private Q_SLOTS:
-    void onEmailTriggered();
-};
-
-#endif // EMAIL_PLUGIN_H
+}

@@ -32,10 +32,7 @@ class QLabel;
 class QVBoxLayout;
 
 namespace KPeople {
-class AbstractPersonDetailsWidget;
-class PersonsModel;
 class PersonDetailsViewPrivate;
-
 
 class KPEOPLE_EXPORT PersonDetailsView : public QWidget
 {
@@ -45,14 +42,13 @@ public:
     virtual ~PersonDetailsView();
 
 public Q_SLOTS:
-    void setPerson(const PersonDataPtr &person);
-    void setPersonsModel(PersonsModel *model);
+    void setPerson(PersonData *person);
+//     void setPersonsModel(PersonsModel *model);
 
 private Q_SLOTS:
     void reload();
 
 private:
-
     Q_DECLARE_PRIVATE(PersonDetailsView)
     PersonDetailsViewPrivate* d_ptr;
 };

@@ -18,13 +18,16 @@
 
 
 #include "personpluginmanager.h"
-#include "abstractpersonplugin.h"
 #include "basepersonsdatasource.h"
 
-#include <QAction>
+//temp
+#include "plugins/akonadi/akonadidatasource.h"
+#include "abstractpersonplugin.h"
+
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginInfo>
+#include <KDebug>
 
 #include <kdemacros.h>
 
@@ -35,49 +38,47 @@ class PersonPluginManagerPrivate
 public:
     PersonPluginManagerPrivate();
     ~PersonPluginManagerPrivate();
-    QList<AbstractPersonPlugin*> plugins;
-    BasePersonsDataSource *presencePlugin;
+    QList<AbstractPersonPlugin*> personPlugins;
+    QList<BasePersonsDataSource*> dataSourcePlugins;
 };
 
 K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 {
-    presencePlugin = 0;
-
-    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
+    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
     Q_FOREACH(const KService::Ptr &service, pluginList) {
-        AbstractPersonPlugin *plugin = service->createInstance<AbstractPersonPlugin>(0);
-        if (plugin) {
-            plugins << plugin;
+        BasePersonsDataSource* dataSource = service->createInstance<BasePersonsDataSource>(0);
+        if (dataSource) {
+            qDebug() << "adding  **** " << dataSource;
+            dataSourcePlugins << dataSource;
+        } else {
+            kWarning() << "Failed to create data source";
         }
     }
 
-    KService::Ptr imService = KServiceTypeTrader::self()->preferredService("KPeople/DataSource");
-    if (!imService.isNull()) {
-        presencePlugin = imService->createInstance<BasePersonsDataSource>(0);
-    }
-    if (!presencePlugin) {
-        presencePlugin = new BasePersonsDataSource(0);
+    KService::List personPluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
+    Q_FOREACH(const KService::Ptr &service, personPluginList) {
+        AbstractPersonPlugin *plugin = service->createInstance<AbstractPersonPlugin>(0);
+        if (plugin) {
+            qDebug() << "found plugin" << service->name();
+            personPlugins << plugin;
+        }
     }
 }
 
 PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 {
-    qDeleteAll(plugins);
-    presencePlugin->deleteLater();
+    qDeleteAll(dataSourcePlugins);
+    qDeleteAll(personPlugins);
 }
 
-QList<QAction*> PersonPluginManager::actionsForPerson(PersonDataPtr person, QObject *parent)
+QList<BasePersonsDataSource*> PersonPluginManager::dataSourcePlugins()
 {
-    QList<QAction*> actions;
-    Q_FOREACH(AbstractPersonPlugin *plugin, s_instance->plugins) {
-        actions << plugin->actionsForPerson(person, parent);
-    }
-    return actions;
+    return s_instance->dataSourcePlugins;
 }
 
-BasePersonsDataSource* PersonPluginManager::presencePlugin()
+QList<AbstractPersonPlugin*> PersonPluginManager::personPlugins()
 {
-    return s_instance->presencePlugin;
+    return s_instance->personPlugins;
 }

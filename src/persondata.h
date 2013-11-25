@@ -1,7 +1,6 @@
 /*
     KPeople
-    Copyright (C) 2012  Aleix Pol Gonzalez <aleixpol@blue-systems.com>
-    Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
+    Copyright (C) 2013  David Edmundson (davidedmundson@kde.org)
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -24,11 +23,9 @@
 #include "kpeople_export.h"
 
 #include <QObject>
-#include <QUrl>
-#include <QStringList>
-#include <KDateTime>
+#include <KABC/Addressee>
 
-namespace Nepomuk2 { class Resource; }
+#include "global.h"
 
 namespace KPeople
 {
@@ -36,78 +33,42 @@ struct PersonDataPrivate;
 
 class PersonData;
 
-typedef QSharedPointer<PersonData> PersonDataPtr;
-
 class KPEOPLE_EXPORT PersonData : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QUrl avatar READ avatar NOTIFY dataChanged)
-    Q_PROPERTY(QString name READ name NOTIFY dataChanged)
-    Q_PROPERTY(QString status READ status NOTIFY dataChanged)
-    Q_PROPERTY(QStringList emails READ emails NOTIFY dataChanged)
-    Q_PROPERTY(QStringList imAccounts READ imAccounts NOTIFY dataChanged)
-    Q_PROPERTY(QStringList phones READ phones NOTIFY dataChanged)
-    Q_PROPERTY(bool isPerson READ isPerson)
-    Q_PROPERTY(bool isValid READ isValid)
 
     public:
-        static PersonDataPtr createFromUri(const QUrl &url);
-        static PersonDataPtr createFromContactId(const QString &contactId);
+        /** Creates a Person object from a given ID.
+         * The ID can be either a local application specific ID (such as akonadi://?item=15)
+         * or a kpeople ID in the form kpeople://15
+         */
+        PersonData(const QString &id, QObject *parent=0);
 
         virtual ~PersonData();
 
-        /** Returns if the URI represents a valid person or contact*/
-        bool isValid() const;
+        /**
+         * Returns the aggregated contact information from all sources
+         */
+        KABC::Addressee person() const;
 
-        /** @returns the uri of the current person */
-        QUrl uri() const;
-
-        /** @returns a url pointing to the avatar image */
-        QUrl avatar() const;
-
-        /** @returns any possible display name (either from IM, email or other label) */
-        QString name() const;
-
-        /** @returns most online status (if there are more than 1 contacts, otherwise the current status of a contact */
-        QString status() const;
-
-        /** @returns list of all emails this contact has */
-        QStringList emails() const;
-
-        /** @returns list of all phone contacts this contact has */
-        QStringList phones() const;
-
-        /** @returns list of all IM accounts this contact has */
-        QStringList imAccounts() const;
-
-        /** @returns true if this is pimo:Person, false if just nco:PersonContact */
-        bool isPerson() const;
-        /** @returns contact's birthday */
-        KDateTime birthday() const;
-
-        /** @returns list of groups the contact is part of */
-        QStringList groups() const;
-
-        QList<Nepomuk2::Resource> contactResources() const;
+        /**
+         * Returns information from each contact source
+         */
+        KABC::AddresseeList contacts() const;
 
     Q_SIGNALS:
-        /** Some of the person's data we're offering has changed */
+        /**
+         * One of the contact sources has changed
+         */
         void dataChanged();
 
-    protected:
-        PersonData(QObject *parent=0);
-
-        /** sets new contact uri, all data are refetched */
-        void loadUri(const QUrl &uri);
-
-        /** @p id will specify the person we're offering by finding the pimo:Person related to it */
-        void loadContact(const QString &id);
+    private Q_SLOTS:
+        void onContactChanged();
 
     private:
+        Q_DISABLE_COPY(PersonData)
         Q_DECLARE_PRIVATE(PersonData)
         PersonDataPrivate * d_ptr;
-
-        QString findMostOnlinePresence(const QStringList &presences) const;
 };
 }
 

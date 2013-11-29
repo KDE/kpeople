@@ -35,7 +35,7 @@ PersonsModel::PersonsModel(QObject *parent):
 {
     Q_D(PersonsModel);
 
-    d->genericAvatarImagePath = KStandardDirs::locate("data", "person-viewer/dummy_avatar.png");
+    d->genericAvatarImagePath = KStandardDirs::locate("data", "kpeople/dummy_avatar.png");
     Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
         d->m_sourceMonitors << dataSource->allContactsMonitor();
     }

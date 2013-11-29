@@ -181,7 +181,7 @@ void PersonDetailsView::reload()
     } else if (!d->m_person->person().photo().url().isEmpty()) {
         avatar = QPixmap(d->m_person->person().photo().url());
     } else {
-        avatar = QPixmap(KStandardDirs::locate("data", "person-viewer/dummy_avatar.png"));
+        avatar = QPixmap(KStandardDirs::locate("data", "kpeople/dummy_avatar.png"));
     }
 
     QString contactPresence = d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence"));

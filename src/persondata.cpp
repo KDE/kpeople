@@ -52,6 +52,11 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
         personId = PersonManager::instance()->personIdForContact(personId); //TODO merge into one method + query
         d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
     }
+
+    if (personId.isEmpty()) {
+        d->contactIds = QStringList() << id;
+    }
+
     KABC::Addressee::Map contacts;
     Q_FOREACH(BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {
         Q_FOREACH(const QString &contactId, d->contactIds) {

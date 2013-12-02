@@ -55,7 +55,7 @@ public:
 
     /**
      * Returns the ID of a person associated with a given contact
-     * If no person for that contact exists, the original contact Id will be returned
+     * If no person for that contact exists, an empty string is returned
      */
     QString personIdForContact(const QString &contactId) const;
 

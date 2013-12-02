@@ -123,7 +123,7 @@ QString PersonManager::personIdForContact(const QString& contactId) const
     if (query.next()) {
         return "kpeople://"+query.value(0).toString();
     }
-    return contactId;
+    return QString();
 }
 
 

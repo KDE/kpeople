@@ -47,15 +47,10 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
     //query DB
     if (id.startsWith("kpeople://")) {
         personId = id;
-        d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
     } else {
-        personId = PersonManager::instance()->personIdForContact(personId); //TODO merge into one method + query
-        d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
+        personId = PersonManager::instance()->personIdForContact(id);
     }
-
-    if (personId.isEmpty()) {
-        d->contactIds = QStringList() << id;
-    }
+    d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
 
     KABC::Addressee::Map contacts;
     Q_FOREACH(BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {

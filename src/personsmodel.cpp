@@ -236,6 +236,7 @@ void PersonsModel::onContactRemoved(const QString &contactId)
     if (!mc.isValid()) {
         removePerson(personId);
     }
+    personChanged(personId);
 }
 
 void PersonsModel::onAddContactToPerson(const QString &contactId, const QString &newPersonId)
@@ -284,6 +285,8 @@ void PersonsModel::onRemoveContactsFromPerson(const QString &contactId)
     //if we don't want the person object anymore
     if (!d->metacontacts[personId].isValid()) {
         removePerson(personId);
+    } else {
+        personChanged(personId);
     }
 
     //now re-insert as a new contact

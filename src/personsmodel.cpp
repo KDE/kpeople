@@ -10,6 +10,7 @@
 
 #include <QDebug>
 #include <QPixmap>
+#include <QTimer>
 
 namespace KPeople {
 class PersonsModelPrivate{
@@ -40,7 +41,7 @@ PersonsModel::PersonsModel(QObject *parent):
         d->m_sourceMonitors << dataSource->allContactsMonitor();
     }
 
-    onContactsFetched();
+    QTimer::singleShot(0, this, SLOT(onContactsFetched()));
 
     Q_FOREACH(const AllContactsMonitorPtr monitor, d->m_sourceMonitors) {
         connect(monitor.data(), SIGNAL(contactAdded(QString,KABC::Addressee)), SLOT(onContactAdded(QString,KABC::Addressee)));

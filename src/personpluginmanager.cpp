@@ -50,7 +50,7 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
     Q_FOREACH(const KService::Ptr &service, pluginList) {
         BasePersonsDataSource* dataSource = service->createInstance<BasePersonsDataSource>(0);
         if (dataSource) {
-            qDebug() << "adding  **** " << dataSource;
+            qDebug() << "adding  **** " << dataSource << service->name();
             dataSourcePlugins << dataSource;
         } else {
             kWarning() << "Failed to create data source";

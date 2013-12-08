@@ -105,7 +105,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 {
     Q_D(PersonDetailsView);
     setLayout(new QVBoxLayout(this));
-    d->m_mainLayout = new QFormLayout(this);
+    d->m_mainLayout = new QFormLayout();
     d->m_mainLayout->setSpacing(4);
     d->m_person = 0;
 

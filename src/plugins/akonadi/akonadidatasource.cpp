@@ -65,6 +65,8 @@ AkonadiAllContacts::AkonadiAllContacts():
 
     m_monitor->setMimeTypeMonitored("text/directory");
     m_monitor->itemFetchScope().fetchFullPayload();
+    m_monitor->itemFetchScope().setFetchModificationTime(false);
+    m_monitor->itemFetchScope().setFetchRemoteIdentification(false);
 
     CollectionFetchJob *fetchJob = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive, this);
     fetchJob->fetchScope().setContentMimeTypes( QStringList() << "text/directory" );
@@ -141,17 +143,19 @@ class AkonadiContact: public ContactMonitor
 {
     Q_OBJECT
 public:
-    AkonadiContact(const QString &contactId);
+    AkonadiContact(Akonadi::Monitor *monitor, const QString &contactId);
+    ~AkonadiContact();
 private Q_SLOTS:
     void onContactFetched(KJob*);
     void onContactChanged(const Akonadi::Item &);
 private:
     Akonadi::Monitor *m_monitor;
+    Akonadi::Item m_item;
 };
 
-AkonadiContact::AkonadiContact(const QString& contactId):
+AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contactId):
     ContactMonitor(contactId),
-    m_monitor(new Akonadi::Monitor(this))
+    m_monitor(monitor)
 {
     //optimisation, base class could copy across from the model if the model exists
     //then we should check if contact is already set to something and avoid the initial fetch
@@ -159,19 +163,24 @@ AkonadiContact::AkonadiContact(const QString& contactId):
     //FIXME This is a bug in the sending code. See Fixme in PersonData
     if (contactId.startsWith("akonadi://")) {
 
-        Item item = Item::fromUrl(QUrl(contactId));
-        ItemFetchJob* itemFetchJob = new ItemFetchJob(item);
+        m_item = Item::fromUrl(QUrl(contactId));
+        ItemFetchJob* itemFetchJob = new ItemFetchJob(m_item);
         itemFetchJob->fetchScope().fetchFullPayload();
         connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
 
-        itemFetchJob->exec();//HACK because something isn't working FIXME FIXME FIXME!!!!
+        itemFetchJob->exec();//HACK because something isn't working in PersonDetailsView::reload() FIXME FIXME FIXME!!!!
 
         //monitor here too
-        m_monitor->setItemMonitored(item, true);
+        m_monitor->setItemMonitored(m_item, true);
         connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onContactChanged(Akonadi::Item)));
-        m_monitor->itemFetchScope().fetchFullPayload();
     }
 }
+
+AkonadiContact::~AkonadiContact()
+{
+    m_monitor->setItemMonitored(m_item, false);
+}
+
 
 void AkonadiContact::onContactFetched(KJob *job)
 {
@@ -183,6 +192,9 @@ void AkonadiContact::onContactFetched(KJob *job)
 
 void AkonadiContact::onContactChanged(const Item &item)
 {
+    if (item != m_item) {
+        return;
+    }
     if(!item.hasPayload<KABC::Addressee>()) {
         return;
     }
@@ -191,10 +203,13 @@ void AkonadiContact::onContactChanged(const Item &item)
 
 
 AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
-    BasePersonsDataSource(parent)
+    BasePersonsDataSource(parent),
+    m_monitor(new Akonadi::Monitor(this))
 {
     Q_UNUSED(args);
-
+    m_monitor->itemFetchScope().fetchFullPayload();
+    m_monitor->itemFetchScope().setFetchModificationTime(false);
+    m_monitor->itemFetchScope().setFetchRemoteIdentification(false);
 }
 
 AkonadiDataSource::~AkonadiDataSource()
@@ -209,7 +224,7 @@ AllContactsMonitor* AkonadiDataSource::createAllContactsMonitor()
 
 ContactMonitor* AkonadiDataSource::createContactMonitor(const QString& contactId)
 {
-    return new AkonadiContact(contactId);
+    return new AkonadiContact(m_monitor, contactId);
 }
 
 K_PLUGIN_FACTORY( AkonadiDataSourceFactory, registerPlugin<AkonadiDataSource>(); )

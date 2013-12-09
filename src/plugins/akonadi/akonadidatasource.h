@@ -34,6 +34,8 @@ public:
     virtual ~AkonadiDataSource();
     virtual AllContactsMonitor* createAllContactsMonitor();
     virtual ContactMonitor* createContactMonitor(const QString& contactId);
+private:
+    Akonadi::Monitor *m_monitor;
 };
 
 #endif // AKONADIDATASOURCE_H

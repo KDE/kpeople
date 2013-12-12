@@ -45,7 +45,7 @@ class PersonDetailsViewPrivate{
 public:
     PersonData  *m_person;
     Ui::PersonDetailsPresentation *m_personDetailsPresentation;
-    QFormLayout *m_mainLayout;
+    QWidget *m_mainWidget;
     QList<AbstractFieldWidgetFactory*> m_plugins;
 };
 }
@@ -105,15 +105,14 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 {
     Q_D(PersonDetailsView);
     setLayout(new QVBoxLayout(this));
-    d->m_mainLayout = new QFormLayout();
-    d->m_mainLayout->setSpacing(4);
+    d->m_mainWidget = new QWidget(d->m_mainWidget);
     d->m_person = 0;
 
     QWidget *details = new QWidget();
     d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
     d->m_personDetailsPresentation->setupUi(details);
     layout()->addWidget(details);
-    layout()->addItem(d->m_mainLayout);
+    layout()->addWidget(d->m_mainWidget);
     layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     //create plugins
@@ -143,7 +142,6 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 
 PersonDetailsView::~PersonDetailsView()
 {
-    Q_D(PersonDetailsView);
     delete d_ptr;
 }
 
@@ -171,6 +169,16 @@ void PersonDetailsView::reload()
 {
     Q_D(PersonDetailsView);
 
+    //replace the entire main widget
+    int layoutIndex = layout()->indexOf(d->m_mainWidget);
+    layout()->takeAt(layoutIndex);
+    d->m_mainWidget->deleteLater();
+    d->m_mainWidget = new QWidget(this);
+    dynamic_cast<QVBoxLayout*>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
+
+    QFormLayout *layout = new QFormLayout(d->m_mainWidget);
+    layout->setSpacing(4);
+
     //update header information
     //FIXME - possibly split this out into a new class with a nice setPerson method
 
@@ -190,15 +198,6 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(QIcon::fromTheme(KPeople::iconNameForPresenceString(contactPresence)).pixmap(32, 32)); //FIXME
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
 
-    //delete all generated plugin widgets
-    if (d->m_mainLayout->count()) {
-        QLayoutItem *child;
-        while ((child = d->m_mainLayout->takeAt(0)) != 0) {
-            delete child->widget();
-            delete child;
-        }
-    }
-
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + ':';
         QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->person(), d->m_person->contacts(), this);
@@ -208,7 +207,7 @@ void PersonDetailsView::reload()
             font.setBold(true);
             widget->setFont(font);
             QLabel *widgetLabel = new QLabel(label, this);
-            d->m_mainLayout->addRow(widgetLabel, widget);
+            layout->addRow(widgetLabel, widget);
         }
     }
 }

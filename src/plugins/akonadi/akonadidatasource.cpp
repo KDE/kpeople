@@ -168,8 +168,6 @@ AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contact
         itemFetchJob->fetchScope().fetchFullPayload();
         connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
 
-        itemFetchJob->exec();//HACK because something isn't working in PersonDetailsView::reload() FIXME FIXME FIXME!!!!
-
         //monitor here too
         m_monitor->setItemMonitored(m_item, true);
         connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onContactChanged(Akonadi::Item)));

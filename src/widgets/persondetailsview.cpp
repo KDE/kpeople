@@ -105,7 +105,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 {
     Q_D(PersonDetailsView);
     setLayout(new QVBoxLayout(this));
-    d->m_mainWidget = new QWidget(d->m_mainWidget);
+    d->m_mainWidget = new QWidget(this);
     d->m_person = 0;
 
     QWidget *details = new QWidget();

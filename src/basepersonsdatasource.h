@@ -1,5 +1,6 @@
 /*
  *    Copyright (C) 2013  Martin Klapetek <mklapetek@kde.org>
+ *    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -32,6 +33,8 @@
 namespace KPeople
 {
 
+struct BasePersonsDataSourcePrivate;
+
 //This is a QObject for KPluginFactory
 class KPEOPLE_EXPORT BasePersonsDataSource : public QObject
 {
@@ -54,10 +57,10 @@ protected:
      * otherwise the AllContactWatcher will be used and filtered.
      */
     virtual ContactMonitor* createContactMonitor(const QString &contactId);
-
 private:
-    QWeakPointer<AllContactsMonitor> m_allContactsMonitor;
-    QHash<QString, QWeakPointer<ContactMonitor> > m_contactMonitors;
+    Q_DISABLE_COPY(BasePersonsDataSource)
+    Q_DECLARE_PRIVATE(BasePersonsDataSource)
+    BasePersonsDataSourcePrivate * d_ptr;
 };
 
 }

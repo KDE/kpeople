@@ -1,6 +1,6 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
- * Copyright 2013  David Edmundson <d.edmundson@lboro.ac.uk>
+ * Abstract class to load a monitor changes for a single contact
+ * Copyright 2013  David Edmundson <davidedmundson@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -22,31 +22,49 @@
 
 #include "contactmonitor.h"
 
-ContactMonitor::ContactMonitor(const QString& contactId)
-: m_contactId(contactId)
-{
+using namespace KPeople;
 
+struct KPeople::ContactMonitorPrivate
+{
+    QString m_contactId;
+    KABC::Addressee m_contact;
+};
+
+
+
+ContactMonitor::ContactMonitor(const QString &contactId)
+    : QObject(0),
+      d_ptr(new ContactMonitorPrivate)
+{
+    Q_D(ContactMonitor);
+    d->m_contactId = contactId;
 }
 
 ContactMonitor::~ContactMonitor()
 {
-
+    delete d_ptr;
 }
 
-void ContactMonitor::setContact(const KABC::Addressee& contact)
+void ContactMonitor::setContact(const KABC::Addressee &contact)
 {
-    m_contact = contact;
+    Q_D(ContactMonitor);
+
+    d->m_contact = contact;
     Q_EMIT contactChanged();
 }
 
 KABC::Addressee ContactMonitor::contact() const
 {
-    return m_contact;
+    Q_D(const ContactMonitor);
+
+    return d->m_contact;
 }
 
 QString ContactMonitor::contactId() const
 {
-    return m_contactId;
+    Q_D(const ContactMonitor);
+
+    return d->m_contactId;
 }
 
 

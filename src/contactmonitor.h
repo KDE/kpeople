@@ -1,6 +1,6 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
- * Copyright 2013  David Edmundson <d.edmundson@lboro.ac.uk>
+ * Abstract class to load a monitor changes for a single contact
+ * Copyright 2013  David Edmundson <davidedmundson@kde.org>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,6 +29,10 @@
 
 #include <KABC/Addressee>
 
+namespace KPeople {
+
+struct ContactMonitorPrivate;
+
 class KPEOPLE_EXPORT ContactMonitor: public QObject
 {
 Q_OBJECT
@@ -42,10 +46,12 @@ Q_SIGNALS:
 protected:
     void setContact(const KABC::Addressee &contact);
 private:
-    QString m_contactId;
-    KABC::Addressee m_contact;
+    Q_DISABLE_COPY(ContactMonitor)
+    Q_DECLARE_PRIVATE(ContactMonitor)
+    ContactMonitorPrivate *d_ptr;
 };
 
-typedef QSharedPointer<ContactMonitor> ContactMonitorPtr;
+}
+typedef QSharedPointer<KPeople::ContactMonitor> ContactMonitorPtr;
 
 #endif // CONTACTMONITOR_H

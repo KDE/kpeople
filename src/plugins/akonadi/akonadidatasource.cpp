@@ -139,7 +139,7 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
 
 
 
-class AkonadiContact: public ContactMonitor
+class AkonadiContact: public KPeople::ContactMonitor
 {
     Q_OBJECT
 public:
@@ -220,7 +220,7 @@ AllContactsMonitor* AkonadiDataSource::createAllContactsMonitor()
     return new AkonadiAllContacts();
 }
 
-ContactMonitor* AkonadiDataSource::createContactMonitor(const QString& contactId)
+KPeople::ContactMonitor* AkonadiDataSource::createContactMonitor(const QString& contactId)
 {
     return new AkonadiContact(m_monitor, contactId);
 }

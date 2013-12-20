@@ -22,18 +22,17 @@
 
 #include <QDebug>
 
-using namespace KPeople;
 
 #include "defaultcontactmonitor_p.h"
 
-namespace KPeople {
-struct BasePersonsDataSourcePrivate
+using namespace KPeople;
+
+struct KPeople::BasePersonsDataSourcePrivate
 {
-public:
     QWeakPointer<AllContactsMonitor> m_allContactsMonitor;
     QHash<QString, QWeakPointer<ContactMonitor> > m_contactMonitors;
 };
-}
+
 
 BasePersonsDataSource::BasePersonsDataSource(QObject *parent, const QVariantList &args)
     : QObject(parent),

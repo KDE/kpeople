@@ -28,6 +28,8 @@
 #include "contactmonitor.h"
 #include "allcontactsmonitor.h"
 
+using namespace KPeople;
+
 // if plugins don't implement a ContactWatcher, we repurpose the whole model, and single out changes for one contact
 // ideally plugins (especially slow ones) will implement their own contact monitor which fetches just the one contact
 class DefaultContactMonitor : public ContactMonitor

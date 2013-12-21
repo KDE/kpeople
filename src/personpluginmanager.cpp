@@ -20,8 +20,6 @@
 #include "personpluginmanager.h"
 #include "basepersonsdatasource.h"
 
-//temp
-#include "plugins/akonadi/akonadidatasource.h"
 #include "abstractpersonplugin.h"
 
 #include <KService>

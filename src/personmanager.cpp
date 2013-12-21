@@ -62,12 +62,10 @@ Transaction::~Transaction()
     }
 }
 
-PersonManager::PersonManager(QObject* parent):
+PersonManager::PersonManager(const QString &databasePath, QObject* parent):
     QObject(parent),
     m_db(QSqlDatabase::addDatabase("QSQLITE3"))
-{
-    const QString personDbFilePath = KGlobal::dirs()->locateLocal("data","kpeople/persondb");
-    m_db.setDatabaseName(personDbFilePath);
+{    m_db.setDatabaseName(databasePath);
     m_db.open();
     m_db.exec("CREATE TABLE IF NOT EXISTS persons (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)");
     m_db.exec("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)");
@@ -256,11 +254,15 @@ bool PersonManager::unmergeContact(const QString &id)
     return true;
 }
 
-PersonManager* PersonManager::instance()
+PersonManager* PersonManager::instance(const QString &databasePath)
 {
     static PersonManager* s_instance = 0;
     if (!s_instance) {
-        s_instance = new PersonManager();
+        QString path = databasePath;
+        if (path.isEmpty()) {
+            path = KGlobal::dirs()->locateLocal("data","kpeople/persondb");
+        }
+        s_instance = new PersonManager(path);
     }
     return s_instance;
 }

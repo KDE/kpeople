@@ -36,6 +36,11 @@ class KPEOPLE_EXPORT PersonPluginManager
 public:
     static QList<BasePersonsDataSource*> dataSourcePlugins();
     static QList<AbstractPersonPlugin*> personPlugins();
+
+
+    //THIS IS FOR TEST PURPOSES ONLY.
+    //FIXME is this class public or not?
+    static void setDataSourcePlugins(const QList<BasePersonsDataSource*> &dataSources);
 };
 }
 

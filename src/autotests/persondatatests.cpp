@@ -108,8 +108,9 @@ void PersonDataTests::contactChanged()
 
     QCOMPARE(person.person().emails().first(), QString("contact1@example.com"));
 
+    QSignalSpy spy(&person, SIGNAL(dataChanged()));
     m_source->changeContact1();
-    //TODO add some stuff with QSIGNALSPY
+    QCOMPARE(spy.count(), 1);
 
     QCOMPARE(person.person().emails().first(), QString("newaddress@yahoo.com"));
 }

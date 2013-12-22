@@ -29,6 +29,10 @@
 
 #include <KABC/Addressee>
 
+namespace KPeople {
+
+class AllContactsMonitorPrivate;
+
 class KPEOPLE_EXPORT AllContactsMonitor : public QObject
 {
     Q_OBJECT
@@ -45,8 +49,13 @@ Q_SIGNALS:
     void contactRemoved(const QString &contactId);
 
 //     bool m_initialFetchComplete;
+private:
+    Q_DISABLE_COPY(AllContactsMonitor)
+    Q_DECLARE_PRIVATE(AllContactsMonitor)
+    AllContactsMonitorPrivate *d_ptr;
 };
 
-typedef QSharedPointer<AllContactsMonitor> AllContactsMonitorPtr;
+}
+typedef QSharedPointer<KPeople::AllContactsMonitor> AllContactsMonitorPtr;
 
 #endif // ALLCONTACTSMONITOR_H

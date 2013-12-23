@@ -1,5 +1,4 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
  * Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -40,7 +39,7 @@ class FakeAllContactsMonitor : public KPeople::AllContactsMonitor
     Q_OBJECT
 public:
     explicit FakeAllContactsMonitor();
-    void changeContact1();
+    void changeContact1Email();
     virtual KABC::Addressee::Map contacts();
 };
 

@@ -38,8 +38,10 @@ public:
     static QList<AbstractPersonPlugin*> personPlugins();
 
 
-    //THIS IS FOR TEST PURPOSES ONLY.
-    //FIXME is this class public or not?
+    /**
+     * Instead of loading datasources from plugins, set sources manually
+     * This is for unit tests only
+     */
     static void setDataSourcePlugins(const QList<BasePersonsDataSource*> &dataSources);
 };
 }

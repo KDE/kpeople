@@ -1,5 +1,4 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
  * Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -38,7 +37,6 @@ private slots:
     void loadContact();
     void loadPerson();
     void contactChanged();
-    void invalidId();
 private:
     FakeContactSource *m_source;
 };

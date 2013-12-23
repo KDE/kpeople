@@ -1,5 +1,4 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
  * Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -68,16 +67,12 @@ void FakeContactSource::changeContact1()
     qobject_cast<FakeAllContactsMonitor*>(allContactsMonitor().data())->changeContact1();
 }
 
-
-void FakeAllContactsMonitor::changeContact1()
+void FakeAllContactsMonitor::changeContact1Email()
 {
     KABC::Addressee contact1 = contacts()["fakesource://contact1"];
     contact1.setEmails(QStringList() << "newaddress@yahoo.com");
 
     Q_EMIT contactChanged("fakesource://contact1", contact1);
 }
-
-
-
 
 #include "fakecontactsource.moc"

@@ -1,5 +1,4 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
  * Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -109,20 +108,10 @@ void PersonDataTests::contactChanged()
     QCOMPARE(person.person().emails().first(), QString("contact1@example.com"));
 
     QSignalSpy spy(&person, SIGNAL(dataChanged()));
-    m_source->changeContact1();
+    m_source->changeContact1Email();
     QCOMPARE(spy.count(), 1);
 
     QCOMPARE(person.person().emails().first(), QString("newaddress@yahoo.com"));
 }
-
-void PersonDataTests::invalidId()
-{
-    KPeople::PersonData person("fakesource://adsf");
-//     QCOMPARE(person.isValid(), false);
-    //FIXME we need this method ^
-}
-
-
-
 
 #include "persondatatests.moc"

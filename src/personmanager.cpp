@@ -62,7 +62,7 @@ Transaction::~Transaction()
     }
 }
 
-PersonManager::PersonManager(const QString &databasePath, QObject* parent):
+PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     QObject(parent),
     m_db(QSqlDatabase::addDatabase("QSQLITE3"))
 {    m_db.setDatabaseName(databasePath);

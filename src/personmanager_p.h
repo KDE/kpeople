@@ -1,5 +1,4 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
  * Copyright 2013  David Edmundson <kde@davidedmundson.co.uk>
  * Copyright 2013  Martin Klapetek <mklapetek@kde.org>
  *

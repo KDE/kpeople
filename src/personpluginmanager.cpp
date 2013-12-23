@@ -17,7 +17,7 @@
 */
 
 
-#include "personpluginmanager.h"
+#include "personpluginmanager_p.h"
 #include "basepersonsdatasource.h"
 
 #include "abstractpersonplugin.h"

@@ -69,7 +69,6 @@ install (FILES
             basepersonsdatasource.h
             allcontactsmonitor.h
             contactmonitor.h
-            personpluginmanager.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/
          COMPONENT Devel
 )

@@ -25,7 +25,7 @@
 
 //private includes
 #include "personmanager_p.h"
-#include "personpluginmanager.h"
+#include "personpluginmanager_p.h"
 
 //public kpeople includes
 #include <KPeople/PersonData>

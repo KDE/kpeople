@@ -20,7 +20,7 @@
 
 #include "metacontact_p.h"
 #include "personmanager_p.h"
-#include "personpluginmanager.h"
+#include "personpluginmanager_p.h"
 #include "basepersonsdatasource.h"
 #include "contactmonitor.h"
 

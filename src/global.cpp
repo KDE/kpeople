@@ -22,7 +22,7 @@
 #include "global.h"
 
 #include "personmanager_p.h"
-#include "personpluginmanager.h"
+#include "personpluginmanager_p.h"
 #include "abstractpersonplugin.h"
 
 #include <KIconLoader>

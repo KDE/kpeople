@@ -1,9 +1,0 @@
-#!/bin/bash
-
-# Start the test environment
-source @NEPOMUK_TESTLIB_TOOLS_DIR@/nepomuk-sandbox-begin.sh
-
-eval '$@'
-
-# Destroy it
-source @NEPOMUK_TESTLIB_TOOLS_DIR@/nepomuk-sandbox-end.sh

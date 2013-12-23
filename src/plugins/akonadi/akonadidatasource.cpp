@@ -38,7 +38,7 @@
 
 using namespace Akonadi;
 
-class AkonadiAllContacts : public AllContactsMonitor
+class AkonadiAllContacts : public KPeople::AllContactsMonitor
 {
     Q_OBJECT
 public:
@@ -215,7 +215,7 @@ AkonadiDataSource::~AkonadiDataSource()
 
 }
 
-AllContactsMonitor* AkonadiDataSource::createAllContactsMonitor()
+KPeople::AllContactsMonitor* AkonadiDataSource::createAllContactsMonitor()
 {
     return new AkonadiAllContacts();
 }

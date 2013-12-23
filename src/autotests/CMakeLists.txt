@@ -1,11 +1,8 @@
-set (NEPOMUK_TESTLIB_TOOLS_DIR
-    "${CMAKE_CURRENT_BINARY_DIR}/lib/tools")
+kde4_add_unit_test(persondatatest persondatatests.cpp fakecontactsource.cpp)
+target_link_libraries(persondatatest
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTTEST_LIBRARY}
+    ${KDEPIMLIBS_KABC_LIBS}
+    kpeople)
 
-set (NEPOMUK_TESTLIB_CMAKE_DIR
-    "${CMAKE_CURRENT_BINARY_DIR}/lib")
-
-set (NEPOMUK_TESTLIB_DATA_DIR
-    "${CMAKE_CURRENT_BINARY_DIR}/lib")
-
-add_subdirectory( lib )
-add_subdirectory( tests )
+# add_test(PersonDataTests persondatatest)

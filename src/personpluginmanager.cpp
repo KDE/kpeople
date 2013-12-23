@@ -17,11 +17,9 @@
 */
 
 
-#include "personpluginmanager.h"
+#include "personpluginmanager_p.h"
 #include "basepersonsdatasource.h"
 
-//temp
-#include "plugins/akonadi/akonadidatasource.h"
 #include "abstractpersonplugin.h"
 
 #include <KService>
@@ -71,6 +69,14 @@ PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 {
     qDeleteAll(dataSourcePlugins);
     qDeleteAll(personPlugins);
+}
+
+
+void PersonPluginManager::setDataSourcePlugins(const QList< BasePersonsDataSource* >& dataSources)
+{
+    qDeleteAll(s_instance->dataSourcePlugins);
+    s_instance->dataSourcePlugins.clear();
+    s_instance->dataSourcePlugins = dataSources;
 }
 
 QList<BasePersonsDataSource*> PersonPluginManager::dataSourcePlugins()

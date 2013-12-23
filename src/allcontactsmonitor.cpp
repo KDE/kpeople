@@ -24,13 +24,23 @@
 
 #include <KABC/Addressee>
 
-AllContactsMonitor::AllContactsMonitor(): QObject()
+using namespace KPeople;
+
+struct KPeople::AllContactsMonitorPrivate
+{
+    //unused but may be one day.
+    //best to be ready
+};
+
+AllContactsMonitor::AllContactsMonitor():
+    QObject(),
+    d_ptr(new AllContactsMonitorPrivate)
 {
 
 }
 AllContactsMonitor::~AllContactsMonitor()
 {
-
+    delete d_ptr;
 }
 
 KABC::Addressee::Map AllContactsMonitor::contacts()

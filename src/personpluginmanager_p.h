@@ -1,6 +1,5 @@
 /*
-    Duplicates Finder Auto Test
-    Copyright (C) 2013  Franck Arrecot <franck.arrecot@gmail.com>
+    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -18,41 +17,33 @@
 */
 
 
-#ifndef DUPLICATESTESTS_H
-#define DUPLICATESTESTS_H
 
-#include <QtCore/QObject>
-#include <QUrl>
-#include "../lib/testbase.h"
+#ifndef PERSON_PLUGIN_MANAGER_H
+#define PERSON_PLUGIN_MANAGER_H
 
-class DuplicatesTests : public Nepomuk2::TestBase
+#include <QObject>
+
+#include "kpeople_export.h"
+
+namespace KPeople
 {
-    Q_OBJECT
-private Q_SLOTS:
-    void init();
-    void initSpecificSearch();
-    void initGeneralSearch();
 
-    void duplicatesSpecificPersonSearch();
-    void duplicatesSearch();
+class AbstractPersonPlugin;
+class BasePersonsDataSource;
 
-private:
-    void initContact1();
-    void initContact1BIS();
+class KPEOPLE_EXPORT PersonPluginManager
+{
+public:
+    static QList<BasePersonsDataSource*> dataSourcePlugins();
+    static QList<AbstractPersonPlugin*> personPlugins();
 
-    void initPersonA();
-    void initPersonB();
 
-    QUrl m_contact1Uri;
-    QUrl m_contact1BISUri;
-
-    QUrl m_contact2Uri;
-    QUrl m_contact2BISUri;
-
-    QUrl m_contact3Uri;
-
-    QUrl m_personAUri;
-    QUrl m_personBUri;
+    /**
+     * Instead of loading datasources from plugins, set sources manually
+     * This is for unit tests only
+     */
+    static void setDataSourcePlugins(const QList<BasePersonsDataSource*> &dataSources);
 };
+}
 
-#endif // DUPLICATESTESTS_H
+#endif // PERSON_PLUGIN_MANAGER_H

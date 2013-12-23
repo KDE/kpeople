@@ -5,9 +5,9 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 # if (ENABLE_EXAMPLES)
   add_subdirectory(examples)
 # endif (ENABLE_EXAMPLES)
-# if (KDE4_BUILD_TESTS)
-#   add_subdirectory(autotests)
-# endif (KDE4_BUILD_TESTS)
+if (KDE4_BUILD_TESTS)
+  add_subdirectory(autotests)
+endif (KDE4_BUILD_TESTS)
 # add_subdirectory(declarative)
 add_subdirectory(plugins)
 add_subdirectory(widgets)
@@ -69,7 +69,6 @@ install (FILES
             basepersonsdatasource.h
             allcontactsmonitor.h
             contactmonitor.h
-            personpluginmanager.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/
          COMPONENT Devel
 )

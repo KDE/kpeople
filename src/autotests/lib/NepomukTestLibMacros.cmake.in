@@ -1,8 +1,0 @@
-# Add a Nepomuk unit test, which is executed when running 'make test' or 'ctest'
-# The executable should be created using kde4_add_executable and the appropriate libraries
-# should be linked using target_link_libraries
-function(add_nepomuk_test fancyName executable)
-    find_program(SH bash)
-    add_test(${fancyName} ${SH} @NEPOMUK_TESTLIB_TOOLS_DIR@/runNepomukTest.sh ${executable})
-endfunction(add_nepomuk_test fancyName executable)
-

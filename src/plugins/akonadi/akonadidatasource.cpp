@@ -84,6 +84,12 @@ KABC::Addressee::Map AkonadiAllContacts::contacts()
     return m_contacts;
 }
 
+QString AkonadiDataSource::sourcePluginId() const
+{
+    return "akonadi";
+}
+
+
 void AkonadiAllContacts::onItemAdded(const Item& item)
 {
     if(!item.hasPayload<KABC::Addressee>()) {

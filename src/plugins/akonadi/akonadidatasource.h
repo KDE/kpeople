@@ -34,6 +34,7 @@ public:
     virtual ~AkonadiDataSource();
     virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
     virtual KPeople::ContactMonitor* createContactMonitor(const QString& contactId);
+    virtual QString sourcePluginId() const;
 private:
     Akonadi::Monitor *m_monitor;
 };

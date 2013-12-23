@@ -56,7 +56,9 @@ void PersonDataTests::initTestCase()
     PersonManager::instance()->mergeContacts(QStringList() << "fakesource://contact2" << "fakesource://contact3");
 
     m_source = new FakeContactSource(0); //don't own. PersonPluginManager removes it on destruction
-    PersonPluginManager::setDataSourcePlugins(QList<BasePersonsDataSource*>() << m_source);
+    QHash<QString, BasePersonsDataSource*> sources;
+    sources["fakesource"] = m_source;
+    PersonPluginManager::setDataSourcePlugins(sources);
 }
 
 void PersonDataTests::cleanupTestCase()

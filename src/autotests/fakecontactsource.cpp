@@ -24,15 +24,22 @@ FakeContactSource::FakeContactSource(QObject* parent, const QVariantList& args):
 
 }
 
+FakeAllContactsMonitor::FakeAllContactsMonitor()
+{
+
+}
+
+QString FakeContactSource::sourcePluginId() const
+{
+    return "fakesource://";
+}
+
+
 KPeople::AllContactsMonitor* FakeContactSource::createAllContactsMonitor()
 {
     return new FakeAllContactsMonitor();
 }
 
-FakeAllContactsMonitor::FakeAllContactsMonitor()
-{
-
-}
 
 KABC::Addressee::Map FakeAllContactsMonitor::contacts()
 {

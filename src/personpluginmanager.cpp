@@ -37,7 +37,7 @@ public:
     PersonPluginManagerPrivate();
     ~PersonPluginManagerPrivate();
     QList<AbstractPersonPlugin*> personPlugins;
-    QList<BasePersonsDataSource*> dataSourcePlugins;
+    QHash<QString /* SourceName*/, BasePersonsDataSource*> dataSourcePlugins;
 };
 
 K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
@@ -48,8 +48,7 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
     Q_FOREACH(const KService::Ptr &service, pluginList) {
         BasePersonsDataSource* dataSource = service->createInstance<BasePersonsDataSource>(0);
         if (dataSource) {
-            qDebug() << "adding  **** " << dataSource << service->name();
-            dataSourcePlugins << dataSource;
+            dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
         } else {
             kWarning() << "Failed to create data source";
         }
@@ -72,7 +71,7 @@ PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 }
 
 
-void PersonPluginManager::setDataSourcePlugins(const QList< BasePersonsDataSource* >& dataSources)
+void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource* > &dataSources)
 {
     qDeleteAll(s_instance->dataSourcePlugins);
     s_instance->dataSourcePlugins.clear();
@@ -81,7 +80,12 @@ void PersonPluginManager::setDataSourcePlugins(const QList< BasePersonsDataSourc
 
 QList<BasePersonsDataSource*> PersonPluginManager::dataSourcePlugins()
 {
-    return s_instance->dataSourcePlugins;
+    return s_instance->dataSourcePlugins.values();
+}
+
+BasePersonsDataSource* PersonPluginManager::dataSource(const QString &sourceId)
+{
+    return s_instance->dataSourcePlugins[sourceId];
 }
 
 QList<AbstractPersonPlugin*> PersonPluginManager::personPlugins()

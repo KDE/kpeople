@@ -25,6 +25,8 @@
 
 #include "kpeople_export.h"
 
+#include <QHash>
+
 namespace KPeople
 {
 
@@ -35,6 +37,7 @@ class KPEOPLE_EXPORT PersonPluginManager
 {
 public:
     static QList<BasePersonsDataSource*> dataSourcePlugins();
+    static BasePersonsDataSource* dataSource(const QString &sourceId);
     static QList<AbstractPersonPlugin*> personPlugins();
 
 
@@ -42,7 +45,7 @@ public:
      * Instead of loading datasources from plugins, set sources manually
      * This is for unit tests only
      */
-    static void setDataSourcePlugins(const QList<BasePersonsDataSource*> &dataSources);
+    static void setDataSourcePlugins(const QHash<QString, BasePersonsDataSource*> &dataSources);
 };
 }
 

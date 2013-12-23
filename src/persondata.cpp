@@ -58,19 +58,23 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
     }
 
     KABC::Addressee::Map contacts;
-    Q_FOREACH(BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {
-        Q_FOREACH(const QString &contactId, d->contactIds) {
-            //FIXME this is terrible.. we have to ask every datasource for the contact
-            //future idea: plugins have a method of what their URIs will start with
-            //then we keep plugins as a map
+    Q_FOREACH(const QString &contactId, d->contactIds) {
+        //load the correct data source for this contact ID
+        const QString sourceId = contactId.left(contactId.indexOf("://"));
+        BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
+        if (dataSource) {
             ContactMonitorPtr cw = dataSource->contactMonitor(contactId);
             d->watchers << cw;
+
+            //if the data source already has the contact set it already
+            //if not it will be loaded when the contactChanged signal is emitted
             if (!cw->contact().isEmpty()) {
                 contacts[contactId] = cw->contact();
             }
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
         }
     }
+
 
     d->metaContact = MetaContact(personId, contacts);
 }

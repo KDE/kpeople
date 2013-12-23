@@ -49,6 +49,12 @@ public:
     //fetch and monitor a single contact
     ContactMonitorPtr      contactMonitor(const QString &contactId);
 
+    /**
+     * Returns the ID used by this datasource.
+     * i.e if the contactIDs are in the form akonadi://?item=324 this method should return "akonadi"
+     */
+    virtual QString sourcePluginId() const = 0;
+
 protected:
     virtual AllContactsMonitor* createAllContactsMonitor() = 0;
 

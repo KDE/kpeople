@@ -214,7 +214,7 @@ AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
     Q_UNUSED(args);
     m_monitor->itemFetchScope().fetchFullPayload();
     m_monitor->itemFetchScope().setFetchModificationTime(false);
-#if HAVE_KDEPIM_ATLEAST_412
+#ifdef HAVE_KDEPIM_ATLEAST_412
     m_monitor->itemFetchScope().setFetchRemoteIdentification(false);
 #endif
 }

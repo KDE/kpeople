@@ -27,7 +27,7 @@
 #include "personpluginmanager_p.h"
 
 //public kpeople includes
-#include <KPeople/PersonData>
+#include <persondata.h>
 
 #include "fakecontactsource.h"
 

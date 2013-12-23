@@ -27,7 +27,7 @@ class FakeContactSource : public KPeople::BasePersonsDataSource
 {
 public:
     FakeContactSource(QObject* parent, const QVariantList& args = QVariantList());
-    void changeContact1();
+    void changeContact1Email();
 protected:
     virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
 

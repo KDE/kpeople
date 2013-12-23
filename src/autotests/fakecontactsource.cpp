@@ -62,9 +62,9 @@ KABC::Addressee::Map FakeAllContactsMonitor::contacts()
     return contacts;
 }
 
-void FakeContactSource::changeContact1()
+void FakeContactSource::changeContact1Email()
 {
-    qobject_cast<FakeAllContactsMonitor*>(allContactsMonitor().data())->changeContact1();
+    qobject_cast<FakeAllContactsMonitor*>(allContactsMonitor().data())->changeContact1Email();
 }
 
 void FakeAllContactsMonitor::changeContact1Email()

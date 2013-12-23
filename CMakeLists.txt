@@ -26,6 +26,10 @@ include_directories (${KDE4_INCLUDES}
                      ${KDEPIMLIBS_INCLUDE_DIRS}
 )
 
+if(KdepimLibs_VERSION_MINOR GREATER 11)
+    add_definitions(-DHAVE_KDEPIM_ATLEAST_412)
+endif()
+
 add_subdirectory (src)
 add_subdirectory (pixmaps)
 

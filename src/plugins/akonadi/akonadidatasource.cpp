@@ -66,7 +66,9 @@ AkonadiAllContacts::AkonadiAllContacts():
     m_monitor->setMimeTypeMonitored("text/directory");
     m_monitor->itemFetchScope().fetchFullPayload();
     m_monitor->itemFetchScope().setFetchModificationTime(false);
+#ifdef HAVE_KDEPIM_ATLEAST_412
     m_monitor->itemFetchScope().setFetchRemoteIdentification(false);
+#endif
 
     CollectionFetchJob *fetchJob = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive, this);
     fetchJob->fetchScope().setContentMimeTypes( QStringList() << "text/directory" );
@@ -207,7 +209,9 @@ AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
     Q_UNUSED(args);
     m_monitor->itemFetchScope().fetchFullPayload();
     m_monitor->itemFetchScope().setFetchModificationTime(false);
+#if HAVE_KDEPIM_ATLEAST_412
     m_monitor->itemFetchScope().setFetchRemoteIdentification(false);
+#endif
 }
 
 AkonadiDataSource::~AkonadiDataSource()

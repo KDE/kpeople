@@ -17,26 +17,16 @@ kde4_add_library (kpeople    SHARED
       global.cpp
       metacontact.cpp
     abstractpersonplugin.cpp
-#     personsmodelfeature.cpp
-#     contactitem.cpp
-#     datasourcewatcher.cpp
-#     personitem.cpp
-#     personsmodel.cpp
     persondata.cpp
-#     resourcewatcherservice.cpp
-#     duplicatesfinder.cpp
 #     matchessolver.cpp
 #     match.cpp
     personsmodel.cpp
-#     personactionsmodel.cpp
     personpluginmanager.cpp
     personmanager.cpp
     basepersonsdatasource.cpp
     allcontactsmonitor.cpp
     contactmonitor.cpp
     defaultcontactmonitor.cpp
-    #temp
-    plugins/akonadi/akonadidatasource.cpp
 )
 
 target_link_libraries (kpeople
@@ -75,10 +65,11 @@ install (FILES
 
 install (FILES
             KPeople/AbstractPersonPlugin
+            KPeople/AllContactsMonitor
             KPeople/BasePersonsDataSource
+            KPeople/ContactMonitor
             KPeople/PersonData
             KPeople/PersonsModel
-            KPeople/PersonsModelFeature
          DESTINATION ${INCLUDE_INSTALL_DIR}/KPeople
          COMPONENT Devel
 )

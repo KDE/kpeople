@@ -135,7 +135,7 @@ void PersonManagerTests::mergePeople()
     qDebug() << mergeId;
     QCOMPARE(mergeId, QString("kpeople://1"));
 
-    //we expect two signals one for each contact added
+    //we expect two signals for contact 3 and 4
     waitForSignal(m_manager, SIGNAL(contactAddedToPerson(QString, QString)), 2);
     debugSignals(spy);
     QCOMPARE(spy.count(), 2);
@@ -165,12 +165,20 @@ void PersonManagerTests::mergeContactWhichIsAlreadyMerged()
 
 void PersonManagerTests::unmergeContactWhichDoesNotExist()
 {
-
+    QSignalSpy spy(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    bool unmergeResult = m_manager->unmergeContact("a://contact1");
+    QCOMPARE(unmergeResult, false);
+    waitForSignal(m_manager, SIGNAL(contactAddedToPerson(QString, QString)), 1); //this should time out
+    QCOMPARE(spy.count(), 0);
 }
 
 void PersonManagerTests::unmergePersonWhichDoesNotExist()
 {
-
+    QSignalSpy spy(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    bool unmergeResult = m_manager->unmergeContact("kpeople://1");
+    QCOMPARE(unmergeResult, false);
+    waitForSignal(m_manager, SIGNAL(contactAddedToPerson(QString, QString)), 1); //this should time out
+    QCOMPARE(spy.count(), 0);
 }
 
 #include "autotests/personmanagertests.moc"

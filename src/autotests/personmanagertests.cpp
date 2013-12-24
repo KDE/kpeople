@@ -1,0 +1,162 @@
+/*
+ * <one line to give the library's name and an idea of what it does.>
+ * Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ */
+
+#include "autotests/personmanagertests.h"
+
+#include "personmanager_p.h"
+
+#include <QtTest>
+#include <QSignalSpy>
+
+QTEST_MAIN(PersonManagerTests);
+
+void waitForSignal(QObject* object, const char* signal, int timeout = 500)
+{
+    QEventLoop loop;
+    loop.connect(object, signal, SLOT(quit()));
+    QTimer::singleShot(timeout, &loop, SLOT(quit()));
+    loop.exec();
+}
+
+
+void PersonManagerTests::initTestCase()
+{
+    // Called before the first testfunction is executed
+
+    //make sure no nonsense is left over from a dead test
+    QFile::remove("/tmp/kpeople_personmanager_test_db");
+
+}
+
+void PersonManagerTests::cleanupTestCase()
+{
+    // Called after the last testfunction was executed
+}
+
+void PersonManagerTests::init()
+{
+    //create a new manager
+    //in this test we don't actually use any of the datasources
+    m_manager = new PersonManager("/tmp/kpeople_personmanager_test_db");
+}
+
+void PersonManagerTests::cleanup()
+{
+    // Called after every testfunction
+
+    delete m_manager;
+    m_manager = 0;
+
+    QFile::remove("/tmp/kpeople_personmanager_test_db");
+
+}
+
+void PersonManagerTests::mergeContacts()
+{
+    //check DB is empty on startup
+    QCOMPARE(m_manager->allPersons().size(), 0);
+
+    QSignalSpy spy(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    QString mergedId = m_manager->mergeContacts(QStringList() << "a://contact1" << "a://contact2");
+    QCOMPARE(mergedId, QString("kpeople://1"));
+
+    //we expect two signals one for each contact added
+    waitForSignal(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    waitForSignal(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    qDebug() << spy;
+    QCOMPARE(spy.count(), 2);
+
+    //check database updated correctly
+    QMultiHash<QString, QString> people = m_manager->allPersons();
+    QCOMPARE(people.count("kpeople://1"), 2);
+    QCOMPARE(people.values("kpeople://1").toSet(), QSet<QString>() << "a://contact1" << "a://contact2");
+}
+
+void PersonManagerTests::mergeContactAndPerson()
+{
+    //create a person
+    m_manager->mergeContacts(QStringList() << "a://contact1" << "a://contact2");
+
+    //when merging a contact to a person we simply add the contact to an existing person
+    QSignalSpy spy(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    QString mergedId = m_manager->mergeContacts(QStringList() << "kpeople://1" << "a://contact3");
+    QCOMPARE(mergedId, QString("kpeople://1"));
+
+    waitForSignal(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    qDebug() << spy;
+    QCOMPARE(spy.count(), 1);
+
+    //check database updated correctly
+    QMultiHash<QString, QString> people = m_manager->allPersons();
+    QCOMPARE(people.count("kpeople://1"), 2);
+    QCOMPARE(people.values("kpeople://1").toSet(), QSet<QString>() << "a://contact1" << "a://contact2" << "a://contact3");
+}
+
+void PersonManagerTests::mergePeople()
+{
+    m_manager->mergeContacts(QStringList() << "a://contact1" << "a://contact2");
+    m_manager->mergeContacts(QStringList() << "a://contact3" << "a://contact4");
+
+    QSignalSpy spy(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    QString mergeId = m_manager->mergeContacts(QStringList() << "kpeople://1" << "kpeople://2");
+
+    qDebug() << mergeId;
+    QCOMPARE(mergeId, QString("kpeople://1"));
+
+    //we expect two signals one for each contact added
+    waitForSignal(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    waitForSignal(m_manager, SIGNAL(contactAddedToPerson(QString, QString)));
+    qDebug() << spy;
+    QCOMPARE(spy.count(), 2);
+
+
+}
+
+void PersonManagerTests::mergeContactInAnotherPerson()
+{
+
+}
+
+void PersonManagerTests::unmergeContact()
+{
+
+}
+
+void PersonManagerTests::unmergePerson()
+{
+
+}
+
+void PersonManagerTests::mergeContactWhichIsAlreadyMerged()
+{
+
+}
+
+void PersonManagerTests::unmergeContactWhichDoesNotExist()
+{
+
+}
+
+void PersonManagerTests::unmergePersonWhichDoesNotExist()
+{
+
+}
+
+#include "autotests/personmanagertests.moc"

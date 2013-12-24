@@ -65,7 +65,8 @@ Transaction::~Transaction()
 PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     QObject(parent),
     m_db(QSqlDatabase::addDatabase("QSQLITE3"))
-{    m_db.setDatabaseName(databasePath);
+{
+    m_db.setDatabaseName(databasePath);
     m_db.open();
     m_db.exec("CREATE TABLE IF NOT EXISTS persons (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)");
     m_db.exec("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)");
@@ -77,7 +78,6 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent):
 
 PersonManager::~PersonManager()
 {
-
 }
 
 QMultiHash< QString, QString > PersonManager::allPersons() const

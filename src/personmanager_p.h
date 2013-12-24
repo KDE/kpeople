@@ -46,13 +46,6 @@ class KPEOPLE_EXPORT PersonManager : public QObject
     Q_OBJECT
 
 public:
-    /**
-     * Create or return a singleton instance of the PersonManager
-     *
-     * @databasePath the path to the database to be used.
-     * If null the correct database is used.
-     * This is for testing purposes only.
-     */
     static PersonManager* instance(const QString &databasePath = QString());
 
 //DATA RETRIEVAL------------
@@ -85,7 +78,14 @@ Q_SIGNALS:
     void contactRemovedFromPerson(const QString &contactId);
     void contactAddedToPerson(const QString &contactId, const QString &newPersonId);
 
-protected:
+public:
+    /**
+     * Create or return a singleton instance of the PersonManager
+     *
+     * @databasePath the path to the database to be used.
+     * If null the correct database is used.
+     * This argument is for unit tests only.
+     */
     explicit PersonManager(const QString &databasePath, QObject* parent = 0);
     virtual ~PersonManager();
 

@@ -29,7 +29,8 @@ class MetaContactData : public QSharedData
 {
 public:
     QString personId;
-    KABC::Addressee::Map contacts;
+    QStringList contactIds;
+    KABC::AddresseeList contacts; //TODO vector
     KABC::Addressee personAddressee;
 };
 }
@@ -46,7 +47,12 @@ MetaContact::MetaContact(const QString& personId, const KABC::Addressee::Map& co
 d (new MetaContactData)
 {
     d->personId = personId;
-    d->contacts = contacts;
+
+    KABC::Addressee::Map::const_iterator it = contacts.constBegin();
+    while (it != contacts.constEnd()) {
+        insertContactInternal(it.key(), it.value());
+        it++;
+    }
     reload();
 }
 
@@ -54,7 +60,7 @@ MetaContact::MetaContact(const QString &contactId, const KABC::Addressee &contac
 d (new MetaContactData)
 {
     d->personId = contactId;
-    d->contacts[contactId] = contact;
+    insertContactInternal(contactId, contact);
     reload();
 }
 
@@ -88,14 +94,24 @@ bool MetaContact::isValid() const
     return !d->contacts.isEmpty();
 }
 
+QStringList MetaContact::contactIds() const
+{
+    return d->contactIds;
+}
+
 KABC::Addressee MetaContact::contact(const QString& contactId)
 {
-    return d->contacts[contactId];
+    int index = d->contactIds.indexOf(contactId);
+    if (index >= 0) {
+        return d->contacts[index];
+    } else {
+        return KABC::Addressee();
+    }
 }
 
 KABC::AddresseeList MetaContact::contacts() const
 {
-    return d->contacts.values();
+    return d->contacts;
 }
 
 const KABC::Addressee& MetaContact::personAddressee() const
@@ -103,16 +119,47 @@ const KABC::Addressee& MetaContact::personAddressee() const
     return d->personAddressee;
 }
 
-void MetaContact::updateContact(const QString& contactId, const KABC::Addressee& contact)
+int MetaContact::insertContact(const QString &contactId, const KABC::Addressee &contact)
 {
-    d->contacts[contactId] = contact;
+    int index = insertContact(contactId, contact);
     reload();
+    return index;
 }
 
-void MetaContact::removeContact(const QString& contactId)
+
+int MetaContact::insertContactInternal(const QString &contactId, const KABC::Addressee &contact)
 {
-    d->contacts.remove(contactId);
+    if (d->contactIds.contains(contactId)) {
+        //if item is already listed, do nothing.
+        return -1;
+    } else {
+        //TODO if from the local address book - prepend to give higher priority.
+        int index = d->contacts.size();
+        d->contacts.append(contact);
+        d->contactIds.append(contactId);
+        return index;
+    }
+}
+
+int MetaContact::updateContact(const QString& contactId, const KABC::Addressee& contact)
+{
+    const int index = d->contactIds.indexOf(contactId);
+    if (index >= 0) {
+        d->contacts[index] = contact;
+    }
     reload();
+    return index;
+}
+
+int MetaContact::removeContact(const QString& contactId)
+{
+    const int index = d->contactIds.indexOf(contactId);
+    if (index >= 0) {
+        d->contacts.removeAt(index);
+        d->contactIds.removeAt(index);
+        reload();
+    }
+    return index;
 }
 
 void MetaContact::reload()
@@ -123,13 +170,13 @@ void MetaContact::reload()
 
     //Optimisation, if only one contact use that for everything
     if (d->contacts.size() == 1) {
-        d->personAddressee = d->contacts.values().first();
+        d->personAddressee = d->contacts.first();
         return;
     }
 
     d->personAddressee = KABC::Addressee();
 
-    Q_FOREACH(const KABC::Addressee &contact, d->contacts.values()) {
+    Q_FOREACH(const KABC::Addressee &contact, d->contacts) {
         //set items with multiple cardinality
         Q_FOREACH(const KABC::Address &address, contact.addresses()) {
             d->personAddressee.insertAddress(address);

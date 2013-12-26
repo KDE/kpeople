@@ -48,15 +48,27 @@ public:
 
     QString id() const;
     bool isValid() const;
+
+    QStringList contactIds() const;
     KABC::AddresseeList contacts() const;
+
     KABC::Addressee contact(const QString &contactId);
     const KABC::Addressee& personAddressee() const;
 
     //update one of the stored contacts in this metacontact object
-    void updateContact(const QString &contactId, const KABC::Addressee &contact);
-    void removeContact(const QString &contactId);
+    //@return the index of the contact which was inserted
+
+    int insertContact(const QString &contactId, const KABC::Addressee &contact);
+
+    int updateContact(const QString &contactId, const KABC::Addressee &contact);
+
+    int removeContact(const QString &contactId);
 
 private:
+    //does the real inserting contacts. Split so that we don't call the expensive "reload" function
+    //multiple times at startup
+    int insertContactInternal(const QString &contactId, const KABC::Addressee &contact);
+
     void reload();
 
     QSharedDataPointer<MetaContactData> d;

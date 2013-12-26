@@ -7,6 +7,7 @@
 
 #include <KABC/Addressee>
 #include <KStandardDirs>
+#include <KDebug>
 
 #include <QDebug>
 #include <QPixmap>
@@ -198,12 +199,20 @@ void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addresse
     const QString &personId = personIdForContact(contactId);
 
     if (d->personIds.contains(personId)) {
-        int newContactPos = d->metacontacts[personId].contacts().size();
-        //FIXME Dave has an idea about how to make this better
-        beginInsertRows(index(d->personIds.indexOf(personId), 0), newContactPos, newContactPos);
-        d->metacontacts[personId].updateContact(contactId, contact);
-        endInsertRows();
-        personChanged(personId);
+        MetaContact &mc = d->metacontacts[personId];
+
+        //if the MC object already contains this object, we want to update the row, not do an insert
+        if (mc.contactIds().contains(contactId)) {
+            kWarning() << "Source emitted contactAdded for a contact we already know about " << contactId;
+            onContactChanged(contactId, contact);
+        } else {
+            //NOTE this is not quite ideal. we should do an update inside the begin/end insert rows
+            //in practice as everything is all in one thread, everything should be fine
+            int newContactPos = mc.insertContact(contactId, contact);
+            beginInsertRows(index(d->personIds.indexOf(personId), 0), newContactPos, newContactPos);
+            endInsertRows();
+            personChanged(personId);
+        }
     } else { //new contact -> new person
         addPerson(MetaContact(personId, contact));
     }
@@ -212,10 +221,11 @@ void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addresse
 void PersonsModel::onContactChanged(const QString &contactId, const KABC::Addressee &contact)
 {
     Q_D(PersonsModel);
-    const QString &personId = personIdForContact(contactId);
-    d->metacontacts[personId].updateContact(contactId, contact);
 
-    const QModelIndex contactIndex = index(d->metacontacts[personId].contacts().indexOf(contact),
+    const QString &personId = personIdForContact(contactId);
+    int row = d->metacontacts[personId].updateContact(contactId, contact);
+
+    const QModelIndex contactIndex = index(row,
                                            0,
                                            index(d->personIds.indexOf(personId), 0));
 
@@ -231,7 +241,10 @@ void PersonsModel::onContactRemoved(const QString &contactId)
     const QString &personId = personIdForContact(contactId);
 
     MetaContact &mc = d->metacontacts[personId];
-    mc.removeContact(personId);
+    int contactPosition = d->metacontacts[personId].contactIds().indexOf(contactId);
+    beginRemoveRows(index(d->personIds.indexOf(personId), 0), contactPosition, contactPosition);
+    d->metacontacts[personId].removeContact(contactId);
+    endRemoveRows();
 
     //if MC object is now invalid remove the person from the list
     if (!mc.isValid()) {
@@ -264,7 +277,7 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
     if (d->personIds.contains(newPersonId)) {
         int newContactPos = d->metacontacts[newPersonId].contacts().size();
         beginInsertRows(index(d->personIds.indexOf(newPersonId), 0), newContactPos, newContactPos);
-        d->metacontacts[newPersonId].updateContact(contactId, contact);
+        d->metacontacts[newPersonId].insertContact(contactId, contact);
         endInsertRows();
     } else { //if the person is not in the model, create a new person and insert it
         KABC::Addressee::Map contacts;

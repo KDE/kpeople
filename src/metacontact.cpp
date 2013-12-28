@@ -121,7 +121,7 @@ const KABC::Addressee& MetaContact::personAddressee() const
 
 int MetaContact::insertContact(const QString &contactId, const KABC::Addressee &contact)
 {
-    int index = insertContact(contactId, contact);
+    int index = insertContactInternal(contactId, contact);
     reload();
     return index;
 }

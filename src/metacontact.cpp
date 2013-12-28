@@ -246,7 +246,7 @@ void MetaContact::reload()
             d->personAddressee.setTimeZone(contact.timeZone());
         }
 
-        if (!d->personAddressee.geo().isValid() && contact.timeZone().isValid()) {
+        if (!d->personAddressee.geo().isValid() && contact.geo().isValid()) {
             d->personAddressee.setGeo(contact.geo());
         }
 

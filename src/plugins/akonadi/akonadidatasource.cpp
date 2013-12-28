@@ -164,21 +164,18 @@ AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contact
     ContactMonitor(contactId),
     m_monitor(monitor)
 {
-    //optimisation, base class could copy across from the model if the model exists
+    //TODO: optimisation, base class could copy across from the model if the model exists
     //then we should check if contact is already set to something and avoid the initial fetch
 
-    //FIXME This is a bug in the sending code. See Fixme in PersonData
-    if (contactId.startsWith("akonadi://")) {
+    //load the contact initially
+    m_item = Item::fromUrl(QUrl(contactId));
+    ItemFetchJob* itemFetchJob = new ItemFetchJob(m_item);
+    itemFetchJob->fetchScope().fetchFullPayload();
+    connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
 
-        m_item = Item::fromUrl(QUrl(contactId));
-        ItemFetchJob* itemFetchJob = new ItemFetchJob(m_item);
-        itemFetchJob->fetchScope().fetchFullPayload();
-        connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
-
-        //monitor here too
-        m_monitor->setItemMonitored(m_item, true);
-        connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onContactChanged(Akonadi::Item)));
-    }
+    //then watch for that item changing
+    m_monitor->setItemMonitored(m_item, true);
+    connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onContactChanged(Akonadi::Item)));
 }
 
 AkonadiContact::~AkonadiContact()

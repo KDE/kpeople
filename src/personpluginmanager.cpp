@@ -50,7 +50,7 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
         if (dataSource) {
             dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
         } else {
-            kWarning() << "Failed to create data source";
+            kWarning() << "Failed to create data source " << service->name() << service->path();
         }
     }
 

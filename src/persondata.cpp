@@ -102,6 +102,10 @@ void PersonData::onContactChanged()
 
 
     ContactMonitor *watcher = qobject_cast<ContactMonitor*>(sender());
-    d->metaContact.updateContact(watcher->contactId(), watcher->contact());
+    if (d->metaContact.contactIds().contains(watcher->contactId())) {
+        d->metaContact.updateContact(watcher->contactId(), watcher->contact());
+    } else {
+        d->metaContact.insertContact(watcher->contactId(), watcher->contact());
+    }
     Q_EMIT dataChanged();
 }

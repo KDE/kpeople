@@ -273,12 +273,12 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
         personChanged(oldPersonId);
     }
 
-    //if the person is already in the model, add the contact to it
+    //if the new person is already in the model, add the contact to it
     if (d->personIds.contains(newPersonId)) {
-        int newContactPos = d->metacontacts[newPersonId].contacts().size();
+        int newContactPos = d->metacontacts[newPersonId].insertContact(contactId, contact);
         beginInsertRows(index(d->personIds.indexOf(newPersonId), 0), newContactPos, newContactPos);
-        d->metacontacts[newPersonId].insertContact(contactId, contact);
         endInsertRows();
+        personChanged(newPersonId);
     } else { //if the person is not in the model, create a new person and insert it
         KABC::Addressee::Map contacts;
         contacts[contactId] = contact;

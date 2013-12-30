@@ -19,14 +19,9 @@
 
 #include "fakecontactsource.h"
 
-FakeContactSource::FakeContactSource(QObject* parent, const QVariantList& args): BasePersonsDataSource(parent, args)
+FakeContactSource::FakeContactSource(QObject *parent, const QVariantList &args)
+    : BasePersonsDataSource(parent, args)
 {
-
-}
-
-FakeAllContactsMonitor::FakeAllContactsMonitor()
-{
-
 }
 
 QString FakeContactSource::sourcePluginId() const
@@ -34,12 +29,24 @@ QString FakeContactSource::sourcePluginId() const
     return "fakesource://";
 }
 
-
 KPeople::AllContactsMonitor* FakeContactSource::createAllContactsMonitor()
 {
     return new FakeAllContactsMonitor();
 }
 
+
+void FakeContactSource::changeContact1Email()
+{
+    qobject_cast<FakeAllContactsMonitor*>(allContactsMonitor().data())->changeContact1Email();
+}
+
+
+//----------------------------------------------------------------------------
+
+
+FakeAllContactsMonitor::FakeAllContactsMonitor()
+{
+}
 
 KABC::Addressee::Map FakeAllContactsMonitor::contacts()
 {
@@ -67,11 +74,6 @@ KABC::Addressee::Map FakeAllContactsMonitor::contacts()
     }
 
     return contacts;
-}
-
-void FakeContactSource::changeContact1Email()
-{
-    qobject_cast<FakeAllContactsMonitor*>(allContactsMonitor().data())->changeContact1Email();
 }
 
 void FakeAllContactsMonitor::changeContact1Email()

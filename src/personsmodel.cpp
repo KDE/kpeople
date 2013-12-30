@@ -343,7 +343,7 @@ void PersonsModel::personChanged(const QString &personId)
     Q_D(const PersonsModel);
     int row = d->personIds.indexOf(personId);
     const QModelIndex contactIndex = index(row);
-    if(row >=0 ) {
+    if (row >= 0) {
         dataChanged(contactIndex, contactIndex);
     }
 }

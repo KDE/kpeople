@@ -32,9 +32,9 @@ public:
     void changeContact1Email();
 protected:
     virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
-
-private:
 };
+
+//----------------------------------------------------------------------------
 
 class FakeAllContactsMonitor : public KPeople::AllContactsMonitor
 {

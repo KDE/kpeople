@@ -287,9 +287,12 @@ void MetaContact::reload()
         const QString &contactPresence = contact.custom("telepathy", "presence");
         const QString &currentPersonPresence = d->personAddressee.custom("telepathy", "presence");
 
+        // FIXME This needs to be redone when presence changes
         if (!contactPresence.isEmpty()) {
             if (KPeople::presenceSortPriority(contactPresence) < KPeople::presenceSortPriority(currentPersonPresence)) {
                 d->personAddressee.insertCustom("telepathy", "presence", contactPresence);
+                d->personAddressee.insertCustom("telepathy", "contactId", contact.custom("telepathy", "contactId"));
+                d->personAddressee.insertCustom("telepathy", "accountPath", contact.custom("telepathy", "accountPath"));
             }
         }
 

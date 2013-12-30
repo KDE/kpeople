@@ -178,7 +178,7 @@ void PersonsModel::onContactsFetched()
                 contacts[contact] = addresseeMap.take(contact);
             }
         }
-        if (!addresseeMap.isEmpty()) {
+        if (!contacts.isEmpty()) {
             addPerson(MetaContact(key, contacts));
         }
     }

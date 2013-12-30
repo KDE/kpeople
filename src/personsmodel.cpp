@@ -139,6 +139,9 @@ int PersonsModel::rowCount(const QModelIndex &parent) const
 
 QModelIndex PersonsModel::index(int row, int column, const QModelIndex &parent) const
 {
+    if (row < 0 || column < 0) {
+        return QModelIndex();
+    }
     //top level items have internalId -1. Anything >=0 is the row of the top level item
     if (!parent.isValid()) {
         return createIndex(row, column, -1);
@@ -149,7 +152,7 @@ QModelIndex PersonsModel::index(int row, int column, const QModelIndex &parent) 
 
 QModelIndex PersonsModel::parent(const QModelIndex &childIndex) const
 {
-    if (childIndex.internalId() == -1) {
+    if (childIndex.internalId() == -1 || !childIndex.isValid()) {
         return QModelIndex();
     }
 

@@ -209,10 +209,9 @@ void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addresse
             kWarning() << "Source emitted contactAdded for a contact we already know about " << contactId;
             onContactChanged(contactId, contact);
         } else {
-            //NOTE this is not quite ideal. we should do an update inside the begin/end insert rows
-            //in practice as everything is all in one thread, everything should be fine
-            int newContactPos = mc.insertContact(contactId, contact);
+            int newContactPos = mc.contacts().size();
             beginInsertRows(index(d->personIds.indexOf(personId)), newContactPos, newContactPos);
+            mc.insertContact(contactId, contact);
             endInsertRows();
             personChanged(personId);
         }
@@ -278,8 +277,9 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
 
     //if the new person is already in the model, add the contact to it
     if (d->personIds.contains(newPersonId)) {
-        int newContactPos = d->metacontacts[newPersonId].insertContact(contactId, contact);
+        int newContactPos = d->metacontacts[newPersonId].contacts().size();
         beginInsertRows(index(d->personIds.indexOf(newPersonId), 0), newContactPos, newContactPos);
+        d->metacontacts[newPersonId].insertContact(contactId, contact);
         endInsertRows();
         personChanged(newPersonId);
     } else { //if the person is not in the model, create a new person and insert it

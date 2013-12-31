@@ -212,7 +212,7 @@ void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addresse
             //NOTE this is not quite ideal. we should do an update inside the begin/end insert rows
             //in practice as everything is all in one thread, everything should be fine
             int newContactPos = mc.insertContact(contactId, contact);
-            beginInsertRows(index(d->personIds.indexOf(personId), 0), newContactPos, newContactPos);
+            beginInsertRows(index(d->personIds.indexOf(personId)), newContactPos, newContactPos);
             endInsertRows();
             personChanged(personId);
         }
@@ -230,7 +230,7 @@ void PersonsModel::onContactChanged(const QString &contactId, const KABC::Addres
 
     const QModelIndex contactIndex = index(row,
                                            0,
-                                           index(d->personIds.indexOf(personId), 0));
+                                           index(d->personIds.indexOf(personId)));
 
     Q_EMIT dataChanged(contactIndex, contactIndex);
 

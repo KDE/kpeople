@@ -30,7 +30,7 @@
 namespace KPeople
 {
 
-class AbstractPersonPlugin;
+class AbstractPersonAction;
 class BasePersonsDataSource;
 
 class KPEOPLE_EXPORT PersonPluginManager
@@ -38,7 +38,7 @@ class KPEOPLE_EXPORT PersonPluginManager
 public:
     static QList<BasePersonsDataSource*> dataSourcePlugins();
     static BasePersonsDataSource* dataSource(const QString &sourceId);
-    static QList<AbstractPersonPlugin*> personPlugins();
+    static QList<AbstractPersonAction*> actions();
 
 
     /**

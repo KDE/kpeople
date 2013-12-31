@@ -23,7 +23,7 @@
 
 #include "personmanager_p.h"
 #include "personpluginmanager_p.h"
-#include "abstractpersonplugin.h"
+#include "abstractpersonaction.h"
 
 #include <KIconLoader>
 #include <QIcon>
@@ -46,7 +46,7 @@ QList<QAction*> KPeople::actionsForPerson(const KABC::Addressee &person,
                                           QObject *parent)
 {
     QList<QAction*> actions;
-    Q_FOREACH(KPeople::AbstractPersonPlugin *plugin, PersonPluginManager::personPlugins()) {
+    Q_FOREACH(KPeople::AbstractPersonAction *plugin, PersonPluginManager::actions()) {
         actions << plugin->actionsForPerson(person, contacts, parent);
     }
 

@@ -17,18 +17,18 @@
 */
 
 
-#include "abstractpersonplugin.h"
+#include "abstractpersonaction.h"
 
 #include <QList>
 #include <QAction>
 
 using namespace KPeople;
 
-AbstractPersonPlugin::AbstractPersonPlugin(QObject *parent) : QObject (parent)
+AbstractPersonAction::AbstractPersonAction(QObject *parent) : QObject (parent)
 {
 }
 
-QList< QAction* > AbstractPersonPlugin::actionsForPerson(const KABC::Addressee &person,
+QList< QAction* > AbstractPersonAction::actionsForPerson(const KABC::Addressee &person,
                                                          const KABC::AddresseeList &contacts,
                                                          QObject *parent) const
 {

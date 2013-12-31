@@ -16,8 +16,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef ABSTRACT_PERSON_PLUGIN_H
-#define ABSTRACT_PERSON_PLUGIN_H
+#ifndef ABSTRACT_PERSON_ACTION_H
+#define ABSTRACT_PERSON_ACTION_H
 
 class PersonData;
 
@@ -30,11 +30,11 @@ class PersonData;
 namespace KPeople
 {
 
-class KPEOPLE_EXPORT AbstractPersonPlugin : public QObject
+class KPEOPLE_EXPORT AbstractPersonAction : public QObject
 {
     Q_OBJECT
 public:
-    AbstractPersonPlugin(QObject *parent);
+    AbstractPersonAction(QObject *parent);
     /** A list of actions that can be executed for a contact
      * Disabled actions should not be added
      *

@@ -20,7 +20,7 @@
 #include "personpluginmanager_p.h"
 #include "basepersonsdatasource.h"
 
-#include "abstractpersonplugin.h"
+#include "abstractpersonaction.h"
 
 #include <KService>
 #include <KServiceTypeTrader>
@@ -36,7 +36,7 @@ class PersonPluginManagerPrivate
 public:
     PersonPluginManagerPrivate();
     ~PersonPluginManagerPrivate();
-    QList<AbstractPersonPlugin*> personPlugins;
+    QList<AbstractPersonAction*> actionPlugins;
     QHash<QString /* SourceName*/, BasePersonsDataSource*> dataSourcePlugins;
 };
 
@@ -56,10 +56,10 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 
     KService::List personPluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
     Q_FOREACH(const KService::Ptr &service, personPluginList) {
-        AbstractPersonPlugin *plugin = service->createInstance<AbstractPersonPlugin>(0);
+        AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
         if (plugin) {
             qDebug() << "found plugin" << service->name();
-            personPlugins << plugin;
+            actionPlugins << plugin;
         }
     }
 }
@@ -67,7 +67,7 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
 PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 {
     qDeleteAll(dataSourcePlugins);
-    qDeleteAll(personPlugins);
+    qDeleteAll(actionPlugins);
 }
 
 
@@ -88,7 +88,7 @@ BasePersonsDataSource* PersonPluginManager::dataSource(const QString &sourceId)
     return s_instance->dataSourcePlugins[sourceId];
 }
 
-QList<AbstractPersonPlugin*> PersonPluginManager::personPlugins()
+QList<AbstractPersonAction*> PersonPluginManager::actions()
 {
-    return s_instance->personPlugins;
+    return s_instance->actionPlugins;
 }

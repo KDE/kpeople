@@ -43,10 +43,14 @@ public:
     BasePersonsDataSource(QObject *parent, const QVariantList &args = QVariantList());
     virtual ~BasePersonsDataSource();
 
-    //fetch and monitor all contacts
+    /**
+     * Return a ref counted AllContactMonitor which lists and monitors all contacts from a source
+     */
     AllContactsMonitorPtr   allContactsMonitor();
 
-    //fetch and monitor a single contact
+    /**
+     * Return a ref counted watcher for a single contact
+     */
     ContactMonitorPtr      contactMonitor(const QString &contactId);
 
     /**

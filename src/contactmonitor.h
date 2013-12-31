@@ -33,17 +33,40 @@ namespace KPeople {
 
 struct ContactMonitorPrivate;
 
+/**
+ * This class loads data for a single contact from a datasource.
+ *
+ * Datasources should subclass this and call setContact() when the contact loads or changes.
+ * It is used for optimising performance over loading all contacts and filtering the results.
+ * Subclasses are expected to be asyncronous in loading data.
+ *
+ */
 class KPEOPLE_EXPORT ContactMonitor: public QObject
 {
 Q_OBJECT
 public:
     ContactMonitor(const QString &contactId);
     virtual ~ContactMonitor();
+
+    /**
+     * The ID of the contact being loaded
+     */
     QString contactId() const;
+
+    /**
+     * The currently loaded information on this contact.
+     */
     KABC::Addressee contact() const;
 Q_SIGNALS:
+    /**
+     * Emitted whenever the contact changes
+     */
     void contactChanged();
 protected:
+    /**
+     * Sets or updates the contact and emits contactChanged
+     * Subclasses should call this when data is loaded or changes
+     */
     void setContact(const KABC::Addressee &contact);
 private:
     Q_DISABLE_COPY(ContactMonitor)

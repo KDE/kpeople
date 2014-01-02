@@ -55,7 +55,7 @@ install (FILES
             personsmodel.h
             persondata.h
             kpeople_export.h
-            abstractpersonplugin.h
+            abstractpersonaction.h
             basepersonsdatasource.h
             allcontactsmonitor.h
             contactmonitor.h
@@ -64,7 +64,7 @@ install (FILES
 )
 
 install (FILES
-            KPeople/AbstractPersonPlugin
+            KPeople/AbstractPersonAction
             KPeople/AllContactsMonitor
             KPeople/BasePersonsDataSource
             KPeople/ContactMonitor

@@ -37,6 +37,11 @@ endif()
 add_subdirectory (src)
 add_subdirectory (pixmaps)
 
-configure_file(cmake/FindKPeople.cmake.in cmake/FindKPeople.cmake @ONLY)
-set(module_install_dir ${DATA_INSTALL_DIR}/cmake/modules )
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/FindKPeople.cmake DESTINATION ${module_install_dir})
+configure_file(cmake/KPeopleConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/KPeopleConfig.cmake @ONLY)
+
+macro_write_basic_cmake_version_file(${CMAKE_CURRENT_BINARY_DIR}/KPeopleConfigVersion.cmake
+        ${KPEOPLE_VERSION_MAJOR} ${KPEOPLE_VERSION_MINOR} ${KPEOPLE_VERSION_PATCH})
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfig.cmake
+              ${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfigVersion.cmake
+        DESTINATION ${LIB_INSTALL_DIR}/cmake/KPeople)

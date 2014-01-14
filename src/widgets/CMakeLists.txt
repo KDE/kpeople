@@ -28,7 +28,7 @@ target_link_libraries (kpeoplewidgets
                        kpeople
 )
 
-set_target_properties (kpeoplewidgets PROPERTIES VERSION ${KPEOPLE_LIB_VERSION} SOVERSION ${KPEOPLE_LIB_SOVERSION})
+set_target_properties (kpeoplewidgets PROPERTIES VERSION ${KPEOPLE_VERSION} SOVERSION ${KPEOPLE_SOVERSION})
 
 if (MSVC)
     set_target_properties (kpeoplewidgets PROPERTIES

@@ -11,8 +11,12 @@ set (CMAKE_MODULE_PATH
 set (KDE_MIN_VERSION "4.10.1")
 set (SDO_MIN_VERSION "0.7.0")
 
-set(KPEOPLE_LIB_VERSION 0.2)
-set(KPEOPLE_LIB_SOVERSION 3)
+set(KPEOPLE_VERSION_MAJOR 0)
+set(KPEOPLE_VERSION_MINOR 2)
+set(KPEOPLE_VERSION_PATCH 0)
+
+set(KPEOPLE_VERSION "${KPEOPLE_VERSION_MAJOR}.${KPEOPLE_VERSION_MINOR}.${KPEOPLE_VERSION_PATCH}")
+set(KPEOPLE_SOVERSION 3)
 
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (KdepimLibs REQUIRED)
@@ -33,5 +37,6 @@ endif()
 add_subdirectory (src)
 add_subdirectory (pixmaps)
 
+configure_file(cmake/FindKPeople.cmake.in cmake/FindKPeople.cmake @ONLY)
 set(module_install_dir ${DATA_INSTALL_DIR}/cmake/modules )
-install(FILES cmake/FindKPeople.cmake DESTINATION ${module_install_dir})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/FindKPeople.cmake DESTINATION ${module_install_dir})

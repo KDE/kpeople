@@ -27,6 +27,8 @@
 #include <KPluginInfo>
 #include <KDebug>
 
+#include <QMutex>
+
 #include <kdemacros.h>
 
 using namespace KPeople;
@@ -38,11 +40,30 @@ public:
     ~PersonPluginManagerPrivate();
     QList<AbstractPersonAction*> actionPlugins;
     QHash<QString /* SourceName*/, BasePersonsDataSource*> dataSourcePlugins;
+
+    void loadDataSourcePlugins();
+    void loadActionsPlugins();
+    bool m_loadedDataSourcePlugins;
+    bool m_loadedActionsPlugins;
+    QMutex m_mutex;
+
 };
 
 K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 
-PersonPluginManagerPrivate::PersonPluginManagerPrivate()
+PersonPluginManagerPrivate::PersonPluginManagerPrivate():
+    m_loadedDataSourcePlugins(false),
+    m_loadedActionsPlugins(false)
+{
+}
+
+PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
+{
+    qDeleteAll(dataSourcePlugins);
+    qDeleteAll(actionPlugins);
+}
+
+void PersonPluginManagerPrivate::loadDataSourcePlugins()
 {
     KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
     Q_FOREACH(const KService::Ptr &service, pluginList) {
@@ -53,7 +74,11 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
             kWarning() << "Failed to create data source " << service->name() << service->path();
         }
     }
+    m_loadedDataSourcePlugins = true;
+}
 
+void PersonPluginManagerPrivate::loadActionsPlugins()
+{
     KService::List personPluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
     Q_FOREACH(const KService::Ptr &service, personPluginList) {
         AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
@@ -62,33 +87,47 @@ PersonPluginManagerPrivate::PersonPluginManagerPrivate()
             actionPlugins << plugin;
         }
     }
+    m_loadedActionsPlugins = true;
 }
-
-PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
-{
-    qDeleteAll(dataSourcePlugins);
-    qDeleteAll(actionPlugins);
-}
-
 
 void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource* > &dataSources)
 {
+    s_instance->m_mutex.lock();
     qDeleteAll(s_instance->dataSourcePlugins);
     s_instance->dataSourcePlugins.clear();
     s_instance->dataSourcePlugins = dataSources;
+    s_instance->m_loadedDataSourcePlugins = true;
+    s_instance->m_mutex.unlock();
 }
 
 QList<BasePersonsDataSource*> PersonPluginManager::dataSourcePlugins()
 {
+    s_instance->m_mutex.lock();
+    if (!s_instance->m_loadedDataSourcePlugins) {
+        s_instance->loadDataSourcePlugins();
+    }
+    s_instance->m_mutex.unlock();
     return s_instance->dataSourcePlugins.values();
 }
 
 BasePersonsDataSource* PersonPluginManager::dataSource(const QString &sourceId)
 {
+    s_instance->m_mutex.lock();
+    if (!s_instance->m_loadedDataSourcePlugins) {
+        s_instance->loadDataSourcePlugins();
+    }
+    s_instance->m_mutex.unlock();
+
     return s_instance->dataSourcePlugins[sourceId];
 }
 
 QList<AbstractPersonAction*> PersonPluginManager::actions()
 {
+    s_instance->m_mutex.lock();
+    if (!s_instance->m_loadedActionsPlugins) {
+        s_instance->loadActionsPlugins();
+    }
+    s_instance->m_mutex.unlock();
+
     return s_instance->actionPlugins;
 }

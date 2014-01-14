@@ -37,9 +37,9 @@ endif()
 add_subdirectory (src)
 add_subdirectory (pixmaps)
 
-configure_file(cmake/KPeopleConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/KPeopleConfig.cmake @ONLY)
+configure_file(cmake/KPeopleConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfig.cmake @ONLY)
 
-macro_write_basic_cmake_version_file(${CMAKE_CURRENT_BINARY_DIR}/KPeopleConfigVersion.cmake
+macro_write_basic_cmake_version_file(${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfigVersion.cmake
         ${KPEOPLE_VERSION_MAJOR} ${KPEOPLE_VERSION_MINOR} ${KPEOPLE_VERSION_PATCH})
 
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfig.cmake

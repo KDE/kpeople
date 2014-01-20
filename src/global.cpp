@@ -104,5 +104,9 @@ int KPeople::presenceSortPriority(const QString& presenceName)
         return 5;
     }
 
-    return 6;
+    if (presenceName == QLatin1String("offline")) {
+        return 6;
+    }
+
+    return 7;
 }

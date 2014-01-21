@@ -348,7 +348,7 @@ void PersonsModel::personChanged(const QString &personId)
     }
 }
 
-QString PersonsModel::personIdForContact(const QString &contactId)
+QString PersonsModel::personIdForContact(const QString &contactId) const
 {
     Q_D(const PersonsModel);
     //TODO optimise with constFind()

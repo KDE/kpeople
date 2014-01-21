@@ -94,7 +94,7 @@ private:
     void removePerson(const QString &id);
     void personChanged(const QString &personId);
 
-    QString personIdForContact(const QString &contactId);
+    QString personIdForContact(const QString &contactId) const;
     QVariant dataForAddressee(const QString &personId, const KABC::Addressee &contact, int role) const;
 
     PersonsModelPrivate * const d_ptr;

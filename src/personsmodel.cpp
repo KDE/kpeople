@@ -216,7 +216,9 @@ void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addresse
             personChanged(personId);
         }
     } else { //new contact -> new person
-        addPerson(MetaContact(personId, contact));
+        KABC::Addressee::Map map;
+        map[contactId] = contact;
+        addPerson(MetaContact(personId, map));
     }
 }
 

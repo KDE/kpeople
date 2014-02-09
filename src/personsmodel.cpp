@@ -44,12 +44,6 @@ PersonsModel::PersonsModel(QObject *parent):
 
     QTimer::singleShot(0, this, SLOT(onContactsFetched()));
 
-    Q_FOREACH(const AllContactsMonitorPtr monitor, d->m_sourceMonitors) {
-        connect(monitor.data(), SIGNAL(contactAdded(QString,KABC::Addressee)), SLOT(onContactAdded(QString,KABC::Addressee)));
-        connect(monitor.data(), SIGNAL(contactChanged(QString,KABC::Addressee)), SLOT(onContactChanged(QString,KABC::Addressee)));
-        connect(monitor.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
-    }
-
     connect(PersonManager::instance(), SIGNAL(contactAddedToPerson(QString,QString)), SLOT(onAddContactToPerson(QString,QString)));
     connect(PersonManager::instance(), SIGNAL(contactRemovedFromPerson(QString)), SLOT(onRemoveContactsFromPerson(QString)));
 }
@@ -190,6 +184,12 @@ void PersonsModel::onContactsFetched()
     KABC::Addressee::Map::const_iterator i;
     for (i = addresseeMap.constBegin(); i != addresseeMap.constEnd(); ++i) {
         addPerson(MetaContact(i.key(), i.value()));
+    }
+
+    Q_FOREACH(const AllContactsMonitorPtr monitor, d->m_sourceMonitors) {
+        connect(monitor.data(), SIGNAL(contactAdded(QString,KABC::Addressee)), SLOT(onContactAdded(QString,KABC::Addressee)));
+        connect(monitor.data(), SIGNAL(contactChanged(QString,KABC::Addressee)), SLOT(onContactChanged(QString,KABC::Addressee)));
+        connect(monitor.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
     }
 
     emit modelInitialized();

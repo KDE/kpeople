@@ -209,7 +209,7 @@ QString PersonManager::mergeContacts(const QStringList& ids)
             insertQuery.bindValue(1, personIdString.mid(strlen("kpeople://"))); //strip kpeople://
             insertQuery.exec();
 
-            //FUTURE OPTIMISATION - this would be best as one signal, but arguments become complex
+            //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
                                                         QLatin1String("org.kde.KPeople"),
                                                         QLatin1String("ContactAddedToPerson"));
@@ -234,7 +234,7 @@ bool PersonManager::unmergeContact(const QString &id)
         query.exec();
 
         Q_FOREACH(const QString &contactId, contactIds) {
-            //FUTURE OPTIMISATION - this would be best as one signal, but arguments become complex
+            //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
                                                       QLatin1String("org.kde.KPeople"),
                                                       QLatin1String("ContactRemovedFromPerson"));

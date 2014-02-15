@@ -168,7 +168,7 @@ void MetaContact::reload()
 
     //TODO - long term goal: resource priority - local vcards for "people" trumps anything else. So we can set a preferred name etc.
 
-    //Optimisation, if only one contact use that for everything
+    //Optimization, if only one contact use that for everything
     if (d->contacts.size() == 1) {
         d->personAddressee = d->contacts.first();
         return;

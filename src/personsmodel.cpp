@@ -61,7 +61,7 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
 {
     Q_D(const PersonsModel);
 
-    //optimisation - if we don't cover this role, ignore it
+    //optimization - if we don't cover this role, ignore it
     if (role < Qt::UserRole && role != Qt::DisplayRole && role != Qt::DecorationRole) {
         return QVariant();
     }
@@ -353,7 +353,7 @@ void PersonsModel::personChanged(const QString &personId)
 QString PersonsModel::personIdForContact(const QString &contactId) const
 {
     Q_D(const PersonsModel);
-    //TODO optimise with constFind()
+    //TODO optimize with constFind()
     if (d->contactToPersons.contains(contactId)) {
         return d->contactToPersons[contactId];
     } else {

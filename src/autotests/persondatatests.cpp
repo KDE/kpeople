@@ -81,7 +81,7 @@ void PersonDataTests::cleanup()
 void PersonDataTests::loadContact()
 {
     PersonData person("fakesource://contact1");
-    //in this case we know the datasource is syncronous, but we should extend the test to cope with it not being async.
+    //in this case we know the datasource is synchronous, but we should extend the test to cope with it not being async.
 
     QCOMPARE(person.contacts().size(), 1);
     QCOMPARE(person.person().name(), QString("Contact 1"));

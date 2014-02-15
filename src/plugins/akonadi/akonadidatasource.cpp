@@ -164,7 +164,7 @@ AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contact
     ContactMonitor(contactId),
     m_monitor(monitor)
 {
-    //TODO: optimisation, base class could copy across from the model if the model exists
+    //TODO: optimiZation, base class could copy across from the model if the model exists
     //then we should check if contact is already set to something and avoid the initial fetch
 
     //load the contact initially

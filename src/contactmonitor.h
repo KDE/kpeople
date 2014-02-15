@@ -38,7 +38,7 @@ struct ContactMonitorPrivate;
  *
  * Datasources should subclass this and call setContact() when the contact loads or changes.
  * It is used for optimising performance over loading all contacts and filtering the results.
- * Subclasses are expected to be asyncronous in loading data.
+ * Subclasses are expected to be asynchronous in loading data.
  *
  */
 class KPEOPLE_EXPORT ContactMonitor: public QObject

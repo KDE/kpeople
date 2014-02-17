@@ -33,7 +33,7 @@
 namespace KPeople
 {
 
-struct BasePersonsDataSourcePrivate;
+class BasePersonsDataSourcePrivate;
 
 //This is a QObject for KPluginFactory
 class KPEOPLE_EXPORT BasePersonsDataSource : public QObject

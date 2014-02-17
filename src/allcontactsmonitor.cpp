@@ -26,7 +26,7 @@
 
 using namespace KPeople;
 
-struct KPeople::AllContactsMonitorPrivate
+class KPeople::AllContactsMonitorPrivate
 {
     //unused but may be one day.
     //best to be ready

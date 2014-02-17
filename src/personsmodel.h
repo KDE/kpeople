@@ -37,7 +37,7 @@ class PersonsModelFeature;
 class ContactItem;
 class PersonItem;
 class MetaContact;
-struct PersonsModelPrivate;
+class PersonsModelPrivate;
 
 /**
  * This class creates a model of all known contacts from all sources

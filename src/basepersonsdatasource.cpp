@@ -27,8 +27,9 @@
 
 using namespace KPeople;
 
-struct KPeople::BasePersonsDataSourcePrivate
+class KPeople::BasePersonsDataSourcePrivate
 {
+public:
     QWeakPointer<AllContactsMonitor> m_allContactsMonitor;
     QHash<QString, QWeakPointer<ContactMonitor> > m_contactMonitors;
 };

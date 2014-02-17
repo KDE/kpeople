@@ -29,7 +29,7 @@
 
 namespace KPeople
 {
-struct PersonDataPrivate;
+class PersonDataPrivate;
 
 class PersonData;
 

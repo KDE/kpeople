@@ -24,8 +24,9 @@
 
 using namespace KPeople;
 
-struct KPeople::ContactMonitorPrivate
+class KPeople::ContactMonitorPrivate
 {
+public:
     QString m_contactId;
     KABC::Addressee m_contact;
 };

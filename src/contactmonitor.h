@@ -31,7 +31,7 @@
 
 namespace KPeople {
 
-struct ContactMonitorPrivate;
+class ContactMonitorPrivate;
 
 /**
  * This class loads data for a single contact from a datasource.

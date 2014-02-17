@@ -28,6 +28,8 @@
 #include <KIconLoader>
 #include <QIcon>
 
+static const KCatalogLoader i18nLoader("libkpeople");
+
 //these namespace members expose the useful bits of PersonManager
 //global.h should be included from every exported header file so namespace members are always visible
 

@@ -34,7 +34,7 @@
 #include <KPluginFactory>
 
 K_PLUGIN_FACTORY( MergeContactsWidgetFactory, registerPlugin<MergeContactsWidget>(); )
-K_EXPORT_PLUGIN( MergeContactsWidgetFactory("mergecontactswidgetplugin", "libkpeople") )
+K_EXPORT_PLUGIN( MergeContactsWidgetFactory("mergecontactswidgetplugin") )
 
 using namespace KPeople;
 

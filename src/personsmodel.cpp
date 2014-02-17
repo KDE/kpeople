@@ -26,6 +26,8 @@ public:
 
     QString genericAvatarImagePath;
     QList<AllContactsMonitorPtr> m_sourceMonitors;
+
+    int initialFetchesDoneCount;
 };
 }
 
@@ -38,11 +40,13 @@ PersonsModel::PersonsModel(QObject *parent):
     Q_D(PersonsModel);
 
     d->genericAvatarImagePath = KStandardDirs::locate("data", "kpeople/dummy_avatar.png");
+    d->initialFetchesDoneCount = 0;
     Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
-        d->m_sourceMonitors << dataSource->allContactsMonitor();
+        const AllContactsMonitorPtr monitor = dataSource->allContactsMonitor();
+        connect(monitor.data(), SIGNAL(initialFetchComplete()),
+                this, SLOT(onMonitorInitialFetchComplete()));
+        d->m_sourceMonitors << monitor;
     }
-
-    QTimer::singleShot(0, this, SLOT(onContactsFetched()));
 
     connect(PersonManager::instance(), SIGNAL(contactAddedToPerson(QString,QString)), SLOT(onAddContactToPerson(QString,QString)));
     connect(PersonManager::instance(), SIGNAL(contactRemovedFromPerson(QString)), SLOT(onRemoveContactsFromPerson(QString)));
@@ -113,6 +117,8 @@ QVariant PersonsModel::dataForAddressee(const QString &personId, const KABC::Add
 
 int PersonsModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
+
     return 1;
 }
 
@@ -153,6 +159,19 @@ QModelIndex PersonsModel::parent(const QModelIndex &childIndex) const
     return index(childIndex.internalId(), 0, QModelIndex());
 }
 
+void PersonsModel::onMonitorInitialFetchComplete()
+{
+    Q_D(PersonsModel);
+
+    d->initialFetchesDoneCount++;
+    Q_ASSERT(d->initialFetchesDoneCount <= d->m_sourceMonitors.count());
+    if (d->initialFetchesDoneCount == d->m_sourceMonitors.count()) {
+
+        onContactsFetched();
+        Q_EMIT modelInitialized();
+    }
+}
+
 void PersonsModel::onContactsFetched()
 {
     Q_D(PersonsModel);
@@ -191,8 +210,6 @@ void PersonsModel::onContactsFetched()
         connect(monitor.data(), SIGNAL(contactChanged(QString,KABC::Addressee)), SLOT(onContactChanged(QString,KABC::Addressee)));
         connect(monitor.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
     }
-
-    emit modelInitialized();
 }
 
 void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addressee &contact)
@@ -360,4 +377,3 @@ QString PersonsModel::personIdForContact(const QString &contactId) const
         return contactId;
     }
 }
-

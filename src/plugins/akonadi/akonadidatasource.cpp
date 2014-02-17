@@ -53,10 +53,12 @@ private Q_SLOTS:
 private:
     Akonadi::Monitor *m_monitor;
     KABC::Addressee::Map m_contacts;
+    int m_activeFetchJobsCount;
 };
 
 AkonadiAllContacts::AkonadiAllContacts():
-    m_monitor(new Akonadi::Monitor(this))
+    m_monitor(new Akonadi::Monitor(this)),
+    m_activeFetchJobsCount(0)
 {
     connect(m_monitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)), SLOT(onItemAdded(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onItemChanged(Akonadi::Item)));
@@ -128,6 +130,10 @@ void AkonadiAllContacts::onItemsFetched(KJob *job)
     foreach (const Item &item, itemFetchJob->items()) {
         onItemAdded(item);
     }
+
+    if (--m_activeFetchJobsCount == 0) {
+        emitInitialFetchComplete();
+    }
 }
 
 void AkonadiAllContacts::onCollectionsFetched(KJob* job)
@@ -144,6 +150,7 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
             ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
             itemFetchJob->fetchScope().fetchFullPayload();
             connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onItemsFetched(KJob*)));
+            ++m_activeFetchJobsCount;
         }
     }
 }

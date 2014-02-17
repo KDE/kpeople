@@ -84,7 +84,8 @@ private Q_SLOTS:
     //update on metadata changes
     void onAddContactToPerson(const QString &contactId, const QString &newPersonId);
     void onRemoveContactsFromPerson(const QString &contactId);
-    
+
+    void onMonitorInitialFetchComplete();
 
 private:
     Q_DISABLE_COPY(PersonsModel)

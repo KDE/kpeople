@@ -28,8 +28,13 @@ using namespace KPeople;
 
 class KPeople::AllContactsMonitorPrivate
 {
-    //unused but may be one day.
-    //best to be ready
+  public:
+    AllContactsMonitorPrivate():
+        m_initialFetchDone(false)
+    {
+    }
+
+    bool m_initialFetchDone;
 };
 
 AllContactsMonitor::AllContactsMonitor():
@@ -47,6 +52,18 @@ KABC::Addressee::Map AllContactsMonitor::contacts()
 {
     return KABC::Addressee::Map();
 }
+
+bool AllContactsMonitor::isInitialFetchComplete() const
+{
+    return d_ptr->m_initialFetchDone;
+}
+
+void AllContactsMonitor::emitInitialFetchComplete()
+{
+    d_ptr->m_initialFetchDone = true;
+    Q_EMIT initialFetchComplete();
+}
+
 
 
 #include "allcontactsmonitor.moc"

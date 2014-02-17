@@ -50,10 +50,10 @@ public:
      * Returns all currently loaded contacts
      */
     virtual KABC::Addressee::Map contacts();
-//     bool isInitialFetchComplete();
+
+    bool isInitialFetchComplete() const;
 
 Q_SIGNALS:
-//     void initialFetchComplete();
     /**
      * DataSources should emit this whenever a known contact changes
      */
@@ -69,7 +69,23 @@ Q_SIGNALS:
      */
     void contactRemoved(const QString &contactId);
 
-//     bool m_initialFetchComplete;
+    /**
+     * Notifies that the DataSource has completed it's initial fetch.
+     *
+     * @warning DataSources should use emitInitialFetchComplete() instead of emitting this signal
+     * directly.
+     */
+    void initialFetchComplete();
+
+protected Q_SLOTS:
+    /**
+     * DataSources should call this once they have finished initial retrieval of all contacts from their
+     * storage.
+     *
+     * This will emit initialFetchComplete() signal
+     */
+    void emitInitialFetchComplete();
+
 private:
     Q_DISABLE_COPY(AllContactsMonitor)
     Q_DECLARE_PRIVATE(AllContactsMonitor)

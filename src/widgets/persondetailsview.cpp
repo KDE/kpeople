@@ -86,6 +86,7 @@ int CoreFieldsPlugin::sortWeight() const
 
 QWidget* CoreFieldsPlugin::createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const
 {
+    Q_UNUSED(contacts)
     //don't handle emails here - KABC::Field just lists one which is rubbish. Instead use a custom plugin that lists everything
     if (m_field->category() == KABC::Field::Email) {
         return 0;

@@ -32,6 +32,7 @@ using namespace KPeople;
 
 QWidget* EmailFieldsPlugin::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
 {
+    Q_UNUSED(contacts);
     if (person.emails().isEmpty()) {
         return 0;
     }

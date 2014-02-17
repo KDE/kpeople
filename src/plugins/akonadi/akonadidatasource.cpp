@@ -135,6 +135,11 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
     CollectionFetchJob *fetchJob = qobject_cast<CollectionFetchJob*>(job);
     QList<Collection> contactCollections;
     foreach (const Collection &collection, fetchJob->collections()) {
+        // Skip virtual collections - we will get contacts linked into virtual
+        // collections from their real parent collections
+        if (collection.isVirtual()) {
+            continue;
+        }
         if (collection.contentMimeTypes().contains( KABC::Addressee::mimeType() ) ) {
             ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
             itemFetchJob->fetchScope().fetchFullPayload();

@@ -153,6 +153,9 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
             ++m_activeFetchJobsCount;
         }
     }
+    if (m_activeFetchJobsCount == 0) {
+        emitInitialFetchComplete();
+    }
 }
 
 

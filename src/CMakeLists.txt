@@ -2,9 +2,9 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# if (ENABLE_EXAMPLES)
+if (ENABLE_EXAMPLES)
   add_subdirectory(examples)
-# endif (ENABLE_EXAMPLES)
+endif (ENABLE_EXAMPLES)
 if (KDE4_BUILD_TESTS)
   add_subdirectory(autotests)
 endif (KDE4_BUILD_TESTS)

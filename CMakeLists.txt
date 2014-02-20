@@ -1,7 +1,7 @@
 project (kpeople)
 
-option(ENABLE_EXAMPLES "Enable building of examples" ON)
-option(KDE4_BUILD_TESTS "Enable building of tests" ON)
+option(ENABLE_EXAMPLES "Enable building of examples" OFF)
+option(KDE4_BUILD_TESTS "Enable building of tests" OFF)
 
 set (CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"

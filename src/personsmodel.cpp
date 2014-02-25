@@ -43,8 +43,12 @@ PersonsModel::PersonsModel(QObject *parent):
     d->initialFetchesDoneCount = 0;
     Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
         const AllContactsMonitorPtr monitor = dataSource->allContactsMonitor();
-        connect(monitor.data(), SIGNAL(initialFetchComplete()),
-                this, SLOT(onMonitorInitialFetchComplete()));
+        if (monitor.data()->isInitialFetchComplete()) {
+            QTimer::singleShot(0, this, SLOT(onMonitorInitialFetchComplete()));
+        } else {
+            connect(monitor.data(), SIGNAL(initialFetchComplete()),
+                    this, SLOT(onMonitorInitialFetchComplete()));
+        }
         d->m_sourceMonitors << monitor;
     }
 

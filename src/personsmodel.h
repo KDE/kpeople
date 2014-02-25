@@ -70,6 +70,8 @@ public:
     virtual QModelIndex parent(const QModelIndex &index) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
+    bool isInitialized() const;
+
 Q_SIGNALS:
     void modelInitialized();
 

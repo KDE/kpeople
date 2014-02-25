@@ -28,6 +28,8 @@ public:
     QList<AllContactsMonitorPtr> m_sourceMonitors;
 
     int initialFetchesDoneCount;
+
+    bool isInitialized;
 };
 }
 
@@ -41,6 +43,8 @@ PersonsModel::PersonsModel(QObject *parent):
 
     d->genericAvatarImagePath = KStandardDirs::locate("data", "kpeople/dummy_avatar.png");
     d->initialFetchesDoneCount = 0;
+    d->isInitialized = false;
+
     Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
         const AllContactsMonitorPtr monitor = dataSource->allContactsMonitor();
         if (monitor.data()->isInitialFetchComplete()) {
@@ -141,6 +145,13 @@ int PersonsModel::rowCount(const QModelIndex &parent) const
     return 0;
 }
 
+bool PersonsModel::isInitialized() const
+{
+    Q_D(const PersonsModel);
+
+    return d->isInitialized;
+}
+
 QModelIndex PersonsModel::index(int row, int column, const QModelIndex &parent) const
 {
     if (row < 0 || column < 0 || row >= rowCount(parent)) {
@@ -172,6 +183,7 @@ void PersonsModel::onMonitorInitialFetchComplete()
     if (d->initialFetchesDoneCount == d->m_sourceMonitors.count()) {
 
         onContactsFetched();
+        d->isInitialized = true;
         Q_EMIT modelInitialized();
     }
 }

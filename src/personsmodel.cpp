@@ -9,7 +9,6 @@
 #include <KStandardDirs>
 #include <KDebug>
 
-#include <QDebug>
 #include <QPixmap>
 #include <QTimer>
 
@@ -181,7 +180,6 @@ void PersonsModel::onMonitorInitialFetchComplete()
     d->initialFetchesDoneCount++;
     Q_ASSERT(d->initialFetchesDoneCount <= d->m_sourceMonitors.count());
     if (d->initialFetchesDoneCount == d->m_sourceMonitors.count()) {
-
         onContactsFetched();
         d->isInitialized = true;
         Q_EMIT modelInitialized();
@@ -191,10 +189,10 @@ void PersonsModel::onMonitorInitialFetchComplete()
 void PersonsModel::onContactsFetched()
 {
     Q_D(PersonsModel);
+
     KABC::Addressee::Map addresseeMap;
 
     //fetch all already loaded contacts from plugins
-    KABC::AddresseeList contactList;
     Q_FOREACH (const AllContactsMonitorPtr &contactWatcher, d->m_sourceMonitors) {
         addresseeMap.unite(contactWatcher->contacts());
     }
@@ -376,6 +374,7 @@ void PersonsModel::removePerson(const QString& id)
 void PersonsModel::personChanged(const QString &personId)
 {
     Q_D(const PersonsModel);
+
     int row = d->personIds.indexOf(personId);
     if (row >= 0) {
         const QModelIndex personIndex = index(row);
@@ -386,6 +385,7 @@ void PersonsModel::personChanged(const QString &personId)
 QString PersonsModel::personIdForContact(const QString &contactId) const
 {
     Q_D(const PersonsModel);
+
     //TODO optimize with constFind()
     if (d->contactToPersons.contains(contactId)) {
         return d->contactToPersons[contactId];

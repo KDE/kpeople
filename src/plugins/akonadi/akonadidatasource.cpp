@@ -27,6 +27,7 @@
 #include <Akonadi/Collection>
 #include <Akonadi/CollectionFetchJob>
 #include <Akonadi/CollectionFetchScope>
+#include <Akonadi/ServerManager>
 
 #include <KABC/Addressee>
 
@@ -50,6 +51,7 @@ private Q_SLOTS:
     void onItemAdded(const Akonadi::Item &item);
     void onItemChanged(const Akonadi::Item &item);
     void onItemRemoved(const Akonadi::Item &item);
+    void onServerStateChanged(Akonadi::ServerManager::State);
 private:
     Akonadi::Monitor *m_monitor;
     KABC::Addressee::Map m_contacts;
@@ -60,6 +62,9 @@ AkonadiAllContacts::AkonadiAllContacts():
     m_monitor(new Akonadi::Monitor(this)),
     m_activeFetchJobsCount(0)
 {
+    connect(Akonadi::ServerManager::self(), SIGNAL(stateChanged(Akonadi::ServerManager::State)), SLOT(onServerStateChanged(Akonadi::ServerManager::State)));
+    onServerStateChanged(Akonadi::ServerManager::state());
+
     connect(m_monitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)), SLOT(onItemAdded(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onItemChanged(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemRemoved(Akonadi::Item)), SLOT(onItemRemoved(Akonadi::Item)));
@@ -131,7 +136,7 @@ void AkonadiAllContacts::onItemsFetched(KJob *job)
         onItemAdded(item);
     }
 
-    if (--m_activeFetchJobsCount == 0) {
+    if (--m_activeFetchJobsCount == 0 && !isInitialFetchComplete()) {
         emitInitialFetchComplete();
     }
 }
@@ -153,11 +158,21 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
             ++m_activeFetchJobsCount;
         }
     }
-    if (m_activeFetchJobsCount == 0) {
+    if (m_activeFetchJobsCount == 0 && !isInitialFetchComplete()) {
         emitInitialFetchComplete();
+
     }
 }
 
+void AkonadiAllContacts::onServerStateChanged(ServerManager::State state)
+{
+    //if we're broken tell kpeople we've loaded so kpeople doesn't block
+    if(state == Akonadi::ServerManager::Broken && !isInitialFetchComplete()) {
+        emitInitialFetchComplete();
+        qWarning() << "Akonadi failed to load, some metacontact features may not be available";
+        qWarning() << "For more information please load akonadi_console" ;
+    }
+}
 
 
 

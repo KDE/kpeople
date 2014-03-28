@@ -74,8 +74,10 @@ Q_SIGNALS:
      *
      * @warning DataSources should use emitInitialFetchComplete() instead of emitting this signal
      * directly.
+     *
+     * @param success True when the fetch was successful, False when an error occurred.
      */
-    void initialFetchComplete();
+    void initialFetchComplete( bool success );
 
 protected Q_SLOTS:
     /**
@@ -83,8 +85,10 @@ protected Q_SLOTS:
      * storage.
      *
      * This will emit initialFetchComplete() signal
+     *
+     * @p success Whether the fetch was successful.
      */
-    void emitInitialFetchComplete();
+    void emitInitialFetchComplete( bool success );
 
 private:
     Q_DISABLE_COPY(AllContactsMonitor)

@@ -58,10 +58,10 @@ bool AllContactsMonitor::isInitialFetchComplete() const
     return d_ptr->m_initialFetchDone;
 }
 
-void AllContactsMonitor::emitInitialFetchComplete()
+void AllContactsMonitor::emitInitialFetchComplete(bool success)
 {
     d_ptr->m_initialFetchDone = true;
-    Q_EMIT initialFetchComplete();
+    Q_EMIT initialFetchComplete(success);
 }
 
 

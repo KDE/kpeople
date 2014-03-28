@@ -49,8 +49,8 @@ PersonsModel::PersonsModel(QObject *parent):
         if (monitor.data()->isInitialFetchComplete()) {
             QTimer::singleShot(0, this, SLOT(onMonitorInitialFetchComplete()));
         } else {
-            connect(monitor.data(), SIGNAL(initialFetchComplete()),
-                    this, SLOT(onMonitorInitialFetchComplete()));
+            connect(monitor.data(), SIGNAL(initialFetchComplete(bool)),
+                    this, SLOT(onMonitorInitialFetchComplete(bool)));
         }
         d->m_sourceMonitors << monitor;
     }
@@ -173,7 +173,7 @@ QModelIndex PersonsModel::parent(const QModelIndex &childIndex) const
     return index(childIndex.internalId(), 0, QModelIndex());
 }
 
-void PersonsModel::onMonitorInitialFetchComplete()
+void PersonsModel::onMonitorInitialFetchComplete(bool success)
 {
     Q_D(PersonsModel);
 
@@ -182,7 +182,7 @@ void PersonsModel::onMonitorInitialFetchComplete()
     if (d->initialFetchesDoneCount == d->m_sourceMonitors.count()) {
         onContactsFetched();
         d->isInitialized = true;
-        Q_EMIT modelInitialized();
+        Q_EMIT modelInitialized(success);
     }
 }
 

@@ -34,11 +34,19 @@
 namespace KPeople {
     class PersonDataPrivate {
     public:
+        PersonDataPrivate(PersonData *parent):
+            q_ptr(parent) {}
+
+        QString personId;
         QStringList contactIds;
         MetaContact metaContact;
         QList<ContactMonitorPtr> watchers;
         KABC::Addressee customContact;
         QString customContactId;
+        ContactMonitorPtr addContactMonitor(const QString &contactId);
+    private:
+        Q_DECLARE_PUBLIC(PersonData);
+        PersonData *q_ptr;
     };
 }
 
@@ -46,7 +54,7 @@ using namespace KPeople;
 
 KPeople::PersonData::PersonData(const QString &id, QObject* parent):
     QObject(parent),
-    d_ptr(new PersonDataPrivate)
+    d_ptr(new PersonDataPrivate(this))
 {
     Q_D(PersonData);
 
@@ -66,28 +74,15 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
 
     KABC::Addressee::Map contacts;
     Q_FOREACH(const QString &contactId, d->contactIds) {
-        //load the correct data source for this contact ID
-        const QString sourceId = contactId.left(contactId.indexOf("://"));
-        BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
-        if (dataSource) {
-            ContactMonitorPtr cw = dataSource->contactMonitor(contactId);
-            d->watchers << cw;
-
-            //if the data source already has the contact set it already
-            //if not it will be loaded when the contactChanged signal is emitted
-            if (!cw->contact().isEmpty()) {
-                contacts[contactId] = cw->contact();
-
-                if (cw->contact().custom("kpeople", "customContact") == "1") {
-                    d->customContact = cw->contact();
-                    d->customContactId = contactId;
-                }
+        ContactMonitorPtr contactMonitor = d->addContactMonitor(contactId);
+        if (contactMonitor && !contactMonitor->contact().isEmpty()) {
+            if (contactMonitor->contact().custom("kpeople", "customContact") == "1") {
+                d->customContact = contactMonitor->contact();
+                d->customContactId = contactId;
             }
-            connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
+            contacts[contactId] = contactMonitor->contact();
         }
     }
-
-
     d->metaContact = MetaContact(personId, contacts);
 }
 
@@ -199,4 +194,49 @@ void PersonData::saveCustomContact(const KABC::Addressee &customContact)
     }
 
     KPeople::mergeContacts(QStringList() << d->metaContact.id() << createJob->item().url().url());
+}
+
+void PersonData::onContactAddedToPerson(const QString &personId, const QString &contactId)
+{
+    Q_D(PersonData);
+
+    //we check both in case we have opened this up for
+    //akonadi://123 which is not in a metacontact and then it becomes part of a metacontact
+    //we would still want to merge
+    if (d->personId == personId || d->personId == contactId) {
+        d->contactIds << contactId;
+
+        ContactMonitorPtr contactMonitor = d->addContactMonitor(contactId);
+
+        //if contact is loaded already
+        if (contactMonitor && !contactMonitor->contact().isEmpty()) {
+            d->metaContact.insertContact(contactId, contactMonitor->contact());
+        }
+    }
+}
+
+void PersonData::onContactRemovedFromPerson(const QString &contactId)
+{
+    Q_D(PersonData);
+
+    if (d->contactIds.contains(contactId)) {
+        d->contactIds.removeOne(contactId);
+    }
+    d->metaContact.removeContact(contactId);
+}
+
+ContactMonitorPtr PersonDataPrivate::addContactMonitor(const QString &contactId)
+{
+    Q_Q(PersonData);
+
+    //load the correct data source for this contact ID
+    const QString sourceId = contactId.left(contactId.indexOf("://"));
+    BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
+    if (dataSource) {
+        ContactMonitorPtr cw = dataSource->contactMonitor(contactId);
+        watchers << cw;
+        q->connect(cw.data(), SIGNAL(contactChanged()), q, SLOT(onContactChanged()));
+        return cw;
+    }
+    return ContactMonitorPtr();
 }

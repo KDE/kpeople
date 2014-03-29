@@ -136,6 +136,10 @@ QString PersonManager::mergeContacts(const QStringList& ids)
     QStringList metacontacts;
     QStringList contacts;
 
+    bool rc = true;
+
+    QList<QDBusMessage> pendingMessages;
+
     // separate the passed ids to metacontacts and simple contacts
     Q_FOREACH (const QString &id, ids) {
         if (id.startsWith(QLatin1String("kpeople://"))) {
@@ -182,32 +186,38 @@ QString PersonManager::mergeContacts(const QStringList& ids)
             updateQuery.prepare("UPDATE persons SET personID = ? WHERE contactID = ?");
             updateQuery.bindValue(0, personIdString.mid(strlen("kpeople://")));
             updateQuery.bindValue(1, id);
-            updateQuery.exec();
+            if (!updateQuery.exec()) {
+                rc = false;
+            }
 
             QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
                                                               QLatin1String("org.kde.KPeople"),
                                                               QLatin1String("ContactRemovedFromPerson"));
 
             message.setArguments(QVariantList() << id);
-            QDBusConnection::sessionBus().send(message);
+            pendingMessages << message;
 
             message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
                                                               QLatin1String("org.kde.KPeople"),
                                                               QLatin1String("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personIdString);
-            QDBusConnection::sessionBus().send(message);
+
         }
     }
 
     // process passed contacts
     if (contacts.size() > 0) {
+
+
         Q_FOREACH (const QString &id, contacts) {
             QSqlQuery insertQuery(m_db);
             insertQuery.prepare("INSERT INTO persons VALUES (?, ?)");
             insertQuery.bindValue(0, id);
             insertQuery.bindValue(1, personIdString.mid(strlen("kpeople://"))); //strip kpeople://
-            insertQuery.exec();
+            if (!insertQuery.exec()) {
+                rc = false;
+            }
 
             //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
@@ -215,8 +225,19 @@ QString PersonManager::mergeContacts(const QStringList& ids)
                                                         QLatin1String("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personIdString);
+            pendingMessages << message;
+        }
+    }
+
+    //if success send all messages to other clients
+    //otherwise roll back our database changes and return an empty string
+    if (rc) {
+        Q_FOREACH(const QDBusMessage &message, pendingMessages) {
             QDBusConnection::sessionBus().send(message);
         }
+    } else {
+        t.cancel();
+        personIdString.clear();
     }
 
     return personIdString;

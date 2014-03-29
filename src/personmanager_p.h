@@ -74,10 +74,11 @@ public:
 public Q_SLOTS:
     //merge all ids (person IDs and contactIds into a single person)
     //returns the ID that will be created
+    //users should KPeople::mergeContacts from global.h
     QString mergeContacts(const QStringList &ids);
 
     //unmerge a contact. Either remove a contact from a given person or remove a person
-    //
+    //users should KPeople::unmergeContact from global.h
     bool unmergeContact(const QString &id);
 
 Q_SIGNALS:

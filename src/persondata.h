@@ -47,6 +47,17 @@ class KPEOPLE_EXPORT PersonData : public QObject
         virtual ~PersonData();
 
         /**
+         * If contacts contains a contact from our custom resource, return that
+         * Otherwise return a blank KABC::Addressee
+         */
+        KABC::Addressee customContact() const;
+
+        /* Saves the custom contact in our custom resource and ensure this is merged
+         * to our person.
+         */
+        KJob* saveCustomContact(const KABC::Addressee &customContact);
+
+        /**
          * Returns the aggregated contact information from all sources
          */
         KABC::Addressee person() const;

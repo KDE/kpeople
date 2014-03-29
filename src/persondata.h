@@ -30,7 +30,6 @@
 namespace KPeople
 {
 class PersonDataPrivate;
-
 class PersonData;
 
 class KPEOPLE_EXPORT PersonData : public QObject
@@ -64,6 +63,9 @@ class KPEOPLE_EXPORT PersonData : public QObject
 
     private Q_SLOTS:
         void onContactChanged();
+
+        void onContactAddedToPerson(const QString &personId, const QString &contactId);
+        void onContactRemovedFromPerson(const QString &contactId);
 
     private:
         Q_DISABLE_COPY(PersonData)

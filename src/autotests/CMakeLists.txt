@@ -5,4 +5,12 @@ target_link_libraries(persondatatest
     ${KDEPIMLIBS_KABC_LIBS}
     kpeople)
 
+kde4_add_unit_test(mergetests mergetests.cpp)
+target_link_libraries(mergetests
+    ${QT_QTCORE_LIBRARY}
+    ${QT_QTTEST_LIBRARY}
+    ${KDEPIMLIBS_KABC_LIBS}
+    kpeople)
+
+
 # add_test(PersonDataTests persondatatest)

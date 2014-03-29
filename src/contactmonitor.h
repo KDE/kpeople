@@ -74,7 +74,7 @@ private:
     ContactMonitorPrivate *d_ptr;
 };
 
-}
 typedef QSharedPointer<KPeople::ContactMonitor> ContactMonitorPtr;
+}
 
 #endif // CONTACTMONITOR_H

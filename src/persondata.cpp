@@ -145,6 +145,7 @@ void PersonData::saveCustomContact(const KABC::Addressee &customContact)
     // If not, we'll continue with ItemCreateJob
     if (!d->customContact.isEmpty()) {
         Akonadi::Item customContactItem = Akonadi::Item::fromUrl(d->customContactId);
+        customContactItem.setMimeType("text/directory");
         customContactItem.setPayload<KABC::Addressee>(customContact);
 
         Akonadi::ItemModifyJob *modifyJob = new Akonadi::ItemModifyJob(customContactItem, this);

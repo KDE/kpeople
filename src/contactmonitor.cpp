@@ -33,12 +33,13 @@ public:
 
 
 
-ContactMonitor::ContactMonitor(const QString &contactId)
+ContactMonitor::ContactMonitor(const QString &contactId, const KABC::Addressee &contact)
     : QObject(0),
       d_ptr(new ContactMonitorPrivate)
 {
     Q_D(ContactMonitor);
     d->m_contactId = contactId;
+    d->m_contact = contact;
 }
 
 ContactMonitor::~ContactMonitor()

@@ -45,7 +45,7 @@ class KPEOPLE_EXPORT ContactMonitor: public QObject
 {
 Q_OBJECT
 public:
-    ContactMonitor(const QString &contactId);
+    ContactMonitor(const QString &contactId, const KABC::Addressee &contact = KABC::Addressee());
     virtual ~ContactMonitor();
 
     /**

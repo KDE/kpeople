@@ -177,7 +177,7 @@ class AkonadiContact: public KPeople::ContactMonitor
 {
     Q_OBJECT
 public:
-    AkonadiContact(Akonadi::Monitor *monitor, const QString &contactId);
+    AkonadiContact(Akonadi::Monitor *monitor, const QString &contactId, const KABC::Addressee &contact = KABC::Addressee());
     ~AkonadiContact();
 private Q_SLOTS:
     void onContactFetched(KJob*);
@@ -187,18 +187,21 @@ private:
     Akonadi::Item m_item;
 };
 
-AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contactId):
-    ContactMonitor(contactId),
+AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contactId, const KABC::Addressee &contact):
+    ContactMonitor(contactId, contact),
     m_monitor(monitor)
 {
-    //TODO: optimiZation, base class could copy across from the model if the model exists
-    //then we should check if contact is already set to something and avoid the initial fetch
-
-    //load the contact initially
     m_item = Item::fromUrl(QUrl(contactId));
-    ItemFetchJob* itemFetchJob = new ItemFetchJob(m_item);
-    itemFetchJob->fetchScope().fetchFullPayload();
-    connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
+
+    // If we were given a contact, use it
+    if (!contact.isEmpty()) {
+        setContact(contact);
+    } else {
+        // ...otherwise load the contact initially
+        ItemFetchJob* itemFetchJob = new ItemFetchJob(m_item);
+        itemFetchJob->fetchScope().fetchFullPayload();
+        connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
+    }
 
     //then watch for that item changing
     m_monitor->setItemMonitored(m_item, true);
@@ -253,9 +256,9 @@ KPeople::AllContactsMonitor* AkonadiDataSource::createAllContactsMonitor()
     return new AkonadiAllContacts();
 }
 
-KPeople::ContactMonitor* AkonadiDataSource::createContactMonitor(const QString& contactId)
+KPeople::ContactMonitor* AkonadiDataSource::createContactMonitor(const QString &contactId, const KABC::Addressee &contact)
 {
-    return new AkonadiContact(m_monitor, contactId);
+    return new AkonadiContact(m_monitor, contactId, contact);
 }
 
 K_PLUGIN_FACTORY( AkonadiDataSourceFactory, registerPlugin<AkonadiDataSource>(); )

@@ -66,7 +66,7 @@ protected:
      * Base classes can implement this in order to not load every contact
      * otherwise the AllContactWatcher will be used and filtered.
      */
-    virtual ContactMonitor* createContactMonitor(const QString &contactId);
+    virtual ContactMonitor* createContactMonitor(const QString &contactId, const KABC::Addressee &contact = KABC::Addressee());
 private:
     Q_DISABLE_COPY(BasePersonsDataSource)
     Q_DECLARE_PRIVATE(BasePersonsDataSource)

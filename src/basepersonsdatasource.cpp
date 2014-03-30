@@ -66,14 +66,18 @@ ContactMonitorPtr BasePersonsDataSource::contactMonitor(const QString& contactId
     Q_D(BasePersonsDataSource);
 
     ContactMonitorPtr c;
-    if (!d->m_contactMonitors[contactId].toStrongRef()) {
+    if (!d->m_allContactsMonitor.isNull() && d->m_allContactsMonitor.data()->contacts().contains(contactId)) {
+        KABC::Addressee existingContact = d->m_allContactsMonitor.data()->contacts().value(contactId);
+        c = ContactMonitorPtr(createContactMonitor(contactId, existingContact));
+    } else if (!d->m_contactMonitors[contactId].toStrongRef()) {
         c = ContactMonitorPtr(createContactMonitor(contactId));
-        d->m_contactMonitors[contactId] = c;
     }
+    d->m_contactMonitors[contactId] = c;
     return d->m_contactMonitors[contactId].toStrongRef();
 }
 
-ContactMonitor* BasePersonsDataSource::createContactMonitor(const QString &contactId)
+ContactMonitor* BasePersonsDataSource::createContactMonitor(const QString &contactId, const KABC::Addressee &contact)
 {
+    Q_UNUSED(contact);
     return new DefaultContactMonitor(contactId, allContactsMonitor());
 }

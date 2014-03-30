@@ -32,7 +32,7 @@ public:
     AkonadiDataSource(QObject *parent, const QVariantList &args = QVariantList());
     virtual ~AkonadiDataSource();
     virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
-    virtual KPeople::ContactMonitor* createContactMonitor(const QString& contactId);
+    virtual KPeople::ContactMonitor* createContactMonitor(const QString &contactId, const KABC::Addressee &contact = KABC::Addressee());
     virtual QString sourcePluginId() const;
 private:
     Akonadi::Monitor *m_monitor;

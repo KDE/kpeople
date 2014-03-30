@@ -68,6 +68,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
 
     if (personId.isEmpty()) {
         d->contactIds = QStringList() << id;
+        d->personId = id;
     } else {
         d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
     }

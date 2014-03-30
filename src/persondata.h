@@ -27,6 +27,7 @@
 
 #include "global.h"
 
+class KJob;
 namespace KPeople
 {
 class PersonDataPrivate;

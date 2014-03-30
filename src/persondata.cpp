@@ -195,7 +195,7 @@ void PersonData::saveCustomContact(const KABC::Addressee &customContact)
         return;
     }
 
-    KPeople::mergeContacts(QStringList() << d->metaContact.id() << createJob->item().url().url());
+    KPeople::mergeContacts(QStringList() << d->personId << createJob->item().url().prettyUrl());
 }
 
 void PersonData::onContactAddedToPerson(const QString &personId, const QString &contactId)

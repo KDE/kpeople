@@ -32,6 +32,7 @@ class ContactPrivate;
 class KPEOPLE_EXPORT Contact : public KABC::Addressee
 {
 public:
+    Contact();
     Contact(const QString &uri, const KABC::Addressee &address);
     Contact(const Contact &other);
     ~Contact();

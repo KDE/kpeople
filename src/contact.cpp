@@ -30,6 +30,13 @@ namespace KPeople {
     };
 }
 
+Contact::Contact():
+    d(new ContactPrivate)
+{
+
+}
+
+
 Contact::Contact(const QString& uri, const KABC::Addressee& address):
     KABC::Addressee(address),
     d(new ContactPrivate)

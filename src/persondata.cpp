@@ -132,14 +132,14 @@ KABC::Addressee PersonData::customContact() const
     return KABC::Addressee();
 }
 
-KJob* PersonData::saveCustomContact(const KABC::Addressee &customContact)
+void PersonData::saveCustomContact(const KABC::Addressee &customContact)
 {
     Akonadi::AgentInstance customContactResource = KPeople::customContactsResource();
 
     if (!customContactResource.isValid()) {
         // Ideally we should return a job that fails immediately
         // (hint in Tp::PendingFailure)
-        return 0;
+        return;
     }
 
     Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob(Akonadi::Collection::root(),
@@ -150,7 +150,7 @@ KJob* PersonData::saveCustomContact(const KABC::Addressee &customContact)
 
     if (job->error()) {
         kWarning() << "Fetching collections failed;" << job->errorText();
-        return 0;
+        return;
     }
 
     Akonadi::Collection customCollection;
@@ -172,6 +172,12 @@ KJob* PersonData::saveCustomContact(const KABC::Addressee &customContact)
     customContactItem.setPayload<KABC::Addressee>(nonConstCopy);
 
     Akonadi::ItemCreateJob *createJob = new Akonadi::ItemCreateJob(customContactItem, customCollection, this);
+    createJob->exec();
 
-    return createJob;
+    if (createJob->error()) {
+        kWarning() << "Failed to store the custom contact:" << createJob->errorText();
+        return;
+    }
+
+    KPeople::mergeContacts(QStringList() << d->metaContact.id() << createJob->item().url().url());
 }

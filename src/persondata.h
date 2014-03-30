@@ -56,7 +56,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /* Saves the custom contact in our custom resource and ensure this is merged
          * to our person.
          */
-        KJob* saveCustomContact(const KABC::Addressee &customContact);
+        void saveCustomContact(const KABC::Addressee &customContact);
 
         /**
          * Returns the aggregated contact information from all sources

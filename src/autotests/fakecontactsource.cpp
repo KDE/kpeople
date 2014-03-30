@@ -19,6 +19,8 @@
 
 #include "fakecontactsource.h"
 
+#include "contact.h"
+
 FakeContactSource::FakeContactSource(QObject *parent, const QVariantList &args)
     : BasePersonsDataSource(parent, args)
 {
@@ -81,7 +83,7 @@ void FakeAllContactsMonitor::changeContact1Email()
     KABC::Addressee contact1 = contacts()["fakesource://contact1"];
     contact1.setEmails(QStringList() << "newaddress@yahoo.com");
 
-    Q_EMIT contactChanged("fakesource://contact1", contact1);
+    Q_EMIT contactChanged(KPeople::Contact("fakesource://contact1", contact1));
 }
 
 #include "fakecontactsource.moc"

@@ -23,15 +23,18 @@
 
 #include <KABC/Addressee>
 
+#include "kpeople_export.h"
+
 namespace KPeople {
 
 class ContactPrivate;
 
-class Contact : public KABC::Addressee
+class KPEOPLE_EXPORT Contact : public KABC::Addressee
 {
 public:
     Contact(const QString &uri, const KABC::Addressee &address);
     Contact(const Contact &other);
+    ~Contact();
 
     Contact &operator=(const Contact &other);
 

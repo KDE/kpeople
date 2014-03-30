@@ -33,6 +33,8 @@
 #include <KPluginFactory>
 #include <KPluginLoader>
 
+#include "contact.h"
+
 #include <QDebug>
 
 using namespace Akonadi;
@@ -101,7 +103,7 @@ void AkonadiAllContacts::onItemAdded(const Item& item)
     const QString id = item.url().prettyUrl();
     const KABC::Addressee contact = item.payload<KABC::Addressee>();
     m_contacts[id] = contact;
-    Q_EMIT contactAdded(item.url().prettyUrl(), contact);
+    Q_EMIT contactAdded(KPeople::Contact(item.url().prettyUrl(), contact));
 }
 
 void AkonadiAllContacts::onItemChanged(const Item& item)
@@ -112,7 +114,7 @@ void AkonadiAllContacts::onItemChanged(const Item& item)
     const QString id = item.url().prettyUrl();
     const KABC::Addressee contact = item.payload<KABC::Addressee>();
     m_contacts[id] = contact;
-    Q_EMIT contactChanged(item.url().prettyUrl(), contact);
+    Q_EMIT contactChanged(KPeople::Contact(item.url().prettyUrl(), contact));
 }
 
 void AkonadiAllContacts::onItemRemoved(const Item& item)

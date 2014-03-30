@@ -26,7 +26,7 @@
 
 #include "kpeople_export.h"
 
-#include <KABC/Addressee>
+#include "contact.h"
 
 namespace KPeople {
 
@@ -57,12 +57,12 @@ Q_SIGNALS:
     /**
      * DataSources should emit this whenever a known contact changes
      */
-    void contactChanged(const QString &contactId, const KABC::Addressee &contact);
+    void contactChanged(const Contact &contact);
 
     /**
      * DataSources should emit this whenever a contact is added
      */
-    void contactAdded(const QString &contactId, const KABC::Addressee &contact);
+    void contactAdded(const Contact &contact);
 
     /**
      * DataSources should emit this whenever a contact is removed and they are no longer able to supply up-to-date data on a contact

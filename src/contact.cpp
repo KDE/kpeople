@@ -54,6 +54,12 @@ Contact& Contact::operator=(const Contact &other )
   return *this;
 }
 
+Contact::~Contact()
+{
+
+}
+
+
 QString Contact::uri() const
 {
     return d->kpeopleURI;

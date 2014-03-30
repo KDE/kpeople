@@ -34,10 +34,9 @@
 namespace KPeople
 {
 class PersonsModelFeature;
-class ContactItem;
-class PersonItem;
 class MetaContact;
 class PersonsModelPrivate;
+class Contact;
 
 /**
  * This class creates a model of all known contacts from all sources
@@ -79,8 +78,8 @@ private Q_SLOTS:
     void onContactsFetched();
 
     //update when a resource signals a contact has changed
-    void onContactAdded(const QString &contactId, const KABC::Addressee &contact);
-    void onContactChanged(const QString &contactId, const KABC::Addressee &contact);
+    void onContactAdded(const KPeople::Contact &contact);
+    void onContactChanged(const KPeople::Contact &contact);
     void onContactRemoved(const QString &contactId);
 
     //update on metadata changes

@@ -220,45 +220,45 @@ void PersonsModel::onContactsFetched()
     }
 
     Q_FOREACH(const AllContactsMonitorPtr monitor, d->m_sourceMonitors) {
-        connect(monitor.data(), SIGNAL(contactAdded(QString,KABC::Addressee)), SLOT(onContactAdded(QString,KABC::Addressee)));
-        connect(monitor.data(), SIGNAL(contactChanged(QString,KABC::Addressee)), SLOT(onContactChanged(QString,KABC::Addressee)));
+        connect(monitor.data(), SIGNAL(contactAdded(KPeople::Contact)), SLOT(onContactAdded(KPeople::Contact)));
+        connect(monitor.data(), SIGNAL(contactChanged(KPeople::Contact)), SLOT(onContactChanged(KPeople::Contact)));
         connect(monitor.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
     }
 }
 
-void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addressee &contact)
+void PersonsModel::onContactAdded(const Contact &contact)
 {
     Q_D(PersonsModel);
 
-    const QString &personId = personIdForContact(contactId);
+    const QString &personId = personIdForContact(contact.uri());
 
     if (d->personIds.contains(personId)) {
         MetaContact &mc = d->metacontacts[personId];
 
         //if the MC object already contains this object, we want to update the row, not do an insert
-        if (mc.contactIds().contains(contactId)) {
-            kWarning() << "Source emitted contactAdded for a contact we already know about " << contactId;
-            onContactChanged(contactId, contact);
+        if (mc.contactIds().contains(contact.uri())) {
+            kWarning() << "Source emitted contactAdded for a contact we already know about " << contact.uri();
+            onContactChanged(contact);
         } else {
             int newContactPos = mc.contacts().size();
             beginInsertRows(index(d->personIds.indexOf(personId)), newContactPos, newContactPos);
-            mc.insertContact(contactId, contact);
+            mc.insertContact(contact.uri(), contact);
             endInsertRows();
             personChanged(personId);
         }
     } else { //new contact -> new person
         KABC::Addressee::Map map;
-        map[contactId] = contact;
+        map[contact.uri()] = contact;
         addPerson(MetaContact(personId, map));
     }
 }
 
-void PersonsModel::onContactChanged(const QString &contactId, const KABC::Addressee &contact)
+void PersonsModel::onContactChanged(const Contact &contact)
 {
     Q_D(PersonsModel);
 
-    const QString &personId = personIdForContact(contactId);
-    int row = d->metacontacts[personId].updateContact(contactId, contact);
+    const QString &personId = personIdForContact(contact.uri());
+    int row = d->metacontacts[personId].updateContact(contact.uri(), contact);
 
     const QModelIndex contactIndex = index(row,
                                            0,

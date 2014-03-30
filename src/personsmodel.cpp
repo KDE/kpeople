@@ -301,6 +301,10 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
     const QString oldPersonId = personIdForContact(contactId);
     d->contactToPersons.insert(contactId, newPersonId);
 
+    if (!d->metacontacts.contains(oldPersonId)) {
+        return;
+    }
+
     //get contact already in the model, remove it from the previous contact
     const KABC::Addressee &contact = d->metacontacts[oldPersonId].contact(contactId);
     int contactPosition = d->metacontacts[oldPersonId].contacts().indexOf(contact);

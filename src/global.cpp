@@ -27,6 +27,13 @@
 
 #include <KIconLoader>
 #include <QIcon>
+#include <QDBusConnection>
+#include <QDBusMessage>
+
+#include <Akonadi/AgentManager>
+#include <Akonadi/AgentInstanceCreateJob>
+#include <KDebug>
+#include <KStandardDirs>
 
 static const KCatalogLoader i18nLoader("libkpeople");
 
@@ -111,4 +118,51 @@ int KPeople::presenceSortPriority(const QString& presenceName)
     }
 
     return 7;
+}
+
+Akonadi::AgentInstance KPeople::customContactsResource()
+{
+    // Check all of Akonadi's available resources and see if we can find our own
+    // TODO: Future optimization - store the resource identifier() into a config file
+    //       for direct lookup
+    Q_FOREACH(const Akonadi::AgentInstance &i, Akonadi::AgentManager::self()->instances()) {
+        if (i.name() == QLatin1String("KPeople Private Resource")) {
+            return i;
+        }
+    }
+
+    // If the resource does not exist yet, we need to create it
+    const Akonadi::AgentType type = Akonadi::AgentManager::self()->type("akonadi_vcard_resource");
+
+    // Ideally this should run only once in a lifetime so we can afford exec() in here
+    Akonadi::AgentInstanceCreateJob *job = new Akonadi::AgentInstanceCreateJob(type);
+    job->exec();
+
+    if (job->error()) {
+        kWarning() << "Failed to create new contact resource";
+        return Akonadi::AgentInstance();
+    }
+
+    Akonadi::AgentInstance agent = qobject_cast<Akonadi::AgentInstanceCreateJob*>(job)->instance();
+    agent.setName(QLatin1String("KPeople Private Resource"));
+
+    // After creating the resource we need to set the vcard file path
+    // This is possible only over Resource's DBus interface
+    // (alternatively we could write the config file directly and just call
+    // reconfigure(); do this if the sync dbus call will give troubles)
+    QDBusMessage settingsMessage = QDBusMessage::createMethodCall(QString("org.freedesktop.Akonadi.Resource.%1").arg(agent.identifier()),
+                                                                  QLatin1String("/Settings"),
+                                                                  QLatin1String("org.kde.Akonadi.VCard.Settings"),
+                                                                  QLatin1String("setPath"));
+
+    QList<QVariant> args;
+    args.append(KGlobal::dirs()->locateLocal("data","kpeople/customContacts.vcard"));
+
+    settingsMessage.setArguments(args);
+
+    QDBusMessage reply = QDBusConnection::sessionBus().call(settingsMessage, QDBus::BlockWithGui);
+    kWarning() << reply.errorMessage();
+
+    agent.reconfigure();
+    return agent;
 }

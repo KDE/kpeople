@@ -29,6 +29,7 @@
 #include "kpeople_export.h"
 
 #include <KABC/Addressee>
+#include <Akonadi/AgentInstance>
 
 class QAction;
 namespace KPeople
@@ -66,6 +67,8 @@ namespace KPeople
      * @return sort priority of the given presence
      */
     KPEOPLE_EXPORT int presenceSortPriority(const QString &presenceName);
+
+    KPEOPLE_EXPORT Akonadi::AgentInstance customContactsResource();
 
 };
 

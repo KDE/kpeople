@@ -240,7 +240,13 @@ void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addresse
             kWarning() << "Source emitted contactAdded for a contact we already know about " << contactId;
             onContactChanged(contactId, contact);
         } else {
+            //FIXME this should be a method in MC
+            //OR we just hide custom contacts and then this isn't an issue
             int newContactPos = mc.contacts().size();
+            if (contact.custom("kpeople", "customContact") == "1") {
+                newContactPos = 0;
+            }
+
             beginInsertRows(index(d->personIds.indexOf(personId)), newContactPos, newContactPos);
             mc.insertContact(contactId, contact);
             endInsertRows();
@@ -311,6 +317,12 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
     //if the new person is already in the model, add the contact to it
     if (d->personIds.contains(newPersonId)) {
         int newContactPos = d->metacontacts[newPersonId].contacts().size();
+        //FIXME this should be a method in MC
+        //OR we just hide custom contacts and then this isn't an issue
+        if (contact.custom("kpeople", "customContact") == "1") {
+            newContactPos = 0;
+        }
+
         beginInsertRows(index(d->personIds.indexOf(newPersonId), 0), newContactPos, newContactPos);
         d->metacontacts[newPersonId].insertContact(contactId, contact);
         endInsertRows();

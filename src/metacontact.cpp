@@ -129,16 +129,22 @@ int MetaContact::insertContact(const QString &contactId, const KABC::Addressee &
 
 int MetaContact::insertContactInternal(const QString &contactId, const KABC::Addressee &contact)
 {
+    int index = -1;
     if (d->contactIds.contains(contactId)) {
         //if item is already listed, do nothing.
-        return -1;
     } else {
-        //TODO if from the local address book - prepend to give higher priority.
-        int index = d->contacts.size();
-        d->contacts.append(contact);
-        d->contactIds.append(contactId);
-        return index;
+        //If from the local address book - prepend to give higher priority.
+        if (contact.custom("kpeople", "customContact") == "1") {
+            index = 0;
+            d->contacts.prepend(contact);
+            d->contactIds.prepend(contactId);
+        } else {
+            index = d->contacts.size();
+            d->contacts.append(contact);
+            d->contactIds.append(contactId);
+        }
     }
+    return index;
 }
 
 int MetaContact::updateContact(const QString& contactId, const KABC::Addressee& contact)

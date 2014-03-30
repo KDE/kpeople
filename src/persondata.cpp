@@ -37,6 +37,7 @@ namespace KPeople {
         MetaContact metaContact;
         QList<ContactMonitorPtr> watchers;
         KABC::Addressee customContact;
+        QString customContactId;
     };
 }
 
@@ -78,6 +79,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
 
                 if (cw->contact().custom("kpeople", "customContact") == "1") {
                     d->customContact = cw->contact();
+                    d->customContactId = contactId;
                 }
             }
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));

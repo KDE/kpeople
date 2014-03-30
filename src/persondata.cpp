@@ -26,12 +26,17 @@
 
 #include <QDebug>
 
+#include <Akonadi/CollectionFetchJob>
+#include <Akonadi/ItemCreateJob>
+#include <Akonadi/Item>
+
 namespace KPeople {
     class PersonDataPrivate {
     public:
         QStringList contactIds;
         MetaContact metaContact;
         QList<ContactMonitorPtr> watchers;
+        KABC::Addressee customContact;
     };
 }
 
@@ -70,6 +75,10 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
             //if not it will be loaded when the contactChanged signal is emitted
             if (!cw->contact().isEmpty()) {
                 contacts[contactId] = cw->contact();
+
+                if (cw->contact().custom("kpeople", "customContact") == "1") {
+                    d->customContact = cw->contact();
+                }
             }
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
         }
@@ -108,4 +117,59 @@ void PersonData::onContactChanged()
         d->metaContact.insertContact(watcher->contactId(), watcher->contact());
     }
     Q_EMIT dataChanged();
+}
+
+KABC::Addressee PersonData::customContact() const
+{
+    Q_D(const PersonData);
+
+    if (!d->customContact.isEmpty()) {
+        return d->customContact;
+    }
+
+    return KABC::Addressee();
+}
+
+KJob* PersonData::saveCustomContact(const KABC::Addressee &customContact)
+{
+    Akonadi::AgentInstance customContactResource = KPeople::customContactsResource();
+
+    if (!customContactResource.isValid()) {
+        // Ideally we should return a job that fails immediately
+        // (hint in Tp::PendingFailure)
+        return 0;
+    }
+
+    Akonadi::CollectionFetchJob *job = new Akonadi::CollectionFetchJob(Akonadi::Collection::root(),
+                                                                       Akonadi::CollectionFetchJob::FirstLevel,
+                                                                       this);
+
+    job->exec();
+
+    if (job->error()) {
+        kWarning() << "Fetching collections failed;" << job->errorText();
+        return 0;
+    }
+
+    Akonadi::Collection customCollection;
+
+    Q_FOREACH (const Akonadi::Collection &collection, job->collections()) {
+        if (collection.resource() == customContactResource.identifier()) {
+            customCollection = collection;
+            break;
+        }
+    }
+
+    job->deleteLater();
+
+    KABC::Addressee nonConstCopy = customContact;
+    nonConstCopy.insertCustom("kpeople","customContact", "1");
+
+    Akonadi::Item customContactItem;
+    customContactItem.setMimeType("text/directory");
+    customContactItem.setPayload<KABC::Addressee>(nonConstCopy);
+
+    Akonadi::ItemCreateJob *createJob = new Akonadi::ItemCreateJob(customContactItem, customCollection, this);
+
+    return createJob;
 }

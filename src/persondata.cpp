@@ -90,7 +90,7 @@ KABC::Addressee PersonData::person() const
     return d->metaContact.personAddressee();
 }
 
-KABC::AddresseeList PersonData::contacts() const
+QList<Contact> PersonData::contacts() const
 {
     Q_D(const PersonData);
     return d->metaContact.contacts();
@@ -102,10 +102,10 @@ void PersonData::onContactChanged()
 
 
     ContactMonitor *watcher = qobject_cast<ContactMonitor*>(sender());
-    if (d->metaContact.contactIds().contains(watcher->contactId())) {
-        d->metaContact.updateContact(watcher->contactId(), watcher->contact());
+    if (d->contactIds.contains(watcher->contactId())) {
+        d->metaContact.updateContact(Contact(watcher->contactId(), watcher->contact()));
     } else {
-        d->metaContact.insertContact(watcher->contactId(), watcher->contact());
+        d->metaContact.insertContact(Contact(watcher->contactId(), watcher->contact()));
     }
     Q_EMIT dataChanged();
 }

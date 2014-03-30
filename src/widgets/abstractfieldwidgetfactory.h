@@ -32,6 +32,7 @@
 namespace KPeople
 {
 class AbstractFieldWidgetFactoryPrivate;
+class Contact;
 
 class KPEOPLE_EXPORT AbstractFieldWidgetFactory : public QObject
 {
@@ -42,7 +43,7 @@ public:
 
     virtual QString label() const = 0;
     virtual int sortWeight() const {return 100;}
-    virtual QWidget *createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const = 0;
+    virtual QWidget *createDetailsWidget(const KABC::Addressee &person, const QList<Contact> &contacts, QWidget *parent) const = 0;
 };
 }
 

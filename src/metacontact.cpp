@@ -22,6 +22,7 @@
 
 #include "metacontact_p.h"
 #include "global.h"
+#include "contact.h"
 #include <QSharedData>
 
 namespace KPeople {
@@ -29,8 +30,9 @@ class MetaContactData : public QSharedData
 {
 public:
     QString personId;
-    QStringList contactIds;
-    KABC::AddresseeList contacts; //TODO vector
+
+    QList<Contact> contacts;
+
     KABC::Addressee personAddressee;
 };
 }
@@ -50,7 +52,7 @@ d (new MetaContactData)
 
     KABC::Addressee::Map::const_iterator it = contacts.constBegin();
     while (it != contacts.constEnd()) {
-        insertContactInternal(it.key(), it.value());
+        insertContactInternal(Contact(it.key(), it.value()));
         it++;
     }
     reload();
@@ -60,7 +62,7 @@ MetaContact::MetaContact(const QString &contactId, const KABC::Addressee &contac
 d (new MetaContactData)
 {
     d->personId = contactId;
-    insertContactInternal(contactId, contact);
+    insertContactInternal(Contact(contactId, contact));
     reload();
 }
 
@@ -94,22 +96,28 @@ bool MetaContact::isValid() const
     return !d->contacts.isEmpty();
 }
 
+//deprecate this?
 QStringList MetaContact::contactIds() const
 {
-    return d->contactIds;
+    QStringList contactIds;
+    Q_FOREACH(const Contact &contact, d->contacts) {
+        contactIds << contact.uri();
+    }
+
+    return contactIds;
 }
 
-KABC::Addressee MetaContact::contact(const QString& contactId)
+Contact MetaContact::contact(const QString& contactId)
 {
-    int index = d->contactIds.indexOf(contactId);
+    int index = indexOf(contactId);
     if (index >= 0) {
         return d->contacts[index];
     } else {
-        return KABC::Addressee();
+        return Contact();
     }
 }
 
-KABC::AddresseeList MetaContact::contacts() const
+QList<Contact> MetaContact::contacts() const
 {
     return d->contacts;
 }
@@ -119,31 +127,38 @@ const KABC::Addressee& MetaContact::personAddressee() const
     return d->personAddressee;
 }
 
-int MetaContact::insertContact(const QString &contactId, const KABC::Addressee &contact)
+int MetaContact::insertContact(const Contact &contact)
 {
-    int index = insertContactInternal(contactId, contact);
+    int index = insertContactInternal(contact);
     reload();
     return index;
 }
 
 
-int MetaContact::insertContactInternal(const QString &contactId, const KABC::Addressee &contact)
+int MetaContact::insertContactInternal(const Contact &contact)
 {
-    if (d->contactIds.contains(contactId)) {
-        //if item is already listed, do nothing.
-        return -1;
-    } else {
-        //TODO if from the local address book - prepend to give higher priority.
-        int index = d->contacts.size();
-        d->contacts.append(contact);
-        d->contactIds.append(contactId);
-        return index;
-    }
+    //TODO custom contact
+    int index = d->contacts.size();
+    d->contacts.append(contact);
+    return index;
 }
 
-int MetaContact::updateContact(const QString& contactId, const KABC::Addressee& contact)
+int MetaContact::indexOf(const QString &contactId) const
 {
-    const int index = d->contactIds.indexOf(contactId);
+    //loop through all our contacts and see if any IDs match
+    //theoretically slow but most people will only have ~3 subcontacts max
+    //so loop is probably faster than any other solution
+    for (int i=0; i < d->contacts.size(); i++) {
+        if (d->contacts[i].uri() == contactId) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int MetaContact::updateContact(const Contact &contact)
+{
+    const int index = indexOf(contact.uri());
     if (index >= 0) {
         d->contacts[index] = contact;
     }
@@ -153,10 +168,9 @@ int MetaContact::updateContact(const QString& contactId, const KABC::Addressee& 
 
 int MetaContact::removeContact(const QString& contactId)
 {
-    const int index = d->contactIds.indexOf(contactId);
+    const int index = indexOf(contactId);
     if (index >= 0) {
         d->contacts.removeAt(index);
-        d->contactIds.removeAt(index);
         reload();
     }
     return index;

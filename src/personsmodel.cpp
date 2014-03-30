@@ -115,7 +115,7 @@ QVariant PersonsModel::dataForAddressee(const QString &personId, const KABC::Add
     case PersonVCardRole:
         return QVariant::fromValue<KABC::Addressee>(person);
     case ContactsVCardRole:
-        return QVariant::fromValue<KABC::AddresseeList>(d->metacontacts[personId].contacts());
+        return QVariant::fromValue<QList<Contact> >(d->metacontacts[personId].contacts());
     case GroupsRole:
         return person.categories();
     }
@@ -242,7 +242,7 @@ void PersonsModel::onContactAdded(const Contact &contact)
         } else {
             int newContactPos = mc.contacts().size();
             beginInsertRows(index(d->personIds.indexOf(personId)), newContactPos, newContactPos);
-            mc.insertContact(contact.uri(), contact);
+            mc.insertContact(contact);
             endInsertRows();
             personChanged(personId);
         }
@@ -258,7 +258,7 @@ void PersonsModel::onContactChanged(const Contact &contact)
     Q_D(PersonsModel);
 
     const QString &personId = personIdForContact(contact.uri());
-    int row = d->metacontacts[personId].updateContact(contact.uri(), contact);
+    int row = d->metacontacts[personId].updateContact(contact);
 
     const QModelIndex contactIndex = index(row,
                                            0,
@@ -296,8 +296,8 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
     d->contactToPersons.insert(contactId, newPersonId);
 
     //get contact already in the model, remove it from the previous contact
-    const KABC::Addressee &contact = d->metacontacts[oldPersonId].contact(contactId);
-    int contactPosition = d->metacontacts[oldPersonId].contacts().indexOf(contact);
+    const Contact &contact = d->metacontacts[oldPersonId].contact(contactId);
+    int contactPosition = d->metacontacts[oldPersonId].indexOf(contactId);
     beginRemoveRows(index(d->personIds.indexOf(oldPersonId), 0), contactPosition, contactPosition);
     d->metacontacts[oldPersonId].removeContact(contactId);
     endRemoveRows();
@@ -312,7 +312,7 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
     if (d->personIds.contains(newPersonId)) {
         int newContactPos = d->metacontacts[newPersonId].contacts().size();
         beginInsertRows(index(d->personIds.indexOf(newPersonId), 0), newContactPos, newContactPos);
-        d->metacontacts[newPersonId].insertContact(contactId, contact);
+        d->metacontacts[newPersonId].insertContact(contact);
         endInsertRows();
         personChanged(newPersonId);
     } else { //if the person is not in the model, create a new person and insert it

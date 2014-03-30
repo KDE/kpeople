@@ -29,14 +29,15 @@
 
 
 #include <KABC/AddresseeList>
+
 #include "global.h"
+#include "contact.h"
 
 namespace KPeople
 {
 class PersonsModelFeature;
 class MetaContact;
 class PersonsModelPrivate;
-class Contact;
 
 /**
  * This class creates a model of all known contacts from all sources
@@ -106,5 +107,7 @@ private:
 
 // Q_DECLARE_METATYPE(KABC::Addressee)
 Q_DECLARE_METATYPE(KABC::AddresseeList)
+Q_DECLARE_METATYPE(QList<KPeople::Contact>)
+
 
 #endif // PERSONS_MODEL_H

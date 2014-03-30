@@ -32,6 +32,7 @@ namespace KPeople
 class PersonDataPrivate;
 
 class PersonData;
+class Contact;
 
 class KPEOPLE_EXPORT PersonData : public QObject
 {
@@ -54,7 +55,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /**
          * Returns information from each contact source
          */
-        KABC::AddresseeList contacts() const;
+        QList<Contact> contacts() const;
 
     Q_SIGNALS:
         /**

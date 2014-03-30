@@ -31,6 +31,7 @@
 
 namespace KPeople {
 class MetaContactData;
+class Contact;
 
 class MetaContact
 {
@@ -50,24 +51,26 @@ public:
     bool isValid() const;
 
     QStringList contactIds() const;
-    KABC::AddresseeList contacts() const;
+    QList<Contact> contacts() const;
 
-    KABC::Addressee contact(const QString &contactId);
+    Contact contact(const QString &contactId);
     const KABC::Addressee& personAddressee() const;
 
     //update one of the stored contacts in this metacontact object
     //@return the index of the contact which was inserted
 
-    int insertContact(const QString &contactId, const KABC::Addressee &contact);
+    int insertContact(const Contact &contact);
 
-    int updateContact(const QString &contactId, const KABC::Addressee &contact);
+    int updateContact(const Contact &contact);
 
     int removeContact(const QString &contactId);
+
+    int indexOf(const QString &contactId) const;
 
 private:
     //does the real inserting contacts. Split so that we don't call the expensive "reload" function
     //multiple times at startup
-    int insertContactInternal(const QString &contactId, const KABC::Addressee &contact);
+    int insertContactInternal(const Contact &contact);
 
     void reload();
 

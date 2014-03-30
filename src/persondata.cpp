@@ -28,6 +28,7 @@
 
 #include <Akonadi/CollectionFetchJob>
 #include <Akonadi/ItemCreateJob>
+#include <Akonadi/ItemModifyJob>
 #include <Akonadi/Item>
 
 namespace KPeople {
@@ -134,11 +135,29 @@ KABC::Addressee PersonData::customContact() const
 
 void PersonData::saveCustomContact(const KABC::Addressee &customContact)
 {
+    Q_D(PersonData);
+
     Akonadi::AgentInstance customContactResource = KPeople::customContactsResource();
 
     if (!customContactResource.isValid()) {
         // Ideally we should return a job that fails immediately
         // (hint in Tp::PendingFailure)
+        return;
+    }
+
+    // If the custom contact already exists, we need to issue ItemModifyJob
+    // If not, we'll continue with ItemCreateJob
+    if (!d->customContact.isEmpty()) {
+        Akonadi::Item customContactItem = Akonadi::Item::fromUrl(d->customContactId);
+        customContactItem.setPayload<KABC::Addressee>(customContact);
+
+        Akonadi::ItemModifyJob *modifyJob = new Akonadi::ItemModifyJob(customContactItem, this);
+        modifyJob->exec();
+
+        if (modifyJob->error()) {
+            kWarning() << "Failed to finish the custom contact modify job:" << modifyJob->errorText();
+        }
+
         return;
     }
 

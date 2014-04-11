@@ -29,6 +29,7 @@ public:
     int initialFetchesDoneCount;
 
     bool isInitialized;
+    bool hasError;
 };
 }
 
@@ -43,6 +44,7 @@ PersonsModel::PersonsModel(QObject *parent):
     d->genericAvatarImagePath = KStandardDirs::locate("data", "kpeople/dummy_avatar.png");
     d->initialFetchesDoneCount = 0;
     d->isInitialized = false;
+    d->hasError = false;
 
     Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
         const AllContactsMonitorPtr monitor = dataSource->allContactsMonitor();
@@ -179,10 +181,13 @@ void PersonsModel::onMonitorInitialFetchComplete(bool success)
     Q_D(PersonsModel);
 
     d->initialFetchesDoneCount++;
+    if (!success) {
+        d->hasError = true;
+    }
     Q_ASSERT(d->initialFetchesDoneCount <= d->m_sourceMonitors.count());
     if (d->initialFetchesDoneCount == d->m_sourceMonitors.count()) {
         d->isInitialized = true;
-        Q_EMIT modelInitialized(success);
+        Q_EMIT modelInitialized(d->hasError);
     }
 }
 

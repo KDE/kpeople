@@ -87,7 +87,7 @@ private Q_SLOTS:
     void onAddContactToPerson(const QString &contactId, const QString &newPersonId);
     void onRemoveContactsFromPerson(const QString &contactId);
 
-    void onMonitorInitialFetchComplete(bool success);
+    void onMonitorInitialFetchComplete(bool success = true);
 
 private:
     Q_DISABLE_COPY(PersonsModel)

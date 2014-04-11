@@ -50,6 +50,7 @@ PersonsModel::PersonsModel(QObject *parent):
         }
         d->m_sourceMonitors << monitor;
     }
+    onContactsFetched();
 
     connect(PersonManager::instance(), SIGNAL(contactAddedToPerson(QString,QString)), SLOT(onAddContactToPerson(QString,QString)));
     connect(PersonManager::instance(), SIGNAL(contactRemovedFromPerson(QString)), SLOT(onRemoveContactsFromPerson(QString)));
@@ -169,7 +170,6 @@ void PersonsModel::onMonitorInitialFetchComplete()
     d->initialFetchesDoneCount++;
     Q_ASSERT(d->initialFetchesDoneCount <= d->m_sourceMonitors.count());
     if (d->initialFetchesDoneCount == d->m_sourceMonitors.count()) {
-        onContactsFetched();
         Q_EMIT modelInitialized();
     }
 }

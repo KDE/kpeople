@@ -144,7 +144,7 @@ void AkonadiAllContacts::onItemsFetched(KJob *job)
     }
 
     if (--m_activeFetchJobsCount == 0 && !isInitialFetchComplete()) {
-        emitInitialFetchComplete();
+        emitInitialFetchComplete(true);
     }
 }
 
@@ -174,7 +174,7 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
         }
     }
     if (m_activeFetchJobsCount == 0 && !isInitialFetchComplete()) {
-        emitInitialFetchComplete();
+        emitInitialFetchComplete(true);
 
     }
 }
@@ -183,7 +183,7 @@ void AkonadiAllContacts::onServerStateChanged(ServerManager::State state)
 {
     //if we're broken tell kpeople we've loaded so kpeople doesn't block
     if(state == Akonadi::ServerManager::Broken && !isInitialFetchComplete()) {
-        emitInitialFetchComplete();
+        emitInitialFetchComplete(false);
         qWarning() << "Akonadi failed to load, some metacontact features may not be available";
         qWarning() << "For more information please load akonadi_console" ;
     }

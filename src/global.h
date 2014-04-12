@@ -34,11 +34,12 @@ class QAction;
 namespace KPeople
 {
     /**
-     * Merge all ids (person IDs and contactIds into a single person)
-     * returns the ID that will be created.
+     * Merge all ids into a single person.
+     * Ids can be a mix of person Ids and contact IDs.
+     *
      * @arg ids a list of all identifiers to be merged
      *
-     * @return the identifier of the new person
+     * @return the identifier of the new person or an empty string upon failure
      */
     KPEOPLE_EXPORT QString mergeContacts(const QStringList &ids);
 

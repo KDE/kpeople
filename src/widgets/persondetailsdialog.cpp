@@ -61,6 +61,8 @@ void PersonDetailsDialog::setPerson(PersonData *person)
 {
     Q_D(PersonDetailsDialog);
     d->view->setPerson(person);
+
+    setWindowTitle(person->person().formattedName());
 }
 
 

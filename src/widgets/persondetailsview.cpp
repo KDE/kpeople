@@ -88,7 +88,7 @@ QWidget* CoreFieldsPlugin::createDetailsWidget(const KABC::Addressee &person, co
 {
     Q_UNUSED(contacts)
     //don't handle emails here - KABC::Field just lists one which is rubbish. Instead use a custom plugin that lists everything
-    if (m_field->category() == KABC::Field::Email) {
+    if (m_field->category() & KABC::Field::Email) {
         return 0;
     }
 

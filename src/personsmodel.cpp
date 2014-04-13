@@ -187,7 +187,7 @@ void PersonsModel::onMonitorInitialFetchComplete(bool success)
     Q_ASSERT(d->initialFetchesDoneCount <= d->m_sourceMonitors.count());
     if (d->initialFetchesDoneCount == d->m_sourceMonitors.count()) {
         d->isInitialized = true;
-        Q_EMIT modelInitialized(d->hasError);
+        Q_EMIT modelInitialized(!d->hasError);
     }
 }
 

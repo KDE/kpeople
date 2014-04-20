@@ -297,16 +297,21 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
 {
     Q_D(PersonsModel);
 
+    const QString oldPersonId = personIdForContact(contactId);
+
     d->contactToPersons.insert(contactId, newPersonId);
 
-    const QString oldPersonId = personIdForContact(contactId);
     int oldPersonRow = d->personIndex[oldPersonId].row();
+
+    if (oldPersonRow < 0) {
+        return;
+    }
+
     MetaContact &oldMc = d->metacontacts[oldPersonRow];
 
     //get contact already in the model, remove it from the previous contact
-    const KABC::Addressee &contact = oldMc.contact(contactId);
-
-    int contactPosition = oldMc.contacts().indexOf(contact);
+    int contactPosition = oldMc.contactIds().indexOf(contactId);
+    const KABC::Addressee contact = oldMc.contacts().at(contactPosition);
 
     beginRemoveRows(index(oldPersonRow), contactPosition, contactPosition);
     oldMc.removeContact(contactId);
@@ -337,24 +342,26 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
 
 void PersonsModel::onRemoveContactsFromPerson(const QString &contactId)
 {
-    //FIXME DAVE
-//     Q_D(PersonsModel);
-//
-//     const QString personId = personIdForContact(contactId);
-//     const KABC::Addressee &contact = d->metacontacts[personId].contact(contactId);
-//     d->metacontacts[personId].removeContact(contactId);
-//     d->contactToPersons.remove(contactId);
-//
-//     //if we don't want the person object anymore
-//     if (!d->metacontacts[personId].isValid()) {
-//         removePerson(personId);
-//     } else {
-//         personChanged(personId);
-//     }
-//
-//     //now re-insert as a new contact
-//     //we know it's not part of a metacontact anymore so reinsert as a contact
-//     addPerson(MetaContact(contactId, contact));
+    Q_D(PersonsModel);
+
+    const QString personId = personIdForContact(contactId);
+    int personRow = d->personIndex[personId].row();
+    MetaContact &mc = d->metacontacts[personRow];
+
+    const KABC::Addressee &contact = mc.contact(contactId);
+    mc.removeContact(contactId);
+    d->contactToPersons.remove(contactId);
+
+    //if we don't want the person object anymore
+    if (!mc.isValid()) {
+        removePerson(personId);
+    } else {
+        personChanged(personId);
+    }
+
+    //now re-insert as a new contact
+    //we know it's not part of a metacontact anymore so reinsert as a contact
+    addPerson(MetaContact(contactId, contact));
 }
 
 void PersonsModel::addPerson(const KPeople::MetaContact &mc)

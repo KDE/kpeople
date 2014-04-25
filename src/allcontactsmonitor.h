@@ -51,7 +51,10 @@ public:
      */
     virtual KABC::Addressee::Map contacts();
 
+    //TODO redo as a state enum - InitialLoad, Fail, Loaded
     bool isInitialFetchComplete() const;
+    
+    bool initialFetchSuccess() const;
 
 Q_SIGNALS:
     /**

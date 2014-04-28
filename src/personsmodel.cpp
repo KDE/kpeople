@@ -104,9 +104,9 @@ QVariant PersonsModel::dataForAddressee(const QString &personId, const KABC::Add
         if (!person.photo().data().isNull()) {
             return person.photo().data();
         } else if (!person.photo().url().isEmpty()) {
-            return QImage(person.photo().url());
+            return QPixmap(person.photo().url());
         } else {
-            return QImage(d->genericAvatarImagePath);
+            return QPixmap(d->genericAvatarImagePath);
         }
     case PersonIdRole:
         return personId;

@@ -4,7 +4,11 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set (kpeople_widgets_SRCS persondetailsdialog.cpp
+set (kpeople_widgets_SRCS 
+    plugins/emaillistmodel.cpp 
+    personemailview.cpp 
+    plugins/emails.cpp 
+    persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp
     plugins/emaildetailswidget.cpp
@@ -25,6 +29,9 @@ target_link_libraries (kpeoplewidgets
                        ${QT_QTGUI_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        ${KDEPIMLIBS_KABC_LIBS}
+                       ${KDEPIMLIBS_AKONADI_LIBS}
+		       ${KDEPIMLIBS_KMIME_LIBS}
+                       ${BALOO_LIBRARIES}                       
                        kpeople
 )
 
@@ -45,6 +52,7 @@ install (TARGETS kpeoplewidgets
 install (FILES
             abstractfieldwidgetfactory.h
             persondetailsview.h
+            personemailview.h
 #             mergedialog.h
             persondetailsdialog.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets
@@ -52,6 +60,7 @@ install (FILES
 )
 
 install (FILES persondetailsplugin.desktop
+	 personemailplugin.desktop
          DESTINATION
          ${SERVICETYPES_INSTALL_DIR}
 )

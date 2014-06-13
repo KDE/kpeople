@@ -35,13 +35,14 @@
 
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaildetailswidget.h"
+#include "plugins/emails.h"
 #include "global.h"
 
 #include "ui_person-details-presentation.h"
 
 namespace KPeople {
 
-class PersonDetailsViewPrivate{
+class PersonDetailsViewPrivate {
 public:
     PersonData  *m_person;
     Ui::PersonDetailsPresentation *m_personDetailsPresentation;
@@ -115,6 +116,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     layout()->addWidget(details);
     layout()->addWidget(d->m_mainWidget);
     layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
+
 
     //create plugins
     Q_FOREACH(KABC::Field *field, KABC::Field::allFields()) {

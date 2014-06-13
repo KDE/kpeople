@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=KPeopleWidgets/Plugin
+
+X-KDE-Library=emailsplugin
+X-KDE-PluginInfo-Name=emailsplugin
+X-KDE-PluginInfo-Author=Nilesh Suthar
+X-KDE-PluginInfo-Email=nil.15111993@gmail.com
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-License=LGPL
+X-KPeople-Weight=1

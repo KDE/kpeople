@@ -35,10 +35,41 @@ EmailListModel::EmailListModel(QList<email> list, QObject *parent) : QAbstractLi
 };
 
 
+int EmailListModel::columnCount(const QModelIndex& parent) const
+{
+    Q_UNUSED(parent);
+    return 3;
+}
+
+
 int EmailListModel::rowCount( const QModelIndex & parent ) const {
     Q_UNUSED(parent);
     return emailList.count();
 }
+
+QVariant EmailListModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (role != Qt::DisplayRole)
+        return QVariant();
+
+    if (orientation == Qt::Horizontal) {
+        switch (section) {
+        case 0:
+            return tr("Subject");
+
+        case 1:
+            return tr("Description");
+
+        case 2:
+            return tr("Date");
+
+        default:
+            return "Other";
+        }
+    }
+    return QVariant();
+}
+
 
 QVariant EmailListModel::data( const QModelIndex & index, int role) const
 {
@@ -47,6 +78,7 @@ QVariant EmailListModel::data( const QModelIndex & index, int role) const
         return QVariant();
 
     if ( role == Qt::DisplayRole ) {
+
         struct email mail = emailList.at(index.row());
         QString desc = mail.desc;
         QString subject = mail.subject;
@@ -61,7 +93,15 @@ QVariant EmailListModel::data( const QModelIndex & index, int role) const
         desc.replace('\n',' ');
         desc.truncate(40);
 
-        rowString = rowString.sprintf("%-40s\t%-55s\t%30s",subject.toStdString().c_str(),desc.toStdString().c_str(),dateString.toStdString().c_str());
+        if(index.column()==0) {
+            rowString = subject;
+        }
+        else if(index.column()==1) {
+            rowString = desc;
+        }
+        else if(index.column()==2) {
+            rowString = dateString;
+        }
 
         return rowString;
     }

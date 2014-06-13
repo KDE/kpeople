@@ -25,7 +25,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <qpushbutton.h>
-#include <qlistview.h>
+#include <QTableView>
 #include <QDebug>
 #include <baloo/query.h>
 #include <baloo/resultiterator.h>
@@ -63,7 +63,8 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
     Q_UNUSED(contacts);
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(widget);
-    QListView *lv = new QListView(parent);
+    QTableView *tv = new QTableView(parent);
+
     layout->setContentsMargins(0,0,0,0);
 
     Baloo::Query query;
@@ -74,7 +75,7 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
 
     while(rt.next()) {
         hasMsg = true;
-        qDebug()<<"baloo return: "+ rt.text();
+
         Akonadi::Item it = Item::fromUrl(rt.url());
         ItemFetchJob* itemFetchJob = new ItemFetchJob(it);
         itemFetchJob->fetchScope().fetchFullPayload();
@@ -82,14 +83,14 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
     }
 
     if(hasMsg) {
-        lv->setModel(me);
-        lv->show();
-        lv->setSelectionMode(QAbstractItemView::SingleSelection);
-        layout->addWidget(lv);
-        connect(lv,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(onEmailDoubleClicked(QModelIndex)));
+        tv->setModel(me);
+        tv->show();
+        tv->setSelectionMode(QAbstractItemView::SingleSelection);
+        layout->addWidget(tv);
+        connect(tv,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(onEmailDoubleClicked(QModelIndex)));
     }
     else {
-        lv->hide();
+        tv->hide();
         layout->addWidget(new QLabel("No Emails"));
     }
     widget->setLayout(layout);
@@ -126,9 +127,6 @@ void Emails::jobFinished(KJob* job)
         KMime::Headers::Subject *subject = msg.subject();
         KMime::Headers::Date* date = msg.date();
         KMime::Content* textContent = msg.textContent();
-
-        qDebug() << "Item Payload:" << item.attributes();
-        qDebug() << "subject: "<< subject->asUnicodeString();
 
         struct email mail;
         mail.subject = subject->asUnicodeString();

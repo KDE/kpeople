@@ -4,7 +4,9 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-set (kpeople_widgets_SRCS 
+set (kpeople_widgets_SRCS
+    plugins/note.cpp
+    personnoteview.cpp 
     plugins/emaillistmodel.cpp 
     personemailview.cpp 
     plugins/emails.cpp 
@@ -53,6 +55,7 @@ install (FILES
             abstractfieldwidgetfactory.h
             persondetailsview.h
             personemailview.h
+            personnoteview.h
 #             mergedialog.h
             persondetailsdialog.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets

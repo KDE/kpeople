@@ -26,11 +26,11 @@
 #include <KGlobal>
 #include <KLocale>
 
-EmailListModel::EmailListModel(QObject *parent) : QAbstractListModel(parent) {
+EmailListModel::EmailListModel(QObject *parent) : QAbstractTableModel(parent) {
 
 }
 
-EmailListModel::EmailListModel(QList<email> list, QObject *parent) : QAbstractListModel(parent) {
+EmailListModel::EmailListModel(QList<email> list, QObject *parent) : QAbstractTableModel(parent) {
     emailList = list;
 };
 

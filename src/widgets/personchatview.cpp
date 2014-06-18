@@ -20,8 +20,7 @@
  *
  */
 
-#include "personnoteview.h"
-
+#include "personchatview.h"
 #include <qtest_kde.h>
 
 #include <QFormLayout>
@@ -39,13 +38,13 @@
 #include <KPluginFactory>
 
 #include "abstractfieldwidgetfactory.h"
-#include "plugins/note.h"
+#include "plugins/chat.h"
 #include "global.h"
 
 
 namespace KPeople {
 
-class PersonNoteViewPrivate {
+class PersonChatViewPrivate {
 public:
     PersonData  *m_person;
     QWidget *m_mainWidget;
@@ -54,39 +53,39 @@ public:
 
 using namespace KPeople;
 
-PersonNoteView::PersonNoteView(QWidget *parent)
+PersonChatView::PersonChatView(QWidget *parent)
     : QWidget(parent),
-      d_ptr(new PersonNoteViewPrivate())
+      d_ptr(new PersonChatViewPrivate())
 {
-    Q_D(PersonNoteView);
+    Q_D(PersonChatView);
     setLayout(new QVBoxLayout(this));
     d->m_mainWidget = new QWidget(this);
     d->m_person = 0;
 
-    d->m_note = new Note();
+    d->m_note = new Chat();
 
 }
 
-PersonNoteView::~PersonNoteView()
+PersonChatView::~PersonChatView()
 {
     delete d_ptr;
 }
 
-void PersonNoteView::setPerson(PersonData *person)
+void PersonChatView::setPerson(PersonData *person)
 {
-    Q_D(PersonNoteView);
+    Q_D(PersonChatView);
     if (d->m_person) {
         disconnect(d->m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
     }
-    
+
     d->m_person = person;
     connect(d->m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
     reload();
 }
 
-void PersonNoteView::reload()
+void PersonChatView::reload()
 {
-    Q_D(PersonNoteView);
+    Q_D(PersonChatView);
 
     //replace the entire main widget
     int layoutIndex = layout()->indexOf(d->m_mainWidget);
@@ -97,7 +96,7 @@ void PersonNoteView::reload()
 
     QFormLayout *layout = new QFormLayout(d->m_mainWidget);
     layout->setSpacing(4);
-    
+
     QWidget *widget = d->m_note->createDetailsWidget(d->m_person->person(), d->m_person->contacts(), this);
 
     layout->addRow(widget);
@@ -106,4 +105,4 @@ void PersonNoteView::reload()
 
 }
 
-#include "personnoteview.moc"
+#include "personchatview.moc"

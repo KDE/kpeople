@@ -1,10 +1,12 @@
-# add_subdirectory(plugins)
+#add_subdirectory(plugins)
 
 include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 set (kpeople_widgets_SRCS
+    plugins/chat.cpp
+    personchatview.cpp
     plugins/note.cpp
     personnoteview.cpp 
     plugins/emaillistmodel.cpp 
@@ -32,7 +34,7 @@ target_link_libraries (kpeoplewidgets
                        ${KDE4_KDEUI_LIBS}
                        ${KDEPIMLIBS_KABC_LIBS}
                        ${KDEPIMLIBS_AKONADI_LIBS}
-		       ${KDEPIMLIBS_KMIME_LIBS}
+                       ${KDEPIMLIBS_KMIME_LIBS}
                        ${BALOO_LIBRARIES}                       
                        kpeople
 )
@@ -56,6 +58,7 @@ install (FILES
             persondetailsview.h
             personemailview.h
             personnoteview.h
+            personchatview.h
 #             mergedialog.h
             persondetailsdialog.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets

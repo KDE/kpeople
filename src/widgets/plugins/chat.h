@@ -20,43 +20,30 @@
  *
  */
 
-#ifndef NOTE_H
-#define NOTE_H
-
+#ifndef CHAT_H
+#define CHAT_H
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaillistmodel.h"
 #include <QItemSelection>
 #include <KJob>
 #include <Akonadi/Collection>
-#include <KABC/Addressee>
-#include <KABC/AddresseeList>
-#include <Akonadi/ItemModifyJob>
 #include <KDateTime>
-#include <QTextEdit>
-#include <QPushButton>
+#include <qtextedit.h>
+#include <qpushbutton.h>
 
 using namespace KPeople;
 
 
-class Note : public AbstractFieldWidgetFactory
+class Chat : public AbstractFieldWidgetFactory
 {
     Q_OBJECT
 public:
-    explicit Note (QObject* parent = 0);
+    explicit Chat (QObject* parent = 0);
     virtual QString label() const;
     virtual int sortWeight() const;
     virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
     
-private Q_SLOTS:
-    void saveNote(bool);
-    void textChanged();
-    void contactModifyResult( KJob* );
-    
-private:
-  QTextEdit *m_noteEditor;
-  QPushButton *m_saveBtn;
-  KABC::Addressee m_person;
-    
 };
 
-#endif // NOTE_H
+
+#endif // CHAT_H

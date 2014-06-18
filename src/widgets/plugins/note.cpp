@@ -24,17 +24,17 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
-#include <qtextedit.h>
-#include <qpushbutton.h>
 #include <QDebug>
 #include <KPluginFactory>
 #include <KLocalizedString>
 
-#include <KABC/Addressee>
 #include <KPluginFactory>
 #include <KPluginLoader>
 
 #include <QDebug>
+
+using namespace Akonadi;
+
 
 Note::Note(QObject* parent): AbstractFieldWidgetFactory(parent)
 {
@@ -46,35 +46,61 @@ QWidget* Note::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0,0,0,0);
-    QTextEdit *noteEditor = new QTextEdit(parent);
-    QPushButton *save = new QPushButton("Save");
-    noteEditor->setText(person.note());
+
+    const_cast<Note*> (this)->m_noteEditor = new QTextEdit(parent);
+    const_cast<Note*> (this)->m_saveBtn = new QPushButton("Save");
+    const_cast<Note*> (this)->m_person = person;
+
+    m_noteEditor->setText(person.note());
+    
 
     if(person.note() != "")
-        noteEditor->setDisabled(true);
-
-    connect(save,SIGNAL(clicked(bool)),this,SLOT(saveNote(bool)));
-    connect(noteEditor,SIGNAL(textChanged()),this,SLOT(textChanged()));
-    layout->addWidget(noteEditor);
-    layout->addWidget(save);
+        m_noteEditor->setDisabled(true);
+    connect(m_saveBtn,SIGNAL(clicked(bool)),this,SLOT(saveNote(bool)));
+    connect(m_noteEditor,SIGNAL(textChanged()),this,SLOT(textChanged()));
+    this->m_saveBtn->setDisabled(true);
+    layout->addWidget(m_noteEditor);
+    layout->addWidget(m_saveBtn);
     widget->setLayout(layout);
     return widget;
 }
 
 void Note::saveNote(bool)
 {
- //TODO On save get qtextedit refrence and save the text
+    QString newNote = this->m_noteEditor->toPlainText();
+
+    qDebug() << "Save Note";
+    
+    //FIXME Some ids are ktp:// in form so they are not being saved
+    qDebug()<< m_person.custom("akonadi","id");
+    const KUrl &url = KUrl(m_person.custom("akonadi","id"));
+    Akonadi::Item item = Item::fromUrl(url);
+    qDebug() << item.id();
+    m_person.setNote(newNote);
+    item.setPayload<KABC::Addressee>( m_person );
+    item.setMimeType( KABC::Addressee::mimeType() );
+    Akonadi::ItemModifyJob *job = new Akonadi::ItemModifyJob( item );
+    connect( job, SIGNAL( result( KJob* ) ), SLOT( contactModifyResult( KJob* ) ) );
+
 }
+void Note::contactModifyResult(KJob* job)
+{
+    if ( job->error() != 0 ) {
+        // error handling, see job->errorString()
+        return;
+    }
+    qDebug()<< "saved";
+}
+
 
 void Note::textChanged()
 {
-  //TODO enable save button on text changed
+    this->m_saveBtn->setDisabled(false);
 }
-
 
 QString Note::label() const
 {
-    return i18n("Mails");
+    return i18n("Notes");
 }
 
 int Note::sortWeight() const
@@ -83,3 +109,4 @@ int Note::sortWeight() const
 }
 
 #include "note.moc"
+

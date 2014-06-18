@@ -20,43 +20,42 @@
  *
  */
 
-#ifndef NOTE_H
-#define NOTE_H
-
-#include "abstractfieldwidgetfactory.h"
-#include "plugins/emaillistmodel.h"
-#include <QItemSelection>
-#include <KJob>
-#include <Akonadi/Collection>
+#include "chat.h"
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QDebug>
+#include <KPluginFactory>
+#include <KLocalizedString>
 #include <KABC/Addressee>
-#include <KABC/AddresseeList>
-#include <Akonadi/ItemModifyJob>
-#include <KDateTime>
-#include <QTextEdit>
-#include <QPushButton>
-
-using namespace KPeople;
+#include <KPluginFactory>
+#include <KPluginLoader>
 
 
-class Note : public AbstractFieldWidgetFactory
+#include <QDebug>
+
+Chat::Chat(QObject* parent): AbstractFieldWidgetFactory(parent)
 {
-    Q_OBJECT
-public:
-    explicit Note (QObject* parent = 0);
-    virtual QString label() const;
-    virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
-    
-private Q_SLOTS:
-    void saveNote(bool);
-    void textChanged();
-    void contactModifyResult( KJob* );
-    
-private:
-  QTextEdit *m_noteEditor;
-  QPushButton *m_saveBtn;
-  KABC::Addressee m_person;
-    
-};
+}
 
-#endif // NOTE_H
+QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
+{
+    Q_UNUSED(contacts);
+    QWidget *widget = new QWidget(parent);
+    QVBoxLayout *layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0,0,0,0);
+    layout->addWidget(new QLabel("Chat coming soon"));
+    widget->setLayout(layout);
+    return widget;
+}
+
+QString Chat::label() const
+{
+    return i18n("Chat");
+}
+
+int Chat::sortWeight() const
+{
+    return 0;
+}
+
+#include "chat.moc"

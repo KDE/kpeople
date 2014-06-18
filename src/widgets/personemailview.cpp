@@ -99,9 +99,9 @@ void PersonEmailsView::reload()
 
     QFormLayout *layout = new QFormLayout(d->m_mainWidget);
     layout->setSpacing(4);
-
+    
     QWidget *widget = d->m_emails->createDetailsWidget(d->m_person->person(), d->m_person->contacts(), this);
-
+      
     layout->addRow(widget);
 
 }

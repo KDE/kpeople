@@ -20,43 +20,39 @@
  *
  */
 
-#ifndef NOTE_H
-#define NOTE_H
+#ifndef PERSONCHATVIEW_H
+#define PERSONCHATVIEW_H
 
-#include "abstractfieldwidgetfactory.h"
-#include "plugins/emaillistmodel.h"
-#include <QItemSelection>
-#include <KJob>
-#include <Akonadi/Collection>
-#include <KABC/Addressee>
-#include <KABC/AddresseeList>
-#include <Akonadi/ItemModifyJob>
-#include <KDateTime>
-#include <QTextEdit>
-#include <QPushButton>
+#include <QWidget>
+#include <QVariantList>
 
-using namespace KPeople;
+#include "../kpeople_export.h"
 
+#include "../persondata.h"
 
-class Note : public AbstractFieldWidgetFactory
+class QLabel;
+class QVBoxLayout;
+
+namespace KPeople {
+class PersonChatViewPrivate;
+
+class KPEOPLE_EXPORT PersonChatView: public QWidget
 {
     Q_OBJECT
 public:
-    explicit Note (QObject* parent = 0);
-    virtual QString label() const;
-    virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
-    
-private Q_SLOTS:
-    void saveNote(bool);
-    void textChanged();
-    void contactModifyResult( KJob* );
-    
-private:
-  QTextEdit *m_noteEditor;
-  QPushButton *m_saveBtn;
-  KABC::Addressee m_person;
-    
-};
+    PersonChatView(QWidget *parent = 0);
+    virtual ~PersonChatView();
 
-#endif // NOTE_H
+public Q_SLOTS:
+    void setPerson(PersonData *person);
+
+private Q_SLOTS:
+    void reload();
+
+private:
+    Q_DECLARE_PRIVATE(PersonChatView)
+    PersonChatViewPrivate* d_ptr;
+};
+}
+
+#endif // PERSONCHATVIEW_H

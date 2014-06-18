@@ -112,7 +112,7 @@ KABC::AddresseeList MetaContact::contacts() const
 }
 
 const KABC::Addressee& MetaContact::personAddressee() const
-{
+{   
     return d->personAddressee;
 }
 
@@ -166,14 +166,17 @@ void MetaContact::reload()
     //TODO - long term goal: resource priority - local vcards for "people" trumps anything else. So we can set a preferred name etc.
 
     //Optimization, if only one contact use that for everything
+
     if (d->contacts.size() == 1) {
         d->personAddressee = d->contacts.first();
+	d->personAddressee.insertCustom("akonadi", "id", d->personId);
         return;
     }
 
     d->personAddressee = KABC::Addressee();
-
+    
     Q_FOREACH(const KABC::Addressee &contact, d->contacts) {
+
         //set items with multiple cardinality
         Q_FOREACH(const KABC::Address &address, contact.addresses()) {
             d->personAddressee.insertAddress(address);
@@ -283,7 +286,8 @@ void MetaContact::reload()
         // find most online presence
         const QString &contactPresence = contact.custom("telepathy", "presence");
         const QString &currentPersonPresence = d->personAddressee.custom("telepathy", "presence");
-
+	d->personAddressee.insertCustom("akonadi", "id", d->personId);
+	
         // FIXME This needs to be redone when presence changes
         if (!contactPresence.isEmpty()) {
             if (KPeople::presenceSortPriority(contactPresence) < KPeople::presenceSortPriority(currentPersonPresence)) {

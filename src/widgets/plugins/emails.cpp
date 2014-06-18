@@ -24,13 +24,14 @@
 
 #include <QVBoxLayout>
 #include <QLabel>
-#include <qpushbutton.h>
+#include <QPushButton>
 #include <QTableView>
 #include <QDebug>
 #include <baloo/query.h>
 #include <baloo/resultiterator.h>
 #include <KPluginFactory>
 #include <KLocalizedString>
+
 
 #include <Akonadi/Item>
 #include <Akonadi/ItemFetchJob>
@@ -42,7 +43,8 @@
 
 #include <KMime/Message>
 #include <KMimeType>
-
+#include <QSizePolicy>
+#include <QHeaderView>
 #include <KABC/Addressee>
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -51,20 +53,19 @@
 
 using namespace Akonadi;
 
+
 Emails::Emails(QObject* parent): AbstractFieldWidgetFactory(parent)
 {
     me = new EmailListModel(emailList);
 }
 
-
-
 QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
 {
     Q_UNUSED(contacts);
     QWidget *widget = new QWidget(parent);
+    
     QVBoxLayout *layout = new QVBoxLayout(widget);
-    QTableView *tv = new QTableView(parent);
-
+    QTableView *tv = new QTableView(parent);    
     layout->setContentsMargins(0,0,0,0);
 
     Baloo::Query query;
@@ -84,9 +85,17 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
 
     if(hasMsg) {
         tv->setModel(me);
+	
+	tv->setSelectionMode(QAbstractItemView::SingleSelection);
+	tv->setSelectionBehavior(QAbstractItemView::SelectRows);
+	tv->setEditTriggers(QAbstractItemView::NoEditTriggers); 
+	tv->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+	tv->horizontalHeader()->setStretchLastSection(true);
+	tv->setColumnWidth(0,150);
+	tv->setColumnWidth(1,350);
+	
         tv->show();
-        tv->setSelectionMode(QAbstractItemView::SingleSelection);
-        layout->addWidget(tv);
+       layout->addWidget(tv);
         connect(tv,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(onEmailDoubleClicked(QModelIndex)));
     }
     else {

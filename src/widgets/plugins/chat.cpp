@@ -24,14 +24,12 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QDebug>
-#include <KPluginFactory>
 #include <KLocalizedString>
 #include <KABC/Addressee>
 #include <KPluginFactory>
 #include <KPluginLoader>
-
-
-#include <QDebug>
+#include <QDir>
+#include <KStandardDirs>
 
 Chat::Chat(QObject* parent): AbstractFieldWidgetFactory(parent)
 {
@@ -43,7 +41,39 @@ QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0,0,0,0);
-    layout->addWidget(new QLabel("Chat coming soon"));
+    KStandardDirs dirs;
+
+    QString path = dirs.localxdgdatadir() + QDir::separator() + QLatin1String("TpLogger") + QDir::separator() + QLatin1String("logs");
+
+    QString id = person.custom("akonadi","id");
+    if (id.startsWith(QLatin1String("ktp://"))) {
+        id.remove(QLatin1String("ktp://"));
+        id.replace(QLatin1String("/"), QLatin1String("_"));
+        QString email = id;
+        email.remove(0,id.indexOf(QLatin1String("?"))+1);
+        id.remove(id.indexOf(QLatin1String("?")),id.length());
+        path += QDir::separator() + id + QDir::separator() + email;
+        QDir dir(path);
+  
+        if(dir.exists()) {
+            QStringList ss;
+            foreach(QString s, dir.entryList()) {
+                if(s.compare(QLatin1String(".")) && s.compare(QLatin1String("..")))
+                    ss.push_back(s);
+            }
+            foreach(QString s, ss) {
+	      
+
+            }
+            layout->addWidget(new QLabel(ss.first()));
+        } else {
+            layout->addWidget(new QLabel("Chats something"));
+        }
+
+//       layout->addWidget(new QLabel(id));
+    } else {
+        layout->addWidget(new QLabel("Chats not available"));
+    }
     widget->setLayout(layout);
     return widget;
 }

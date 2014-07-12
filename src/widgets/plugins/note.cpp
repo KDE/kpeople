@@ -28,7 +28,6 @@
 #include <KPluginFactory>
 #include <KLocalizedString>
 
-#include <KPluginFactory>
 #include <KPluginLoader>
 
 #include <QDebug>
@@ -52,10 +51,14 @@ QWidget* Note::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
     const_cast<Note*> (this)->m_person = person;
 
     m_noteEditor->setText(person.note());
-    
+     for(int i =0 ;i < person.customs().count();i++){
+       qDebug() << person.customs().at(i);
+    }
+    qDebug()<< m_person.custom("akonadi", "id");
 
-    if(person.note() != "")
-        m_noteEditor->setDisabled(true);
+//     if(person.note() != "")
+//         m_noteEditor->setDisabled(true);
+    
     connect(m_saveBtn,SIGNAL(clicked(bool)),this,SLOT(saveNote(bool)));
     connect(m_noteEditor,SIGNAL(textChanged()),this,SLOT(textChanged()));
     this->m_saveBtn->setDisabled(true);

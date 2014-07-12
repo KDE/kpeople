@@ -87,11 +87,12 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
     }
 
     if (index.parent().isValid()) {
+       
         if (role == ContactsVCardRole) {
             return QVariant::fromValue<KABC::AddresseeList>(KABC::AddresseeList());
         }
         const MetaContact &mc = d->metacontacts.at(index.parent().row());
-
+  
         return dataForAddressee(mc.id(), mc.contacts().at(index.row()), role);
     } else {
         const MetaContact &mc = d->metacontacts.at(index.row());
@@ -102,7 +103,7 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
 QVariant PersonsModel::dataForAddressee(const QString &personId, const KABC::Addressee &person, int role) const
 {
     Q_D(const PersonsModel);
-
+    
     switch(role) {
     case FormattedNameRole:
         return person.formattedName();

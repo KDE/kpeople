@@ -5,6 +5,8 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (kpeople_widgets_SRCS
+    plugins/events.cpp
+    personeventview.cpp
     plugins/chat.cpp
     personchatview.cpp
     plugins/note.cpp
@@ -35,7 +37,10 @@ target_link_libraries (kpeoplewidgets
                        ${KDEPIMLIBS_KABC_LIBS}
                        ${KDEPIMLIBS_AKONADI_LIBS}
                        ${KDEPIMLIBS_KMIME_LIBS}
-                       ${BALOO_LIBRARIES}                       
+                       ${BALOO_LIBRARIES}   
+                       ${LibKFbAPI_LIBRARY}
+                       ${KDEPIMLIBS_KCALCORE_LIBS}
+                       ${KDEPIMLIBS_KMIME_LIBS}
                        kpeople
 )
 
@@ -55,6 +60,7 @@ install (TARGETS kpeoplewidgets
 
 install (FILES
             abstractfieldwidgetfactory.h
+            personeventview.h
             persondetailsview.h
             personemailview.h
             personnoteview.h

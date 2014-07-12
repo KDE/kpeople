@@ -20,9 +20,7 @@
  *
  */
 
-#include "personnoteview.h"
-
-#include <qtest_kde.h>
+#include "personeventview.h"
 
 #include <QFormLayout>
 #include <QLabel>
@@ -39,13 +37,13 @@
 #include <KPluginFactory>
 
 #include "abstractfieldwidgetfactory.h"
-#include "plugins/note.h"
+#include "plugins/events.h"
 #include "global.h"
 
 
 namespace KPeople {
 
-class PersonNoteViewPrivate {
+class PersonEventViewPrivate {
 public:
     PersonData  *m_person;
     QWidget *m_mainWidget;
@@ -54,39 +52,39 @@ public:
 
 using namespace KPeople;
 
-PersonNoteView::PersonNoteView(QWidget *parent)
+PersonEventView::PersonEventView(QWidget *parent)
     : QWidget(parent),
-      d_ptr(new PersonNoteViewPrivate())
+      d_ptr(new PersonEventViewPrivate())
 {
-    Q_D(PersonNoteView);
+    Q_D(PersonEventView);
     setLayout(new QVBoxLayout(this));
     d->m_mainWidget = new QWidget(this);
     d->m_person = 0;
 
-    d->m_note = new Note();
+    d->m_note = new Events();
 
 }
 
-PersonNoteView::~PersonNoteView()
+PersonEventView::~PersonEventView()
 {
     delete d_ptr;
 }
 
-void PersonNoteView::setPerson(PersonData *person)
+void PersonEventView::setPerson(PersonData *person)
 {
-    Q_D(PersonNoteView);
+    Q_D(PersonEventView);
     if (d->m_person) {
         disconnect(d->m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
     }
-    
+
     d->m_person = person;
     connect(d->m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
     reload();
 }
 
-void PersonNoteView::reload()
+void PersonEventView::reload()
 {
-    Q_D(PersonNoteView);
+    Q_D(PersonEventView);
 
     //replace the entire main widget
     int layoutIndex = layout()->indexOf(d->m_mainWidget);
@@ -105,5 +103,4 @@ void PersonNoteView::reload()
 }
 
 }
-
-#include "personnoteview.moc"
+#include "personeventview.moc"

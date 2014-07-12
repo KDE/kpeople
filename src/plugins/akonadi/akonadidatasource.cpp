@@ -102,7 +102,12 @@ void AkonadiAllContacts::onItemAdded(const Item& item)
     }
     const QString id = item.url().prettyUrl();
     const KABC::Addressee contact = item.payload<KABC::Addressee>();
-    m_contacts[id] = contact;
+    
+    KABC::Addressee *pcontact  = (KABC::Addressee*) &contact;
+    if (id.startsWith(QLatin1String("akonadi://"))) 
+      pcontact->insertCustom("akonadi", "id", id);
+    
+    m_contacts[id] = contact;    
     Q_EMIT contactAdded(item.url().prettyUrl(), contact);
 }
 

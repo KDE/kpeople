@@ -23,6 +23,7 @@
 #include "personpluginmanager_p.h"
 #include "basepersonsdatasource.h"
 #include "contactmonitor.h"
+#include <QDebug>
 
 namespace KPeople {
     class PersonDataPrivate {
@@ -40,16 +41,15 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
     d_ptr(new PersonDataPrivate)
 {
     Q_D(PersonData);
-
     QString personId;
     //query DB
     if (id.startsWith("kpeople://")) {
         personId = id;
     } else {
-      //TODO personIdForContact is alway return
+      //TODO personIdForContact is alway return null
         personId = PersonManager::instance()->personIdForContact(id);
     }
-
+    
     if (personId.isEmpty()) {
         d->contactIds = QStringList() << id;
 	//FIXME Temporary workaround if personIdForContact is returning null

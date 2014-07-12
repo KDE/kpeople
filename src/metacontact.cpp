@@ -20,6 +20,7 @@
 #include "metacontact_p.h"
 #include "global.h"
 #include <QSharedData>
+#include <QDebug>
 
 namespace KPeople {
 class MetaContactData : public QSharedData
@@ -43,6 +44,7 @@ d(new MetaContactData)
 MetaContact::MetaContact(const QString& personId, const KABC::Addressee::Map& contacts):
 d (new MetaContactData)
 {
+  if(!personId.isEmpty())
     d->personId = personId;
 
     KABC::Addressee::Map::const_iterator it = contacts.constBegin();
@@ -165,11 +167,13 @@ void MetaContact::reload()
 
     //TODO - long term goal: resource priority - local vcards for "people" trumps anything else. So we can set a preferred name etc.
 
-    //Optimization, if only one contact use that for everything
-
+    //Optimization, if only one contact use that for everything 
     if (d->contacts.size() == 1) {
         d->personAddressee = d->contacts.first();
-	d->personAddressee.insertCustom("akonadi", "id", d->personId);
+// 	qDebug() << "dr" << d->contacts.first().custom("akonadi","id");
+	if(!d->personId.isEmpty()&& d->personAddressee.custom("akonadi", "id").isEmpty()){
+	  d->personAddressee.insertCustom("akonadi", "id", d->personId); 
+	}
         return;
     }
 
@@ -283,10 +287,13 @@ void MetaContact::reload()
             d->personAddressee.setPhoto(contact.photo());
         }
 
+        if (!contact.custom("akonadi", "id").isEmpty()) { 
+	  d->personAddressee.insertCustom("akonadi", "id", contact.custom("akonadi", "id"));
+	}
         // find most online presence
         const QString &contactPresence = contact.custom("telepathy", "presence");
         const QString &currentPersonPresence = d->personAddressee.custom("telepathy", "presence");
-	d->personAddressee.insertCustom("akonadi", "id", d->personId);
+	
 	
         // FIXME This needs to be redone when presence changes
         if (!contactPresence.isEmpty()) {

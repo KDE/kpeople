@@ -1,6 +1,5 @@
 /*
- * <one line to give the library's name and an idea of what it does.>
- * Copyright 2014  <copyright holder> <email>
+ * Copyright 2014  Nilesh Suthar <nileshsuthar@live.in>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as

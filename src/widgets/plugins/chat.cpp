@@ -30,6 +30,9 @@
 #include <KPluginLoader>
 #include <QDir>
 #include <KStandardDirs>
+#include <KTp/Logger/log-manager.h>
+#include <KTp/Logger/log-entity.h>
+#include <TelepathyQt/Account>
 
 Chat::Chat(QObject* parent): AbstractFieldWidgetFactory(parent)
 {
@@ -41,6 +44,31 @@ QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0,0,0,0);
+    if(person.custom("telepathy","accountPath").isEmpty()){
+      layout->addWidget(new QLabel("Chats for current contact is not available"));
+    }else{
+    
+      KTp::LogManager *logManager = KTp::LogManager::instance();
+      layout->addWidget(new QLabel("Work in Progress"));
+      qDebug() << person.custom("akonadi","id");
+      KTp::LogEntity logEntity = KTp::LogEntity(Tp::HandleTypeContact,person.custom("telepathy","contactId"));
+      Tp::AccountPtr account;
+      
+      qDebug() << logManager->logsExist(account,logEntity);
+      qDebug() << logEntity.isValid();
+//       qDebug() << logEntity.entityType();
+//       qDebug() << logEntity.id();
+      
+//       foreach(QString s , person.customs()){
+// 	 qDebug() << s;
+// 	 
+//       }
+      
+    }
+    
+    
+    
+/*    
     KStandardDirs dirs;
 
     QString path = dirs.localxdgdatadir() + QDir::separator() + QLatin1String("TpLogger") + QDir::separator() + QLatin1String("logs");
@@ -73,7 +101,7 @@ QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
 //       layout->addWidget(new QLabel(id));
     } else {
         layout->addWidget(new QLabel("Chats not available"));
-    }
+    }*/
     widget->setLayout(layout);
     return widget;
 }

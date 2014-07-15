@@ -36,11 +36,13 @@ target_link_libraries (kpeoplewidgets
                        ${KDE4_KDEUI_LIBS}
                        ${KDEPIMLIBS_KABC_LIBS}
                        ${KDEPIMLIBS_AKONADI_LIBS}
+                       ${KDEPIMLIBS_KCALCORE_LIBS}
                        ${KDEPIMLIBS_KMIME_LIBS}
                        ${BALOO_LIBRARIES}   
                        ${LibKFbAPI_LIBRARY}
-                       ${KDEPIMLIBS_KCALCORE_LIBS}
-                       ${KDEPIMLIBS_KMIME_LIBS}
+                       ${KTP_LIBRARIES}
+                       ${KTP_LOGGER_LIBRARIES}
+                       ${KTP_MODELS_LIBRARIES}
                        kpeople
 )
 

@@ -21,6 +21,7 @@ set(KPEOPLE_LIBVERSION "${KPEOPLE_SOVERSION}.${KPEOPLE_VERSION_MINOR}.${KPEOPLE_
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (KdepimLibs REQUIRED)
 find_package(Baloo REQUIRED)
+find_package (TelepathyQt4 0.9.3 REQUIRED)
 
 include (KDE4Defaults)
 include (MacroLibrary)
@@ -30,6 +31,8 @@ include_directories (${KDE4_INCLUDES}
                      ${CMAKE_CURRENT_BINARY_DIR}
                      ${KDEPIMLIBS_INCLUDE_DIRS}
                      ${BALOO_INCLUDE_DIR}
+                     ${TELEPATHY_QT4_INCLUDE_DIR}
+                     ${KTP_INCLUDE_DIR}
 )
 
 if(KdepimLibs_VERSION_MINOR GREATER 11)

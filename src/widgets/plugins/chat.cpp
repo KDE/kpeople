@@ -30,50 +30,79 @@
 #include <KPluginLoader>
 #include <QDir>
 #include <KStandardDirs>
+#include <KTp/core.h>
 #include <KTp/Logger/log-manager.h>
 #include <KTp/Logger/log-entity.h>
+#include <KTp/Logger/pending-logger-logs.h>
+#include <KTp/message.h>
 #include <TelepathyQt/Account>
-#include <KPeople/PersonsModel>
+#include <TelepathyQt/AccountManager>
 
 Chat::Chat(QObject* parent): AbstractFieldWidgetFactory(parent)
 {
 }
 
-QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
+QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const
 {
     Q_UNUSED(contacts);
-    QWidget *widget = new QWidget(parent);
+    QWidget* widget = new QWidget(parent);
 
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->setContentsMargins(0,0,0,0);
-    if(person.custom("telepathy","accountPath").isEmpty()) {
+    QVBoxLayout* layout = new QVBoxLayout(widget);
+    layout->setContentsMargins(0, 0, 0, 0);
+    if (person.custom("telepathy", "accountPath").isEmpty()) {
         layout->addWidget(new QLabel("Chats for current contact is not available"));
     } else {
 
-        KTp::LogManager *logManager = KTp::LogManager::instance();
+        KTp::LogManager* logManager = KTp::LogManager::instance();
+        logManager->setAccountManager(KTp::accountManager());
         layout->addWidget(new QLabel("Work in Progress"));
-        qDebug() << person.custom("akonadi","id");
-        KTp::LogEntity logEntity = KTp::LogEntity(Tp::HandleTypeContact,person.custom("telepathy","contactId"));
-        Tp::AccountPtr account;
+        KTp::LogEntity logEntity = KTp::LogEntity(Tp::HandleTypeContact, person.custom("telepathy", "contactId"));
+        Tp::AccountPtr account = KTp::accountManager().data()->accountForPath(person.custom("telepathy", "accountPath"));
 
-//       Tp::AccountPtr account(index.data(KTp::AccountsListModel::AccountRole).value<Tp::AccountPtr>());
+        if (logManager->logsExist(account, logEntity)) {
+            qDebug() << "Logs Exist";
 
-
-        qDebug() << logManager->logsExist(account,logEntity);
-        qDebug() << logEntity.isValid();
-//       qDebug() << logEntity.entityType();
-//       qDebug() << logEntity.id();
-
-//       foreach(QString s , person.customs()){
-// 	 qDebug() << s;
-//
-//       }
-
+            KTp::PendingLoggerDates* pd = logManager->queryDates(account, logEntity);
+            if (!pd) {
+                qWarning() << "Error in PendingDates";
+            } else {
+                connect(pd, SIGNAL(finished(KTp::PendingLoggerOperation*)), SLOT(onPendingDates(KTp::PendingLoggerOperation*)));
+            }
+        }
     }
 
     widget->setLayout(layout);
     return widget;
 }
+void Chat::onPendingDates(KTp::PendingLoggerOperation* po)
+{
+
+    KTp::PendingLoggerDates* pd = qobject_cast<KTp::PendingLoggerDates*>(po);
+    QList<QDate> dates = pd->dates();
+    if (dates.isEmpty()) {
+        qDebug() << "No messages";
+    }
+    KTp::PendingLoggerLogs* log = KTp::LogManager::instance()->queryLogs(pd->account(), pd->entity(), dates.last());
+    connect(log, SIGNAL(finished(KTp::PendingLoggerOperation*)), this, SLOT(onEventsFinished(KTp::PendingLoggerOperation*)));
+}
+
+void Chat::onEventsFinished(KTp::PendingLoggerOperation* op)
+{
+    KTp::PendingLoggerLogs* logsOp = qobject_cast<KTp::PendingLoggerLogs*>(op);
+    if (logsOp->hasError()) {
+        kWarning() << "Failed to fetch events:" << logsOp->error();
+        return;
+    }
+    QStringList queuedMessageTokens;
+    QList<KTp::LogMessage> ml = logsOp->logs();
+    foreach (KTp::Message message, ml) {
+        qDebug() << message.time();
+        qDebug() << message.sender();
+        qDebug() << message.type();
+        qDebug() << message.mainMessagePart();
+    }
+}
+
 
 QString Chat::label() const
 {

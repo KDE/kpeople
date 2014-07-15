@@ -23,13 +23,9 @@
 #ifndef CHAT_H
 #define CHAT_H
 #include "abstractfieldwidgetfactory.h"
-#include "plugins/emaillistmodel.h"
-#include <QItemSelection>
-#include <KJob>
-#include <Akonadi/Collection>
-#include <KDateTime>
-#include <qtextedit.h>
-#include <qpushbutton.h>
+#include <KDebug>
+#include <KTp/Logger/pending-logger-dates.h>
+#include <KTp/Logger/pending-logger-operation.h>
 
 using namespace KPeople;
 
@@ -38,12 +34,15 @@ class Chat : public AbstractFieldWidgetFactory
 {
     Q_OBJECT
 public:
-    explicit Chat (QObject* parent = 0);
+    explicit Chat(QObject* parent = 0);
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
-    
-};
+    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const;
 
+private slots:
+    void onPendingDates(KTp::PendingLoggerOperation*);
+    void onEventsFinished(KTp::PendingLoggerOperation*);
+
+};
 
 #endif // CHAT_H

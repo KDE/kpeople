@@ -33,6 +33,7 @@
 #include <KTp/Logger/log-manager.h>
 #include <KTp/Logger/log-entity.h>
 #include <TelepathyQt/Account>
+#include <KPeople/PersonsModel>
 
 Chat::Chat(QObject* parent): AbstractFieldWidgetFactory(parent)
 {
@@ -42,66 +43,34 @@ QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
 {
     Q_UNUSED(contacts);
     QWidget *widget = new QWidget(parent);
+
     QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0,0,0,0);
-    if(person.custom("telepathy","accountPath").isEmpty()){
-      layout->addWidget(new QLabel("Chats for current contact is not available"));
-    }else{
-    
-      KTp::LogManager *logManager = KTp::LogManager::instance();
-      layout->addWidget(new QLabel("Work in Progress"));
-      qDebug() << person.custom("akonadi","id");
-      KTp::LogEntity logEntity = KTp::LogEntity(Tp::HandleTypeContact,person.custom("telepathy","contactId"));
-      Tp::AccountPtr account;
-      
-      qDebug() << logManager->logsExist(account,logEntity);
-      qDebug() << logEntity.isValid();
+    if(person.custom("telepathy","accountPath").isEmpty()) {
+        layout->addWidget(new QLabel("Chats for current contact is not available"));
+    } else {
+
+        KTp::LogManager *logManager = KTp::LogManager::instance();
+        layout->addWidget(new QLabel("Work in Progress"));
+        qDebug() << person.custom("akonadi","id");
+        KTp::LogEntity logEntity = KTp::LogEntity(Tp::HandleTypeContact,person.custom("telepathy","contactId"));
+        Tp::AccountPtr account;
+
+//       Tp::AccountPtr account(index.data(KTp::AccountsListModel::AccountRole).value<Tp::AccountPtr>());
+
+
+        qDebug() << logManager->logsExist(account,logEntity);
+        qDebug() << logEntity.isValid();
 //       qDebug() << logEntity.entityType();
 //       qDebug() << logEntity.id();
-      
+
 //       foreach(QString s , person.customs()){
 // 	 qDebug() << s;
-// 	 
+//
 //       }
-      
+
     }
-    
-    
-    
-/*    
-    KStandardDirs dirs;
 
-    QString path = dirs.localxdgdatadir() + QDir::separator() + QLatin1String("TpLogger") + QDir::separator() + QLatin1String("logs");
-
-    QString id = person.custom("akonadi","id");
-    if (id.startsWith(QLatin1String("ktp://"))) {
-        id.remove(QLatin1String("ktp://"));
-        id.replace(QLatin1String("/"), QLatin1String("_"));
-        QString email = id;
-        email.remove(0,id.indexOf(QLatin1String("?"))+1);
-        id.remove(id.indexOf(QLatin1String("?")),id.length());
-        path += QDir::separator() + id + QDir::separator() + email;
-        QDir dir(path);
-  
-        if(dir.exists()) {
-            QStringList ss;
-            foreach(QString s, dir.entryList()) {
-                if(s.compare(QLatin1String(".")) && s.compare(QLatin1String("..")))
-                    ss.push_back(s);
-            }
-            foreach(QString s, ss) {
-	      
-
-            }
-            layout->addWidget(new QLabel(ss.first()));
-        } else {
-            layout->addWidget(new QLabel("Chats something"));
-        }
-
-//       layout->addWidget(new QLabel(id));
-    } else {
-        layout->addWidget(new QLabel("Chats not available"));
-    }*/
     widget->setLayout(layout);
     return widget;
 }

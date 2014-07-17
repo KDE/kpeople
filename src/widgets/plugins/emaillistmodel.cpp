@@ -25,82 +25,44 @@
 #include <KGlobal>
 #include <KLocale>
 
-EmailListModel::EmailListModel(QObject *parent) : QAbstractTableModel(parent) {
+EmailListModel::EmailListModel(QObject* parent) : QAbstractListModel(parent)
+{
 
 }
 
-EmailListModel::EmailListModel(QList<email> list, QObject *parent) : QAbstractTableModel(parent) {
+EmailListModel::EmailListModel(QList<email> list, QObject* parent) : QAbstractListModel(parent)
+{
     emailList = list;
 };
 
-
-int EmailListModel::columnCount(const QModelIndex& parent) const
+int EmailListModel::rowCount(const QModelIndex& parent) const
 {
-    Q_UNUSED(parent);
-    return 3;
-}
-
-
-int EmailListModel::rowCount( const QModelIndex & parent ) const {
     Q_UNUSED(parent);
     return emailList.count();
 }
 
-QVariant EmailListModel::headerData(int section, Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole)
-        return QVariant();
-
-    if (orientation == Qt::Horizontal) {
-        switch (section) {
-        case 0:
-            return tr("Subject");
-
-        case 1:
-            return tr("Description");
-
-        case 2:
-            return tr("Date");
-
-        default:
-            return "Other";
-        }
-    }
-    return QVariant();
-}
-
-
-QVariant EmailListModel::data( const QModelIndex & index, int role) const
+QVariant EmailListModel::data(const QModelIndex& index, int role) const
 {
 
-    if(!index.isValid())
+    if (!index.isValid())
         return QVariant();
 
-    if ( role == Qt::DisplayRole ) {
+    if (role == Qt::DisplayRole) {
 
         struct email mail = emailList.at(index.row());
         QString desc = mail.desc;
         QString subject = mail.subject;
-        QString rowString ="";
+        QString rowString = "";
         QString dateString = KGlobal::locale()->formatDateTime(mail.date.dateTime(), KLocale::FancyShortDate, KLocale::Seconds);
 
-        if(mail.subject == "")
+        if (mail.subject == "")
             subject = "No Subject";
 
-        subject.replace('\n',' ');
+        subject.replace('\n', ' ');
         subject.truncate(25);
-        desc.replace('\n',' ');
+        desc.replace('\n', ' ');
         desc.truncate(40);
-
-        if(index.column()==0) {
-            rowString = subject;
-        }
-        else if(index.column()==1) {
-            rowString = desc;
-        }
-        else if(index.column()==2) {
-            rowString = dateString;
-        }
+        rowString = subject;
 
         return rowString;
     }
@@ -109,11 +71,12 @@ QVariant EmailListModel::data( const QModelIndex & index, int role) const
 
 void EmailListModel::addEmail(email mail)
 {
-    beginInsertRows(QModelIndex(), emailList.count(), emailList.count()+1);
+    beginInsertRows(QModelIndex(), emailList.count(), emailList.count() + 1);
     emailList << mail;
     endInsertRows();
 }
 
-QUrl EmailListModel::getItemUrl(int row) {
+QUrl EmailListModel::getItemUrl(int row)
+{
     return emailList.at(row).url;
 }

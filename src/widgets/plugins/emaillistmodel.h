@@ -22,7 +22,7 @@
 #ifndef EMAILLISTMODEL_H
 #define EMAILLISTMODEL_H
 
-#include <QAbstractTableModel>
+#include <QAbstractListModel>
 #include <KDateTime>
 #include <QUrl>
 
@@ -33,26 +33,19 @@ struct email {
     QUrl url;
 };
 
-
-class EmailListModel : public QAbstractTableModel
+class EmailListModel : public QAbstractListModel
 {
     Q_OBJECT
-
+    
 public:
-    EmailListModel(QObject *parent=0);
-    EmailListModel(QList<email> list, QObject *parent=0);
+    EmailListModel(QObject* parent = 0);
+    EmailListModel(QList<email> list, QObject* parent = 0);
 
     virtual QVariant data(const QModelIndex& index, int role) const;
-
-    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-    virtual int columnCount(const QModelIndex& parent) const;
     virtual int rowCount(const QModelIndex& parent) const;
-    
 
     void addEmail(struct email mail);
     QUrl getItemUrl(int row);
-
-
 
 private:
     QList<email> emailList;

@@ -24,7 +24,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <QTableView>
+#include <QListView>
 #include <QDebug>
 #include <baloo/query.h>
 #include <baloo/resultiterator.h>
@@ -58,14 +58,14 @@ Emails::Emails(QObject* parent): AbstractFieldWidgetFactory(parent)
     me = new EmailListModel(emailList);
 }
 
-QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const
+QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const
 {
     Q_UNUSED(contacts);
-    QWidget *widget = new QWidget(parent);
-    
-    QVBoxLayout *layout = new QVBoxLayout(widget);
-    QTableView *tv = new QTableView(parent);    
-    layout->setContentsMargins(0,0,0,0);
+    QWidget* widget = new QWidget(parent);
+
+    QVBoxLayout* layout = new QVBoxLayout(widget);
+    QListView* listview = new QListView(parent);
+    layout->setContentsMargins(0, 0, 0, 0);
 
     Baloo::Query query;
     query.setSearchString(person.preferredEmail());
@@ -73,7 +73,7 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
     Baloo::ResultIterator rt = query.exec();
     bool hasMsg = false;
 
-    while(rt.next()) {
+    while (rt.next()) {
         hasMsg = true;
 
         Akonadi::Item it = Item::fromUrl(rt.url());
@@ -82,33 +82,28 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
         connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
     }
 
-    if(hasMsg) {
-        tv->setModel(me);
-	
-	tv->setSelectionMode(QAbstractItemView::SingleSelection);
-	tv->setSelectionBehavior(QAbstractItemView::SelectRows);
-	tv->setEditTriggers(QAbstractItemView::NoEditTriggers); 
-	tv->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-	tv->horizontalHeader()->setStretchLastSection(true);
-	tv->setColumnWidth(0,150);
-	tv->setColumnWidth(1,350);
-	
-        tv->show();
-       layout->addWidget(tv);
-        connect(tv,SIGNAL(doubleClicked(QModelIndex)),this,SLOT(onEmailDoubleClicked(QModelIndex)));
-    }
-    else {
-        tv->hide();
+    if (hasMsg) {
+        listview->setModel(me);
+
+        listview->setSelectionMode(QAbstractItemView::SingleSelection);
+        listview->setSelectionBehavior(QAbstractItemView::SelectRows);
+        listview->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+        listview->show();
+        layout->addWidget(listview);
+        connect(listview, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onEmailDoubleClicked(QModelIndex)));
+    } else {
+        listview->hide();
         layout->addWidget(new QLabel("No Emails"));
     }
     widget->setLayout(layout);
     return widget;
 }
 
-void Emails::onEmailDoubleClicked(const QModelIndex &clicked) {
+void Emails::onEmailDoubleClicked(const QModelIndex& clicked)
+{
 
     QUrl url = me->getItemUrl(clicked.row());
-
     QString cmd = "kmail --view ";
     cmd.append(url.toString());
 
@@ -118,21 +113,22 @@ void Emails::onEmailDoubleClicked(const QModelIndex &clicked) {
 
 void Emails::jobFinished(KJob* job)
 {
-    if(job->error()) {
-        qDebug() << "Error";
+    if (job->error()) {
+        qDebug() << "Error:" << job->errorString();
+        return;
     }
 
-    Akonadi::ItemFetchJob *fetchJob = qobject_cast<Akonadi::ItemFetchJob*>(job);
+    Akonadi::ItemFetchJob* fetchJob = qobject_cast<Akonadi::ItemFetchJob*>(job);
     const Akonadi::Item::List items = fetchJob->items();
     KMime::Message msg;
 
-    foreach (const Akonadi::Item &item, items) {
+    foreach (const Akonadi::Item & item, items) {
 
 
         msg.setContent(item.payloadData());
         msg.setFrozen(true);
         msg.parse();
-        KMime::Headers::Subject *subject = msg.subject();
+        KMime::Headers::Subject* subject = msg.subject();
         KMime::Headers::Date* date = msg.date();
         KMime::Content* textContent = msg.textContent();
 

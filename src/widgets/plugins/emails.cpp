@@ -64,8 +64,8 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
     QWidget* widget = new QWidget(parent);
 
     QVBoxLayout* layout = new QVBoxLayout(widget);
-    QListView* listview = new QListView(parent);
     layout->setContentsMargins(0, 0, 0, 0);
+    QListView* listview = new QListView();
 
     Baloo::Query query;
     query.setSearchString(person.preferredEmail());
@@ -83,14 +83,15 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
     }
 
     if (hasMsg) {
+        EmailListViewDelegate* emailListDelegate = new EmailListViewDelegate();
         listview->setModel(me);
-
+        listview->setItemDelegate(emailListDelegate);
         listview->setSelectionMode(QAbstractItemView::SingleSelection);
         listview->setSelectionBehavior(QAbstractItemView::SelectRows);
         listview->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
         listview->show();
         layout->addWidget(listview);
+       
         connect(listview, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onEmailDoubleClicked(QModelIndex)));
     } else {
         listview->hide();
@@ -155,3 +156,5 @@ int Emails::sortWeight() const
 
 
 #include "emails.moc"
+
+

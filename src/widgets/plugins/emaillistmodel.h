@@ -33,10 +33,12 @@ struct email {
     QUrl url;
 };
 
+enum datarole {mailSubjectRole = Qt::UserRole + 100, mailDescRole = Qt::UserRole + 101, mailTimeRole = Qt::UserRole + 102};
+
 class EmailListModel : public QAbstractListModel
 {
     Q_OBJECT
-    
+
 public:
     EmailListModel(QObject* parent = 0);
     EmailListModel(QList<email> list, QObject* parent = 0);

@@ -11,10 +11,11 @@ set (kpeople_widgets_SRCS
     plugins/chat.cpp
     personchatview.cpp
     plugins/note.cpp
-    personnoteview.cpp 
-    plugins/emaillistmodel.cpp 
-    personemailview.cpp 
-    plugins/emails.cpp 
+    personnoteview.cpp
+    plugins/emaillistviewdelegate.cpp
+    plugins/emaillistmodel.cpp
+    personemailview.cpp
+    plugins/emails.cpp
     persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp

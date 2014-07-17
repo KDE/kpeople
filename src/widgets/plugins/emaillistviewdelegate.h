@@ -19,37 +19,16 @@
  *
  */
 
-#ifndef EMAILS_H
-#define EMAILS_H
+#ifndef EMAILLISTVIEWDELEGATE_H
+#define EMAILLISTVIEWDELEGATE_H
+#include "emaillistmodel.h"
+#include <QtGui>
 
-#include "abstractfieldwidgetfactory.h"
-#include "plugins/emaillistmodel.h"
-#include "plugins/emaillistviewdelegate.h"
-#include <QItemSelection>
-#include <KJob>
-#include <Akonadi/Collection>
-#include <KDateTime>
-
-using namespace KPeople;
-
-
-class Emails : public AbstractFieldWidgetFactory
+class EmailListViewDelegate : public QStyledItemDelegate
 {
-    Q_OBJECT
-public:
-    explicit Emails(QObject* parent = 0);
-    virtual QString label() const;
-    virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
-private:
-    QList<email> emailList;
-    EmailListModel *me;
-
-private Q_SLOTS:
-    void onEmailDoubleClicked(const QModelIndex &index);
-    void jobFinished(KJob *job);
-
-
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+               const QModelIndex& index) const;
 };
 
-#endif // EMAILS_H
+#endif // EMAILLISTVIEWDELEGATE_H

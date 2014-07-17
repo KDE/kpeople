@@ -27,7 +27,6 @@
 
 EmailListModel::EmailListModel(QObject* parent) : QAbstractListModel(parent)
 {
-
 }
 
 EmailListModel::EmailListModel(QList<email> list, QObject* parent) : QAbstractListModel(parent)
@@ -47,25 +46,28 @@ QVariant EmailListModel::data(const QModelIndex& index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (role == Qt::DisplayRole) {
+    struct email mail = emailList.at(index.row());
+    QString desc = mail.desc;
+    QString subject = mail.subject;
+    QString dateString = KGlobal::locale()->formatDateTime(mail.date.dateTime(), KLocale::FancyShortDate, KLocale::Seconds);
 
-        struct email mail = emailList.at(index.row());
-        QString desc = mail.desc;
-        QString subject = mail.subject;
-        QString rowString = "";
-        QString dateString = KGlobal::locale()->formatDateTime(mail.date.dateTime(), KLocale::FancyShortDate, KLocale::Seconds);
+    if (mail.subject == "")
+        subject = "No Subject";
 
-        if (mail.subject == "")
-            subject = "No Subject";
+    subject.replace('\n', ' ');
+//     subject.truncate(25);
+    desc.replace('\n', ' ');
+    desc.truncate(160);
+    desc.append("...");
 
-        subject.replace('\n', ' ');
-        subject.truncate(25);
-        desc.replace('\n', ' ');
-        desc.truncate(40);
-        rowString = subject;
-
-        return rowString;
+    if (role == mailSubjectRole) {
+        return subject;
+    } else if (role == mailDescRole) {
+        return desc;
+    } else if (role == mailTimeRole) {
+        return dateString;
     }
+
     return QVariant();
 }
 

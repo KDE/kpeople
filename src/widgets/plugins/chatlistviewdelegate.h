@@ -19,35 +19,20 @@
  *
  */
 
-#ifndef CHAT_H
-#define CHAT_H
-#include "abstractfieldwidgetfactory.h"
-#include <KDebug>
-#include <QListView>
-#include <QStandardItemModel>
-#include <KTp/Logger/pending-logger-dates.h>
-#include <KTp/Logger/pending-logger-operation.h>
+#ifndef CHATLISTVIEWDELEGATE_H
+#define CHATLISTVIEWDELEGATE_H
 
-using namespace KPeople;
+#include <QtGui>
 
-
-class Chat : public AbstractFieldWidgetFactory
+class ChatListviewDelegate : public QStyledItemDelegate
 {
-    Q_OBJECT
 public:
-    explicit Chat(QObject* parent = 0);
-    virtual QString label() const;
-    virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const;
+    ChatListviewDelegate();
 
-private slots:
-    void onPendingDates(KTp::PendingLoggerOperation*);
-    void onEventsFinished(KTp::PendingLoggerOperation*);
+    enum datarole {senderAliasRole = Qt::UserRole + 100, messageRole = Qt::UserRole + 101, messageTimeRole = Qt::UserRole + 102};
 
-private:
-    QWidget* m_chatwidget;
-    QListView* m_chatlistView;
-    QStandardItemModel* model;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+               const QModelIndex& index) const;
+
 };
-
-#endif // CHAT_H
+#endif // CHATLISTVIEWDELEGATE_H

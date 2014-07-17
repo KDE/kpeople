@@ -20,15 +20,18 @@
  */
 
 #include "chat.h"
+#include "chatlistviewdelegate.h"
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QScrollArea>
 #include <QDebug>
 #include <KLocalizedString>
+#include <KGlobal>
 #include <KABC/Addressee>
 #include <KPluginFactory>
 #include <KPluginLoader>
-#include <QDir>
-#include <KStandardDirs>
+#include <KLocale>
+#include <complex>
 #include <KTp/core.h>
 #include <KTp/Logger/log-manager.h>
 #include <KTp/Logger/log-entity.h>
@@ -36,6 +39,7 @@
 #include <KTp/message.h>
 #include <TelepathyQt/Account>
 #include <TelepathyQt/AccountManager>
+
 
 Chat::Chat(QObject* parent): AbstractFieldWidgetFactory(parent)
 {
@@ -46,21 +50,38 @@ QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
     Q_UNUSED(contacts);
     QWidget* widget = new QWidget(parent);
 
+    const_cast<Chat*>(this)->m_chatwidget = widget;
+
+    QScrollArea* scrollArea = new QScrollArea();
+    scrollArea->setWidget(widget);
+    scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setWidgetResizable(true);
+    scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    scrollArea->setFixedHeight(widget->height());
+
     QVBoxLayout* layout = new QVBoxLayout(widget);
+    QListView* lv = new QListView();
+    ChatListviewDelegate* ch = new ChatListviewDelegate();
+
+    const_cast<Chat*>(this)->m_chatlistView = lv;
+    const_cast<Chat*>(this)->model = new QStandardItemModel();
+
+
+
+    lv->setModel(model);
+
+    lv->setItemDelegate(ch);
     layout->setContentsMargins(0, 0, 0, 0);
+
     if (person.custom("telepathy", "accountPath").isEmpty()) {
         layout->addWidget(new QLabel("Chats for current contact is not available"));
     } else {
-
         KTp::LogManager* logManager = KTp::LogManager::instance();
         logManager->setAccountManager(KTp::accountManager());
-        layout->addWidget(new QLabel("Work in Progress"));
         KTp::LogEntity logEntity = KTp::LogEntity(Tp::HandleTypeContact, person.custom("telepathy", "contactId"));
         Tp::AccountPtr account = KTp::accountManager().data()->accountForPath(person.custom("telepathy", "accountPath"));
 
         if (logManager->logsExist(account, logEntity)) {
-            qDebug() << "Logs Exist";
-
             KTp::PendingLoggerDates* pd = logManager->queryDates(account, logEntity);
             if (!pd) {
                 qWarning() << "Error in PendingDates";
@@ -70,8 +91,10 @@ QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
         }
     }
 
+    layout->addWidget(lv);
     widget->setLayout(layout);
-    return widget;
+
+    return scrollArea;
 }
 void Chat::onPendingDates(KTp::PendingLoggerOperation* po)
 {
@@ -94,11 +117,27 @@ void Chat::onEventsFinished(KTp::PendingLoggerOperation* op)
     }
     QStringList queuedMessageTokens;
     QList<KTp::LogMessage> ml = logsOp->logs();
-    foreach (KTp::Message message, ml) {
-        qDebug() << message.time();
-        qDebug() << message.sender();
-        qDebug() << message.type();
-        qDebug() << message.mainMessagePart();
+    QString date = KGlobal::locale()->formatDate(logsOp->date(), KLocale::FancyShortDate);
+//     m_chatwidget->layout()->addWidget(new QLabel("Chat histrory from " + date));
+    foreach (KTp::LogMessage message, ml) {
+
+        if (message.direction()) {
+            QStandardItem* messageRow = new QStandardItem();
+
+            messageRow->setData(message.senderAlias(), ChatListviewDelegate::senderAliasRole);
+            messageRow->setData(message.mainMessagePart(), ChatListviewDelegate::messageRole);
+            messageRow->setData(KGlobal::locale()->formatTime(message.time().time()), ChatListviewDelegate::messageTimeRole);
+
+            model->appendRow(messageRow);
+        } else {
+
+            QStandardItem* messageRow = new QStandardItem();
+
+            messageRow->setData("Me", ChatListviewDelegate::senderAliasRole);
+            messageRow->setData(message.mainMessagePart(), ChatListviewDelegate::messageRole);
+            messageRow->setData(KGlobal::locale()->formatTime(message.time().time()), ChatListviewDelegate::messageTimeRole);
+            model->appendRow(messageRow);
+        }
     }
 }
 

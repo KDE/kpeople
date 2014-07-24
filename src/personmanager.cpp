@@ -21,7 +21,6 @@
 
 // #include "personmanager.moc"
 #include <QVariant>
-#include <QDebug>
 #include <QSqlError>
 #include <QDBusConnection>
 #include <QDBusMessage>
@@ -62,7 +61,6 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     QObject(parent),
     m_db(QSqlDatabase::addDatabase("QSQLITE"))
 {
-    qDebug() << databasePath;
     m_db.setDatabaseName(databasePath);
     m_db.open();
     m_db.exec("CREATE TABLE IF NOT EXISTS persons (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)");

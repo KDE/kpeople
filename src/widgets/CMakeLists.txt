@@ -5,6 +5,9 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (kpeople_widgets_SRCS
+    plugins/postviewdelegate.cpp
+    plugins/posts.cpp
+    personpostview.cpp
     plugins/eventviewdelegate.cpp
     plugins/chatlistviewdelegate.cpp
     plugins/events.cpp
@@ -46,6 +49,7 @@ target_link_libraries (kpeoplewidgets
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KTP_LIBRARIES}
                        ${KTP_LOGGER_LIBRARIES}
+                       ${KDEPIMLIBS_AKONADI_SOCIALUTILS_LIBS}
                        kpeople
 )
 
@@ -70,6 +74,7 @@ install (FILES
             personemailview.h
             personnoteview.h
             personchatview.h
+            personpostview.h
 #             mergedialog.h
             persondetailsdialog.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets

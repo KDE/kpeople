@@ -50,10 +50,6 @@ QWidget* Note::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
     const_cast<Note*> (this)->m_person = person;
 
     m_noteEditor->setText(person.note());
-     for(int i =0 ;i < person.customs().count();i++){
-       qDebug() << person.customs().at(i);
-    }
-    qDebug()<< m_person.custom("akonadi", "id");
 
 //     if(person.note() != "")
 //         m_noteEditor->setDisabled(true);
@@ -70,14 +66,10 @@ QWidget* Note::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
 void Note::saveNote(bool)
 {
     QString newNote = this->m_noteEditor->toPlainText();
-
-    qDebug() << "Save Note";
     
     //FIXME Some ids are ktp:// in form so they are not being saved
-    qDebug()<< m_person.custom("akonadi","id");
     const KUrl &url = KUrl(m_person.custom("akonadi","id"));
     Akonadi::Item item = Item::fromUrl(url);
-    qDebug() << item.id();
     m_person.setNote(newNote);
     item.setPayload<KABC::Addressee>( m_person );
     item.setMimeType( KABC::Addressee::mimeType() );
@@ -91,7 +83,6 @@ void Note::contactModifyResult(KJob* job)
         // error handling, see job->errorString()
         return;
     }
-    qDebug()<< "saved";
 }
 
 

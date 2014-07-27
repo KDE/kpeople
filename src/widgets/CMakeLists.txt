@@ -5,6 +5,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (kpeople_widgets_SRCS
+    plugins/eventviewdelegate.cpp
     plugins/chatlistviewdelegate.cpp
     plugins/events.cpp
     personeventview.cpp

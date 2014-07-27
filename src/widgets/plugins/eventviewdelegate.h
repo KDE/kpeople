@@ -19,39 +19,28 @@
  *
  */
 
-#ifndef EVENTS_H
-#define EVENTS_H
-#include "abstractfieldwidgetfactory.h"
+#ifndef EVENTVIEWDELEGATE_H
+#define EVENTVIEWDELEGATE_H
 
-#include <KJob>
-#include <Akonadi/Collection>
-#include <Akonadi/ResourceBase>
-#include <KDateTime>
-#include <QVBoxLayout>
-#include <QListView>
-#include <QStandardItemModel>
+#include <QtGui>
 
-using namespace KPeople;
-
-class Events : public AbstractFieldWidgetFactory
+class EventViewDelegate : public QStyledItemDelegate
 {
-  Q_OBJECT
 public:
-    explicit Events (QObject* parent = 0);
-    virtual QString label() const;
-    virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
-    
-private:
-    KABC::Addressee m_person;
-    QVBoxLayout *m_layout;
-    QListView *m_listView;
-    QStandardItemModel *m_model;
-
-private slots:
-    void fetchFinished( KJob *job );
-    void jobFinished(KJob *job );
-
+  enum Role {
+        
+        FormattedNameRole = Qt::DisplayRole,
+        PhotoRole = Qt::DecorationRole,
+        EventDateRole = Qt::UserRole,
+        EventNameRole,
+        EventLocationRole,
+        EventDurationRole,
+        EventDescRole,
+        EventLinkRole
+    };
+    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void paint(QPainter* painter, const QStyleOptionViewItem& option,
+               const QModelIndex& index) const;
 };
 
-#endif // EVENTS_H
+#endif // EVENTVIEWDELEGATE_H

@@ -5,6 +5,8 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (kpeople_widgets_SRCS
+    plugins/files.cpp
+    personfilesview.cpp
     plugins/postviewdelegate.cpp
     plugins/posts.cpp
     personpostview.cpp
@@ -69,6 +71,7 @@ install (TARGETS kpeoplewidgets
 
 install (FILES
             abstractfieldwidgetfactory.h
+            personfilesview.h
             personeventview.h
             persondetailsview.h
             personemailview.h

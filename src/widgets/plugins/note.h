@@ -41,21 +41,21 @@ class Note : public AbstractFieldWidgetFactory
 {
     Q_OBJECT
 public:
-    explicit Note (QObject* parent = 0);
+    explicit Note(QObject* parent = 0);
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
-    
+    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const;
+
 private Q_SLOTS:
     void saveNote(bool);
     void textChanged();
-    void contactModifyResult( KJob* );
-    
+    void contactModifyResult(KJob*);
+
 private:
-  QTextEdit *m_noteEditor;
-  QPushButton *m_saveBtn;
-  KABC::Addressee m_person;
-    
+    QTextEdit* m_noteEditor;
+    QPushButton* m_saveBtn;
+    KABC::Addressee m_person;
+
 };
 
 #endif // NOTE_H

@@ -47,10 +47,12 @@ private:
     QVBoxLayout *m_layout;
     QListView *m_listView;
     QStandardItemModel *m_model;
+    QList<qlonglong> eventId;
 
 private slots:
     void fetchFinished( KJob *job );
     void jobFinished(KJob *job );
+    void akonadiItemFetchFinished(KJob*);
 
 };
 

@@ -33,6 +33,9 @@
 #include <libkfbapi/eventjob.h>
 #include <KCalCore/Attendee>
 #include <KLocale>
+#include <KStandardDirs>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 
 using namespace Akonadi;
 
@@ -58,37 +61,101 @@ QWidget* Events::createDetailsWidget(const KABC::Addressee& person, const KABC::
     const_cast<Events*>(this)->m_listView = new QListView();
     const_cast<Events*>(this)->m_model = new QStandardItemModel();
 
-    //TODO Check if contacts belongs to Facebook then only call CollectionFetchJob
-//     layout->addWidget(new QLabel("Events Coming Soon"));
-
     m_listView->setItemDelegate(new EventViewDelegate());
     m_listView->setModel(m_model);
     m_listView->setSelectionMode(QAbstractItemView::SingleSelection);
     m_listView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_listView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    m_listView->show();
+
+    if (m_person.custom("akonadi", "id").contains("akonadi://?item=")) {
+        QString id = m_person.custom("akonadi", "id").split("akonadi://?item=", QString::SkipEmptyParts).first();
+        Item item;
+        item.setId(id.toLongLong());
+        ItemFetchJob* job = new ItemFetchJob(item);
+        connect(job, SIGNAL(finished(KJob*)), this, SLOT(akonadiItemFetchFinished(KJob*)));
+    } else if (m_person.custom("akonadi", "id").contains("chat.facebook.com")) {
+        QString id = m_person.custom("akonadi", "id");
+        id = m_person.custom("akonadi", "id").mid(id.indexOf("chat_2efacebook_2ecom0?-") + 24);
+        id = id.left(id.lastIndexOf("@chat.facebook.com"));
+        QString DBpath = KGlobal::dirs()->localxdgdatadir() + QLatin1String("akonadi/facebook_events.db");
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+        db.setDatabaseName(DBpath);
+        if (!db.open()) {
+            qDebug() << "Database not found";
+        }
+        QSqlQuery query;
+        query.prepare("SELECT eventId FROM userEvent WHERE userId=?");
+        query.bindValue(0, id);
+        query.exec();
+        while (query.next()) {
+            const_cast<Events*>(this)->eventId << query.value(0).toLongLong();
+        }
+        db.close();
+        if (eventId.length()) {
+            CollectionFetchJob* job = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive);
+            connect(job, SIGNAL(result(KJob*)), SLOT(fetchFinished(KJob*)));
+        } else {
+            layout->addWidget(new QLabel("Events of Selected contacts are not avaiable"));
+        }
+    } else {
+        layout->addWidget(new QLabel("Events of Selected contacts are not avaiable"));
+    }
     layout->addWidget(m_listView);
-
-    CollectionFetchJob* job = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive);
-    connect(job, SIGNAL(result(KJob*)), SLOT(fetchFinished(KJob*)));
-
     widget->setLayout(layout);
     return scrollArea;
+}
+void Events::akonadiItemFetchFinished(KJob* job)
+{
+    if (job->error()) {
+        qDebug() << "Error occurred" << job->errorString();
+        return;
+    }
+    Akonadi::ItemFetchJob* fetchJob = qobject_cast<Akonadi::ItemFetchJob*>(job);
+    const Akonadi::Item::List items = fetchJob->items();
+
+    if (!items.count())
+        return;
+
+    QString DBpath = KGlobal::dirs()->localxdgdatadir() + QLatin1String("akonadi/facebook_events.db");
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(DBpath);
+    if (!db.open()) {
+        qDebug() << "Database not found";
+    }
+    QSqlQuery query;
+    query.prepare("SELECT eventId FROM userEvent WHERE userId=?");
+    query.bindValue(0, items.first().remoteId());
+    query.exec();
+    while (query.next()) {
+        eventId << query.value(0).toLongLong();
+    }
+    db.close();
+    if (eventId.length()) {
+        CollectionFetchJob* cjob = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive);
+        connect(cjob, SIGNAL(result(KJob*)), SLOT(fetchFinished(KJob*)));
+    } else {
+        m_layout->addWidget(new QLabel("Events of Selected contacts are not avaiable"));
+    }
 }
 
 void Events::fetchFinished(KJob* job)
 {
     if (job->error()) {
-        qDebug() << "Error occurred";
+        qDebug() << "Error occurred" << job->errorString();
         return;
     }
     CollectionFetchJob* fetchJob = qobject_cast<CollectionFetchJob*>(job);
     const Collection::List collections = fetchJob->collections();
     foreach (const Collection & collection, collections) {
         if (collection.contentMimeTypes().contains(QLatin1String("application/x-vnd.akonadi.calendar.event")) && collection.name().contains(QLatin1String("Facebook"))) {
-            Akonadi::ItemFetchJob* job = new Akonadi::ItemFetchJob(collection);
-            connect(job, SIGNAL(result(KJob*)), SLOT(jobFinished(KJob*)));
-            job->fetchScope().fetchFullPayload();
+            foreach (qlonglong eventid, eventId) {
+                Item item;
+                item.setRemoteId(QString::number(eventid));
+                ItemFetchJob* job = new ItemFetchJob(item);
+                job->setCollection(collection);
+                job->fetchScope().fetchFullPayload();
+                connect(job, SIGNAL(result(KJob*)), SLOT(jobFinished(KJob*)));
+            }
         }
     }
 }
@@ -103,23 +170,18 @@ void Events::jobFinished(KJob* job)
     const Akonadi::Item::List items = fetchJob->items();
     foreach (const Akonadi::Item & item, items) {
         KFbAPI::IncidencePtr i = item.payload<KFbAPI::IncidencePtr>();
-        foreach (KCalCore::Attendee::Ptr a, i.data()->attendees()) {
-            if (m_person.uid().compare(a.data()->uid()) == 0) {
-                QStandardItem* event = new QStandardItem();
-                event->setData(i.data()->summary(), EventViewDelegate::EventNameRole);
+        QStandardItem* event = new QStandardItem();
+        event->setData(i.data()->summary(), EventViewDelegate::EventNameRole);
 //               event->setData(i.data()->description(),EventViewDelegate::EventDescRole);
-                KDateTime startDate = i.data()->dateTime(KCalCore::IncidenceBase::RoleDisplayStart);
-                KDateTime endDate = i.data()->dateTime(KCalCore::IncidenceBase::RoleDisplayEnd);
-                event->setData(KGlobal::locale()->formatDateTime(startDate, KLocale::FancyShortDate), EventViewDelegate::EventDateRole);
-                event->setData(KGlobal::locale()->formatDuration(startDate.secsTo(endDate))
-                               , EventViewDelegate::EventDurationRole);
-                event->setData(i.data()->location(), EventViewDelegate::EventLocationRole);
-                event->setData(i.data()->url().toString(), EventViewDelegate::EventLinkRole);
-                m_model->appendRow(event);
+        KDateTime startDate = i.data()->dateTime(KCalCore::IncidenceBase::RoleDisplayStart);
+        KDateTime endDate = i.data()->dateTime(KCalCore::IncidenceBase::RoleDisplayEnd);
+        event->setData(KGlobal::locale()->formatDateTime(startDate, KLocale::FancyShortDate), EventViewDelegate::EventDateRole);
+        event->setData(KGlobal::locale()->formatDuration(startDate.secsTo(endDate))
+                       , EventViewDelegate::EventDurationRole);
+        event->setData(i.data()->location(), EventViewDelegate::EventLocationRole);
+        event->setData(i.data()->url().toString(), EventViewDelegate::EventLinkRole);
+        m_model->appendRow(event);
 //                 m_layout->addWidget(new QLabel(i.data()->summary()));
-            }
-        }
-
     }
 }
 

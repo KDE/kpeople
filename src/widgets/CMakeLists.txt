@@ -52,6 +52,7 @@ target_link_libraries (kpeoplewidgets
                        ${KTP_LIBRARIES}
                        ${KTP_LOGGER_LIBRARIES}
                        ${KDEPIMLIBS_AKONADI_SOCIALUTILS_LIBS}
+                       ${QT_QTSQL_LIBRARIES}
                        kpeople
 )
 

@@ -41,30 +41,30 @@
 #include <TelepathyQt/AccountManager>
 
 
-Chat::Chat(QObject* parent): AbstractFieldWidgetFactory(parent)
+Chat::Chat(QObject *parent): AbstractFieldWidgetFactory(parent)
 {
 }
 
-QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const
+QWidget *Chat::createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const
 {
     Q_UNUSED(contacts);
-    QWidget* widget = new QWidget(parent);
+    QWidget *widget = new QWidget(parent);
 
-    const_cast<Chat*>(this)->m_chatwidget = widget;
+    const_cast<Chat *>(this)->m_chatwidget = widget;
 
-    QScrollArea* scrollArea = new QScrollArea();
+    QScrollArea *scrollArea = new QScrollArea();
     scrollArea->setWidget(widget);
     scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     scrollArea->setWidgetResizable(true);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     scrollArea->setFixedHeight(widget->height());
 
-    QVBoxLayout* layout = new QVBoxLayout(widget);
-    QListView* lv = new QListView();
-    ChatListviewDelegate* ch = new ChatListviewDelegate();
+    QVBoxLayout *layout = new QVBoxLayout(widget);
+    QListView *lv = new QListView();
+    ChatListviewDelegate *ch = new ChatListviewDelegate();
 
-    const_cast<Chat*>(this)->m_chatlistView = lv;
-    const_cast<Chat*>(this)->model = new QStandardItemModel();
+    const_cast<Chat *>(this)->m_chatlistView = lv;
+    const_cast<Chat *>(this)->model = new QStandardItemModel();
 
 
 
@@ -72,21 +72,28 @@ QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
 
     lv->setItemDelegate(ch);
     layout->setContentsMargins(0, 0, 0, 0);
-
     if (person.custom("telepathy", "accountPath").isEmpty()) {
-        layout->addWidget(new QLabel("Chats for current contact is not available"));
+        layout->addWidget(new QLabel("Chats for current contact is not supported"));
     } else {
-        KTp::LogManager* logManager = KTp::LogManager::instance();
+        KTp::LogManager *logManager = KTp::LogManager::instance();
         logManager->setAccountManager(KTp::accountManager());
         KTp::LogEntity logEntity = KTp::LogEntity(Tp::HandleTypeContact, person.custom("telepathy", "contactId"));
-        Tp::AccountPtr account = KTp::accountManager().data()->accountForPath(person.custom("telepathy", "accountPath"));
 
-        if (logManager->logsExist(account, logEntity)) {
-            KTp::PendingLoggerDates* pd = logManager->queryDates(account, logEntity);
-            if (!pd) {
-                qWarning() << "Error in PendingDates";
+        //FIXME Use some proper method to get account using accountPath
+        Tp::AccountPtr account = KTp::accountManager().data()->accountForObjectPath("/org/freedesktop/Telepathy/Account/" + person.custom("telepathy", "accountPath"));
+
+        if (account.isNull()) {
+            qDebug() << "Error Occoured Account is not supposed to be null";
+        } else {
+            if (logManager->logsExist(account, logEntity)) {
+                KTp::PendingLoggerDates *pd = logManager->queryDates(account, logEntity);
+                if (!pd) {
+                    qWarning() << "Error in PendingDates";
+                } else {
+                    connect(pd, SIGNAL(finished(KTp::PendingLoggerOperation *)), SLOT(onPendingDates(KTp::PendingLoggerOperation *)));
+                }
             } else {
-                connect(pd, SIGNAL(finished(KTp::PendingLoggerOperation*)), SLOT(onPendingDates(KTp::PendingLoggerOperation*)));
+                layout->addWidget(new QLabel("Chats for current contact is not available"));
             }
         }
     }
@@ -96,21 +103,21 @@ QWidget* Chat::createDetailsWidget(const KABC::Addressee& person, const KABC::Ad
 
     return scrollArea;
 }
-void Chat::onPendingDates(KTp::PendingLoggerOperation* po)
+void Chat::onPendingDates(KTp::PendingLoggerOperation *po)
 {
 
-    KTp::PendingLoggerDates* pd = qobject_cast<KTp::PendingLoggerDates*>(po);
+    KTp::PendingLoggerDates *pd = qobject_cast<KTp::PendingLoggerDates *>(po);
     QList<QDate> dates = pd->dates();
     if (dates.isEmpty()) {
         qDebug() << "No messages";
     }
-    KTp::PendingLoggerLogs* log = KTp::LogManager::instance()->queryLogs(pd->account(), pd->entity(), dates.last());
-    connect(log, SIGNAL(finished(KTp::PendingLoggerOperation*)), this, SLOT(onEventsFinished(KTp::PendingLoggerOperation*)));
+    KTp::PendingLoggerLogs *log = KTp::LogManager::instance()->queryLogs(pd->account(), pd->entity(), dates.last());
+    connect(log, SIGNAL(finished(KTp::PendingLoggerOperation *)), this, SLOT(onEventsFinished(KTp::PendingLoggerOperation *)));
 }
 
-void Chat::onEventsFinished(KTp::PendingLoggerOperation* op)
+void Chat::onEventsFinished(KTp::PendingLoggerOperation *op)
 {
-    KTp::PendingLoggerLogs* logsOp = qobject_cast<KTp::PendingLoggerLogs*>(op);
+    KTp::PendingLoggerLogs *logsOp = qobject_cast<KTp::PendingLoggerLogs *>(op);
     if (logsOp->hasError()) {
         kWarning() << "Failed to fetch events:" << logsOp->error();
         return;
@@ -122,7 +129,7 @@ void Chat::onEventsFinished(KTp::PendingLoggerOperation* op)
     foreach (KTp::LogMessage message, ml) {
 
         if (message.direction()) {
-            QStandardItem* messageRow = new QStandardItem();
+            QStandardItem *messageRow = new QStandardItem();
 
             messageRow->setData(message.senderAlias(), ChatListviewDelegate::senderAliasRole);
             messageRow->setData(message.mainMessagePart(), ChatListviewDelegate::messageRole);
@@ -131,7 +138,7 @@ void Chat::onEventsFinished(KTp::PendingLoggerOperation* op)
             model->appendRow(messageRow);
         } else {
 
-            QStandardItem* messageRow = new QStandardItem();
+            QStandardItem *messageRow = new QStandardItem();
 
             messageRow->setData("Me", ChatListviewDelegate::senderAliasRole);
             messageRow->setData(message.mainMessagePart(), ChatListviewDelegate::messageRole);

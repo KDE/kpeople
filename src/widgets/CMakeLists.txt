@@ -48,6 +48,7 @@ target_link_libraries (kpeoplewidgets
                        ${KDEPIMLIBS_KMIME_LIBS}
                        ${BALOO_LIBRARIES}   
                        ${LibKFbAPI_LIBRARY}
+                       ${LibKGAPI2_LIBRARY}
                        ${TELEPATHY_QT4_LIBRARIES}
                        ${KTP_LIBRARIES}
                        ${KTP_LOGGER_LIBRARIES}

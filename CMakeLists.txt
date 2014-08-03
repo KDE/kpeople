@@ -22,6 +22,7 @@ find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (KdepimLibs REQUIRED)
 find_package(Baloo REQUIRED)
 find_package (TelepathyQt4 0.9.3 REQUIRED)
+find_package (LibKGAPI2 REQUIRED)
 
 include (KDE4Defaults)
 include (MacroLibrary)

@@ -21,12 +21,17 @@
 
 #ifndef FILES_H
 #define FILES_H
+#define JOB_PROPERTY "_KGAPI2Job"
 
 #include "abstractfieldwidgetfactory.h"
 #include <QItemSelection>
 #include <KDateTime>
+#include <KConfig>
+#include <KConfigGroup>
 #include <QListView>
 #include <QStandardItemModel>
+#include <LibKGAPI2/Account>
+#include <LibKGAPI2/Job>
 
 using namespace KPeople;
 
@@ -39,9 +44,17 @@ public:
     virtual int sortWeight() const;
     virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const;
 
+private slots:
+    void authenticate();
+    void slotAuthJobFinished(KGAPI2::Job*);
+    void slotFileFetchJobFinished(KGAPI2::Job*);
+    void getFiles();
+    void updateAccountToken(const KGAPI2::AccountPtr&, KGAPI2::Job *restartJob = 0);
+
 private:
     KABC::Addressee m_person;
     QListView* m_ListView;
     QStandardItemModel* m_model;
+    KGAPI2::AccountPtr m_account;
 };
 #endif // FILES_H

@@ -24,6 +24,7 @@
 
 #include "abstractfieldwidgetfactory.h"
 #include <QItemSelection>
+#include <QVBoxLayout>
 #include <KJob>
 #include <Akonadi/Collection>
 #include <KDateTime>
@@ -41,16 +42,19 @@ public:
     explicit Posts(QObject* parent = 0);
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
+    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const;
 
 private:
-  KABC::Addressee m_person;
-  QListView* m_ListView;
-  QStandardItemModel *m_model;
-  
+    KABC::Addressee m_person;
+    QListView* m_ListView;
+    QStandardItemModel* m_model;
+    QVBoxLayout* m_layout;
+    QStringList postsId;
+
 private slots:
     void collectionResult(KJob*);
     void jobFinished(KJob*);
+    void akonadiItemFetchFinished(KJob*);
 };
 
 #endif // POSTS_H

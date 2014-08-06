@@ -11,10 +11,8 @@ set (kpeople_widgets_SRCS
     plugins/posts.cpp
     personpostview.cpp
     plugins/eventviewdelegate.cpp
-    plugins/chatlistviewdelegate.cpp
     plugins/events.cpp
     personeventview.cpp
-    plugins/chat.cpp
     personchatview.cpp
     plugins/note.cpp
     personnoteview.cpp
@@ -49,9 +47,6 @@ target_link_libraries (kpeoplewidgets
                        ${BALOO_LIBRARIES}   
                        ${LibKFbAPI_LIBRARY}
                        ${LibKGAPI2_LIBRARY}
-                       ${TELEPATHY_QT4_LIBRARIES}
-                       ${KTP_LIBRARIES}
-                       ${KTP_LOGGER_LIBRARIES}
                        ${KDEPIMLIBS_AKONADI_SOCIALUTILS_LIBS}
                        ${QT_QTSQL_LIBRARIES}
                        kpeople

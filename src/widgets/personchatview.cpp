@@ -20,7 +20,6 @@
  */
 
 #include "personchatview.h"
-#include <qtest_kde.h>
 
 #include <QFormLayout>
 #include <QLabel>
@@ -37,17 +36,17 @@
 #include <KPluginFactory>
 
 #include "abstractfieldwidgetfactory.h"
-#include "plugins/chat.h"
 #include "global.h"
 
+namespace KPeople
+{
 
-namespace KPeople {
-
-class PersonChatViewPrivate {
+class PersonChatViewPrivate
+{
 public:
     PersonData  *m_person;
     QWidget *m_mainWidget;
-    AbstractFieldWidgetFactory* m_note;
+    AbstractFieldWidgetFactory *m_note;
 };
 
 using namespace KPeople;
@@ -60,9 +59,15 @@ PersonChatView::PersonChatView(QWidget *parent)
     setLayout(new QVBoxLayout(this));
     d->m_mainWidget = new QWidget(this);
     d->m_person = 0;
-
-    d->m_note = new Chat();
-
+    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"), "'kpeople_chat_plugin' == Name");
+    if (pluginList.count()) {
+        KService::Ptr chatPlugin = pluginList.first();
+        QString error;
+        AbstractFieldWidgetFactory *f = chatPlugin.data()->createInstance<AbstractFieldWidgetFactory>(this, QVariantList(), &error);
+        d->m_note = f;
+    } else {
+        qDebug() << "Chat Plugin not found";
+    }
 }
 
 PersonChatView::~PersonChatView()
@@ -91,7 +96,7 @@ void PersonChatView::reload()
     layout()->takeAt(layoutIndex);
     d->m_mainWidget->deleteLater();
     d->m_mainWidget = new QWidget(this);
-    dynamic_cast<QVBoxLayout*>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
+    dynamic_cast<QVBoxLayout *>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
 
     QFormLayout *layout = new QFormLayout(d->m_mainWidget);
     layout->setSpacing(4);

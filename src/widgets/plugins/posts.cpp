@@ -137,7 +137,7 @@ void Posts::akonadiItemFetchFinished(KJob *job)
     if (!items.count())
         return;
 
-    QString DBpath = KGlobal::dirs()->localxdgdatadir() + QLatin1String("akonadi/facebook_post.db");
+    QString DBpath = KGlobal::dirs()->localxdgdatadir() + QLatin1String("akonadi/facebook_posts.db");
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(DBpath);
     if (!db.open()) {

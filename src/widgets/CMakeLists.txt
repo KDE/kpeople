@@ -8,6 +8,10 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp
     plugins/emaildetailswidget.cpp
+    personemailview.cpp
+    plugins/emails.cpp
+    plugins/emaillistviewdelegate.cpp
+    plugins/emaillistmodel.cpp
     abstractfieldwidgetfactory.cpp
 
 #     mergedialog.cpp
@@ -25,6 +29,9 @@ target_link_libraries (kpeoplewidgets
                        ${QT_QTGUI_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        ${KDEPIMLIBS_KABC_LIBS}
+                       ${KDEPIMLIBS_KMIME_LIBS}
+                       ${KDEPIMLIBS_AKONADI_LIBS}
+                       ${BALOO_LIBRARIES}
                        kpeople
 )
 
@@ -47,6 +54,7 @@ install (FILES
             persondetailsview.h
 #             mergedialog.h
             persondetailsdialog.h
+            personemailview.h
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets
          COMPONENT Devel
 )

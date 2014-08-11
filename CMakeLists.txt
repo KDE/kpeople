@@ -20,6 +20,8 @@ set(KPEOPLE_LIBVERSION "${KPEOPLE_SOVERSION}.${KPEOPLE_VERSION_MINOR}.${KPEOPLE_
 
 find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
 find_package (KdepimLibs REQUIRED)
+find_package(Baloo REQUIRED)
+
 
 include (KDE4Defaults)
 include (MacroLibrary)
@@ -28,6 +30,7 @@ include_directories (${KDE4_INCLUDES}
                      ${CMAKE_CURRENT_SOURCE_DIR}
                      ${CMAKE_CURRENT_BINARY_DIR}
                      ${KDEPIMLIBS_INCLUDE_DIRS}
+                     ${BALOO_INCLUDE_DIR}
 )
 
 if(KdepimLibs_VERSION_MINOR GREATER 11)

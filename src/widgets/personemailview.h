@@ -23,10 +23,8 @@
 #define PERSON_EMAILS_VIEW_H
 
 #include <QWidget>
-#include <QVariantList>
 
 #include "../kpeople_export.h"
-
 #include "../persondata.h"
 
 class QLabel;
@@ -35,7 +33,7 @@ class QVBoxLayout;
 namespace KPeople {
 class PersonEmailsViewPrivate;
 
-class KPEOPLE_EXPORT PersonEmailsView: public QWidget
+class KPEOPLE_EXPORT PersonEmailsView : public QWidget
 {
     Q_OBJECT
 public:
@@ -50,9 +48,8 @@ private Q_SLOTS:
 
 private:
     Q_DECLARE_PRIVATE(PersonEmailsView)
-    PersonEmailsViewPrivate* d_ptr;
+    PersonEmailsViewPrivate *d_ptr;
 };
 }
-
 
 #endif // PERSON_EMAILS_VIEW_H

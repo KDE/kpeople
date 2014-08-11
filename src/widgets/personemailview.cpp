@@ -21,27 +21,14 @@
 
 #include "personemailview.h"
 
-#include <qtest_kde.h>
-
-#include <QFormLayout>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QDebug>
-#include <QList>
-
-#include <KLocalizedString>
-#include <KStandardDirs>
-#include <KService>
-#include <KServiceTypeTrader>
-#include <KPluginInfo>
-#include <KPluginLoader>
-#include <KPluginFactory>
 
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaildetailswidget.h"
 #include "plugins/emails.h"
 #include "global.h"
 
+#include <QVBoxLayout>
+#include <QFormLayout>
 
 namespace KPeople {
 
@@ -49,9 +36,8 @@ class PersonEmailsViewPrivate {
 public:
     PersonData  *m_person;
     QWidget *m_mainWidget;
-    AbstractFieldWidgetFactory* m_emails;
+    AbstractFieldWidgetFactory *m_emails;
 };
-
 
 using namespace KPeople;
 
@@ -63,7 +49,6 @@ PersonEmailsView::PersonEmailsView(QWidget *parent)
     setLayout(new QVBoxLayout(this));
     d->m_mainWidget = new QWidget(this);
     d->m_person = 0;
-
     d->m_emails = new Emails();
 
 }
@@ -94,13 +79,13 @@ void PersonEmailsView::reload()
     layout()->takeAt(layoutIndex);
     d->m_mainWidget->deleteLater();
     d->m_mainWidget = new QWidget(this);
-    dynamic_cast<QVBoxLayout*>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
+    dynamic_cast<QVBoxLayout *>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
 
     QFormLayout *layout = new QFormLayout(d->m_mainWidget);
     layout->setSpacing(4);
-    
+
     QWidget *widget = d->m_emails->createDetailsWidget(d->m_person->person(), d->m_person->contacts(), this);
-      
+
     layout->addRow(widget);
 
 }

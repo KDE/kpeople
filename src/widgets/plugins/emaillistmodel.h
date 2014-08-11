@@ -23,8 +23,8 @@
 #define EMAILLISTMODEL_H
 
 #include <QAbstractListModel>
-#include <KDateTime>
 #include <QUrl>
+#include <KDateTime>
 
 struct email {
     QString subject;
@@ -33,18 +33,22 @@ struct email {
     QUrl url;
 };
 
-enum datarole {mailSubjectRole = Qt::UserRole + 100, mailDescRole = Qt::UserRole + 101, mailTimeRole = Qt::UserRole + 102};
-
 class EmailListModel : public QAbstractListModel
 {
     Q_OBJECT
 
 public:
-    EmailListModel(QObject* parent = 0);
-    EmailListModel(QList<email> list, QObject* parent = 0);
+    enum dataRole {
+        mailSubjectRole = Qt::UserRole + 100,
+        mailDescRole = Qt::UserRole + 101,
+        mailTimeRole = Qt::UserRole + 102
+    };
 
-    virtual QVariant data(const QModelIndex& index, int role) const;
-    virtual int rowCount(const QModelIndex& parent) const;
+    EmailListModel(QObject *parent = 0);
+    EmailListModel(QList<email> list, QObject *parent = 0);
+
+    virtual QVariant data(const QModelIndex &index, int role) const;
+    virtual int rowCount(const QModelIndex &parent) const;
 
     void addEmail(struct email mail);
     QUrl getItemUrl(int row);

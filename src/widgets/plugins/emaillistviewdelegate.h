@@ -21,14 +21,15 @@
 
 #ifndef EMAILLISTVIEWDELEGATE_H
 #define EMAILLISTVIEWDELEGATE_H
+
 #include "emaillistmodel.h"
-#include <QtGui>
+#include <QStyledItemDelegate>
 
 class EmailListViewDelegate : public QStyledItemDelegate
 {
-    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    void paint(QPainter* painter, const QStyleOptionViewItem& option,
-               const QModelIndex& index) const;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const;
 };
 
 #endif // EMAILLISTVIEWDELEGATE_H

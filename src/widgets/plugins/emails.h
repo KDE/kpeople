@@ -24,31 +24,31 @@
 
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaillistmodel.h"
-#include "plugins/emaillistviewdelegate.h"
-#include <QItemSelection>
-#include <KJob>
-#include <Akonadi/Collection>
-#include <KDateTime>
 
+class KJob;
+class QModelIndex;
+
+namespace KABC {
+class Addressee;
+class AddresseeList;
+}
 using namespace KPeople;
-
 
 class Emails : public AbstractFieldWidgetFactory
 {
     Q_OBJECT
 public:
-    explicit Emails(QObject* parent = 0);
+    explicit Emails(QObject *parent = 0);
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
+    virtual QWidget *createDetailsWidget(const KABC::Addressee &, const KABC::AddresseeList &, QWidget *) const;
 private:
     QList<email> emailList;
     EmailListModel *me;
 
 private Q_SLOTS:
-    void onEmailDoubleClicked(const QModelIndex &index);
-    void jobFinished(KJob *job);
-
+    void onEmailDoubleClicked(const QModelIndex &);
+    void jobFinished(KJob *);
 
 };
 

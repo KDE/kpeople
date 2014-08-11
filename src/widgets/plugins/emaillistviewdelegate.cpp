@@ -20,23 +20,28 @@
  */
 
 #include "emaillistviewdelegate.h"
-QSize EmailListViewDelegate::sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const
+
+#include <QPainter>
+#include <QApplication>
+
+QSize EmailListViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
+    Q_UNUSED(index);
     QSize s;
     s = QSize(option.decorationSize.width(), option.decorationSize.height());
     s.setHeight(option.decorationSize.height() * 2);
     return s;
 }
 
-void EmailListViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
+void EmailListViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     QStyledItemDelegate::paint(painter, option, index);
 
     painter->save();
 
-    QString subject = qvariant_cast<QString>(index.data(mailSubjectRole));
-    QString desc = qvariant_cast<QString>(index.data(mailDescRole));
-    QString time = qvariant_cast<QString>(index.data(mailTimeRole));
+    QString subject = index.data(EmailListModel::mailSubjectRole).toString();
+    QString desc = index.data(EmailListModel::mailDescRole).toString();
+    QString time = index.data(EmailListModel::mailTimeRole).toString();
 
     QFont subjectFont = QApplication::font();
     QFont timeFont = QApplication::font();
@@ -49,7 +54,6 @@ void EmailListViewDelegate::paint(QPainter* painter, const QStyleOptionViewItem&
     QRect subjectRect = option.rect;
     subjectRect.setTop(subjectRect.top() + 5);
     descRect.setTop(subjectRect.top() + fm.height());
-
 
     painter->setFont(subjectFont);
     painter->drawText(subjectRect, "Subject: " + subject);

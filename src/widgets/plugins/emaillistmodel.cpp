@@ -20,27 +20,27 @@
  */
 
 #include "emaillistmodel.h"
-#include <QtCore>
+
 #include <QDebug>
 #include <KGlobal>
 #include <KLocale>
 
-EmailListModel::EmailListModel(QObject* parent) : QAbstractListModel(parent)
+EmailListModel::EmailListModel(QObject *parent) : QAbstractListModel(parent)
 {
 }
 
-EmailListModel::EmailListModel(QList<email> list, QObject* parent) : QAbstractListModel(parent)
+EmailListModel::EmailListModel(QList<email> list, QObject *parent) : QAbstractListModel(parent)
 {
     emailList = list;
 };
 
-int EmailListModel::rowCount(const QModelIndex& parent) const
+int EmailListModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return emailList.count();
 }
 
-QVariant EmailListModel::data(const QModelIndex& index, int role) const
+QVariant EmailListModel::data(const QModelIndex &index, int role) const
 {
 
     if (!index.isValid())
@@ -55,7 +55,6 @@ QVariant EmailListModel::data(const QModelIndex& index, int role) const
         subject = "No Subject";
 
     subject.replace('\n', ' ');
-//     subject.truncate(25);
     desc.replace('\n', ' ');
     desc.truncate(160);
     desc.append("...");

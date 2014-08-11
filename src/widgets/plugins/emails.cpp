@@ -20,53 +20,43 @@
  */
 
 #include "emails.h"
+#include "plugins/emaillistmodel.h"
+#include "plugins/emaillistviewdelegate.h"
 
-#include <QVBoxLayout>
-#include <QLabel>
-#include <QPushButton>
-#include <QListView>
 #include <QDebug>
-#include <baloo/query.h>
-#include <baloo/resultiterator.h>
-#include <KPluginFactory>
+#include <QLabel>
+#include <QListView>
+#include <QVBoxLayout>
+
+#include <KMimeType>
+#include <KMime/Message>
+#include <QDesktopServices>
+#include <KABC/Addressee>
 #include <KLocalizedString>
 
+#include <baloo/query.h>
+#include <baloo/resultiterator.h>
 
 #include <Akonadi/Item>
 #include <Akonadi/ItemFetchJob>
 #include <Akonadi/ItemFetchScope>
-#include <Akonadi/Collection>
-#include <Akonadi/CollectionFetchJob>
-#include <Akonadi/CollectionFetchScope>
-#include <Akonadi/ServerManager>
-
-#include <KMime/Message>
-#include <KMimeType>
-#include <QSizePolicy>
-#include <QHeaderView>
-#include <KABC/Addressee>
-#include <KPluginFactory>
-#include <KPluginLoader>
-
-#include <QDebug>
 
 using namespace Akonadi;
 
-
-Emails::Emails(QObject* parent): AbstractFieldWidgetFactory(parent)
+Emails::Emails(QObject *parent): AbstractFieldWidgetFactory(parent)
 {
     me = new EmailListModel(emailList);
 }
 
-QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const
+QWidget *Emails::createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const
 {
     Q_UNUSED(contacts);
-    QWidget* widget = new QWidget(parent);
+    QWidget *widget = new QWidget(parent);
 
-    QVBoxLayout* layout = new QVBoxLayout(widget);
+    QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0, 0, 0, 0);
-    QListView* listview = new QListView();
 
+    //Fetches emails from Baloo using person preferredEmail
     Baloo::Query query;
     query.setSearchString(person.preferredEmail());
     query.setType("Email");
@@ -76,62 +66,54 @@ QWidget* Emails::createDetailsWidget(const KABC::Addressee& person, const KABC::
     while (rt.next()) {
         hasMsg = true;
 
+        //Complete msg is not return so fetches the complete mail from akonadi
         Akonadi::Item it = Item::fromUrl(rt.url());
-        ItemFetchJob* itemFetchJob = new ItemFetchJob(it);
+        ItemFetchJob *itemFetchJob = new ItemFetchJob(it);
         itemFetchJob->fetchScope().fetchFullPayload();
         connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(jobFinished(KJob*)));
     }
 
     if (hasMsg) {
-        EmailListViewDelegate* emailListDelegate = new EmailListViewDelegate();
+        QListView *listview = new QListView();
         listview->setModel(me);
-        listview->setItemDelegate(emailListDelegate);
+        listview->setItemDelegate(new EmailListViewDelegate());
         listview->setSelectionMode(QAbstractItemView::SingleSelection);
         listview->setSelectionBehavior(QAbstractItemView::SelectRows);
         listview->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        listview->show();
         layout->addWidget(listview);
-       
+
         connect(listview, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onEmailDoubleClicked(QModelIndex)));
     } else {
-        listview->hide();
         layout->addWidget(new QLabel("No Emails"));
     }
     widget->setLayout(layout);
     return widget;
 }
 
-void Emails::onEmailDoubleClicked(const QModelIndex& clicked)
+void Emails::onEmailDoubleClicked(const QModelIndex &clicked)
 {
-
     QUrl url = me->getItemUrl(clicked.row());
-    QString cmd = "kmail --view ";
-    cmd.append(url.toString());
-
-    system(cmd.toStdString().c_str());
-
+    QDesktopServices::openUrl(url);
 }
 
-void Emails::jobFinished(KJob* job)
+void Emails::jobFinished(KJob *job)
 {
     if (job->error()) {
         qDebug() << "Error:" << job->errorString();
         return;
     }
 
-    Akonadi::ItemFetchJob* fetchJob = qobject_cast<Akonadi::ItemFetchJob*>(job);
+    Akonadi::ItemFetchJob *fetchJob = qobject_cast<Akonadi::ItemFetchJob *>(job);
     const Akonadi::Item::List items = fetchJob->items();
     KMime::Message msg;
 
     foreach (const Akonadi::Item & item, items) {
-
-
         msg.setContent(item.payloadData());
         msg.setFrozen(true);
         msg.parse();
-        KMime::Headers::Subject* subject = msg.subject();
-        KMime::Headers::Date* date = msg.date();
-        KMime::Content* textContent = msg.textContent();
+        KMime::Headers::Subject *subject = msg.subject();
+        KMime::Headers::Date *date = msg.date();
+        KMime::Content *textContent = msg.textContent();
 
         struct email mail;
         mail.subject = subject->asUnicodeString();
@@ -154,7 +136,4 @@ int Emails::sortWeight() const
     return 0;
 }
 
-
 #include "emails.moc"
-
-

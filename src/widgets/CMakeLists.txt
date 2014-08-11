@@ -85,7 +85,6 @@ install (FILES
 )
 INSTALL (FILES plugins/filelist.ui DESTINATION ${DATA_INSTALL_DIR}/kpeople/)
 install (FILES persondetailsplugin.desktop
-	 personemailplugin.desktop
          DESTINATION
          ${SERVICETYPES_INSTALL_DIR}
 )

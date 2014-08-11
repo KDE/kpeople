@@ -50,6 +50,8 @@ private slots:
     void slotFileFetchJobFinished(KGAPI2::Job*);
     void getFiles();
     void updateAccountToken(const KGAPI2::AccountPtr&, KGAPI2::Job *restartJob = 0);
+    void viewBtnClick(bool);
+    void editBtnClick(bool);
 
 private:
     KABC::Addressee m_person;

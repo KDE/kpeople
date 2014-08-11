@@ -5,6 +5,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 set (kpeople_widgets_SRCS
+    plugins/filesviewdelegate.cpp
     plugins/files.cpp
     personfilesview.cpp
     plugins/postviewdelegate.cpp
@@ -32,6 +33,7 @@ set (kpeople_widgets_SRCS
 
 kde4_add_ui_files (kpeople_widgets_SRCS
                    person-details-presentation.ui
+                   plugins/filelist.ui
 )
 
 kde4_add_library (kpeoplewidgets SHARED ${kpeople_widgets_SRCS} )
@@ -39,6 +41,7 @@ kde4_add_library (kpeoplewidgets SHARED ${kpeople_widgets_SRCS} )
 target_link_libraries (kpeoplewidgets
                        ${QT_QTCORE_LIBRARIES}
                        ${QT_QTGUI_LIBRARIES}
+                       ${QT_QTUITOOLS_LIBRARIES}
                        ${KDE4_KDEUI_LIBS}
                        ${KDEPIMLIBS_KABC_LIBS}
                        ${KDEPIMLIBS_AKONADI_LIBS}
@@ -80,7 +83,7 @@ install (FILES
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets
          COMPONENT Devel
 )
-
+INSTALL (FILES plugins/filelist.ui DESTINATION ${DATA_INSTALL_DIR}/kpeople/)
 install (FILES persondetailsplugin.desktop
 	 personemailplugin.desktop
          DESTINATION

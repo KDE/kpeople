@@ -20,14 +20,19 @@
  */
 
 #include "files.h"
+#include "filesviewdelegate.h"
 
 #include <QDebug>
 #include <QLabel>
+#include <QtUiTools>
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QPushButton>
+#include <QDesktopServices>
+#include <QGraphicsView>
 #include <QStandardItem>
 #include <KLocale>
+#include <KStandardDirs>
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <KLocalizedString>
@@ -36,6 +41,7 @@
 #include <LibKGAPI2/Drive/File>
 #include <LibKGAPI2/Drive/FileFetchJob>
 #include <LibKGAPI2/Drive/FileSearchQuery>
+#include <LibKGAPI2/Drive/ParentReference>
 
 using namespace KGAPI2;
 using namespace KGAPI2::Drive;
@@ -91,9 +97,11 @@ QWidget *Files::createDetailsWidget(const KABC::Addressee &person, const KABC::A
     const_cast<Files *>(this)->m_model = new QStandardItemModel();
 
     m_ListView->setModel(m_model);
+    m_ListView->setItemDelegate(new FilesViewDelegate());
     m_ListView->setSelectionMode(QAbstractItemView::SingleSelection);
     m_ListView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_ListView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
     layout->addWidget(m_ListView);
     widget->setLayout(layout);
     return scrollArea;
@@ -107,22 +115,20 @@ void Files::authenticate()
         account,
         QLatin1String("732262982909-n9aj72dft8vsa1kr85n93vmjehu2q0oq.apps.googleusercontent.com"),
         QLatin1String("bbwbrU4ym4UBF08brgSey-1c"));
-    connect(authJob, SIGNAL(finished(KGAPI2::Job*)), this, SLOT(slotAuthJobFinished(KGAPI2::Job*)));
+    connect(authJob, SIGNAL(finished(KGAPI2::Job *)), this, SLOT(slotAuthJobFinished(KGAPI2::Job *)));
 }
 
 void Files::updateAccountToken(const AccountPtr &account, Job *restartJob)
 {
     qDebug() << "Update token";
-    qDebug() << account.data()->accessToken();
-    qDebug() << account.data()->refreshToken();
 
     KGAPI2::AuthJob *authJob = new KGAPI2::AuthJob(
         account,
         QLatin1String("732262982909-n9aj72dft8vsa1kr85n93vmjehu2q0oq.apps.googleusercontent.com"),
         QLatin1String("bbwbrU4ym4UBF08brgSey-1c"), m_ListView);
     authJob->setProperty(JOB_PROPERTY, QVariant::fromValue(restartJob));
-    connect(authJob, SIGNAL(finished(KGAPI2::Job*)),
-            this, SLOT(slotAuthJobFinished(KGAPI2::Job*)));
+    connect(authJob, SIGNAL(finished(KGAPI2::Job *)),
+            this, SLOT(slotAuthJobFinished(KGAPI2::Job *)));
 }
 
 void Files::slotAuthJobFinished(KGAPI2::Job *job)
@@ -153,7 +159,7 @@ void Files::getFiles()
     query.addQuery(FileSearchQuery::Writers, FileSearchQuery::In, m_person.preferredEmail());
 
     KGAPI2::Drive::FileFetchJob *fetchJob = new KGAPI2::Drive::FileFetchJob(query, m_account);
-    connect(fetchJob, SIGNAL(finished(KGAPI2::Job*)), this, SLOT(slotFileFetchJobFinished(KGAPI2::Job*)));
+    connect(fetchJob, SIGNAL(finished(KGAPI2::Job *)), this, SLOT(slotFileFetchJobFinished(KGAPI2::Job *)));
 }
 
 void Files::slotFileFetchJobFinished(KGAPI2::Job *job)
@@ -177,22 +183,64 @@ void Files::slotFileFetchJobFinished(KGAPI2::Job *job)
     /* Get all items the job has retrieved */
     const KGAPI2::ObjectsList objects = fetchJob->items();
 
-    Q_FOREACH (const KGAPI2::ObjectPtr & object, objects) {
+    Q_FOREACH(const KGAPI2::ObjectPtr & object, objects) {
         const KGAPI2::Drive::FilePtr file = object.dynamicCast<KGAPI2::Drive::File>();
-        /* Convert the contact to QListWidget item */
-        qDebug() << file.data()->isFolder();
-        qDebug() << file.data()->title();
-        qDebug() << file.data()->embedLink(); //Read Only Link for files
-        qDebug() << file.data()->alternateLink();
-        qDebug() << file.data()->thumbnailLink();//Files only
-//         qDebug() << file.data()->thumbnail();
 
-        QStandardItem *item = new QStandardItem();
-        item->setData(file.data()->title(), Qt::DisplayRole);
-        m_model->appendRow(item);
+        if (!file.data()->isFolder()) {
+
+            QUiLoader loader;
+            KStandardDirs dir;
+            
+            QString pathList = dir.findResourceDir("data", "kpeople/filelist.ui");
+            QFile uiform(pathList + "kpeople/filelist.ui");
+            uiform.open(QFile::ReadOnly);
+            QWidget *formWidget = loader.load(&uiform, m_ListView);
+            uiform.close();
+
+            QPushButton *viewBtn = formWidget->findChild<QPushButton *>("viewBtn");
+            QPushButton *editBtn = formWidget->findChild<QPushButton *>("editBtn");
+
+            QLabel *nameLabel = formWidget->findChild<QLabel *>("name");
+            QLabel *extLabel = formWidget->findChild<QLabel *>("ext");
+            QLabel *sizeLabel = formWidget->findChild<QLabel *>("size");
+
+            nameLabel->setText(file.data()->title());
+            sizeLabel->setText("Size: " + KGlobal::locale()->formatByteSize(file.data()->fileSize()));
+            extLabel->setText("Extension: " + file.data()->fileExtension());
+
+            connect(viewBtn, SIGNAL(clicked(bool)), this, SLOT(viewBtnClick(bool)));
+            connect(editBtn, SIGNAL(clicked(bool)), this, SLOT(editBtnClick(bool)));
+
+            QStandardItem *item = new QStandardItem();
+            item->setData(file.data()->embedLink(), FilesViewDelegate::readOnlyLink);
+            item->setData(file.data()->alternateLink(), FilesViewDelegate::editLink);
+            m_model->appendRow(item);
+
+            m_ListView->setIndexWidget(item->index(), formWidget);
+
+        }
+
     }
 
 }
+void Files::editBtnClick(bool)
+{
+    QModelIndex index = m_ListView->currentIndex();
+    QUrl url = m_model->data(index, FilesViewDelegate::editLink).toUrl();
+    if (!url.isEmpty()) {
+        QDesktopServices::openUrl(url);
+    }
+}
+
+void Files::viewBtnClick(bool)
+{
+    QModelIndex index = m_ListView->currentIndex();
+    QUrl url = m_model->data(index, FilesViewDelegate::readOnlyLink).toUrl();
+    if (!url.isEmpty()) {
+        QDesktopServices::openUrl(url);
+    }
+}
+
 
 QString Files::label() const
 {

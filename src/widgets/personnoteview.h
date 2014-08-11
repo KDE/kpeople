@@ -23,10 +23,8 @@
 #define PERSONNOTEVIEW_H
 
 #include <QWidget>
-#include <QVariantList>
 
 #include "../kpeople_export.h"
-
 #include "../persondata.h"
 
 class QLabel;
@@ -35,7 +33,7 @@ class QVBoxLayout;
 namespace KPeople {
 class PersonNoteViewPrivate;
 
-class KPEOPLE_EXPORT PersonNoteView: public QWidget
+class KPEOPLE_EXPORT PersonNoteView : public QWidget
 {
     Q_OBJECT
 public:
@@ -50,7 +48,7 @@ private Q_SLOTS:
 
 private:
     Q_DECLARE_PRIVATE(PersonNoteView)
-    PersonNoteViewPrivate* d_ptr;
+    PersonNoteViewPrivate *d_ptr;
 };
 }
 

@@ -21,26 +21,12 @@
 
 #include "personnoteview.h"
 
-#include <qtest_kde.h>
-
-#include <QFormLayout>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QDebug>
-#include <QList>
-
-#include <KLocalizedString>
-#include <KStandardDirs>
-#include <KService>
-#include <KServiceTypeTrader>
-#include <KPluginInfo>
-#include <KPluginLoader>
-#include <KPluginFactory>
-
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/note.h"
 #include "global.h"
 
+#include <QFormLayout>
+#include <QVBoxLayout>
 
 namespace KPeople {
 
@@ -48,7 +34,7 @@ class PersonNoteViewPrivate {
 public:
     PersonData  *m_person;
     QWidget *m_mainWidget;
-    AbstractFieldWidgetFactory* m_note;
+    AbstractFieldWidgetFactory *m_note;
 };
 
 using namespace KPeople;
@@ -77,7 +63,7 @@ void PersonNoteView::setPerson(PersonData *person)
     if (d->m_person) {
         disconnect(d->m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
     }
-    
+
     d->m_person = person;
     connect(d->m_person, SIGNAL(dataChanged()), this, SLOT(reload()));
     reload();
@@ -92,7 +78,7 @@ void PersonNoteView::reload()
     layout()->takeAt(layoutIndex);
     d->m_mainWidget->deleteLater();
     d->m_mainWidget = new QWidget(this);
-    dynamic_cast<QVBoxLayout*>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
+    dynamic_cast<QVBoxLayout *>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
 
     QFormLayout *layout = new QFormLayout(d->m_mainWidget);
     layout->setSpacing(4);

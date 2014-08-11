@@ -21,37 +21,35 @@
 
 #include "note.h"
 
-#include <QVBoxLayout>
+#include <QDebug>
 #include <QLabel>
-#include <QDebug>
-#include <KPluginFactory>
+#include <QTextEdit>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include <KLocalizedString>
-
-#include <KPluginLoader>
-
-#include <QDebug>
+#include <Akonadi/Item>
+#include <Akonadi/ItemModifyJob>
 
 using namespace Akonadi;
 
-
-Note::Note(QObject* parent): AbstractFieldWidgetFactory(parent)
+Note::Note(QObject *parent): AbstractFieldWidgetFactory(parent)
 {
 }
 
-QWidget* Note::createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList& contacts, QWidget* parent) const
+QWidget *Note::createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const
 {
     Q_UNUSED(contacts);
-    QWidget* widget = new QWidget(parent);
-    QVBoxLayout* layout = new QVBoxLayout(widget);
+    QWidget *widget = new QWidget(parent);
+    QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0, 0, 0, 0);
 
-    const_cast<Note*>(this)->m_noteEditor = new QTextEdit(parent);
-    const_cast<Note*>(this)->m_saveBtn = new QPushButton("Save");
-    const_cast<Note*>(this)->m_person = person;
+    const_cast<Note *>(this)->m_noteEditor = new QTextEdit(parent);
+    const_cast<Note *>(this)->m_saveBtn = new QPushButton("Save");
+    const_cast<Note *>(this)->m_person = person;
 
     m_noteEditor->setText(person.note());
 
-//     if(person.note() != "")
+//     if (person.note() != "")
 //         m_noteEditor->setDisabled(true);
 
     connect(m_saveBtn, SIGNAL(clicked(bool)), this, SLOT(saveNote(bool)));
@@ -68,23 +66,22 @@ void Note::saveNote(bool)
     QString newNote = this->m_noteEditor->toPlainText();
 
     //FIXME Some ids are ktp:// in form so they are not being saved
-    const KUrl& url = KUrl(m_person.custom("akonadi", "id"));
+    const KUrl &url = KUrl(m_person.custom("akonadi", "id"));
     Akonadi::Item item = Item::fromUrl(url);
     m_person.setNote(newNote);
     item.setPayload<KABC::Addressee>(m_person);
     item.setMimeType(KABC::Addressee::mimeType());
-    Akonadi::ItemModifyJob* job = new Akonadi::ItemModifyJob(item);
+    Akonadi::ItemModifyJob *job = new Akonadi::ItemModifyJob(item);
     connect(job, SIGNAL(result(KJob*)), SLOT(contactModifyResult(KJob*)));
 
 }
-void Note::contactModifyResult(KJob* job)
+void Note::contactModifyResult(KJob *job)
 {
     if (job->error() != 0) {
         // error handling, see job->errorString()
         return;
     }
 }
-
 
 void Note::textChanged()
 {
@@ -102,4 +99,3 @@ int Note::sortWeight() const
 }
 
 #include "note.moc"
-

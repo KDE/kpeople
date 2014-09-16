@@ -8,15 +8,20 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp
     plugins/emaildetailswidget.cpp
-    personemailview.cpp
-    plugins/emails.cpp
-    plugins/emaillistviewdelegate.cpp
-    plugins/emaillistmodel.cpp
     abstractfieldwidgetfactory.cpp
 
 #     mergedialog.cpp
 #     mergedelegate.cpp
 )
+
+if (${Baloo_FOUND})
+    set(kpeople_widgets_SRCS
+        ${kpeople_widgets_SRCS}
+        personemailview.cpp
+        plugins/emails.cpp
+        plugins/emaillistviewdelegate.cpp
+        plugins/emaillistmodel.cpp)
+endif()
 
 kde4_add_ui_files (kpeople_widgets_SRCS
                    person-details-presentation.ui
@@ -31,9 +36,12 @@ target_link_libraries (kpeoplewidgets
                        ${KDEPIMLIBS_KABC_LIBS}
                        ${KDEPIMLIBS_KMIME_LIBS}
                        ${KDEPIMLIBS_AKONADI_LIBS}
-                       ${BALOO_LIBRARIES}
                        kpeople
 )
+
+if (${Baloo_FOUND})
+    target_link_libraries(kpeoplewidgets ${BALOO_LIBRARIES})
+endif()
 
 set_target_properties (kpeoplewidgets PROPERTIES VERSION ${KPEOPLE_LIBVERSION} SOVERSION ${KPEOPLE_SOVERSION})
 

@@ -282,15 +282,15 @@ void MetaContact::reload()
         }
 
         // find most online presence
-        const QString &contactPresence = contact.custom("telepathy", "presence");
-        const QString &currentPersonPresence = d->personAddressee.custom("telepathy", "presence");
+        const QString &contactPresence = contact.custom(QStringLiteral("telepathy"), QStringLiteral("presence"));
+        const QString &currentPersonPresence = d->personAddressee.custom(QStringLiteral("telepathy"), QStringLiteral("presence"));
 
         // FIXME This needs to be redone when presence changes
         if (!contactPresence.isEmpty()) {
             if (KPeople::presenceSortPriority(contactPresence) < KPeople::presenceSortPriority(currentPersonPresence)) {
-                d->personAddressee.insertCustom("telepathy", "presence", contactPresence);
-                d->personAddressee.insertCustom("telepathy", "contactId", contact.custom("telepathy", "contactId"));
-                d->personAddressee.insertCustom("telepathy", "accountPath", contact.custom("telepathy", "accountPath"));
+                d->personAddressee.insertCustom(QStringLiteral("telepathy"), QStringLiteral("presence"), contactPresence);
+                d->personAddressee.insertCustom(QStringLiteral("telepathy"), QStringLiteral("contactId"), contact.custom(QStringLiteral("telepathy"), QStringLiteral("contactId")));
+                d->personAddressee.insertCustom(QStringLiteral("telepathy"), QStringLiteral("accountPath"), contact.custom(QStringLiteral("telepathy"), QStringLiteral("accountPath")));
             }
         }
 

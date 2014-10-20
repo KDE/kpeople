@@ -190,7 +190,7 @@ void PersonDetailsView::reload()
     } else if (!d->m_person->person().photo().url().isEmpty()) {
         avatar = QPixmap(d->m_person->person().photo().url());
     } else {
-        avatar = QPixmap(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kpeople/dummy_avatar.png"));
+        avatar = QPixmap(QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png")));
     }
 
     QString contactPresence = d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence"));
@@ -200,7 +200,7 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
-        const QString label = widgetFactory->label() + ':';
+        const QString label = widgetFactory->label() + QLatin1Char(':');
         QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->person(), d->m_person->contacts(), this);
 
         if (widget) {

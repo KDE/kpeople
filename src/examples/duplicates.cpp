@@ -34,7 +34,7 @@ using namespace KPeople;
 class ResultPrinter : public QObject
 {
     Q_OBJECT
-    public slots:
+    public Q_SLOTS:
         void print(KJob *j) {
             QList<Match> res = ((DuplicatesFinder *) j)->results();
             std::cout << "Results:" << std::endl;

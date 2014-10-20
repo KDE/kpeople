@@ -52,19 +52,19 @@ using namespace KPeople;
 void PersonDataTests::initTestCase()
 {
     // Called before the first testfunction is executed
-    PersonManager::instance("/tmp/kpeople_test_db");
-    PersonManager::instance()->mergeContacts(QStringList() << "fakesource://contact2" << "fakesource://contact3");
+    PersonManager::instance(QStringLiteral("/tmp/kpeople_test_db"));
+    PersonManager::instance()->mergeContacts(QStringList() << QStringLiteral("fakesource://contact2") << QStringLiteral("fakesource://contact3"));
 
     m_source = new FakeContactSource(0); //don't own. PersonPluginManager removes it on destruction
     QHash<QString, BasePersonsDataSource*> sources;
-    sources["fakesource"] = m_source;
+    sources[QStringLiteral("fakesource")] = m_source;
     PersonPluginManager::setDataSourcePlugins(sources);
 }
 
 void PersonDataTests::cleanupTestCase()
 {
     // Called after the last testfunction was executed
-    QFile::remove("/tmp/kpeople_test_db");
+    QFile::remove(QStringLiteral("/tmp/kpeople_test_db"));
 }
 
 void PersonDataTests::init()
@@ -80,40 +80,40 @@ void PersonDataTests::cleanup()
 
 void PersonDataTests::loadContact()
 {
-    PersonData person("fakesource://contact1");
+    PersonData person(QStringLiteral("fakesource://contact1"));
     //in this case we know the datasource is synchronous, but we should extend the test to cope with it not being async.
 
     QCOMPARE(person.contacts().size(), 1);
-    QCOMPARE(person.person().name(), QString("Contact 1"));
+    QCOMPARE(person.person().name(), QStringLiteral("Contact 1"));
     QCOMPARE(person.person().emails().size(), 1);
-    QCOMPARE(person.person().emails().first(), QString("contact1@example.com"));
+    QCOMPARE(person.person().emails().first(), QStringLiteral("contact1@example.com"));
 }
 
 void PersonDataTests::loadPerson()
 {
     //loading contact 2 which is already merged should return person1
     //which is both contact 2 and 3
-    PersonData person("fakesource://contact2");
+    PersonData person(QStringLiteral("fakesource://contact2"));
 
     QCOMPARE(person.contacts().size(), 2);
-    QCOMPARE(person.person().name(), QString("Person A"));
+    QCOMPARE(person.person().name(), QStringLiteral("Person A"));
     QCOMPARE(person.person().emails().size(), 2);
 
     //convert to set as order is not important
-    QCOMPARE(person.person().emails().toSet(), QSet<QString>() << "contact2@example.com" << "contact3@example.com");
+    QCOMPARE(person.person().emails().toSet(), QSet<QString>() << QStringLiteral("contact2@example.com") << QStringLiteral("contact3@example.com"));
 }
 
 void PersonDataTests::contactChanged()
 {
-    PersonData person("fakesource://contact1");
+    PersonData person(QStringLiteral("fakesource://contact1"));
 
-    QCOMPARE(person.person().emails().first(), QString("contact1@example.com"));
+    QCOMPARE(person.person().emails().first(), QStringLiteral("contact1@example.com"));
 
     QSignalSpy spy(&person, SIGNAL(dataChanged()));
     m_source->changeContact1Email();
     QCOMPARE(spy.count(), 1);
 
-    QCOMPARE(person.person().emails().first(), QString("newaddress@yahoo.com"));
+    QCOMPARE(person.person().emails().first(), QStringLiteral("newaddress@yahoo.com"));
 }
 
 #include "persondatatests.moc"

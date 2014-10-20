@@ -64,12 +64,14 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent):
 {
     m_db.setDatabaseName(databasePath);
     m_db.open();
-    m_db.exec("CREATE TABLE IF NOT EXISTS persons (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)");
-    m_db.exec("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)");
-    m_db.exec("CREATE INDEX IF NOT EXISTS personIdIndex ON persons (personId)");
+    m_db.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS persons (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)"));
+    m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)"));
+    m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS personIdIndex ON persons (personId)"));
 
-    QDBusConnection::sessionBus().connect(QString(), QString("/KPeople"), "org.kde.KPeople", "ContactAddedToPerson", this, SIGNAL(contactAddedToPerson(const QString&, const QString&)));
-    QDBusConnection::sessionBus().connect(QString(), QString("/KPeople"), "org.kde.KPeople", "ContactRemovedFromPerson", this, SIGNAL(contactRemovedFromPerson(const QString&)));
+    QDBusConnection::sessionBus().connect(QString(), QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"),
+        QStringLiteral("ContactAddedToPerson"), this, SIGNAL(contactAddedToPerson(QString,QString)));
+    QDBusConnection::sessionBus().connect(QString(), QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"),
+        QStringLiteral("ContactRemovedFromPerson"), this, SIGNAL(contactRemovedFromPerson(QString)));
 }
 
 PersonManager::~PersonManager()
@@ -81,9 +83,9 @@ QMultiHash< QString, QString > PersonManager::allPersons() const
 {
     QMultiHash<QString /*PersonID*/, QString /*ContactID*/> contactMapping;
 
-    QSqlQuery query = m_db.exec("SELECT personID, contactID FROM persons");
+    QSqlQuery query = m_db.exec(QStringLiteral("SELECT personID, contactID FROM persons"));
     while (query.next()) {
-        const QString personId = "kpeople://" + query.value(0).toString(); // we store as ints internally, convert it to a string here
+        const QString personId = QLatin1String("kpeople://") + query.value(0).toString(); // we store as ints internally, convert it to a string here
         const QString contactID = query.value(1).toString();
         contactMapping.insertMulti(personId, contactID);
     }
@@ -92,14 +94,14 @@ QMultiHash< QString, QString > PersonManager::allPersons() const
 
 QStringList PersonManager::contactsForPersonId(const QString& personId) const
 {
-    if (!personId.startsWith("kpeople://")) {
+    if (!personId.startsWith(QLatin1String("kpeople://"))) {
         return QStringList();
     }
 
     QStringList contactIds;
     //TODO port to the proper qsql method for args
     QSqlQuery query(m_db);
-    query.prepare("SELECT contactID FROM persons WHERE personId = ?");
+    query.prepare(QStringLiteral("SELECT contactID FROM persons WHERE personId = ?"));
     query.bindValue(0, personId.mid(strlen("kpeople://")));
     query.exec();
 
@@ -112,11 +114,11 @@ QStringList PersonManager::contactsForPersonId(const QString& personId) const
 QString PersonManager::personIdForContact(const QString& contactId) const
 {
     QSqlQuery query(m_db);
-    query.prepare("SELECT personId FROM persons WHERE contactId = ?");
+    query.prepare(QStringLiteral("SELECT personId FROM persons WHERE contactId = ?"));
     query.bindValue(0, contactId);
     query.exec();
     if (query.next()) {
-        return "kpeople://"+query.value(0).toString();
+        return QLatin1String("kpeople://")+query.value(0).toString();
     }
     return QString();
 }
@@ -152,13 +154,13 @@ QString PersonManager::mergeContacts(const QStringList& ids)
     if (metacontacts.count() == 0) {
         // query for the highest existing ID in the database and +1 it
         int personId = 0;
-        QSqlQuery query = m_db.exec(QString("SELECT MAX(personID) FROM persons"));
+        QSqlQuery query = m_db.exec(QStringLiteral("SELECT MAX(personID) FROM persons"));
         if (query.next()) {
             personId = query.value(0).toInt();
             personId++;
         }
 
-        personIdString = "kpeople://" + QString::number(personId);
+        personIdString = QLatin1String("kpeople://") + QString::number(personId);
     } else {
         personIdString = metacontacts.first();
     }
@@ -179,7 +181,7 @@ QString PersonManager::mergeContacts(const QStringList& ids)
         // iterate over all of the contacts and change their personID to the new personIdString
         Q_FOREACH (const QString &id, personContacts) {
             QSqlQuery updateQuery(m_db);
-            updateQuery.prepare("UPDATE persons SET personID = ? WHERE contactID = ?");
+            updateQuery.prepare(QStringLiteral("UPDATE persons SET personID = ? WHERE contactID = ?"));
             updateQuery.bindValue(0, personIdString.mid(strlen("kpeople://")));
             updateQuery.bindValue(1, id);
             if (!updateQuery.exec()) {
@@ -208,7 +210,7 @@ QString PersonManager::mergeContacts(const QStringList& ids)
 
         Q_FOREACH (const QString &id, contacts) {
             QSqlQuery insertQuery(m_db);
-            insertQuery.prepare("INSERT INTO persons VALUES (?, ?)");
+            insertQuery.prepare(QStringLiteral("INSERT INTO persons VALUES (?, ?)"));
             insertQuery.bindValue(0, id);
             insertQuery.bindValue(1, personIdString.mid(strlen("kpeople://"))); //strip kpeople://
             if (!insertQuery.exec()) {
@@ -242,11 +244,11 @@ QString PersonManager::mergeContacts(const QStringList& ids)
 bool PersonManager::unmergeContact(const QString &id)
 {
     //remove rows from DB
-    if (id.startsWith("kpeople://")) {
+    if (id.startsWith(QLatin1String("kpeople://"))) {
         QSqlQuery query(m_db);
 
         const QStringList contactIds = contactsForPersonId(id);
-        query.prepare("DELETE FROM persons WHERE personId = ?");
+        query.prepare(QStringLiteral("DELETE FROM persons WHERE personId = ?"));
         query.bindValue(0, id.mid(strlen("kpeople://")));
         query.exec();
 
@@ -261,7 +263,7 @@ bool PersonManager::unmergeContact(const QString &id)
         }
     } else {
         QSqlQuery query(m_db);
-        query.prepare("DELETE FROM persons WHERE contactId = ?");
+        query.prepare(QStringLiteral("DELETE FROM persons WHERE contactId = ?"));
         query.bindValue(0, id);
         query.exec();
         //emit signal(dbus)

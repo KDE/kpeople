@@ -26,7 +26,7 @@ FakeContactSource::FakeContactSource(QObject *parent, const QVariantList &args)
 
 QString FakeContactSource::sourcePluginId() const
 {
-    return "fakesource://";
+    return QStringLiteral("fakesource://");
 }
 
 KPeople::AllContactsMonitor* FakeContactSource::createAllContactsMonitor()
@@ -54,23 +54,23 @@ KABC::Addressee::Map FakeAllContactsMonitor::contacts()
 
     {
         KABC::Addressee contact1;
-        contact1.setName("Contact 1");
-        contact1.setEmails(QStringList() << "contact1@example.com");
-        contacts["fakesource://contact1"] = contact1;
+        contact1.setName(QStringLiteral("Contact 1"));
+        contact1.setEmails(QStringList() << QStringLiteral("contact1@example.com"));
+        contacts[QStringLiteral("fakesource://contact1")] = contact1;
     }
 
     {
         KABC::Addressee contact2;
-        contact2.setName("Person A");
-        contact2.setEmails(QStringList() << "contact2@example.com");
-        contacts["fakesource://contact2"] = contact2;
+        contact2.setName(QStringLiteral("Person A"));
+        contact2.setEmails(QStringList() << QStringLiteral("contact2@example.com"));
+        contacts[QStringLiteral("fakesource://contact2")] = contact2;
     }
 
     {
         KABC::Addressee contact3;
-        contact3.setName("Person A");
-        contact3.setEmails(QStringList() << "contact3@example.com");
-        contacts["fakesource://contact3"] = contact3;
+        contact3.setName(QStringLiteral("Person A"));
+        contact3.setEmails(QStringList() << QStringLiteral("contact3@example.com"));
+        contacts[QStringLiteral("fakesource://contact3")] = contact3;
     }
 
     return contacts;
@@ -78,10 +78,10 @@ KABC::Addressee::Map FakeAllContactsMonitor::contacts()
 
 void FakeAllContactsMonitor::changeContact1Email()
 {
-    KABC::Addressee contact1 = contacts()["fakesource://contact1"];
-    contact1.setEmails(QStringList() << "newaddress@yahoo.com");
+    KABC::Addressee contact1 = contacts()[QStringLiteral("fakesource://contact1")];
+    contact1.setEmails(QStringList() << QStringLiteral("newaddress@yahoo.com"));
 
-    Q_EMIT contactChanged("fakesource://contact1", contact1);
+    Q_EMIT contactChanged(QStringLiteral("fakesource://contact1"), contact1);
 }
 
 #include "fakecontactsource.moc"

@@ -18,7 +18,7 @@ include(ECMPackageConfigHelpers)
 include(GenerateExportHeader)
 include(FeatureSummary)
 include(KDEInstallDirs)
-include(KDECompilerSettings)
+include(KDEFrameworkCompilerSettings)
 include(KDECMakeSettings)
 
 add_definitions(-DTRANSLATION_DOMAIN=\"libkpeople\")

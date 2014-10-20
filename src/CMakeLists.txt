@@ -29,10 +29,12 @@ add_library (KPeople
 add_library(KF5::People ALIAS KPeople)
 
 target_link_libraries (KPeople
-                       Qt5::Sql
-                       Qt5::DBus
-                       KF5::KIOWidgets
-                       KF5::Abc
+                    PUBLIC
+                        KF5::Abc
+                    PRIVATE
+                        Qt5::Sql
+                        Qt5::DBus
+                        KF5::KIOWidgets
 )
 
 set_target_properties (KPeople PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
@@ -60,6 +62,7 @@ ecm_generate_headers(KPeople_CamelCase_HEADERS
         ContactMonitor
         PersonData
         PersonsModel
+        Global
     REQUIRED_HEADERS KPeople_HEADERS
     PREFIX KPeople
 )

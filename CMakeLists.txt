@@ -23,7 +23,7 @@ include(KDECMakeSettings)
 
 add_definitions(-DTRANSLATION_DOMAIN=\"libkpeople\")
 
-set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KPeople")
+set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KF5People")
 
 ecm_setup_version(0.5.0 VARIABLE_PREFIX KPEOPLE
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h"

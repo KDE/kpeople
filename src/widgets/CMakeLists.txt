@@ -25,9 +25,12 @@ add_library (KPeopleWidgets SHARED ${kpeople_widgets_SRCS} )
 add_library (KF5::PeopleWidegts ALIAS KPeopleWidgets)
 
 target_link_libraries (KPeopleWidgets
-                       Qt5::Gui
-                       KF5::I18n
-                       KPeople
+                    PUBLIC
+                        KPeople
+                        Qt5::Widgets
+                    PRIVATE
+                        KF5::I18n
+                        KF5::Service
 )
 
 if (Baloo_FOUND)

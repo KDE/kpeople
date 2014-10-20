@@ -27,7 +27,7 @@
 #include <KABC/Field>
 #include <KABC/Addressee>
 
-#include "../kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 
 namespace KPeople
 {

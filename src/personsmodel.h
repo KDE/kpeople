@@ -23,7 +23,7 @@
 #ifndef PERSONS_MODEL_H
 #define PERSONS_MODEL_H
 
-#include "kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 
 #include <QAbstractItemModel>
 

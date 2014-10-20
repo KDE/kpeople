@@ -24,9 +24,9 @@
 #include <QVBoxLayout>
 #include <QDebug>
 #include <QList>
+#include <QStandardPaths>
 
 #include <KLocalizedString>
-#include <KStandardDirs>
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginInfo>
@@ -190,7 +190,7 @@ void PersonDetailsView::reload()
     } else if (!d->m_person->person().photo().url().isEmpty()) {
         avatar = QPixmap(d->m_person->person().photo().url());
     } else {
-        avatar = QPixmap(KStandardDirs::locate("data", "kpeople/dummy_avatar.png"));
+        avatar = QPixmap(QStandardPaths::locate(QStandardPaths::GenericDataLocation, "kpeople/dummy_avatar.png"));
     }
 
     QString contactPresence = d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence"));

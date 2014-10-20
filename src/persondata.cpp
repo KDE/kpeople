@@ -45,7 +45,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
 
     QString personId;
     //query DB
-    if (id.startsWith("kpeople://")) {
+    if (id.startsWith(QLatin1String("kpeople://"))) {
         personId = id;
     } else {
         personId = PersonManager::instance()->personIdForContact(id);
@@ -60,7 +60,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
     KABC::Addressee::Map contacts;
     Q_FOREACH(const QString &contactId, d->contactIds) {
         //load the correct data source for this contact ID
-        const QString sourceId = contactId.left(contactId.indexOf("://"));
+        const QString sourceId = contactId.left(contactId.indexOf(QStringLiteral("://")));
         BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
         if (dataSource) {
             ContactMonitorPtr cw = dataSource->contactMonitor(contactId);

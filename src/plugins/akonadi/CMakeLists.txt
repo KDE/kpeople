@@ -1,16 +1,9 @@
-set (akonadi_source_plugin_SRCS
-     akonadidatasource.cpp
-)
-
-kde4_add_plugin (akonadi_kpeople_plugin
-                 ${akonadi_source_plugin_SRCS}
-)
+add_library(akonadi_kpeople_plugin MODULE akonadidatasource.cpp)
 
 target_link_libraries (akonadi_kpeople_plugin
-    ${QT_LIBRARIES}
     ${KDEPIMLIBS_AKONADI_LIBS}
-    ${KDEPIMLIBS_KABC_LIBS}
-    kpeople
+    KF5::Abc
+    KPeople
 )
 
 # Install:

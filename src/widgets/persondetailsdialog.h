@@ -21,9 +21,9 @@
 #ifndef PERSONDETAILSDIALOG_H
 #define PERSONDETAILSDIALOG_H
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
-#include "../kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 #include "../persondata.h"
 
 namespace KPeople

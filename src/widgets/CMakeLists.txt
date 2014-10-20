@@ -1,9 +1,5 @@
 # add_subdirectory(plugins)
 
-include_directories (${CMAKE_CURRENT_BINARY_DIR}
-                     ${CMAKE_CURRENT_SOURCE_DIR}
-)
-
 set (kpeople_widgets_SRCS persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp
@@ -14,7 +10,7 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
 #     mergedelegate.cpp
 )
 
-if (${Baloo_FOUND})
+if (Baloo_FOUND)
     set(kpeople_widgets_SRCS
         ${kpeople_widgets_SRCS}
         personemailview.cpp
@@ -23,39 +19,33 @@ if (${Baloo_FOUND})
         plugins/emaillistmodel.cpp)
 endif()
 
-kde4_add_ui_files (kpeople_widgets_SRCS
-                   person-details-presentation.ui
+qt5_wrap_ui (kpeople_widgets_SRCS person-details-presentation.ui)
+
+add_library (KPeopleWidgets SHARED ${kpeople_widgets_SRCS} )
+add_library (KF5::PeopleWidegts ALIAS KPeopleWidgets)
+
+target_link_libraries (KPeopleWidgets
+                       Qt5::Gui
+                       KF5::I18n
+                       KPeople
 )
 
-kde4_add_library (kpeoplewidgets SHARED ${kpeople_widgets_SRCS} )
-
-target_link_libraries (kpeoplewidgets
-                       ${QT_QTCORE_LIBRARIES}
-                       ${QT_QTGUI_LIBRARIES}
-                       ${KDE4_KDEUI_LIBS}
-                       ${KDEPIMLIBS_KABC_LIBS}
-                       ${KDEPIMLIBS_KMIME_LIBS}
-                       ${KDEPIMLIBS_AKONADI_LIBS}
-                       kpeople
-)
-
-if (${Baloo_FOUND})
-    target_link_libraries(kpeoplewidgets ${BALOO_LIBRARIES})
+if (Baloo_FOUND)
+    target_link_libraries(KPeopleWidgets KF5::Baloo)
 endif()
 
-set_target_properties (kpeoplewidgets PROPERTIES VERSION ${KPEOPLE_LIBVERSION} SOVERSION ${KPEOPLE_SOVERSION})
+set_target_properties (KPeopleWidgets PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME PeopleWidgets)
 
 if (MSVC)
-    set_target_properties (kpeoplewidgets PROPERTIES
-                           OUTPUT_NAME libkpeoplewidgets
+    set_target_properties (KPeopleWidgets PROPERTIES
+                           OUTPUT_NAME libKPeopleWidgets
     )
 endif (MSVC)
 
 # Install:
-install (TARGETS kpeoplewidgets
+install (TARGETS KPeopleWidgets
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
-
 
 install (FILES
             abstractfieldwidgetfactory.h
@@ -69,6 +59,6 @@ install (FILES
 
 install (FILES persondetailsplugin.desktop
          DESTINATION
-         ${SERVICETYPES_INSTALL_DIR}
+            ${SERVICETYPES_INSTALL_DIR}
 )
 

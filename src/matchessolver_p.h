@@ -22,7 +22,7 @@
 #include <KJob>
 #include <QSet>
 
-#include "kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 
 class QUrl;
 class QModelIndex;

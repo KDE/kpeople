@@ -1,53 +1,50 @@
-project (kpeople)
+cmake_minimum_required(VERSION 2.8.12)
 
-option(ENABLE_EXAMPLES "Enable building of examples" OFF)
-option(KDE4_BUILD_TESTS "Enable building of tests" OFF)
+project (KPeople)
 
-set (CMAKE_MODULE_PATH
-     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules"
-     ${CMAKE_MODULE_PATH}
+find_package(ECM 1.3.0 REQUIRED NO_MODULE)
+set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
+
+find_package(Qt5 5.3 REQUIRED Gui Sql DBus Widgets)
+find_package(KF5 5.3 REQUIRED CoreAddons KIO I18n)
+find_package(KF5Abc REQUIRED)
+find_package(KF5Baloo)
+
+include(ECMSetupVersion)
+include(ECMGenerateHeaders)
+include(ECMSetupVersion)
+include(ECMAddTests)
+include(ECMPackageConfigHelpers)
+include(GenerateExportHeader)
+include(FeatureSummary)
+include(KDEInstallDirs)
+include(KDECompilerSettings)
+include(KDECMakeSettings)
+
+add_definitions(-DTRANSLATION_DOMAIN=\"libkpeople\")
+
+set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KPeople")
+
+ecm_setup_version(0.5.0 VARIABLE_PREFIX KPEOPLE
+                        VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h"
+                        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
+                        SOVERSION 5)
+
+ecm_configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/KF5PeopleConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
+  INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
 )
 
-set (KDE_MIN_VERSION "4.10.1")
-
-set(KPEOPLE_VERSION_MAJOR 0)
-set(KPEOPLE_VERSION_MINOR 3)
-set(KPEOPLE_VERSION_PATCH 0)
-
-set(KPEOPLE_VERSION "${KPEOPLE_VERSION_MAJOR}.${KPEOPLE_VERSION_MINOR}.${KPEOPLE_VERSION_PATCH}")
-set(KPEOPLE_SOVERSION 4)
-set(KPEOPLE_LIBVERSION "${KPEOPLE_SOVERSION}.${KPEOPLE_VERSION_MINOR}.${KPEOPLE_VERSION_PATCH}")
-
-find_package (KDE4 ${KDE_MIN_VERSION} REQUIRED)
-find_package (KdepimLibs REQUIRED)
-find_package(Baloo)
-
-
-include (KDE4Defaults)
-include (MacroLibrary)
-
-include_directories (${KDE4_INCLUDES}
-                     ${CMAKE_CURRENT_SOURCE_DIR}
-                     ${CMAKE_CURRENT_BINARY_DIR}
-                     ${KDEPIMLIBS_INCLUDE_DIRS}
-)
-
-if (${Baloo_FOUND})
-    include_directories(${BALOO_INCLUDE_DIR})
-endif()
-
-if(KdepimLibs_VERSION_MINOR GREATER 11)
-    add_definitions(-DHAVE_KDEPIM_ATLEAST_412)
-endif()
 
 add_subdirectory (src)
 add_subdirectory (pixmaps)
 
-configure_file(cmake/KPeopleConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfig.cmake @ONLY)
+install(EXPORT KPeopleTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KPeopleTargets.cmake NAMESPACE KF5::)
+install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
+               "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        COMPONENT Devel )
 
-macro_write_basic_cmake_version_file(${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfigVersion.cmake
-        ${KPEOPLE_VERSION_MAJOR} ${KPEOPLE_VERSION_MINOR} ${KPEOPLE_VERSION_PATCH})
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfig.cmake
-              ${CMAKE_CURRENT_BINARY_DIR}/cmake/KPeopleConfigVersion.cmake
-        DESTINATION ${LIB_INSTALL_DIR}/cmake/KPeople)
+feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

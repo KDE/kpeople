@@ -18,6 +18,7 @@
 */
 
 #include "defaultcontactmonitor_p.h"
+#include <KABC/Addressee>
 
 DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const AllContactsMonitorPtr& allContactsWatcher):
     ContactMonitor(contactId),
@@ -57,4 +58,4 @@ void DefaultContactMonitor::onContactRemoved(const QString& id)
 
 
 
-#include "defaultcontactmonitor_p.moc"
+#include "defaultcontactmonitor.moc"

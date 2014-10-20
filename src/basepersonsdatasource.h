@@ -25,7 +25,7 @@
 #include <QVariant>
 #include <KABC/Addressee>
 
-#include "kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 
 #include "allcontactsmonitor.h"
 #include "contactmonitor.h"

@@ -20,7 +20,7 @@
 #ifndef PERSONDATA_H
 #define PERSONDATA_H
 
-#include "kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 
 #include <QObject>
 #include <KABC/Addressee>

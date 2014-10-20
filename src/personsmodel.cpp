@@ -6,11 +6,11 @@
 #include "personmanager_p.h"
 
 #include <KABC/Addressee>
-#include <KStandardDirs>
-#include <KDebug>
 
+#include <QStandardPaths>
 #include <QPixmap>
 #include <QTimer>
+#include <QDebug>
 
 namespace KPeople {
 class PersonsModelPrivate{
@@ -42,7 +42,7 @@ PersonsModel::PersonsModel(QObject *parent):
 {
     Q_D(PersonsModel);
 
-    d->genericAvatarImagePath = KStandardDirs::locate("data", "kpeople/dummy_avatar.png");
+    d->genericAvatarImagePath = QStandardPaths::locate(QStandardPaths::QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png"));
     d->initialFetchesDoneCount = 0;
     d->isInitialized = false;
     d->hasError = false;
@@ -244,7 +244,7 @@ void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addresse
 
         //if the MC object already contains this object, we want to update the row, not do an insert
         if (mc.contactIds().contains(contactId)) {
-            kWarning() << "Source emitted contactAdded for a contact we already know about " << contactId;
+            qWarning() << "Source emitted contactAdded for a contact we already know about " << contactId;
             onContactChanged(contactId, contact);
         } else {
             int newContactPos = mc.contacts().size();

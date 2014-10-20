@@ -24,7 +24,7 @@ class PersonData;
 #include <QObject>
 #include <QAction>
 
-#include "kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 #include "persondata.h"
 
 namespace KPeople

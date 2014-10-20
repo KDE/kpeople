@@ -22,10 +22,7 @@
 #include "personpluginmanager_p.h"
 #include "abstractpersonaction.h"
 
-#include <KIconLoader>
 #include <QIcon>
-
-static const KCatalogLoader i18nLoader("libkpeople");
 
 //these namespace members expose the useful bits of PersonManager
 //global.h should be included from every exported header file so namespace members are always visible
@@ -55,26 +52,26 @@ QList<QAction*> KPeople::actionsForPerson(const KABC::Addressee &person,
 QString KPeople::iconNameForPresenceString(const QString& presenceName)
 {
     if (presenceName == QLatin1String("available")) {
-        return "user-online";
+        return QStringLiteral("user-online");
     }
 
     if (presenceName == QLatin1String("away")) {
-        return "user-away";
+        return QStringLiteral("user-away");
     }
 
     if (presenceName == QLatin1String("busy") || presenceName == QLatin1String("dnd")) {
-        return "user-busy";
+        return QStringLiteral("user-busy");
     }
 
     if (presenceName == QLatin1String("xa")) {
-        return "user-away-extended";
+        return QStringLiteral("user-away-extended");
     }
 
     if (presenceName == QLatin1String("hidden")) {
-        return "user-invisible";
+        return QStringLiteral("user-invisible");
     }
 
-    return "user-offline";
+    return QStringLiteral("user-offline");
 }
 
 int KPeople::presenceSortPriority(const QString& presenceName)

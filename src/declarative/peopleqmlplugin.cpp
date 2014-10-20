@@ -26,7 +26,7 @@
 #include "declarativepersonsmodel.h"
 #include "declarativepersondata.h"
 
-#include <QtDeclarative/QDeclarativeItem>
+#include <QDeclarativeItem>
 
 void PeopleQMLPlugin::registerTypes(const char *uri)
 {

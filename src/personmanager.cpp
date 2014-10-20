@@ -22,10 +22,10 @@
 // #include "personmanager.moc"
 #include <QVariant>
 #include <QDebug>
+#include <QStandardPaths>
 #include <QSqlError>
 #include <QDBusConnection>
 #include <QDBusMessage>
-#include <KStandardDirs>
 
 class Transaction
 {
@@ -60,7 +60,7 @@ Transaction::~Transaction()
 
 PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     QObject(parent),
-    m_db(QSqlDatabase::addDatabase("QSQLITE"))
+    m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE")))
 {
     m_db.setDatabaseName(databasePath);
     m_db.open();
@@ -278,7 +278,7 @@ PersonManager* PersonManager::instance(const QString &databasePath)
     if (!s_instance) {
         QString path = databasePath;
         if (path.isEmpty()) {
-            path = KGlobal::dirs()->locateLocal("data","kpeople/persondb");
+            path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("kpeople/persondb");
         }
         s_instance = new PersonManager(path);
     }

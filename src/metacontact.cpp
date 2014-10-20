@@ -20,6 +20,7 @@
 #include "metacontact_p.h"
 #include "global.h"
 #include <QSharedData>
+#include <KABC/Addressee>
 
 namespace KPeople {
 class MetaContactData : public QSharedData

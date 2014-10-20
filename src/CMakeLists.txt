@@ -5,15 +5,13 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 if (ENABLE_EXAMPLES)
   add_subdirectory(examples)
 endif (ENABLE_EXAMPLES)
-if (KDE4_BUILD_TESTS)
-  add_subdirectory(autotests)
-endif (KDE4_BUILD_TESTS)
+add_subdirectory(autotests)
 # add_subdirectory(declarative)
 add_subdirectory(plugins)
 add_subdirectory(widgets)
 
 
-kde4_add_library (kpeople    SHARED
+add_library (KPeople
       global.cpp
       metacontact.cpp
     abstractpersonaction.cpp
@@ -28,51 +26,55 @@ kde4_add_library (kpeople    SHARED
     contactmonitor.cpp
     defaultcontactmonitor.cpp
 )
+add_library(KF5::People ALIAS KPeople)
 
-target_link_libraries (kpeople
-                       ${QT_QTCORE_LIBRARIES}
-                       ${QT_QTSQL_LIBRARIES}
-                       ${KDE4_KIO_LIBS}
-                       ${KDEPIMLIBS_AKONADI_LIBS} #can be removed when we remove temp bodge above
-                       ${KDEPIMLIBS_KABC_LIBS}
+target_link_libraries (KPeople
+                       Qt5::Sql
+                       Qt5::DBus
+                       KF5::KIOWidgets
+                       KF5::Abc
 )
 
-set_target_properties (kpeople PROPERTIES VERSION ${KPEOPLE_LIBVERSION} SOVERSION ${KPEOPLE_SOVERSION})
+set_target_properties (KPeople PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
+target_include_directories (KPeople PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
+                                    INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KPeople>"
+)
 
 if (MSVC)
-    set_target_properties (kpeople PROPERTIES
+    set_target_properties (KPeople PROPERTIES
                            OUTPUT_NAME libkpeople
     )
 endif (MSVC)
 
 # Install:
-install (TARGETS kpeople
-         ${INSTALL_TARGETS_DEFAULT_ARGS}
+install (TARGETS KPeople
+         EXPORT KPeopleTargets
+         ${KF5_INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES
-            global.h
-            personsmodel.h
-            persondata.h
-            kpeople_export.h
-            abstractpersonaction.h
-            basepersonsdatasource.h
-            allcontactsmonitor.h
-            contactmonitor.h
-         DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/
-         COMPONENT Devel
+ecm_generate_headers(KPeople_CamelCase_HEADERS
+    HEADER_NAMES
+        AbstractPersonAction
+        AllContactsMonitor
+        BasePersonsDataSource
+        ContactMonitor
+        PersonData
+        PersonsModel
+    REQUIRED_HEADERS KPeople_HEADERS
+    PREFIX KPeople
 )
 
-install (FILES
-            KPeople/AbstractPersonAction
-            KPeople/AllContactsMonitor
-            KPeople/BasePersonsDataSource
-            KPeople/ContactMonitor
-            KPeople/PersonData
-            KPeople/PersonsModel
-         DESTINATION ${INCLUDE_INSTALL_DIR}/KPeople
+install (FILES ${KPeople_CamelCase_HEADERS}
+         DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/KPeople
          COMPONENT Devel
 )
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h
+  ${KPeople_HEADERS}
+  DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/kpeople COMPONENT Devel
+)
+
+generate_export_header(KPeople EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
 
 install (FILES
          kpeople_data_source.desktop

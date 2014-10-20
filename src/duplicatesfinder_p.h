@@ -23,7 +23,7 @@
 #include <QVariantList>
 #include <QVector>
 #include <QUrl>
-#include "kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 #include "match_p.h"
 
 namespace KPeople

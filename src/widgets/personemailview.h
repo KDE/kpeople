@@ -21,7 +21,7 @@
 
 #include <QWidget>
 
-#include "../kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 #include "../persondata.h"
 
 class QLabel;

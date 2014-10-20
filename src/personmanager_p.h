@@ -28,7 +28,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 
-#include "kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 
 /**
  * This is a private internal class that manages all the internal mapping of contacts <---> persons

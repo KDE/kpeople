@@ -1,9 +1,9 @@
-kde4_add_executable(contactlistwidgets contactlistwidgets.cpp)
-target_link_libraries(contactlistwidgets ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} kpeople)
+add_executable(contactlistwidgets contactlistwidgets.cpp)
+target_link_libraries(contactlistwidgets Qt5::Core Qt5::Gui KPeople)
 
-kde4_add_executable(personwidget personwidget.cpp)
-target_link_libraries(personwidget ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} kpeople kpeoplewidgets)
+add_executable(personwidget personwidget.cpp)
+target_link_libraries(personwidget Qt5::Core Qt5::Gui KPeople KPeopleWidgets)
 
 
-# kde4_add_executable(loadcontact loadcontact.cpp)
-# target_link_libraries(loadcontact ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${KDEPIMLIBS_KABC_LIBS} kpeople)
+# add_executable(loadcontact loadcontact.cpp)
+# target_link_libraries(loadcontact Qt5::Core Qt5::Gui KF5::Abc KPeople)

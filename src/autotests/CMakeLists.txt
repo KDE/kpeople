@@ -1,8 +1,8 @@
-kde4_add_unit_test(persondatatest persondatatests.cpp fakecontactsource.cpp)
-target_link_libraries(persondatatest
-    ${QT_QTCORE_LIBRARY}
-    ${QT_QTTEST_LIBRARY}
-    ${KDEPIMLIBS_KABC_LIBS}
-    kpeople)
+find_package(Qt5Test)
 
-# add_test(PersonDataTests persondatatest)
+ecm_add_test(TEST_NAME persondatatest persondatatests.cpp fakecontactsource.cpp)
+target_link_libraries(persondatatest
+    Qt5::Core
+    Qt5::Test
+    KF5::Abc
+    KPeople)

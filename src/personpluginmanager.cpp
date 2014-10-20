@@ -25,11 +25,9 @@
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginInfo>
-#include <KDebug>
 
 #include <QMutex>
-
-#include <kdemacros.h>
+#include <QDebug>
 
 using namespace KPeople;
 
@@ -49,7 +47,7 @@ public:
 
 };
 
-K_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
+Q_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate():
     m_loadedDataSourcePlugins(false),
@@ -71,7 +69,7 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
         if (dataSource) {
             dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
         } else {
-            kWarning() << "Failed to create data source " << service->name() << service->path();
+            qWarning() << "Failed to create data source " << service->name() << service->path();
         }
     }
     m_loadedDataSourcePlugins = true;
@@ -83,7 +81,7 @@ void PersonPluginManagerPrivate::loadActionsPlugins()
     Q_FOREACH(const KService::Ptr &service, personPluginList) {
         AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
         if (plugin) {
-            qDebug() << "found plugin" << service->name();
+//             qDebug() << "found plugin" << service->name();
             actionPlugins << plugin;
         }
     }

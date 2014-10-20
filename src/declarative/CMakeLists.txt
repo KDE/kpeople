@@ -1,16 +1,9 @@
-project(kpeople-declarative)
-
-include_directories(
-        ${CMAKE_SOURCE_DIR}
-        ${CMAKE_BINARY_DIR}
-)
-
-kde4_add_library(kpeopledeclarative SHARED
+add_library(KPeopleDeclarative SHARED
                     declarativepersonsmodel.cpp
                     declarativepersondata.cpp
                     peopleqmlplugin.cpp)
 
-target_link_libraries(kpeopledeclarative ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTDECLARATIVE_LIBRARY} ${KDE4_KDECORE_LIBRARY} kpeople)
+target_link_libraries(KPeopleDeclarative Qt5::Core Qt5::Gui Qt5::Declarative KPeople)
 
-install(TARGETS kpeopledeclarative DESTINATION ${IMPORTS_INSTALL_DIR}/org/kde/people)
+install(TARGETS KPeopleDeclarative DESTINATION ${IMPORTS_INSTALL_DIR}/org/kde/people)
 install(FILES qmldir DESTINATION ${IMPORTS_INSTALL_DIR}/org/kde/people)

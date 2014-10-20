@@ -23,7 +23,7 @@
 #include <QStringList>
 #include <QIcon>
 
-#include "kpeople_export.h"
+#include <kpeople/kpeople_export.h>
 
 #include <KABC/Addressee>
 

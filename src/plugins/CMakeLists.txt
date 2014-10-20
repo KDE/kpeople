@@ -1,1 +1,3 @@
-add_subdirectory(akonadi)
+if(Akonadi_FOUND)
+    add_subdirectory(akonadi)
+endif()

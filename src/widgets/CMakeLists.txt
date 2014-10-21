@@ -47,17 +47,34 @@ endif (MSVC)
 
 # Install:
 install (TARGETS KPeopleWidgets
+         EXPORT KPeopleTargets
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 install (FILES
-            abstractfieldwidgetfactory.h
-            persondetailsview.h
-#             mergedialog.h
-            persondetailsdialog.h
-            personemailview.h
+
          DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets
          COMPONENT Devel
+)
+
+ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
+    HEADER_NAMES
+            AbstractFieldWidgetFactory
+            PersonDetailsView
+#             MergeDialog
+            PersonDetailsDialog
+            PersonEmailView
+    REQUIRED_HEADERS KPeopleWidgets_HEADERS
+    PREFIX KPeople
+)
+
+install (FILES ${KPeopleWidgets_CamelCase_HEADERS}
+         DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/KPeople/Widgets
+         COMPONENT Devel
+)
+install(FILES
+  ${KPeopleWidgets_HEADERS}
+  DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/kpeople/widgets COMPONENT Devel
 )
 
 install (FILES persondetailsplugin.desktop

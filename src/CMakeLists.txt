@@ -4,7 +4,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 
 if (ENABLE_EXAMPLES)
   add_subdirectory(examples)
-endif (ENABLE_EXAMPLES)
+endif()
 add_subdirectory(autotests)
 # add_subdirectory(declarative)
 add_subdirectory(plugins)

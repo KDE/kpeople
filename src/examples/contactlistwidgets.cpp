@@ -125,11 +125,11 @@ ContactListApp::ContactListApp()
     m_view->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     layout->addWidget(m_view);
-    QPushButton *mergeButton = new QPushButton("Merge", this);
+    QPushButton *mergeButton = new QPushButton(QStringLiteral("Merge"), this);
     connect(mergeButton, SIGNAL(released()), SLOT(onMergeClicked()));
     layout->addWidget(mergeButton);
 
-    QPushButton *unmergeButton = new QPushButton("Unmerge", this);
+    QPushButton *unmergeButton = new QPushButton(QStringLiteral("Unmerge"), this);
     connect(unmergeButton, SIGNAL(released()), SLOT(onUnmergeClicked()));
     layout->addWidget(unmergeButton);
 }

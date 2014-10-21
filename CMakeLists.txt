@@ -36,6 +36,7 @@ ecm_configure_package_config_file(
   INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
 )
 
+option(ENABLE_EXAMPLES "Build the examples" "ON")
 
 add_subdirectory (src)
 add_subdirectory (pixmaps)

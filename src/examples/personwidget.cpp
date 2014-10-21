@@ -26,12 +26,12 @@
 int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
-    if(app.argc()<2) {
+    if(app.arguments().isEmpty()<2) {
         qWarning() << "Missing argument: \"" << qPrintable(app.arguments().first()) << " <contact id>\"";
         return 1;
     }
 
-    KPeople::PersonData *person = new KPeople::PersonData(app.arguments()[1]);
+    KPeople::PersonData *person = new KPeople::PersonData(app.arguments().last());
 
     KPeople::PersonDetailsView w;
     w.setPerson(person);

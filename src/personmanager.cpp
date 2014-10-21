@@ -23,6 +23,7 @@
 #include <QVariant>
 #include <QDebug>
 #include <QStandardPaths>
+#include <QDir>
 #include <QSqlError>
 #include <QDBusConnection>
 #include <QDBusMessage>
@@ -63,7 +64,8 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE")))
 {
     m_db.setDatabaseName(databasePath);
-    m_db.open();
+    if (!m_db.open())
+        qWarning() << "Couldn't open the database at" << databasePath;
     m_db.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS persons (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)"));
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)"));
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS personIdIndex ON persons (personId)"));
@@ -280,7 +282,10 @@ PersonManager* PersonManager::instance(const QString &databasePath)
     if (!s_instance) {
         QString path = databasePath;
         if (path.isEmpty()) {
-            path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("kpeople/persondb");
+            path = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + QStringLiteral("/kpeople/");
+
+            QDir().mkpath(path);
+            path += QLatin1String("persondb");
         }
         s_instance = new PersonManager(path);
     }

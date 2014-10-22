@@ -23,6 +23,7 @@
 #define ALLCONTACTSMONITOR_H
 
 #include <QObject>
+#include <QSharedPointer>
 
 #include <kpeople/kpeople_export.h>
 

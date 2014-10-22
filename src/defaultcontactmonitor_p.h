@@ -20,6 +20,7 @@
 #define DEFAULTCONTACTMONITOR_H
 
 #include <QObject>
+#include <QSharedPointer>
 
 #include "contactmonitor.h"
 #include "allcontactsmonitor.h"

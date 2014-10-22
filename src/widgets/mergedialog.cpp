@@ -182,6 +182,7 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
             parent->appendRow(oneChild);
         }
     }
+    rootItem->sortChildren(0);
 }
 
 QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, const Match &match)

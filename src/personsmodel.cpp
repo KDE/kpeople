@@ -419,3 +419,9 @@ QString PersonsModel::personIdForContact(const QString &contactId) const
         return contactId;
     }
 }
+
+QModelIndex PersonsModel::indexForPersonId(const QString& personId) const
+{
+    Q_D(const PersonsModel);
+    return d->personIndex.value(personId);
+}

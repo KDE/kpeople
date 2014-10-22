@@ -33,7 +33,6 @@
 
 namespace KPeople
 {
-class PersonsModelFeature;
 class ContactItem;
 class PersonItem;
 class MetaContact;
@@ -69,6 +68,8 @@ public:
     virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
     virtual QModelIndex parent(const QModelIndex &index) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+
+    QModelIndex indexForPersonId(const QString& personId) const;
 
     bool isInitialized() const;
 

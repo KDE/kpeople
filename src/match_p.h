@@ -22,18 +22,37 @@
 
 #include <QList>
 #include <QPersistentModelIndex>
+#include <QtCore/qnamespace.h>
+
+#include "kpeople/kpeople_export.h"
+
+namespace KABC
+{
+    class Addressee;
+}
 
 namespace KPeople
 {
 
-struct Match
+class KPEOPLE_EXPORT Match
 {
+Q_GADGET
+public:
+    enum MatchReason {
+        NameMatch,
+        EmailMatch
+    };
+    Q_ENUMS(MatchReason);
+
     Match() {}
-    Match(const QList< int >& roles, const QPersistentModelIndex& a, const QPersistentModelIndex& b);
+    Match(const QList<MatchReason>& roles, const QPersistentModelIndex& a, const QPersistentModelIndex& b);
     bool operator==(const Match &m) const;
     bool operator<(const Match &m) const;
+    QStringList matchReasons() const;
+    static QString matchValue(MatchReason r, const KABC::Addressee &addr);
+    static QList<Match::MatchReason> matchAt(const KABC::Addressee &value, const KABC::Addressee &toCompare);
 
-    QList<int> role;
+    QList<MatchReason> reasons;
     QPersistentModelIndex indexA, indexB;
 };
 

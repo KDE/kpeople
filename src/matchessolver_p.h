@@ -23,6 +23,7 @@
 #include <QSet>
 
 #include <kpeople/kpeople_export.h>
+#include "match_p.h"
 
 class QUrl;
 class QModelIndex;
@@ -30,7 +31,6 @@ class QModelIndex;
 namespace KPeople
 {
 class PersonsModel;
-struct Match;
 
 /**
  * @brief This class is responsible for merging different persons into one
@@ -62,11 +62,9 @@ class KPEOPLE_EXPORT MatchesSolver : public KJob
 
     private Q_SLOTS:
         void startMatching();
-        void jobDone(KJob *job);
 
     private:
         QList<Match> m_matches;
-        QSet<KJob*> m_pending;
         PersonsModel *m_model;
 };
 }

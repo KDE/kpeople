@@ -16,15 +16,15 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <QApplication>
-#include <QTreeView>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QTextStream>
+#include <QTimer>
+#include <qcommandlineparser.h>
 
 #include <personsmodel.h>
 #include <duplicatesfinder_p.h>
 #include <matchessolver_p.h>
-#include <personsmodelfeature.h>
 
 #include <cstdio>
 #include <iostream>
@@ -39,15 +39,18 @@ class ResultPrinter : public QObject
             QList<Match> res = ((DuplicatesFinder *) j)->results();
             std::cout << "Results:" << std::endl;
             for (QList<Match>::iterator it = res.begin(); it != res.end();) {
-                QStringList roles;
+                QStringList roles = it->matchReasons();
                 QStringList rA, rB;
-                Q_FOREACH (int i, it->role) {
-                    roles += m_model->roleNames()[i];
-                    rA += variantToString(it->indexA.data(it->role.first()));
-                    rB += variantToString(it->indexB.data(it->role.first()));
+
+                KABC::Addressee aA = it->indexA.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+                KABC::Addressee aB = it->indexB.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+
+                Q_FOREACH (Match::MatchReason i, it->reasons) {
+                    rA += it->matchValue(i, aA);
+                    rB += it->matchValue(i, aB);
                 }
-                std::cout << "\t- " << qPrintable(roles.join(", ")) << ": " << it->indexA.row() << " " << it->indexB.row()
-                          << " because: " << qPrintable(rA.join(", ")) << " // " << qPrintable(rB.join(", ")) << '.' << std::endl;
+                std::cout << "\t- " << qPrintable(roles.join(QStringLiteral(", "))) << ": " << it->indexA.row() << " " << it->indexB.row()
+                          << " because: " << qPrintable(rA.join(QStringLiteral(", "))) << " // " << qPrintable(rB.join(QStringLiteral(", "))) << '.' << std::endl;
                 bool remove = false;
                 if (m_action == Ask) {
                     for (char ans=' '; ans != 'y' && ans != 'n';) {
@@ -88,7 +91,7 @@ class ResultPrinter : public QObject
                 Q_FOREACH (const QVariant &v, list) {
                     strings += variantToString(v);
                 }
-                return "("+strings.join(", ")+")";
+                return QLatin1Char('(')+strings.join(QStringLiteral(", "))+QLatin1Char(')');
             } else {
                 return data.toString();
             }
@@ -105,18 +108,28 @@ int main(int argc, char **argv)
     QCoreApplication app(argc, argv);
     PersonsModel model;
 
-    model.startQuery(QList<PersonsModelFeature>() << PersonsModelFeature::emailModelFeature()
-                                                  << PersonsModelFeature::imModelFeature());
-
     ResultPrinter r;
     r.m_model = &model;
-    r.m_action = app.arguments().contains("--apply") ? ResultPrinter::Apply
-               : app.arguments().contains("--ask") ? ResultPrinter::Ask
-               : ResultPrinter::NotApply;
+    {
+        QCommandLineParser parser;
+        parser.addOption(QCommandLineOption(QStringLiteral("ask"), QStringLiteral("Ask whether to actually do the merge")));
+        parser.addOption(QCommandLineOption(QStringLiteral("apply"), QStringLiteral("Actually apply all merges. (!!!)")));
+        parser.addHelpOption();
+        parser.process(app);
+        r.m_action = parser.isSet(QStringLiteral("apply")) ? ResultPrinter::Apply
+                   : parser.isSet(QStringLiteral("ask"))   ? ResultPrinter::Ask
+                   : ResultPrinter::NotApply;
+    }
 
     DuplicatesFinder *f = new DuplicatesFinder(&model);
     QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
-    QObject::connect(&model, SIGNAL(modelInitialized()), f, SLOT(start()));
+
+    QTimer* t = new QTimer(&app);
+    t->setInterval(500);
+    t->setSingleShot(true);
+    QObject::connect(&model, SIGNAL(modelInitialized(bool)), t, SLOT(start()));
+    QObject::connect(&model, SIGNAL(rowsInserted(QModelIndex,int,int)), t, SLOT(start()));
+    QObject::connect(t, SIGNAL(timeout()), f, SLOT(start()));
 
     app.exec();
 }

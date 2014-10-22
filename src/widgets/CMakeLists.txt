@@ -6,8 +6,8 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     plugins/emaildetailswidget.cpp
     abstractfieldwidgetfactory.cpp
 
-#     mergedialog.cpp
-#     mergedelegate.cpp
+    mergedialog.cpp
+    mergedelegate.cpp
 )
 
 if (Baloo_FOUND)
@@ -22,7 +22,7 @@ endif()
 qt5_wrap_ui (kpeople_widgets_SRCS person-details-presentation.ui)
 
 add_library (KPeopleWidgets SHARED ${kpeople_widgets_SRCS} )
-add_library (KF5::PeopleWidegts ALIAS KPeopleWidgets)
+add_library (KF5::PeopleWidgets ALIAS KPeopleWidgets)
 
 target_link_libraries (KPeopleWidgets
                     PUBLIC
@@ -31,6 +31,8 @@ target_link_libraries (KPeopleWidgets
                     PRIVATE
                         KF5::I18n
                         KF5::Service
+                        KF5::ItemViews
+                        KF5::WidgetsAddons
 )
 
 if (Baloo_FOUND)
@@ -61,7 +63,7 @@ ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
     HEADER_NAMES
             AbstractFieldWidgetFactory
             PersonDetailsView
-#             MergeDialog
+            MergeDialog
             PersonDetailsDialog
             PersonEmailView
     REQUIRED_HEADERS KPeopleWidgets_HEADERS

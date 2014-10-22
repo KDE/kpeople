@@ -91,6 +91,7 @@ void PersonsDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 QSize PersonsDelegate::sizeHint (const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
     Q_UNUSED(option)
+    Q_UNUSED(index)
     return QSize(128, 48);
 }
 

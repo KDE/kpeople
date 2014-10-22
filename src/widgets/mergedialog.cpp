@@ -24,17 +24,15 @@
 #include "personsmodel.h"
 #include "matchessolver_p.h"
 
-#include <KDebug>
-
 #include <QObject>
 #include <QLabel>
 #include <QLayout>
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QListView>
+#include <QDebug>
 #include <QStandardItemModel>
 
-#include <KStandardDirs>
 #include <KLocalizedString>
 #include <KPixmapSequence>
 #include <KPixmapSequenceWidget>
@@ -80,7 +78,7 @@ MergeDialog::MergeDialog(QWidget *parent)
     connect(buttons, SIGNAL(rejected()), SLOT(reject()));
 
     d->sequence = new KPixmapSequenceWidget(this);
-    d->sequence->setSequence(KPixmapSequence("process-working", 22));
+    d->sequence->setSequence(KPixmapSequence(QStringLiteral("process-working"), 22));
     d->sequence->setInterval(100);
     d->sequence->setVisible(false);
 
@@ -101,7 +99,7 @@ void MergeDialog::setPersonsModel(PersonsModel *model)
     d->personsModel = model;
     if (d->personsModel) {
         searchForDuplicates();
-        connect(d->personsModel, SIGNAL(modelInitialized()), SLOT(searchForDuplicates()));
+        connect(d->personsModel, SIGNAL(modelInitialized(bool)), SLOT(searchForDuplicates()));
     }
 }
 
@@ -109,7 +107,7 @@ void MergeDialog::searchForDuplicates()
 {
     Q_D(MergeDialog);
     if (!d->personsModel || !d->personsModel->rowCount() || d->duplicatesFinder) {
-        kDebug() << "MergeDialog failed to launch the duplicates research";
+        qWarning() << "MergeDialog failed to launch the duplicates research";
         return;
     }
     d->duplicatesFinder = new DuplicatesFinder(d->personsModel);
@@ -191,13 +189,13 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
     QStandardItem *item = new QStandardItem;
 
     item->setCheckable(true);
-    item->setCheckState(Qt::Checked);
+    item->setCheckState(Qt::Unchecked);
 
-    QUrl uri;
+    QString uri;
     if (!idx.isValid()) { // child
 
-        uri = match.indexB.data(PersonsModel::UriRole).toUrl();
-        item->setData(qVariantFromValue<QUrl>(uri), UriRole);
+        uri = match.indexB.data(PersonsModel::PersonIdRole).toString();
+        item->setData(qVariantFromValue<QString>(uri), UriRole);
 
         item->setData(qVariantFromValue<Match>(match), MergeReasonRole);
         item->setText(match.indexB.data(Qt::DisplayRole).toString());
@@ -205,8 +203,8 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
 
     } else { // parent
 
-        uri = match.indexA.data(PersonsModel::UriRole).toUrl();
-        item->setData(qVariantFromValue<QUrl>(uri), UriRole);
+        uri = match.indexA.data(PersonsModel::PersonIdRole).toString();
+        item->setData(qVariantFromValue<QString>(uri), UriRole);
 
         item->setText(match.indexA.data(Qt::DisplayRole).toString());
         item->setData(match.indexA.data(Qt::DecorationRole), Qt::DecorationRole);

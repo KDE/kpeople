@@ -31,10 +31,9 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QItemSelection>
-
-#include <KIcon>
-#include <KStandardDirs>
-#include <KDebug>
+#include <QDebug>
+#include <QIcon>
+#include <KLocalizedString>
 
 #define MAX_MATCHING_CONTACTS_ICON 5
 #define SIZE_STANDARD_PIXMAP 35
@@ -44,7 +43,7 @@ using namespace KPeople;
 MergeDelegate::MergeDelegate(QAbstractItemView *parent)
     : KExtendableItemDelegate(parent)
     , m_arrowSize(15,15)
-    , m_decorationSize(SIZE_STANDARD_PIXMAP , SIZE_STANDARD_PIXMAP)
+    , m_decorationSize(SIZE_STANDARD_PIXMAP, SIZE_STANDARD_PIXMAP)
 {
 }
 
@@ -84,15 +83,9 @@ QWidget* MergeDelegate::buildMultipleLineLabel(const QModelIndex &idx)
         QModelIndex child = idx.child(i,0);
         Match m = child.data(MergeDialog::MergeReasonRole).value<Match>();
 
-        QString mergeReason;
-        // NOTE : could be improve to be perfectly sure we're displaying the common property
-        QList<QString> mergeReasonList = m.indexB.data(m.role.first()).value<QStringList>();
-        if (!mergeReasonList.isEmpty()) {
-            mergeReason = mergeReasonList.first();
-        }
         QString name = m.indexB.data(Qt::DisplayRole).toString();
-        QString display = (name == mergeReason) ? name : name.append(" : "+mergeReason);
-        contents += display+"<p/>";
+        QString display = name + QStringLiteral(" : ") + m.matchReasons().join(i18nc("reasons join", ", "));
+        contents += display+ QLatin1String("<p/>");
     }
     QLabel *childDisplay = new QLabel(contents, dynamic_cast<QWidget*>(parent()));
 
@@ -117,10 +110,10 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
     QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
     QPoint arrowPlace(arrowRect.x(), arrowRect.y() + m_decorationSize.height()/2 + option.fontMetrics.height()/4);
     if (!isExtended(index)) {
-        static KIcon arrow("arrow-right");
+        static QIcon arrow = QIcon::fromTheme(QStringLiteral("arrow-right"));
         painter->drawPixmap(arrowPlace, arrow.pixmap(m_arrowSize));
     } else {
-        static KIcon arrow("arrow-down");
+        static QIcon arrow = QIcon::fromTheme(QStringLiteral("arrow-down"));
         painter->drawPixmap(arrowPlace, arrow.pixmap(m_arrowSize));
 
         // paint the extender in blue
@@ -131,7 +124,7 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
     KExtendableItemDelegate::paint(painter, option, index);
 
     const int separation = 5;
-    static KIcon arrow("arrow-right");
+    static QIcon arrow = QIcon::fromTheme(QStringLiteral("arrow-right"));
 
     int facesRows = qMin(rows, MAX_MATCHING_CONTACTS_ICON );
     for (int i = 0; i < facesRows; i++) { // Children Icon Displaying Loop

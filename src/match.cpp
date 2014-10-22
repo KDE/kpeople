@@ -18,11 +18,12 @@
 */
 
 #include "match_p.h"
+#include <KABC/Addressee>
 
 using namespace KPeople;
 
-Match::Match(const QList<int> &roles, const QPersistentModelIndex &a, const QPersistentModelIndex &b)
-    : role(roles), indexA(a), indexB(b)
+Match::Match(const QList<MatchReason> &reasons, const QPersistentModelIndex &a, const QPersistentModelIndex &b)
+    : reasons(reasons), indexA(a), indexB(b)
 {
     if (indexB<indexA) {
         qSwap(indexA, indexB);
@@ -31,7 +32,7 @@ Match::Match(const QList<int> &roles, const QPersistentModelIndex &a, const QPer
 
 bool Match::operator==(const Match &m) const
 {
-    return role == m.role
+    return reasons == m.reasons
            && indexA == m.indexA
            && indexB == m.indexB;
 }
@@ -40,4 +41,41 @@ bool Match::operator<(const Match &m) const
 {
     return indexA < m.indexA
            || (indexA == m.indexA && indexB < m.indexB);
+}
+
+QStringList Match::matchReasons() const
+{
+    QStringList ret;
+    for(MatchReason r: reasons) {
+        switch(r) {
+            case NameMatch:
+                ret += KABC::Addressee::nameLabel();
+                break;
+            case EmailMatch:
+                ret += KABC::Addressee::emailLabel();
+                break;
+        }
+    }
+    return ret;
+}
+
+QString Match::matchValue(MatchReason r, const KABC::Addressee &addr)
+{
+    switch(r) {
+        case NameMatch:
+            return addr.name();
+        case EmailMatch:
+            return addr.preferredEmail();
+    }
+    Q_UNREACHABLE();
+}
+
+QList<Match::MatchReason> Match::matchAt(const KABC::Addressee &value, const KABC::Addressee &toCompare)
+{
+    QList<Match::MatchReason> ret;
+
+    if (!value.formattedName().isEmpty() && value.formattedName() == toCompare.formattedName())
+        ret.append(Match::NameMatch);
+
+    return ret;
 }

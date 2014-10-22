@@ -20,8 +20,8 @@
 #include "matchessolver_p.h"
 #include "match_p.h"
 #include "personsmodel.h"
-#include <nepomuk2/datamanagement.h>
-#include <QUrl>
+#include "personmanager_p.h"
+#include <QString>
 #include <QDebug>
 
 using namespace KPeople;
@@ -41,12 +41,12 @@ void MatchesSolver::start()
 void MatchesSolver::startMatching()
 {
     //Will contain all the sets to be merged
-    QHash<QUrl, QSet<QUrl> > jobsData;
+    QHash<QString, QSet<QString> > jobsData;
     // has a relation of each person, to know where it is
-    QHash<QUrl, QUrl> destinationResolver;
+    QHash<QString, QString> destinationResolver;
     Q_FOREACH(const Match &m, m_matches) {
-        QUrl urlA = m.indexA.data(PersonsModel::UriRole).toUrl();
-        QUrl urlB = m.indexB.data(PersonsModel::UriRole).toUrl();
+        QString urlA = m.indexA.data(PersonsModel::PersonIdRole).toString();
+        QString urlB = m.indexB.data(PersonsModel::PersonIdRole).toString();
         Q_ASSERT(urlA != urlB);
 
         const bool inA = destinationResolver.contains(urlA);
@@ -59,8 +59,8 @@ void MatchesSolver::startMatching()
             //we've put all items pointed to by urlA, to the B set
             //now we re-assign anything pointing to B as pointing to A
             //because they are the same
-            QList<QUrl> keys = destinationResolver.keys(urlB);
-            foreach(const QUrl& key, keys) {
+            QList<QString> keys = destinationResolver.keys(urlB);
+            foreach(const QString& key, keys) {
                 destinationResolver[key] = urlA;
             }
         } else {
@@ -69,9 +69,9 @@ void MatchesSolver::startMatching()
                 qSwap(urlB, urlA);
             }
             //in case B is anywhere, add A to that set, otherwise just insert B
-            const QUrl mergeUrl = destinationResolver.value(urlB, urlB);
+            const QString mergeUrl = destinationResolver.value(urlB, urlB);
 
-            QSet<QUrl>& jobs = jobsData[mergeUrl];
+            QSet<QString>& jobs = jobsData[mergeUrl];
             jobs.insert(urlB);
             jobs.insert(urlA);
 
@@ -84,27 +84,10 @@ void MatchesSolver::startMatching()
         }
     }
 
-    Q_FOREACH(const QSet<QUrl>& uris, jobsData) {
-        KJob* job = m_model->createPersonFromUris(uris.toList());
-        //createPersonFromUris can return null if there nothing to be done
-        if (job) {
-            m_pending.insert(job);
-            connect(job, SIGNAL(finished(KJob*)), SLOT(jobDone(KJob*)));
-        } else {
+    Q_FOREACH(const QSet<QString>& uris, jobsData) {
+        if (PersonManager::instance()->mergeContacts(uris.toList()).isEmpty()) {
             qWarning() << "error: failing to merge contacts: " << uris;
         }
     }
-
-    //if there are no jobs in the queue emit finished
-    if(m_pending.isEmpty()) {
-        jobDone(0);
-    }
-}
-
-void MatchesSolver::jobDone(KJob *job)
-{
-    m_pending.remove(job);
-    if (m_pending.isEmpty()) {
-        emitResult();
-    }
+    emitResult();
 }

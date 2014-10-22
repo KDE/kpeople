@@ -20,6 +20,8 @@
 #include "personsmodel.h"
 
 #include <QUrl>
+#include <QDebug>
+#include <KABC/Addressee>
 
 using namespace KPeople;
 
@@ -27,35 +29,20 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)
     : KJob(parent)
     , m_model(model)
 {
-    m_compareRoles << PersonsModel::FullNamesRole
-                   << PersonsModel::NicknamesRole
-                   << PersonsModel::EmailsRole
-                   << PersonsModel::PhonesRole;
 }
 
-void DuplicatesFinder::setSpecificPerson(const QUrl &uri)
+void DuplicatesFinder::setSpecificPerson(const QString &personId)
 {
-    m_uri = uri;
+    m_personId = personId;
 }
 
 void DuplicatesFinder::start()
 {
-    if(m_uri.isEmpty()) {
+    if(m_personId.isEmpty()) {
         QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
     } else {
         QMetaObject::invokeMethod(this, "doSpecificSearch", Qt::QueuedConnection);
     }
-}
-
-QVariantList DuplicatesFinder::valuesForIndex(const QModelIndex &idx)
-{
-    //we gather the values
-    QVariantList values;
-    Q_FOREACH (int role, m_compareRoles) {
-        values += idx.data(role);
-    }
-    Q_ASSERT(values.size() == m_compareRoles.size());
-    return values;
 }
 
 //TODO: start providing partial results so that we can start processing matches while it's not done
@@ -64,19 +51,23 @@ void DuplicatesFinder::doSearch()
     //NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment
     //maybe using nepomuk for the matching would help?
 
-    QVector<QVariantList> collectedValues;
+    QVector<KABC::Addressee> collectedValues;
     m_matches.clear();
+
+    if (m_model->rowCount() == 0) {
+        qWarning() << "finding duplicates on empty model!";
+    }
 
     for (int i = 0, rows = m_model->rowCount(); i < rows; i++) {
         QModelIndex idx = m_model->index(i, 0);
 
         //we gather the values
-        QVariantList values = valuesForIndex(idx);
+        KABC::Addressee values = idx.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
 
         //we check if it matches
         int j = 0;
-        Q_FOREACH (const QVariantList &valueToCompare, collectedValues) {
-            QList<int> matchedRoles = matchAt(values, valueToCompare);
+        Q_FOREACH (const KABC::Addressee &valueToCompare, collectedValues) {
+            QList<Match::MatchReason> matchedRoles = Match::matchAt(values, valueToCompare);
 
             if (!matchedRoles.isEmpty()) {
                 QPersistentModelIndex i2(m_model->index(j, 0));
@@ -96,60 +87,24 @@ void DuplicatesFinder::doSpecificSearch()
 {
     m_matches.clear();
 
-    QModelIndex idx = m_model->indexForUri(m_uri);
-    QVariantList values = valuesForIndex(idx);
+    QModelIndex idx = m_model->indexForPersonId(m_personId);
+    KABC::Addressee values = idx.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
 
     for (int i = 0, rows = m_model->rowCount(); i<rows; i++) {
         QModelIndex idx2 = m_model->index(i,0);
 
-        if (idx2.data(PersonsModel::UriRole) == m_uri) {
+        if (idx2.data(PersonsModel::PersonIdRole) == m_personId) {
             continue;
         }
 
-        QVariantList values2 = valuesForIndex(idx2);
-        QList<int> matchedRoles = matchAt(values, values2);
+        KABC::Addressee values2 = idx2.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+        QList<Match::MatchReason> matchedRoles = Match::matchAt(values, values2);
         if (!matchedRoles.isEmpty()) {
             m_matches.append(Match(matchedRoles, idx, idx2));
         }
     }
 
     emitResult();
-}
-
-QList<int> DuplicatesFinder::matchAt(const QVariantList &value, const QVariantList &toCompare) const
-{
-    Q_ASSERT(value.size() == toCompare.size());
-
-    QList<int> ret;
-    for (int i = 0; i < toCompare.size(); i++) {
-        const QVariant &v = value[i];
-        bool add = false;
-
-        if (v.type() == QVariant::List) {
-            QVariantList listA = v.toList();
-            QVariantList listB = toCompare[i].toList();
-
-            if (!listA.isEmpty() && !listB.isEmpty()) {
-                Q_FOREACH (const QVariant &v, listB) {
-                    if (!v.isNull() && listA.contains(v)) {
-                        Q_ASSERT(!ret.contains(m_compareRoles[i]) && "B");
-                        add = true;
-                        break;
-                    }
-                }
-            }
-        } else if (!v.isNull() && v == toCompare[i]
-            && (v.type() != QVariant::String || !v.toString().isEmpty()))
-        {
-            Q_ASSERT(!ret.contains(m_compareRoles[i]) && "A");
-            add = true;
-        }
-
-        if (add) {
-            ret += m_compareRoles[i];
-        }
-    }
-    return ret;
 }
 
 QList<Match> DuplicatesFinder::results() const

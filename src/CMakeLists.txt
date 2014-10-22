@@ -16,8 +16,9 @@ add_library (KPeople
       metacontact.cpp
     abstractpersonaction.cpp
     persondata.cpp
-#     matchessolver.cpp
-#     match.cpp
+    matchessolver.cpp
+    match.cpp
+    duplicatesfinder.cpp
     personsmodel.cpp
     personpluginmanager.cpp
     personmanager.cpp

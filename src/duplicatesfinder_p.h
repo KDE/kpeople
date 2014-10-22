@@ -26,6 +26,11 @@
 #include <kpeople/kpeople_export.h>
 #include "match_p.h"
 
+namespace KABC
+{
+class Addressee;
+}
+
 namespace KPeople
 {
 
@@ -35,7 +40,7 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
     Q_OBJECT
     public:
         explicit DuplicatesFinder(PersonsModel *model, QObject *parent = 0);
-        void setSpecificPerson(const QUrl &uri);
+        void setSpecificPerson(const QString &personId);
 
         QList<Match> results() const;
 
@@ -47,13 +52,9 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
         void doSpecificSearch();
 
     private:
-        QVariantList valuesForIndex(const QModelIndex &idx);
-
-        QList< int > matchAt(const QVariantList &value, const QVariantList &toCompare) const;
         PersonsModel *m_model;
         QList<Match> m_matches;
-        QVector<int> m_compareRoles;
-        QUrl m_uri;
+        QString m_personId;
 };
 }
 

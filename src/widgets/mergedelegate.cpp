@@ -40,11 +40,23 @@
 
 using namespace KPeople;
 
+//TODO: use proper, runtime values there
+QSize MergeDelegate::s_decorationSize(SIZE_STANDARD_PIXMAP, SIZE_STANDARD_PIXMAP);
+QSize MergeDelegate::s_arrowSize(15,15);
+
+QSize MergeDelegate::pictureSize()
+{
+    return s_decorationSize;
+}
+
 MergeDelegate::MergeDelegate(QAbstractItemView *parent)
     : KExtendableItemDelegate(parent)
-    , m_arrowSize(15,15)
-    , m_decorationSize(SIZE_STANDARD_PIXMAP, SIZE_STANDARD_PIXMAP)
 {
+    static QIcon arrowD = QIcon::fromTheme(QStringLiteral("arrow-down"));
+    setContractPixmap(arrowD.pixmap(s_arrowSize));
+
+    static QIcon arrowR = QIcon::fromTheme(QStringLiteral("arrow-right"));
+    setExtendPixmap(arrowR.pixmap(s_arrowSize));
 }
 
 MergeDelegate::~MergeDelegate()
@@ -88,74 +100,34 @@ QWidget* MergeDelegate::buildMultipleLineLabel(const QModelIndex &idx)
         contents += display+ QLatin1String("<p/>");
     }
     QLabel *childDisplay = new QLabel(contents, dynamic_cast<QWidget*>(parent()));
-
     childDisplay->setAlignment(Qt::AlignRight);
-    QPalette p = childDisplay->palette();
-    p.setColor(QPalette::Text, p.color(QPalette::HighlightedText));
-    childDisplay->setPalette(p);
+    childDisplay->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     return childDisplay;
 }
 
 
 void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionOld, const QModelIndex &index) const
 {
-    QStyleOptionViewItem option = QStyleOptionViewItem(optionOld);
-    option.rect.translate(m_arrowSize.width(), 0);
-
-    // draw the arrow to let the user know it's expandable
-    QPoint arrowRect = optionOld.rect.topLeft();
-    int rows = index.model()->rowCount(index);
-
+    QStyleOptionViewItem option(optionOld);
     QStyleOptionViewItemV4 opt(option);
-    QStyle *style = opt.widget ? opt.widget->style() : QApplication::style();
-    QPoint arrowPlace(arrowRect.x(), arrowRect.y() + m_decorationSize.height()/2 + option.fontMetrics.height()/4);
-    if (!isExtended(index)) {
-        static QIcon arrow = QIcon::fromTheme(QStringLiteral("arrow-right"));
-        painter->drawPixmap(arrowPlace, arrow.pixmap(m_arrowSize));
-    } else {
-        static QIcon arrow = QIcon::fromTheme(QStringLiteral("arrow-down"));
-        painter->drawPixmap(arrowPlace, arrow.pixmap(m_arrowSize));
-
-        // paint the extender in blue
-        style->drawPrimitive(QStyle::PE_PanelItemViewItem, &opt, painter, opt.widget);
-    }
-
-    option.decorationSize = QSize(SIZE_STANDARD_PIXMAP,SIZE_STANDARD_PIXMAP);
     KExtendableItemDelegate::paint(painter, option, index);
 
     const int separation = 5;
-    static QIcon arrow = QIcon::fromTheme(QStringLiteral("arrow-right"));
 
-    int facesRows = qMin(rows, MAX_MATCHING_CONTACTS_ICON );
+    int facesRows = qMin(index.model()->rowCount(index), MAX_MATCHING_CONTACTS_ICON );
     for (int i = 0; i < facesRows; i++) { // Children Icon Displaying Loop
-
-        QPixmap pix;
         const QModelIndex child = index.child(i,0);
 
         QVariant decoration = child.data(Qt::DecorationRole);
-        if (decoration.type() == (QVariant::Icon)) {
-            QIcon icon = decoration.value<QIcon>();
-            pix = icon.pixmap(m_decorationSize);
-        } else if (decoration.type() == (QVariant::Pixmap)) {
-            pix = decoration.value<QPixmap>();
-        }
+        Q_ASSERT(decoration.type() == (QVariant::Icon));
 
-        QPoint pixmapRect;
-        pixmapRect.setX(option.rect.width()/2 + i*(m_decorationSize.width() + separation));
-        pixmapRect.setY(option.rect.top() + m_decorationSize.height()/4 + option.fontMetrics.height()/4);
-        painter->drawPixmap(pixmapRect, pix);
+        QIcon pix = decoration.value<QIcon>();
+        QPoint pixmapPoint = {option.rect.width()/2 + i*(s_decorationSize.width() + separation), option.rect.top()};
+        painter->drawPixmap(pixmapPoint, pix.pixmap(s_decorationSize));
     }
-    // draw a vertical blue line to separate the original person and the merging contacts
+    // draw a vertical line to separate the original person and the merging contacts
     int midWidth = option.rect.width()/2;
     painter->setPen(opt.palette.color(QPalette::Background));
-    painter->drawLine( option.rect.left()+midWidth -SIZE_STANDARD_PIXMAP, option.rect.bottom()-5,
+    painter->drawLine( option.rect.left()+midWidth-SIZE_STANDARD_PIXMAP, option.rect.bottom()-5,
                        option.rect.left()+midWidth-SIZE_STANDARD_PIXMAP, option.rect.top()+5);
-}
-
-QSize MergeDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    // the width doesn't matter here : the dialog overchoose it.
-    QSize defaultSize = KExtendableItemDelegate::sizeHint(option, index);
-    defaultSize.rheight() += m_decorationSize.height();
-    return defaultSize;
 }

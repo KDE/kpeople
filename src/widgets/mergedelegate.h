@@ -38,6 +38,8 @@ public:
     explicit MergeDelegate(QAbstractItemView *parent);
     ~MergeDelegate();
 
+    static QSize pictureSize();
+
 public Q_SLOTS:
     void onClickContactParent(const QModelIndex &parent);
     void onSelectedContactsChanged(const QItemSelection &now, const QItemSelection &old);
@@ -45,12 +47,11 @@ public Q_SLOTS:
 private:
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index)const;
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
     QWidget* buildExtensionWidget(const QModelIndex& idx);
     QWidget* buildMultipleLineLabel(const QModelIndex &idx);
 
-    QSize m_arrowSize;
-    QSize m_decorationSize;
+    static QSize s_arrowSize;
+    static QSize s_decorationSize;
 };
 
 #endif // MERGEDELEGATE_H

@@ -190,24 +190,33 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
 
     item->setCheckable(true);
     item->setCheckState(Qt::Unchecked);
+    item->setSizeHint(MergeDelegate::pictureSize());
+    item->setData(true, KExtendableItemDelegate::ShowExtensionIndicatorRole);
 
-    QString uri;
+    QVariant deco;
     if (!idx.isValid()) { // child
-
-        uri = match.indexB.data(PersonsModel::PersonIdRole).toString();
-        item->setData(qVariantFromValue<QString>(uri), UriRole);
+        QString uri = match.indexB.data(PersonsModel::PersonIdRole).toString();
+        item->setData(uri, UriRole);
 
         item->setData(qVariantFromValue<Match>(match), MergeReasonRole);
         item->setText(match.indexB.data(Qt::DisplayRole).toString());
-        item->setData(match.indexB.data(Qt::DecorationRole), Qt::DecorationRole);
+        deco = match.indexB.data(Qt::DecorationRole);
 
     } else { // parent
-
-        uri = match.indexA.data(PersonsModel::PersonIdRole).toString();
-        item->setData(qVariantFromValue<QString>(uri), UriRole);
+        QString uri = match.indexA.data(PersonsModel::PersonIdRole).toString();
+        item->setData(uri, UriRole);
 
         item->setText(match.indexA.data(Qt::DisplayRole).toString());
-        item->setData(match.indexA.data(Qt::DecorationRole), Qt::DecorationRole);
+        deco = match.indexA.data(Qt::DecorationRole);
     }
+
+    QIcon icon;
+    if (deco.type() == (QVariant::Icon)) {
+        icon = deco.value<QIcon>();
+    } else if (deco.type() == (QVariant::Pixmap)) {
+        icon = QIcon(deco.value<QPixmap>());
+    } else
+        qWarning() << "unknown decoration type" << deco.typeName();
+    item->setIcon(icon);
     return item;
 }

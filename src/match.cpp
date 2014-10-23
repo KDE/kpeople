@@ -63,7 +63,7 @@ QString Match::matchValue(MatchReason r, const KABC::Addressee &addr)
 {
     switch(r) {
         case NameMatch:
-            return addr.name();
+            return addr.formattedName();
         case EmailMatch:
             return addr.preferredEmail();
     }

@@ -96,7 +96,7 @@ QWidget* MergeDelegate::buildMultipleLineLabel(const QModelIndex &idx)
         Match m = child.data(MergeDialog::MergeReasonRole).value<Match>();
 
         QString name = m.indexB.data(Qt::DisplayRole).toString();
-        QString display = name + QStringLiteral(" : ") + m.matchReasons().join(i18nc("reasons join", ", "));
+        QString display = i18nc("name: merge reasons", "%1: %2", name, m.matchReasons().join(i18nc("reasons join", ", ")));
         contents += display+ QLatin1String("<p/>");
     }
     QLabel *childDisplay = new QLabel(contents, dynamic_cast<QWidget*>(parent()));

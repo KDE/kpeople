@@ -37,7 +37,7 @@ class ResultPrinter : public QObject
     public Q_SLOTS:
         void print(KJob *j) {
             QList<Match> res = ((DuplicatesFinder *) j)->results();
-            std::cout << "Results:" << std::endl;
+            std::cout << "Results: " << res.count() << std::endl;
             for (QList<Match>::iterator it = res.begin(); it != res.end();) {
                 QStringList roles = it->matchReasons();
                 QStringList rA, rB;
@@ -45,6 +45,7 @@ class ResultPrinter : public QObject
                 KABC::Addressee aA = it->indexA.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
                 KABC::Addressee aB = it->indexB.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
 
+                Q_ASSERT(!it->reasons.isEmpty());
                 Q_FOREACH (Match::MatchReason i, it->reasons) {
                     rA += it->matchValue(i, aA);
                     rB += it->matchValue(i, aB);
@@ -81,20 +82,6 @@ class ResultPrinter : public QObject
                 std::cout << "Matching failed with error: " << job->error() << std::endl;
             }
             QCoreApplication::instance()->quit();
-        }
-
-    private:
-        QString variantToString(const QVariant &data) {
-            if (data.type() == QVariant::List) {
-                QList<QVariant> list = data.toList();
-                QStringList strings;
-                Q_FOREACH (const QVariant &v, list) {
-                    strings += variantToString(v);
-                }
-                return QLatin1Char('(')+strings.join(QStringLiteral(", "))+QLatin1Char(')');
-            } else {
-                return data.toString();
-            }
         }
 
     public:

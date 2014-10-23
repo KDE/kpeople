@@ -55,7 +55,7 @@ private Q_SLOTS:
     void onMergeButtonClicked();
 
 private:
-    QStandardItem* itemMergeContactFromMatch(const QModelIndex &idx, const Match &match);
+    QStandardItem* itemMergeContactFromMatch(bool parent, const KPeople::Match& match);
     void feedDuplicateModelFromMatches(const QList<Match> &matches);
 
     MergeDialogPrivate * const d_ptr;

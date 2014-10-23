@@ -155,37 +155,36 @@ void MergeDialog::searchForDuplicatesFinished(KJob*)
 void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
 {
     Q_D(MergeDialog);
-    QMap<QPersistentModelIndex, QList<Match> > compareTable;
+    QHash<QPersistentModelIndex, QList<Match> > compareTable;
+    QHash<QPersistentModelIndex, QPersistentModelIndex> doneIndexes;
 
     Q_FOREACH (const Match &match, matches) {
-        QList<Match> currentValue = compareTable.value(match.indexA);
+        QPersistentModelIndex destination = doneIndexes.value(match.indexA, match.indexA);
+        QHash<QPersistentModelIndex, QList< Match > >::iterator currentValue = compareTable.find(destination);
 
-        if (currentValue.isEmpty()) { // new parent, create it
-            QList<Match> firstList = QList<Match>() << match;
-            compareTable.insert(match.indexA, firstList);
+        if (currentValue == compareTable.end()) { // new parent, create it
+            compareTable[match.indexA] = QList<Match>() << match;
         } else { //know parent, add child
-            currentValue.append(match);
-            compareTable[match.indexA]= currentValue;
+            currentValue->append(match);
         }
+        doneIndexes[match.indexB] = destination;
     }
-    // now build the model : 1st dimension = parent, 2nd dimension = children
+    // now build the model : 1st dimension = person candidate, 2nd dimension = match
     QStandardItem *rootItem = d->model->invisibleRootItem();
-    QMap<QPersistentModelIndex, QList< Match > >::const_iterator i;
+    QHash<QPersistentModelIndex, QList< Match > >::const_iterator i;
 
     for (i = compareTable.constBegin(); i != compareTable.constEnd(); ++i) {
         // Build the merge Contact in the model
-        QStandardItem *parent = itemMergeContactFromMatch(i.key(), i->first());
+        QStandardItem *parent = itemMergeContactFromMatch(true, i->first());
         rootItem->appendRow(parent);
 
-        Q_FOREACH (const Match &matchChild, compareTable.value(QModelIndex(), *i)) {
-            QStandardItem *oneChild = itemMergeContactFromMatch(QModelIndex(), matchChild);
-            parent->appendRow(oneChild);
+        Q_FOREACH (const Match &matchChild, *i) {
+            parent->appendRow(itemMergeContactFromMatch(false, matchChild));
         }
     }
-    rootItem->sortChildren(0);
 }
 
-QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, const Match &match)
+QStandardItem* MergeDialog::itemMergeContactFromMatch(bool isParent, const Match &match)
 {
     QStandardItem *item = new QStandardItem;
 
@@ -195,7 +194,7 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(const QModelIndex &idx, co
     item->setData(true, KExtendableItemDelegate::ShowExtensionIndicatorRole);
 
     QVariant deco;
-    if (!idx.isValid()) { // child
+    if (!isParent) { // child
         QString uri = match.indexB.data(PersonsModel::PersonIdRole).toString();
         item->setData(uri, UriRole);
 

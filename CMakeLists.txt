@@ -40,6 +40,10 @@ option(ENABLE_EXAMPLES "Build the examples" "ON")
 
 add_subdirectory (src)
 add_subdirectory (pixmaps)
+if (ENABLE_EXAMPLES)
+  add_subdirectory(examples)
+endif()
+add_subdirectory(autotests)
 
 install(EXPORT KPeopleTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KPeopleTargets.cmake NAMESPACE KF5::)
 install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"

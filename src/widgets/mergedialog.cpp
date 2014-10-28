@@ -182,6 +182,8 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
             parent->appendRow(itemMergeContactFromMatch(false, matchChild));
         }
     }
+
+    rootItem->sortChildren(0);
 }
 
 QStandardItem* MergeDialog::itemMergeContactFromMatch(bool isParent, const Match &match)

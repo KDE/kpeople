@@ -28,7 +28,6 @@
 #include <QLabel>
 
 #include <KLocalizedString>
-#include <KStandardDirs>
 #include <KJob>
 #include <KDebug>
 #include <KPluginFactory>

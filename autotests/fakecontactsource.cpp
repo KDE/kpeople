@@ -48,26 +48,26 @@ FakeAllContactsMonitor::FakeAllContactsMonitor()
 {
 }
 
-KABC::Addressee::Map FakeAllContactsMonitor::contacts()
+KContacts::Addressee::Map FakeAllContactsMonitor::contacts()
 {
-    KABC::Addressee::Map contacts;
+    KContacts::Addressee::Map contacts;
 
     {
-        KABC::Addressee contact1;
+        KContacts::Addressee contact1;
         contact1.setName(QStringLiteral("Contact 1"));
         contact1.setEmails(QStringList() << QStringLiteral("contact1@example.com"));
         contacts[QStringLiteral("fakesource://contact1")] = contact1;
     }
 
     {
-        KABC::Addressee contact2;
+        KContacts::Addressee contact2;
         contact2.setName(QStringLiteral("Person A"));
         contact2.setEmails(QStringList() << QStringLiteral("contact2@example.com"));
         contacts[QStringLiteral("fakesource://contact2")] = contact2;
     }
 
     {
-        KABC::Addressee contact3;
+        KContacts::Addressee contact3;
         contact3.setName(QStringLiteral("Person A"));
         contact3.setEmails(QStringList() << QStringLiteral("contact3@example.com"));
         contacts[QStringLiteral("fakesource://contact3")] = contact3;
@@ -78,7 +78,7 @@ KABC::Addressee::Map FakeAllContactsMonitor::contacts()
 
 void FakeAllContactsMonitor::changeContact1Email()
 {
-    KABC::Addressee contact1 = contacts()[QStringLiteral("fakesource://contact1")];
+    KContacts::Addressee contact1 = contacts()[QStringLiteral("fakesource://contact1")];
     contact1.setEmails(QStringList() << QStringLiteral("newaddress@yahoo.com"));
 
     Q_EMIT contactChanged(QStringLiteral("fakesource://contact1"), contact1);

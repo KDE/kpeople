@@ -20,7 +20,7 @@
 #include "metacontact_p.h"
 #include "global.h"
 #include <QSharedData>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 namespace KPeople {
 class MetaContactData : public QSharedData
@@ -28,8 +28,8 @@ class MetaContactData : public QSharedData
 public:
     QString personId;
     QStringList contactIds;
-    KABC::AddresseeList contacts; //TODO vector
-    KABC::Addressee personAddressee;
+    KContacts::AddresseeList contacts; //TODO vector
+    KContacts::Addressee personAddressee;
 };
 }
 
@@ -41,12 +41,12 @@ d(new MetaContactData)
 
 }
 
-MetaContact::MetaContact(const QString& personId, const KABC::Addressee::Map& contacts):
+MetaContact::MetaContact(const QString& personId, const KContacts::Addressee::Map& contacts):
 d (new MetaContactData)
 {
     d->personId = personId;
 
-    KABC::Addressee::Map::const_iterator it = contacts.constBegin();
+    KContacts::Addressee::Map::const_iterator it = contacts.constBegin();
     while (it != contacts.constEnd()) {
         insertContactInternal(it.key(), it.value());
         it++;
@@ -54,7 +54,7 @@ d (new MetaContactData)
     reload();
 }
 
-MetaContact::MetaContact(const QString &contactId, const KABC::Addressee &contact):
+MetaContact::MetaContact(const QString &contactId, const KContacts::Addressee &contact):
 d (new MetaContactData)
 {
     d->personId = contactId;
@@ -97,27 +97,27 @@ QStringList MetaContact::contactIds() const
     return d->contactIds;
 }
 
-KABC::Addressee MetaContact::contact(const QString& contactId)
+KContacts::Addressee MetaContact::contact(const QString& contactId)
 {
     int index = d->contactIds.indexOf(contactId);
     if (index >= 0) {
         return d->contacts[index];
     } else {
-        return KABC::Addressee();
+        return KContacts::Addressee();
     }
 }
 
-KABC::AddresseeList MetaContact::contacts() const
+KContacts::AddresseeList MetaContact::contacts() const
 {
     return d->contacts;
 }
 
-const KABC::Addressee& MetaContact::personAddressee() const
+const KContacts::Addressee& MetaContact::personAddressee() const
 {
     return d->personAddressee;
 }
 
-int MetaContact::insertContact(const QString &contactId, const KABC::Addressee &contact)
+int MetaContact::insertContact(const QString &contactId, const KContacts::Addressee &contact)
 {
     int index = insertContactInternal(contactId, contact);
     reload();
@@ -125,7 +125,7 @@ int MetaContact::insertContact(const QString &contactId, const KABC::Addressee &
 }
 
 
-int MetaContact::insertContactInternal(const QString &contactId, const KABC::Addressee &contact)
+int MetaContact::insertContactInternal(const QString &contactId, const KContacts::Addressee &contact)
 {
     if (d->contactIds.contains(contactId)) {
         //if item is already listed, do nothing.
@@ -139,7 +139,7 @@ int MetaContact::insertContactInternal(const QString &contactId, const KABC::Add
     }
 }
 
-int MetaContact::updateContact(const QString& contactId, const KABC::Addressee& contact)
+int MetaContact::updateContact(const QString& contactId, const KContacts::Addressee& contact)
 {
     const int index = d->contactIds.indexOf(contactId);
     if (index >= 0) {
@@ -172,11 +172,11 @@ void MetaContact::reload()
         return;
     }
 
-    d->personAddressee = KABC::Addressee();
+    d->personAddressee = KContacts::Addressee();
 
-    Q_FOREACH(const KABC::Addressee &contact, d->contacts) {
+    Q_FOREACH(const KContacts::Addressee &contact, d->contacts) {
         //set items with multiple cardinality
-        Q_FOREACH(const KABC::Address &address, contact.addresses()) {
+        Q_FOREACH(const KContacts::Address &address, contact.addresses()) {
             d->personAddressee.insertAddress(address);
         }
         Q_FOREACH(const QString &category, contact.categories()) {
@@ -185,10 +185,10 @@ void MetaContact::reload()
         Q_FOREACH(const QString &email, contact.emails()) {
             d->personAddressee.insertEmail(email);
         }
-        Q_FOREACH(const KABC::Key &key, contact.keys()) {
+        Q_FOREACH(const KContacts::Key &key, contact.keys()) {
             d->personAddressee.insertKey(key);
         }
-        Q_FOREACH(const KABC::PhoneNumber &phoneNumber, contact.phoneNumbers()) {
+        Q_FOREACH(const KContacts::PhoneNumber &phoneNumber, contact.phoneNumbers()) {
             d->personAddressee.insertPhoneNumber(phoneNumber);
         }
         //TODO customs

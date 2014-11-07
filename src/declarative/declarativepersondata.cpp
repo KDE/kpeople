@@ -19,36 +19,17 @@
 
 #include "declarativepersondata.h"
 
-#include <KDebug>
+#include <QDebug>
 
 DeclarativePersonData::DeclarativePersonData(QObject *parent)
-    : KPeople::PersonData(parent)
+    : QObject(parent)
+    , m_person(0)
 {
 
 }
 
-void DeclarativePersonData::classBegin()
+void DeclarativePersonData::setId(const QString& uri)
 {
-
-}
-
-void DeclarativePersonData::componentComplete()
-{
-    if (!m_uri.isEmpty()) {
-        loadUri(m_uri);
-    } else if (!m_contactId.isEmpty()) {
-        loadContact(m_contactId);
-    } else {
-        kWarning() << "item has no uri or contactId set";
-    }
-}
-
-void DeclarativePersonData::setContactId(const QString &contactId)
-{
-    m_contactId = contactId;
-}
-
-void DeclarativePersonData::setUri(const QString &uri)
-{
-    m_uri = uri;
+    delete m_person;
+    m_person = new KPeople::PersonData(uri, this);
 }

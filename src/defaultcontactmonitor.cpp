@@ -18,31 +18,31 @@
 */
 
 #include "defaultcontactmonitor_p.h"
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const AllContactsMonitorPtr& allContactsWatcher):
     ContactMonitor(contactId),
     m_allContactsMonitor(allContactsWatcher)
 {
-    connect(allContactsWatcher.data(), SIGNAL(contactAdded(QString,KABC::Addressee)), SLOT(onContactAdded(QString,KABC::Addressee)));
+    connect(allContactsWatcher.data(), SIGNAL(contactAdded(QString,KContacts::Addressee)), SLOT(onContactAdded(QString,KContacts::Addressee)));
     connect(allContactsWatcher.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
-    connect(allContactsWatcher.data(), SIGNAL(contactChanged(QString,KABC::Addressee)), SLOT(onContactChanged(QString,KABC::Addressee)));
+    connect(allContactsWatcher.data(), SIGNAL(contactChanged(QString,KContacts::Addressee)), SLOT(onContactChanged(QString,KContacts::Addressee)));
 
-    const KABC::Addressee::Map &contacts = m_allContactsMonitor->contacts();
-    KABC::Addressee::Map::const_iterator it = contacts.constFind(contactId);
+    const KContacts::Addressee::Map &contacts = m_allContactsMonitor->contacts();
+    KContacts::Addressee::Map::const_iterator it = contacts.constFind(contactId);
     if (it != contacts.constEnd()) {
         setContact(it.value());
     }
 }
 
-void DefaultContactMonitor::onContactAdded(const QString& id, const KABC::Addressee& contact)
+void DefaultContactMonitor::onContactAdded(const QString& id, const KContacts::Addressee& contact)
 {
     if (id == contactId()) {
         setContact(contact);
     }
 }
 
-void DefaultContactMonitor::onContactChanged(const QString& id, const KABC::Addressee& contact)
+void DefaultContactMonitor::onContactChanged(const QString& id, const KContacts::Addressee& contact)
 {
     if (id == contactId()) {
         setContact(contact);
@@ -52,7 +52,7 @@ void DefaultContactMonitor::onContactChanged(const QString& id, const KABC::Addr
 void DefaultContactMonitor::onContactRemoved(const QString& id)
 {
     if (id == contactId()) {
-        setContact(KABC::Addressee());
+        setContact(KContacts::Addressee());
     }
 }
 

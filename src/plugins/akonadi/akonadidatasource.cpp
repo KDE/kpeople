@@ -26,7 +26,7 @@
 #include <Akonadi/CollectionFetchScope>
 #include <Akonadi/ServerManager>
 
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 #include <KPluginFactory>
 #include <KPluginLoader>
@@ -41,7 +41,7 @@ class AkonadiAllContacts : public KPeople::AllContactsMonitor
 public:
     AkonadiAllContacts();
     ~AkonadiAllContacts();
-    virtual KABC::Addressee::Map contacts();
+    virtual KContacts::Addressee::Map contacts();
 private Q_SLOTS:
     void onCollectionsFetched(KJob* job);
     void onItemsFetched(KJob* job);
@@ -51,7 +51,7 @@ private Q_SLOTS:
     void onServerStateChanged(Akonadi::ServerManager::State);
 private:
     Akonadi::Monitor *m_monitor;
-    KABC::Addressee::Map m_contacts;
+    KContacts::Addressee::Map m_contacts;
     int m_activeFetchJobsCount;
     bool m_fetchError;
 };
@@ -84,7 +84,7 @@ AkonadiAllContacts::~AkonadiAllContacts()
 {
 }
 
-KABC::Addressee::Map AkonadiAllContacts::contacts()
+KContacts::Addressee::Map AkonadiAllContacts::contacts()
 {
     return m_contacts;
 }
@@ -97,29 +97,29 @@ QString AkonadiDataSource::sourcePluginId() const
 
 void AkonadiAllContacts::onItemAdded(const Item& item)
 {
-    if(!item.hasPayload<KABC::Addressee>()) {
+    if(!item.hasPayload<KContacts::Addressee>()) {
         return;
     }
     const QString id = item.url().prettyUrl();
-    const KABC::Addressee contact = item.payload<KABC::Addressee>();
+    const KContacts::Addressee contact = item.payload<KContacts::Addressee>();
     m_contacts[id] = contact;
     Q_EMIT contactAdded(item.url().prettyUrl(), contact);
 }
 
 void AkonadiAllContacts::onItemChanged(const Item& item)
 {
-    if(!item.hasPayload<KABC::Addressee>()) {
+    if(!item.hasPayload<KContacts::Addressee>()) {
         return;
     }
     const QString id = item.url().prettyUrl();
-    const KABC::Addressee contact = item.payload<KABC::Addressee>();
+    const KContacts::Addressee contact = item.payload<KContacts::Addressee>();
     m_contacts[id] = contact;
     Q_EMIT contactChanged(item.url().prettyUrl(), contact);
 }
 
 void AkonadiAllContacts::onItemRemoved(const Item& item)
 {
-    if(!item.hasPayload<KABC::Addressee>()) {
+    if(!item.hasPayload<KContacts::Addressee>()) {
         return;
     }
     const QString id = item.url().prettyUrl();
@@ -159,7 +159,7 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
             if (collection.isVirtual()) {
                 continue;
             }
-            if (collection.contentMimeTypes().contains( KABC::Addressee::mimeType() ) ) {
+            if (collection.contentMimeTypes().contains( KContacts::Addressee::mimeType() ) ) {
                 ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
                 itemFetchJob->fetchScope().fetchFullPayload();
                 connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onItemsFetched(KJob*)));
@@ -229,8 +229,8 @@ AkonadiContact::~AkonadiContact()
 void AkonadiContact::onContactFetched(KJob *job)
 {
     ItemFetchJob* fetchJob = qobject_cast<ItemFetchJob*>(job);
-    if (fetchJob->items().count() && fetchJob->items().first().hasPayload<KABC::Addressee>()) {
-        setContact(fetchJob->items().first().payload<KABC::Addressee>());
+    if (fetchJob->items().count() && fetchJob->items().first().hasPayload<KContacts::Addressee>()) {
+        setContact(fetchJob->items().first().payload<KContacts::Addressee>());
     }
 }
 
@@ -239,10 +239,10 @@ void AkonadiContact::onContactChanged(const Item &item)
     if (item != m_item) {
         return;
     }
-    if(!item.hasPayload<KABC::Addressee>()) {
+    if(!item.hasPayload<KContacts::Addressee>()) {
         return;
     }
-    setContact(item.payload<KABC::Addressee>());
+    setContact(item.payload<KContacts::Addressee>());
 }
 
 

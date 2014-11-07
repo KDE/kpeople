@@ -57,7 +57,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
         d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
     }
 
-    KABC::Addressee::Map contacts;
+    KContacts::Addressee::Map contacts;
     Q_FOREACH(const QString &contactId, d->contactIds) {
         //load the correct data source for this contact ID
         const QString sourceId = contactId.left(contactId.indexOf(QStringLiteral("://")));
@@ -84,13 +84,13 @@ PersonData::~PersonData()
     delete d_ptr;
 }
 
-KABC::Addressee PersonData::person() const
+KContacts::Addressee PersonData::person() const
 {
     Q_D(const PersonData);
     return d->metaContact.personAddressee();
 }
 
-KABC::AddresseeList PersonData::contacts() const
+KContacts::AddresseeList PersonData::contacts() const
 {
     Q_D(const PersonData);
     return d->metaContact.contacts();

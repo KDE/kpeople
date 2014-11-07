@@ -28,7 +28,7 @@
 #include <KMimeType>
 #include <KMime/Message>
 #include <QDesktopServices>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 #include <KLocalizedString>
 
 #include <baloo/query.h>
@@ -44,7 +44,7 @@ Emails::Emails(QObject *parent): AbstractFieldWidgetFactory(parent)
 {
 }
 
-QWidget *Emails::createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const
+QWidget *Emails::createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const
 {
     Q_UNUSED(contacts);
     QWidget *widget = new QWidget(parent);

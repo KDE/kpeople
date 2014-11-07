@@ -25,7 +25,7 @@
 
 #include <kpeople/kpeople_export.h>
 
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 class QAction;
 namespace KPeople
@@ -47,8 +47,8 @@ namespace KPeople
      */
     KPEOPLE_EXPORT bool unmergeContact(const QString &id);
 
-    KPEOPLE_EXPORT QList<QAction*> actionsForPerson(const KABC::Addressee &person,
-                                                    const KABC::AddresseeList &contacts,
+    KPEOPLE_EXPORT QList<QAction*> actionsForPerson(const KContacts::Addressee &person,
+                                                    const KContacts::AddresseeList &contacts,
                                                     QObject *parent);
 
     /**

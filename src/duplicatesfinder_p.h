@@ -26,7 +26,7 @@
 #include <kpeople/kpeople_export.h>
 #include "match_p.h"
 
-namespace KABC
+namespace KContacts
 {
 class Addressee;
 }

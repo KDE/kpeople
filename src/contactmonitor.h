@@ -25,7 +25,7 @@
 
 #include <kpeople/kpeople_export.h>
 
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 namespace KPeople {
 
@@ -54,7 +54,7 @@ public:
     /**
      * The currently loaded information on this contact.
      */
-    KABC::Addressee contact() const;
+    KContacts::Addressee contact() const;
 Q_SIGNALS:
     /**
      * Emitted whenever the contact changes
@@ -65,7 +65,7 @@ protected:
      * Sets or updates the contact and emits contactChanged
      * Subclasses should call this when data is loaded or changes
      */
-    void setContact(const KABC::Addressee &contact);
+    void setContact(const KContacts::Addressee &contact);
 private:
     Q_DISABLE_COPY(ContactMonitor)
     Q_DECLARE_PRIVATE(ContactMonitor)

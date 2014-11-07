@@ -42,7 +42,7 @@ class FakeAllContactsMonitor : public KPeople::AllContactsMonitor
 public:
     explicit FakeAllContactsMonitor();
     void changeContact1Email();
-    virtual KABC::Addressee::Map contacts();
+    virtual KContacts::Addressee::Map contacts();
 };
 
 #endif // FAKECONTACTSOURCE_H

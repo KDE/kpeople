@@ -24,8 +24,8 @@
 #include <QWidget>
 #include <QIcon>
 
-#include <KABC/Field>
-#include <KABC/Addressee>
+#include <KContacts/Field>
+#include <KContacts/Addressee>
 
 #include <kpeople/kpeople_export.h>
 
@@ -42,7 +42,7 @@ public:
 
     virtual QString label() const = 0;
     virtual int sortWeight() const {return 100;}
-    virtual QWidget *createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const = 0;
+    virtual QWidget *createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const = 0;
 };
 }
 

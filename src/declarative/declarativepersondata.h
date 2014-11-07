@@ -23,29 +23,25 @@
 
 #include "persondata.h"
 
-#include <QDeclarativeParserStatus>
+#include <QQmlParserStatus>
 
-class DeclarativePersonData : public KPeople::PersonData, public QDeclarativeParserStatus
+class DeclarativePersonData : public QObject
 {
     Q_OBJECT
-    Q_INTERFACES(QDeclarativeParserStatus)
 
-    Q_PROPERTY(QString uri WRITE setUri);
-    Q_PROPERTY(QString contactId WRITE setContactId);
+    Q_PROPERTY(QString id WRITE setId NOTIFY personChanged);
 
 public:
     DeclarativePersonData(QObject *parent=0);
 
-    void setUri(const QString &uri);
-    void setContactId(const QString &uri);
+    void setId(const QString &uri);
 
-
-    void classBegin();
-    void componentComplete();
+Q_SIGNALS:
+    void personChanged();
 
 private:
-    QString m_uri;
-    QString m_contactId;
+    QString m_id;
+    KPeople::PersonData* m_person;
 };
 
 #endif // DECLARATIVEPERSONDATA_H

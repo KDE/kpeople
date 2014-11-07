@@ -25,7 +25,7 @@ class KPeople::ContactMonitorPrivate
 {
 public:
     QString m_contactId;
-    KABC::Addressee m_contact;
+    KContacts::Addressee m_contact;
 };
 
 
@@ -43,7 +43,7 @@ ContactMonitor::~ContactMonitor()
     delete d_ptr;
 }
 
-void ContactMonitor::setContact(const KABC::Addressee &contact)
+void ContactMonitor::setContact(const KContacts::Addressee &contact)
 {
     Q_D(ContactMonitor);
 
@@ -51,7 +51,7 @@ void ContactMonitor::setContact(const KABC::Addressee &contact)
     Q_EMIT contactChanged();
 }
 
-KABC::Addressee ContactMonitor::contact() const
+KContacts::Addressee ContactMonitor::contact() const
 {
     Q_D(const ContactMonitor);
 

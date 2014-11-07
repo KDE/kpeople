@@ -26,7 +26,7 @@
 
 #include "kpeople/kpeople_export.h"
 
-namespace KABC
+namespace KContacts
 {
     class Addressee;
 }
@@ -49,8 +49,8 @@ public:
     bool operator==(const Match &m) const;
     bool operator<(const Match &m) const;
     QStringList matchReasons() const;
-    static QString matchValue(MatchReason r, const KABC::Addressee &addr);
-    static QList<Match::MatchReason> matchAt(const KABC::Addressee &value, const KABC::Addressee &toCompare);
+    static QString matchValue(MatchReason r, const KContacts::Addressee &addr);
+    static QList<Match::MatchReason> matchAt(const KContacts::Addressee &value, const KContacts::Addressee &toCompare);
 
     QList<MatchReason> reasons;
     QPersistentModelIndex indexA, indexB;

@@ -55,16 +55,16 @@ using namespace KPeople;
 class CoreFieldsPlugin : public AbstractFieldWidgetFactory
 {
 public:
-    CoreFieldsPlugin(KABC::Field *field);
+    CoreFieldsPlugin(KContacts::Field *field);
     virtual ~CoreFieldsPlugin();
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const;
+    virtual QWidget* createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const;
 private:
-    KABC::Field* m_field;
+    KContacts::Field* m_field;
 };
 
-CoreFieldsPlugin::CoreFieldsPlugin(KABC::Field* field):
+CoreFieldsPlugin::CoreFieldsPlugin(KContacts::Field* field):
     m_field(field)
 {
 }
@@ -84,11 +84,11 @@ int CoreFieldsPlugin::sortWeight() const
     return m_field->category()*10;
 }
 
-QWidget* CoreFieldsPlugin::createDetailsWidget(const KABC::Addressee &person, const KABC::AddresseeList &contacts, QWidget *parent) const
+QWidget* CoreFieldsPlugin::createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const
 {
     Q_UNUSED(contacts)
-    //don't handle emails here - KABC::Field just lists one which is rubbish. Instead use a custom plugin that lists everything
-    if (m_field->category() & KABC::Field::Email) {
+    //don't handle emails here - KContacts::Field just lists one which is rubbish. Instead use a custom plugin that lists everything
+    if (m_field->category() & KContacts::Field::Email) {
         return 0;
     }
 
@@ -117,7 +117,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     //create plugins
-    Q_FOREACH(KABC::Field *field, KABC::Field::allFields()) {
+    Q_FOREACH(KContacts::Field *field, KContacts::Field::allFields()) {
         d->m_plugins << new CoreFieldsPlugin(field);
     }
 

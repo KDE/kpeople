@@ -38,12 +38,12 @@ public:
     /** A list of actions that can be executed for a contact
      * Disabled actions should not be added
      *
-     * @arg person the person KABC::Addressee object
+     * @arg person the person KContacts::Addressee object
      * @arg contacts person's list of subcontacts
      * @arg parent parent object for newly created actions
      */
-    virtual QList<QAction*> actionsForPerson(const KABC::Addressee &person,
-                                             const KABC::AddresseeList &contacts,
+    virtual QList<QAction*> actionsForPerson(const KContacts::Addressee &person,
+                                             const KContacts::AddresseeList &contacts,
                                              QObject *parent) const = 0;
 };
 

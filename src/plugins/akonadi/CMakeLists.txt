@@ -2,7 +2,7 @@ add_library(akonadi_kpeople_plugin MODULE akonadidatasource.cpp)
 
 target_link_libraries (akonadi_kpeople_plugin
     ${KDEPIMLIBS_AKONADI_LIBS}
-    KF5::Abc
+    KF5::Contacts
     KPeople
 )
 

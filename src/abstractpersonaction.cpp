@@ -28,8 +28,8 @@ AbstractPersonAction::AbstractPersonAction(QObject *parent) : QObject (parent)
 {
 }
 
-QList< QAction* > AbstractPersonAction::actionsForPerson(const KABC::Addressee &person,
-                                                         const KABC::AddresseeList &contacts,
+QList< QAction* > AbstractPersonAction::actionsForPerson(const KContacts::Addressee &person,
+                                                         const KContacts::AddresseeList &contacts,
                                                          QObject *parent) const
 {
     Q_UNUSED(person);

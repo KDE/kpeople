@@ -1,7 +1,7 @@
 @PACKAGE_INIT@
 
 find_dependency(Qt5Core @REQUIRED_QT_VERSION@)
-find_dependency(KF5Abc)
+find_dependency(KF5Contacts)
 
 include("${CMAKE_CURRENT_LIST_DIR}/KPeopleTargets.cmake")
 

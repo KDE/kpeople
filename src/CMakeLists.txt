@@ -2,7 +2,7 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
                      ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-# add_subdirectory(declarative)
+add_subdirectory(declarative)
 add_subdirectory(plugins)
 add_subdirectory(widgets)
 
@@ -27,7 +27,7 @@ add_library(KF5::People ALIAS KPeople)
 
 target_link_libraries (KPeople
                     PUBLIC
-                        KF5::Abc
+                        KF5::Contacts
                     PRIVATE
                         Qt5::Sql
                         Qt5::DBus

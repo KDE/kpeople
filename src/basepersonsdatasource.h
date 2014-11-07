@@ -23,7 +23,7 @@
 
 #include <QObject>
 #include <QVariant>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 #include <kpeople/kpeople_export.h>
 

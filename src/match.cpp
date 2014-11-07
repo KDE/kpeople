@@ -18,7 +18,7 @@
 */
 
 #include "match_p.h"
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 using namespace KPeople;
 
@@ -49,17 +49,17 @@ QStringList Match::matchReasons() const
     for(MatchReason r: reasons) {
         switch(r) {
             case NameMatch:
-                ret += KABC::Addressee::nameLabel();
+                ret += KContacts::Addressee::nameLabel();
                 break;
             case EmailMatch:
-                ret += KABC::Addressee::emailLabel();
+                ret += KContacts::Addressee::emailLabel();
                 break;
         }
     }
     return ret;
 }
 
-QString Match::matchValue(MatchReason r, const KABC::Addressee &addr)
+QString Match::matchValue(MatchReason r, const KContacts::Addressee &addr)
 {
     switch(r) {
         case NameMatch:
@@ -70,7 +70,7 @@ QString Match::matchValue(MatchReason r, const KABC::Addressee &addr)
     Q_UNREACHABLE();
 }
 
-QList<Match::MatchReason> Match::matchAt(const KABC::Addressee &value, const KABC::Addressee &toCompare)
+QList<Match::MatchReason> Match::matchAt(const KContacts::Addressee &value, const KContacts::Addressee &toCompare)
 {
     QList<Match::MatchReason> ret;
 

@@ -5,9 +5,9 @@ project (KPeople)
 find_package(ECM 1.3.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
-find_package(Qt5 5.3 REQUIRED Gui Sql DBus Widgets)
+find_package(Qt5 5.3 REQUIRED Gui Sql DBus Widgets Qml)
 find_package(KF5 5.3 REQUIRED CoreAddons KIO I18n ItemViews)
-find_package(KF5Abc REQUIRED)
+find_package(KF5Contacts REQUIRED)
 find_package(KF5Baloo)
 
 include(ECMSetupVersion)

@@ -21,7 +21,7 @@
 
 #include <QUrl>
 #include <QDebug>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 using namespace KPeople;
 
@@ -51,7 +51,7 @@ void DuplicatesFinder::doSearch()
     //NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment
     //maybe using nepomuk for the matching would help?
 
-    QVector<KABC::Addressee> collectedValues;
+    QVector<KContacts::Addressee> collectedValues;
     m_matches.clear();
 
     if (m_model->rowCount() == 0) {
@@ -62,11 +62,11 @@ void DuplicatesFinder::doSearch()
         QModelIndex idx = m_model->index(i, 0);
 
         //we gather the values
-        KABC::Addressee values = idx.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+        KContacts::Addressee values = idx.data(PersonsModel::PersonVCardRole).value<KContacts::Addressee>();
 
         //we check if it matches
         int j = 0;
-        Q_FOREACH (const KABC::Addressee &valueToCompare, collectedValues) {
+        Q_FOREACH (const KContacts::Addressee &valueToCompare, collectedValues) {
             QList<Match::MatchReason> matchedRoles = Match::matchAt(values, valueToCompare);
 
             if (!matchedRoles.isEmpty()) {
@@ -88,7 +88,7 @@ void DuplicatesFinder::doSpecificSearch()
     m_matches.clear();
 
     QModelIndex idx = m_model->indexForPersonId(m_personId);
-    KABC::Addressee values = idx.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+    KContacts::Addressee values = idx.data(PersonsModel::PersonVCardRole).value<KContacts::Addressee>();
 
     for (int i = 0, rows = m_model->rowCount(); i<rows; i++) {
         QModelIndex idx2 = m_model->index(i,0);
@@ -97,7 +97,7 @@ void DuplicatesFinder::doSpecificSearch()
             continue;
         }
 
-        KABC::Addressee values2 = idx2.data(PersonsModel::PersonVCardRole).value<KABC::Addressee>();
+        KContacts::Addressee values2 = idx2.data(PersonsModel::PersonVCardRole).value<KContacts::Addressee>();
         QList<Match::MatchReason> matchedRoles = Match::matchAt(values, values2);
         if (!matchedRoles.isEmpty()) {
             m_matches.append(Match(matchedRoles, idx, idx2));

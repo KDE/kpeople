@@ -5,7 +5,7 @@
 #include "basepersonsdatasource.h"
 #include "personmanager_p.h"
 
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 #include <QStandardPaths>
 #include <QPixmap>
@@ -67,7 +67,7 @@ PersonsModel::~PersonsModel()
 {
 }
 
-// QVariant dataForPerson(const KABC::Person &person)
+// QVariant dataForPerson(const KContacts::Person &person)
 // {
 //
 // }
@@ -88,7 +88,7 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
 
     if (index.parent().isValid()) {
         if (role == ContactsVCardRole) {
-            return QVariant::fromValue<KABC::AddresseeList>(KABC::AddresseeList());
+            return QVariant::fromValue<KContacts::AddresseeList>(KContacts::AddresseeList());
         }
         const MetaContact &mc = d->metacontacts.at(index.parent().row());
 
@@ -99,7 +99,7 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QVariant PersonsModel::dataForAddressee(const QString &personId, const KABC::Addressee &person, int role) const
+QVariant PersonsModel::dataForAddressee(const QString &personId, const KContacts::Addressee &person, int role) const
 {
     Q_D(const PersonsModel);
 
@@ -117,9 +117,9 @@ QVariant PersonsModel::dataForAddressee(const QString &personId, const KABC::Add
     case PersonIdRole:
         return personId;
     case PersonVCardRole:
-        return QVariant::fromValue<KABC::Addressee>(person);
+        return QVariant::fromValue<KContacts::Addressee>(person);
     case ContactsVCardRole:
-        return QVariant::fromValue<KABC::AddresseeList>(d->metacontacts[d->personIndex[personId].row()].contacts());
+        return QVariant::fromValue<KContacts::AddresseeList>(d->metacontacts[d->personIndex[personId].row()].contacts());
     case GroupsRole:
         return person.categories();
     }
@@ -196,7 +196,7 @@ void PersonsModel::onContactsFetched()
 {
     Q_D(PersonsModel);
 
-    KABC::Addressee::Map addresseeMap;
+    KContacts::Addressee::Map addresseeMap;
 
     //fetch all already loaded contacts from plugins
     Q_FOREACH (const AllContactsMonitorPtr &contactWatcher, d->m_sourceMonitors) {
@@ -207,7 +207,7 @@ void PersonsModel::onContactsFetched()
     QMultiHash<QString, QString> contactMapping = PersonManager::instance()->allPersons();
 
     Q_FOREACH (const QString &key, contactMapping.uniqueKeys()) {
-        KABC::Addressee::Map contacts;
+        KContacts::Addressee::Map contacts;
         Q_FOREACH (const QString &contact, contactMapping.values(key)) {
             d->contactToPersons[contact] = key;
             if (addresseeMap.contains(contact)) {
@@ -220,19 +220,19 @@ void PersonsModel::onContactsFetched()
     }
 
     //add remaining contacts
-    KABC::Addressee::Map::const_iterator i;
+    KContacts::Addressee::Map::const_iterator i;
     for (i = addresseeMap.constBegin(); i != addresseeMap.constEnd(); ++i) {
         addPerson(MetaContact(i.key(), i.value()));
     }
 
     Q_FOREACH(const AllContactsMonitorPtr monitor, d->m_sourceMonitors) {
-        connect(monitor.data(), SIGNAL(contactAdded(QString,KABC::Addressee)), SLOT(onContactAdded(QString,KABC::Addressee)));
-        connect(monitor.data(), SIGNAL(contactChanged(QString,KABC::Addressee)), SLOT(onContactChanged(QString,KABC::Addressee)));
+        connect(monitor.data(), SIGNAL(contactAdded(QString,KContacts::Addressee)), SLOT(onContactAdded(QString,KContacts::Addressee)));
+        connect(monitor.data(), SIGNAL(contactChanged(QString,KContacts::Addressee)), SLOT(onContactChanged(QString,KContacts::Addressee)));
         connect(monitor.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
     }
 }
 
-void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addressee &contact)
+void PersonsModel::onContactAdded(const QString &contactId, const KContacts::Addressee &contact)
 {
     Q_D(PersonsModel);
 
@@ -254,13 +254,13 @@ void PersonsModel::onContactAdded(const QString &contactId, const KABC::Addresse
             personChanged(personId);
         }
     } else { //new contact -> new person
-        KABC::Addressee::Map map;
+        KContacts::Addressee::Map map;
         map[contactId] = contact;
         addPerson(MetaContact(personId, map));
     }
 }
 
-void PersonsModel::onContactChanged(const QString &contactId, const KABC::Addressee &contact)
+void PersonsModel::onContactChanged(const QString &contactId, const KContacts::Addressee &contact)
 {
     Q_D(PersonsModel);
 
@@ -316,7 +316,7 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
 
     //get contact already in the model, remove it from the previous contact
     int contactPosition = oldMc.contactIds().indexOf(contactId);
-    const KABC::Addressee contact = oldMc.contacts().at(contactPosition);
+    const KContacts::Addressee contact = oldMc.contacts().at(contactPosition);
 
     beginRemoveRows(index(oldPersonRow), contactPosition, contactPosition);
     oldMc.removeContact(contactId);
@@ -338,7 +338,7 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
         endInsertRows();
         personChanged(newPersonId);
     } else { //if the person is not in the model, create a new person and insert it
-        KABC::Addressee::Map contacts;
+        KContacts::Addressee::Map contacts;
         contacts[contactId] = contact;
         addPerson(MetaContact(newPersonId, contacts));
     }
@@ -353,7 +353,7 @@ void PersonsModel::onRemoveContactsFromPerson(const QString &contactId)
     int personRow = d->personIndex[personId].row();
     MetaContact &mc = d->metacontacts[personRow];
 
-    const KABC::Addressee &contact = mc.contact(contactId);
+    const KContacts::Addressee &contact = mc.contact(contactId);
     mc.removeContact(contactId);
     d->contactToPersons.remove(contactId);
 

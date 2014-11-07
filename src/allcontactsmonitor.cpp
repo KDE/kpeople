@@ -22,7 +22,7 @@
 
 #include "allcontactsmonitor.h"
 
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 using namespace KPeople;
 
@@ -50,9 +50,9 @@ AllContactsMonitor::~AllContactsMonitor()
     delete d_ptr;
 }
 
-KABC::Addressee::Map AllContactsMonitor::contacts()
+KContacts::Addressee::Map AllContactsMonitor::contacts()
 {
-    return KABC::Addressee::Map();
+    return KContacts::Addressee::Map();
 }
 
 bool AllContactsMonitor::isInitialFetchComplete() const

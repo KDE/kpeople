@@ -27,7 +27,7 @@
 
 #include <kpeople/kpeople_export.h>
 
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 namespace KPeople {
 
@@ -50,7 +50,7 @@ public:
     /**
      * Returns all currently loaded contacts
      */
-    virtual KABC::Addressee::Map contacts();
+    virtual KContacts::Addressee::Map contacts();
 
     //TODO redo as a state enum - InitialLoad, Fail, Loaded
     bool isInitialFetchComplete() const;
@@ -61,12 +61,12 @@ Q_SIGNALS:
     /**
      * DataSources should emit this whenever a known contact changes
      */
-    void contactChanged(const QString &contactId, const KABC::Addressee &contact);
+    void contactChanged(const QString &contactId, const KContacts::Addressee &contact);
 
     /**
      * DataSources should emit this whenever a contact is added
      */
-    void contactAdded(const QString &contactId, const KABC::Addressee &contact);
+    void contactAdded(const QString &contactId, const KContacts::Addressee &contact);
 
     /**
      * DataSources should emit this whenever a contact is removed and they are no longer able to supply up-to-date data on a contact

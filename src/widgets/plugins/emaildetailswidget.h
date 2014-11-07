@@ -30,7 +30,7 @@ class EmailFieldsPlugin : public AbstractFieldWidgetFactory
 public:
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KABC::Addressee& person, const KABC::AddresseeList &contacts, QWidget* parent) const;
+    virtual QWidget* createDetailsWidget(const KContacts::Addressee& person, const KContacts::AddresseeList &contacts, QWidget* parent) const;
 };
 
 #endif // EMAIL_DETAILS_WIDGET_H

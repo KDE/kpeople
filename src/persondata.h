@@ -23,7 +23,7 @@
 #include <kpeople/kpeople_export.h>
 
 #include <QObject>
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 #include "global.h"
 
@@ -49,12 +49,12 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /**
          * Returns the aggregated contact information from all sources
          */
-        KABC::Addressee person() const;
+        KContacts::Addressee person() const;
 
         /**
          * Returns information from each contact source
          */
-        KABC::AddresseeList contacts() const;
+        KContacts::AddresseeList contacts() const;
 
     Q_SIGNALS:
         /**

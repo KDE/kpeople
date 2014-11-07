@@ -23,7 +23,7 @@
 #include <QSharedDataPointer>
 
 
-#include <KABC/Addressee>
+#include <KContacts/Addressee>
 
 #include <kpeople/kpeople_export.h>
 
@@ -35,10 +35,10 @@ class MetaContact
 public:
     MetaContact();
     /** Create a 'MetaContact' from a single contact*/
-    MetaContact(const QString &contactId, const KABC::Addressee &contact);
+    MetaContact(const QString &contactId, const KContacts::Addressee &contact);
 
     /** Create a MetaContact with a given person ID and a map of all associated contacts*/
-    MetaContact(const QString &personId, const KABC::Addressee::Map& contacts);
+    MetaContact(const QString &personId, const KContacts::Addressee::Map& contacts);
     MetaContact(const MetaContact &other);
     ~MetaContact();
 
@@ -48,24 +48,24 @@ public:
     bool isValid() const;
 
     QStringList contactIds() const;
-    KABC::AddresseeList contacts() const;
+    KContacts::AddresseeList contacts() const;
 
-    KABC::Addressee contact(const QString &contactId);
-    const KABC::Addressee& personAddressee() const;
+    KContacts::Addressee contact(const QString &contactId);
+    const KContacts::Addressee& personAddressee() const;
 
     //update one of the stored contacts in this metacontact object
     //@return the index of the contact which was inserted
 
-    int insertContact(const QString &contactId, const KABC::Addressee &contact);
+    int insertContact(const QString &contactId, const KContacts::Addressee &contact);
 
-    int updateContact(const QString &contactId, const KABC::Addressee &contact);
+    int updateContact(const QString &contactId, const KContacts::Addressee &contact);
 
     int removeContact(const QString &contactId);
 
 private:
     //does the real inserting contacts. Split so that we don't call the expensive "reload" function
     //multiple times at startup
-    int insertContactInternal(const QString &contactId, const KABC::Addressee &contact);
+    int insertContactInternal(const QString &contactId, const KContacts::Addressee &contact);
 
     void reload();
 

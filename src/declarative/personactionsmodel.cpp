@@ -49,10 +49,8 @@ void PersonActionsModel::setId(const QString& id)
     PersonData person(id);
 
     beginResetModel();
-    d->actions.clear();
     d->id = id;
-
-    d->actions.append(KPeople::actionsForPerson(person.person(), person.contacts(), this));
+    d->actions = KPeople::actionsForPerson(person.person(), person.contacts(), this);
     endResetModel();
 
     emit personChanged();

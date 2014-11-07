@@ -1,9 +1,9 @@
-import QtQuick 1.1
-import org.kde.people 0.1
-import org.kde.plasma.components 0.1
-import org.kde.plasma.core 0.1 as Core
-import org.kde.plasma.extras 0.1
-import org.kde.qtextracomponents 0.1
+import QtQuick 2.1
+import org.kde.people 1.0
+import org.kde.plasma.components 2.0
+import org.kde.plasma.core 2.0 as Core
+import org.kde.plasma.extras 2.0
+import org.kde.kquickcontrolsaddons 2.0
 
 Rectangle {
     width: 300
@@ -16,7 +16,6 @@ Rectangle {
         sortCaseSensitivity: Qt.CaseInsensitive
         sourceModel: PersonsModel {
             id: people
-            optionalFeatures: PersonsModel.FeatureAll
         }
         filterRegExp: searchField.text
     }
@@ -94,10 +93,9 @@ Rectangle {
                         clip: true
                         height: view.cellHeight
                         width: view.cellWidth-5
-                        Image {
+                        Core.IconItem {
                             id: avatar
-                            source: photo ? photo[0] : ""
-                            fillMode: Image.PreserveAspectCrop
+                            source: decoration
                             anchors.fill: parent
                         }
                         Label {
@@ -110,9 +108,9 @@ Rectangle {
                         enabled: true
                         onClicked: {
                             contactItem.contactData = model
-                            personActions.setPerson(filteredPeople, model.index)
+                            personActions.id = model.personId
                             if(areWeMerging.checked)
-                                toMergeItems.addUri(model.uri, model.name)
+                                toMergeItems.addUri(model.personId, model.display)
                         }
                     }
     }

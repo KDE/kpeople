@@ -72,6 +72,7 @@ public:
     QModelIndex indexForPersonId(const QString& personId) const;
 
     bool isInitialized() const;
+    virtual QHash<int, QByteArray> roleNames() const;
 
 Q_SIGNALS:
     void modelInitialized(bool success);

@@ -1,1 +1,3 @@
+module org.kde.people
+
 plugin KPeopleDeclarative

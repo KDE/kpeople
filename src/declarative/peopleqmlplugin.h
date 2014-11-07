@@ -20,13 +20,14 @@
 #ifndef PEOPLEQMLPLUGIN_H
 #define PEOPLEQMLPLUGIN_H
 
-#include <QDeclarativeExtensionPlugin>
+#include <QQmlExtensionPlugin>
 
-class PeopleQMLPlugin : public QDeclarativeExtensionPlugin
+class PeopleQMLPlugin : public QQmlExtensionPlugin
 {
+Q_OBJECT
+Q_PLUGIN_METADATA(IID "org.qt-project.Qt.QQmlExtensionInterface")
+public:
     virtual void registerTypes(const char *uri);
 };
-
-Q_EXPORT_PLUGIN2(kpeopledeclarative, PeopleQMLPlugin);
 
 #endif // PEOPLEQMLPLUGIN_H

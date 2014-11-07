@@ -26,6 +26,11 @@
 
 class QAction;
 
+namespace KContacts
+{
+    class Addressee;
+}
+
 namespace KPeople
 {
 class PersonActionsPrivate;
@@ -34,6 +39,8 @@ class KPEOPLE_EXPORT PersonActionsModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY personChanged)
+    Q_PROPERTY(QString id READ id WRITE setId NOTIFY personChanged)
+
 public:
     PersonActionsModel(QObject *parent = 0);
     virtual ~PersonActionsModel();
@@ -41,8 +48,9 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    Q_INVOKABLE void setPerson(QAbstractItemModel *model, int row);
-    void setPerson(const QPersistentModelIndex &index);
+    QString id() const;
+    void setId(const QString& id);
+
     QList<QAction*> actions() const;
 
     Q_INVOKABLE void triggerAction(int row) const;

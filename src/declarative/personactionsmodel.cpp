@@ -18,26 +18,14 @@
 
 
 #include "personactionsmodel_p.h"
-#include "personsmodel.h"
-#include "personpluginmanager.h"
-#include "persondata.h"
-
-#include <QPersistentModelIndex>
+#include "../persondata.h"
+#include <kpeople/persondata.h>
 #include <QAction>
-
-#include <KIcon>
-#include <KLocalizedString>
-#include <KToolInvocation>
 
 namespace KPeople {
 struct PersonActionsPrivate {
-    PersonActionsPrivate():
-        person(0)
-        {}
     QList<QAction*> actions;
-
-    QPersistentModelIndex index;
-    PersonDataPtr person;
+    QString id;
 };
 }
 
@@ -55,23 +43,25 @@ PersonActionsModel::~PersonActionsModel()
     delete d_ptr;
 }
 
-void PersonActionsModel::setPerson(QAbstractItemModel *model, int row)
-{
-    setPerson(model->index(row, 0));
-}
-
-void PersonActionsModel::setPerson(const QPersistentModelIndex &index)
+void PersonActionsModel::setId(const QString& id)
 {
     Q_D(PersonActions);
+    PersonData person(id);
+
     beginResetModel();
     d->actions.clear();
-    d->index = index;
-    d->person = PersonData::createFromUri(index.data(PersonsModel::UriRole).toString());
+    d->id = id;
 
-    d->actions.append(PersonPluginManager::actionsForPerson(d->person, this));
-
+    d->actions.append(KPeople::actionsForPerson(person.person(), person.contacts(), this));
     endResetModel();
+
     emit personChanged();
+}
+
+QString PersonActionsModel::id() const
+{
+    Q_D(const PersonActions);
+    return d->id;
 }
 
 QVariant PersonActionsModel::data(const QModelIndex &index, int role) const

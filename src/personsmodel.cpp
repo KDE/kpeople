@@ -67,10 +67,14 @@ PersonsModel::~PersonsModel()
 {
 }
 
-// QVariant dataForPerson(const KContacts::Person &person)
-// {
-//
-// }
+QHash<int, QByteArray> PersonsModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
+    roles.insert(PersonIdRole, "personId");
+    roles.insert(PersonVCardRole, "personVCard");
+    roles.insert(ContactsVCardRole, "contactsVCard");
+    return roles;
+}
 
 QVariant PersonsModel::data(const QModelIndex &index, int role) const
 {

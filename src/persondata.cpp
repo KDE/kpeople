@@ -25,6 +25,7 @@
 #include "contactmonitor.h"
 
 #include <QDebug>
+#include <QStandardPaths>
 
 namespace KPeople {
     class PersonDataPrivate {
@@ -108,4 +109,24 @@ void PersonData::onContactChanged()
         d->metaContact.insertContact(watcher->contactId(), watcher->contact());
     }
     Q_EMIT dataChanged();
+}
+
+QPixmap PersonData::photo() const
+{
+    Q_D(const PersonData);
+    QPixmap avatar;
+
+    KContacts::Picture pic = person().photo();
+    QImage img = pic.data();
+    if (!img.isNull()) {
+        avatar = QPixmap::fromImage(img);
+    } else {
+        avatar = QPixmap(pic.url());
+    }
+
+    if (avatar.isNull()) {
+        static QString defaultAvatar = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png"));
+        avatar = QPixmap(defaultAvatar);
+    }
+    return avatar;
 }

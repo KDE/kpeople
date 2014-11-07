@@ -56,6 +56,11 @@ class KPEOPLE_EXPORT PersonData : public QObject
          */
         KContacts::AddresseeList contacts() const;
 
+        /**
+         * @returns a pixmap with the photo of the person, or a default one if not available
+         */
+        QPixmap photo() const;
+
     Q_SIGNALS:
         /**
          * One of the contact sources has changed

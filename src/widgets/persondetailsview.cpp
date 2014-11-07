@@ -183,15 +183,7 @@ void PersonDetailsView::reload()
     //update header information
     //FIXME - possibly split this out into a new class with a nice setPerson method
 
-    QPixmap avatar;
-
-    if (!d->m_person->person().photo().data().isNull()) {
-        avatar = QPixmap::fromImage(d->m_person->person().photo().data());
-    } else if (!d->m_person->person().photo().url().isEmpty()) {
-        avatar = QPixmap(d->m_person->person().photo().url());
-    } else {
-        avatar = QPixmap(QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png")));
-    }
+    QPixmap avatar = d->m_person->photo();
 
     QString contactPresence = d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence"));
 

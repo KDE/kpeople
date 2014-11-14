@@ -21,11 +21,18 @@
 #include "../persondata.h"
 #include <kpeople/persondata.h>
 #include <QAction>
+#include <QDebug>
+#include <QPointer>
 
 namespace KPeople {
 struct PersonActionsPrivate {
+    PersonActionsPrivate()
+        : person(0)
+    {}
+
     QList<QAction*> actions;
     QString id;
+    KPeople::PersonData* person;
 };
 }
 
@@ -46,14 +53,24 @@ PersonActionsModel::~PersonActionsModel()
 void PersonActionsModel::setPersonId(const QString& id)
 {
     Q_D(PersonActions);
-    PersonData person(id);
 
-    beginResetModel();
+    delete d->person;
+    d->person = new PersonData(id, this);
+    connect(d->person, &PersonData::dataChanged, this, &PersonActionsModel::resetActions);
     d->id = id;
-    d->actions = KPeople::actionsForPerson(person.person(), person.contacts(), this);
-    endResetModel();
+
+    resetActions();
 
     emit personChanged();
+}
+
+void PersonActionsModel::resetActions()
+{
+    Q_D(PersonActions);
+
+    beginResetModel();
+    d->actions = KPeople::actionsForPerson(d->person->person(), d->person->contacts(), this);
+    endResetModel();
 }
 
 QString PersonActionsModel::personId() const

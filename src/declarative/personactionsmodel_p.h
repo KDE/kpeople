@@ -59,6 +59,8 @@ Q_SIGNALS:
     void personChanged();
 
 private:
+    void resetActions();
+
     Q_DECLARE_PRIVATE(PersonActions);
     PersonActionsPrivate * const d_ptr;
 };

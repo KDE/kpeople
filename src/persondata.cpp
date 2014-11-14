@@ -111,6 +111,11 @@ void PersonData::onContactChanged()
     Q_EMIT dataChanged();
 }
 
+QString PersonData::name() const
+{
+    return person().formattedName();
+}
+
 QPixmap PersonData::photo() const
 {
     Q_D(const PersonData);
@@ -129,4 +134,10 @@ QPixmap PersonData::photo() const
         avatar = QPixmap(defaultAvatar);
     }
     return avatar;
+}
+
+QString PersonData::presenceIconName() const
+{
+    QString contactPresence = person().custom(QStringLiteral("telepathy"), QStringLiteral("presence"));
+    return KPeople::iconNameForPresenceString(contactPresence);
 }

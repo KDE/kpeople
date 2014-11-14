@@ -36,6 +36,9 @@ class PersonData;
 class KPEOPLE_EXPORT PersonData : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QString name READ name NOTIFY dataChanged)
+    Q_PROPERTY(QPixmap photo READ photo NOTIFY dataChanged)
+    Q_PROPERTY(QString presenceIconName READ presenceIconName NOTIFY dataChanged)
 
     public:
         /** Creates a Person object from a given ID.
@@ -55,6 +58,16 @@ class KPEOPLE_EXPORT PersonData : public QObject
          * Returns information from each contact source
          */
         KContacts::AddresseeList contacts() const;
+
+        /**
+         * @returns the name of the person
+         */
+        QString name() const;
+
+        /**
+         * @returns an icon name that represents the IM status of the person
+         */
+        QString presenceIconName() const;
 
         /**
          * @returns a pixmap with the photo of the person, or a default one if not available

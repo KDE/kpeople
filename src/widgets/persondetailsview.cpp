@@ -185,11 +185,9 @@ void PersonDetailsView::reload()
 
     QPixmap avatar = d->m_person->photo();
 
-    QString contactPresence = d->m_person->person().custom(QLatin1String("telepathy"), QLatin1String("presence"));
-
     d->m_personDetailsPresentation->avatarPixmapLabel->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio)); //FIXME
-    d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(QIcon::fromTheme(KPeople::iconNameForPresenceString(contactPresence)).pixmap(32, 32)); //FIXME
-    d->m_personDetailsPresentation->nameLabel->setText(d->m_person->person().formattedName());
+    d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(QIcon::fromTheme(d->m_person->presenceIconName()).pixmap(32, 32)); //FIXME
+    d->m_personDetailsPresentation->nameLabel->setText(d->m_person->name());
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + QLatin1Char(':');

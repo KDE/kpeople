@@ -31,4 +31,5 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
     qmlRegisterType<KPeople::PersonsModel>(uri, 1, 0, "PersonsModel");
     qmlRegisterType<KPeople::PersonActionsModel>(uri, 1, 0, "PersonActions");
     qmlRegisterType<DeclarativePersonData>(uri, 1, 0, "PersonData");
+    qmlRegisterType<KPeople::PersonData>();
 }

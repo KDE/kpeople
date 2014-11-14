@@ -20,16 +20,29 @@
 #include "declarativepersondata.h"
 
 #include <QDebug>
+#include <KPeople/KPeople/PersonData>
 
 DeclarativePersonData::DeclarativePersonData(QObject *parent)
     : QObject(parent)
-    , m_person(0)
+    , m_person(nullptr)
 {
-
 }
 
-void DeclarativePersonData::setPersonId(const QString& uri)
+void DeclarativePersonData::setPersonId(const QString& id)
 {
+    m_id = id;
     delete m_person;
-    m_person = new KPeople::PersonData(uri, this);
+    m_person = new KPeople::PersonData(id, this);
+
+    emit personChanged();
+}
+
+KPeople::PersonData* DeclarativePersonData::person() const
+{
+    return m_person;
+}
+
+QString DeclarativePersonData::personId() const
+{
+    return m_id;
 }

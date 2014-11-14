@@ -29,12 +29,16 @@ class DeclarativePersonData : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString personId WRITE setPersonId NOTIFY personChanged);
+    Q_PROPERTY(QString personId READ personId WRITE setPersonId NOTIFY personChanged);
+    Q_PROPERTY(KPeople::PersonData* person READ person NOTIFY personChanged);
 
 public:
     DeclarativePersonData(QObject *parent=0);
 
-    void setPersonId(const QString &uri);
+    void setPersonId(const QString &id);
+    QString personId() const;
+
+    KPeople::PersonData* person() const;
 
 Q_SIGNALS:
     void personChanged();

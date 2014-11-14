@@ -50,6 +50,14 @@ PersonActionsModel::~PersonActionsModel()
     delete d_ptr;
 }
 
+QHash<int, QByteArray> PersonActionsModel::roleNames() const
+{
+    QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
+    roles[IconNameRole] = "iconName";
+    roles[ActionRole] = "action";
+    return roles;
+}
+
 void PersonActionsModel::setPersonId(const QString& id)
 {
     Q_D(PersonActions);
@@ -94,6 +102,10 @@ QVariant PersonActionsModel::data(const QModelIndex &index, int role) const
             return d->actions[index.row()]->icon();
         case Qt::ToolTip:
             return d->actions[index.row()]->toolTip();
+        case IconNameRole:
+            return d->actions[index.row()]->icon().name();
+        case ActionRole:
+            return QVariant::fromValue<QObject*>(d->actions[index.row()]);
     }
 
     return QVariant();

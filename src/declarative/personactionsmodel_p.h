@@ -42,6 +42,11 @@ class KPEOPLE_EXPORT PersonActionsModel : public QAbstractListModel
     Q_PROPERTY(QString personId READ personId WRITE setPersonId NOTIFY personChanged)
 
 public:
+    enum Roles {
+        IconNameRole = Qt::UserRole + 1,
+        ActionRole
+    };
+
     PersonActionsModel(QObject *parent = 0);
     virtual ~PersonActionsModel();
 
@@ -52,6 +57,8 @@ public:
     void setPersonId(const QString& personId);
 
     QList<QAction*> actions() const;
+
+    virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
     Q_INVOKABLE void triggerAction(int row) const;
 

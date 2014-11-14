@@ -28,7 +28,7 @@ DeclarativePersonData::DeclarativePersonData(QObject *parent)
 
 }
 
-void DeclarativePersonData::setId(const QString& uri)
+void DeclarativePersonData::setPersonId(const QString& uri)
 {
     delete m_person;
     m_person = new KPeople::PersonData(uri, this);

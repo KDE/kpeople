@@ -43,7 +43,7 @@ PersonActionsModel::~PersonActionsModel()
     delete d_ptr;
 }
 
-void PersonActionsModel::setId(const QString& id)
+void PersonActionsModel::setPersonId(const QString& id)
 {
     Q_D(PersonActions);
     PersonData person(id);
@@ -56,7 +56,7 @@ void PersonActionsModel::setId(const QString& id)
     emit personChanged();
 }
 
-QString PersonActionsModel::id() const
+QString PersonActionsModel::personId() const
 {
     Q_D(const PersonActions);
     return d->id;

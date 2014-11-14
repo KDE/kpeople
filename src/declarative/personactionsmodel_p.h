@@ -39,7 +39,7 @@ class KPEOPLE_EXPORT PersonActionsModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY personChanged)
-    Q_PROPERTY(QString id READ id WRITE setId NOTIFY personChanged)
+    Q_PROPERTY(QString personId READ personId WRITE setPersonId NOTIFY personChanged)
 
 public:
     PersonActionsModel(QObject *parent = 0);
@@ -48,8 +48,8 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    QString id() const;
-    void setId(const QString& id);
+    QString personId() const;
+    void setPersonId(const QString& personId);
 
     QList<QAction*> actions() const;
 

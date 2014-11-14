@@ -108,7 +108,7 @@ Rectangle {
                         enabled: true
                         onClicked: {
                             contactItem.contactData = model
-                            personActions.id = model.personId
+                            personActions.personId = model.personId
                             if(areWeMerging.checked)
                                 toMergeItems.addUri(model.personId, model.display)
                         }

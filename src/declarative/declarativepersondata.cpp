@@ -32,7 +32,11 @@ void DeclarativePersonData::setPersonId(const QString& id)
 {
     m_id = id;
     delete m_person;
-    m_person = new KPeople::PersonData(id, this);
+    if (m_id.isEmpty()) {
+        delete m_person;
+        m_person = 0;
+    } else
+        m_person = new KPeople::PersonData(id, this);
 
     emit personChanged();
 }

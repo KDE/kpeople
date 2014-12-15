@@ -46,6 +46,8 @@ class PersonsModelPrivate;
 class KPEOPLE_EXPORT PersonsModel : public QAbstractItemModel
 {
     Q_OBJECT
+    /** specifies whether the model has already been initialized */
+    Q_PROPERTY(bool isInitialized READ isInitialized NOTIFY modelInitialized)
 public:
     enum Role {
         FormattedNameRole = Qt::DisplayRole,//QString best name for this person
@@ -71,6 +73,7 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
+    /** @returns the index for a given @p personId */
     QModelIndex indexForPersonId(const QString& personId) const;
 
     bool isInitialized() const;

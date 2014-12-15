@@ -429,3 +429,8 @@ QModelIndex PersonsModel::indexForPersonId(const QString& personId) const
     Q_D(const PersonsModel);
     return d->personIndex.value(personId);
 }
+
+QVariant PersonsModel::get(int row, int role)
+{
+    return index(row, 0).data(role);
+}

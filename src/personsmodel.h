@@ -58,6 +58,7 @@ public:
 
         UserRole = Qt::UserRole + 0x1000 ///< in case it's needed to extend, use this one to start from
     };
+    Q_ENUMS(Role)
 
     PersonsModel(QObject *parent = 0);
 
@@ -73,6 +74,9 @@ public:
 
     bool isInitialized() const;
     virtual QHash<int, QByteArray> roleNames() const;
+
+    /** Helper class to ease model access through QML */
+    Q_SCRIPTABLE QVariant get(int row, int role);
 
 Q_SIGNALS:
     void modelInitialized(bool success);

@@ -64,16 +64,16 @@ public:
 
     virtual ~PersonsModel();
 
-    virtual int columnCount (const QModelIndex &parent = QModelIndex()) const;
-    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-    virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const;
-    virtual QModelIndex parent(const QModelIndex &index) const;
-    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    virtual int columnCount (const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
+    virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    virtual QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
+    virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
     QModelIndex indexForPersonId(const QString& personId) const;
 
     bool isInitialized() const;
-    virtual QHash<int, QByteArray> roleNames() const;
 
     /** Helper class to ease model access through QML */
     Q_SCRIPTABLE QVariant get(int row, int role);

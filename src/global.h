@@ -48,7 +48,7 @@ namespace KPeople
     KPEOPLE_EXPORT bool unmergeContact(const QString &id);
 
     KPEOPLE_EXPORT QList<QAction*> actionsForPerson(const KContacts::Addressee &person,
-                                                    const KContacts::AddresseeList &contacts,
+                                                    const KContacts::Addressee::List &contacts,
                                                     QObject *parent);
 
     /**

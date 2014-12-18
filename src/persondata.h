@@ -57,7 +57,7 @@ class KPEOPLE_EXPORT PersonData : public QObject
         /**
          * Returns information from each contact source
          */
-        KContacts::AddresseeList contacts() const;
+        KContacts::Addressee::List contacts() const;
 
         /**
          * @returns the name of the person

@@ -42,7 +42,7 @@ public:
 
     virtual QString label() const = 0;
     virtual int sortWeight() const {return 100;}
-    virtual QWidget *createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const = 0;
+    virtual QWidget *createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const = 0;
 };
 }
 

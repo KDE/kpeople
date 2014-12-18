@@ -27,7 +27,7 @@ class QModelIndex;
 
 namespace KContacts {
 class Addressee;
-class AddresseeList;
+class Addressee::List;
 }
 using namespace KPeople;
 
@@ -38,7 +38,7 @@ public:
     explicit Emails(QObject *parent = 0);
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget *createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const;
+    virtual QWidget *createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const;
 
 private Q_SLOTS:
     void onEmailDoubleClicked(const QModelIndex &clicked);

@@ -91,7 +91,7 @@ KContacts::Addressee PersonData::person() const
     return d->metaContact.personAddressee();
 }
 
-KContacts::AddresseeList PersonData::contacts() const
+KContacts::Addressee::List PersonData::contacts() const
 {
     Q_D(const PersonData);
     return d->metaContact.contacts();

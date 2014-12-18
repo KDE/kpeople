@@ -38,7 +38,7 @@ bool KPeople::unmergeContact(const QString &id)
 }
 
 QList<QAction*> KPeople::actionsForPerson(const KContacts::Addressee &person,
-                                          const KContacts::AddresseeList &contacts,
+                                          const KContacts::Addressee::List &contacts,
                                           QObject *parent)
 {
     QList<QAction*> actions;

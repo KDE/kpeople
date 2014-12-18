@@ -28,7 +28,7 @@ class MetaContactData : public QSharedData
 public:
     QString personId;
     QStringList contactIds;
-    KContacts::AddresseeList contacts; //TODO vector
+    KContacts::Addressee::List contacts; //TODO vector
     KContacts::Addressee personAddressee;
 };
 }
@@ -107,7 +107,7 @@ KContacts::Addressee MetaContact::contact(const QString& contactId)
     }
 }
 
-KContacts::AddresseeList MetaContact::contacts() const
+KContacts::Addressee::List MetaContact::contacts() const
 {
     return d->contacts;
 }

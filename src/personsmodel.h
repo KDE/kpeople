@@ -27,8 +27,7 @@
 
 #include <QAbstractItemModel>
 
-
-#include <KContacts/AddresseeList>
+#include <KContacts/Addressee>
 #include "global.h"
 
 namespace KPeople
@@ -54,7 +53,7 @@ public:
         PhotoRole = Qt::DecorationRole, //QPixmap best photo for this person
         PersonIdRole = Qt::UserRole, //QString ID of this person
         PersonVCardRole, //KContacts::Addressee
-        ContactsVCardRole, //KContacts::AddresseeList (FIXME or map?)
+        ContactsVCardRole, //KContacts::Addressee::List (FIXME or map?)
 
         GroupsRole, ///groups QStringList
 
@@ -115,6 +114,6 @@ private:
 }
 
 // Q_DECLARE_METATYPE(KContacts::Addressee)
-Q_DECLARE_METATYPE(KContacts::AddresseeList)
+Q_DECLARE_METATYPE(KContacts::Addressee::List)
 
 #endif // PERSONS_MODEL_H

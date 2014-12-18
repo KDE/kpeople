@@ -43,7 +43,7 @@ public:
      * @arg parent parent object for newly created actions
      */
     virtual QList<QAction*> actionsForPerson(const KContacts::Addressee &person,
-                                             const KContacts::AddresseeList &contacts,
+                                             const KContacts::Addressee::List &contacts,
                                              QObject *parent) const = 0;
 };
 

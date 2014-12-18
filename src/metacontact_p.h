@@ -48,7 +48,7 @@ public:
     bool isValid() const;
 
     QStringList contactIds() const;
-    KContacts::AddresseeList contacts() const;
+    KContacts::Addressee::List contacts() const;
 
     KContacts::Addressee contact(const QString &contactId);
     const KContacts::Addressee& personAddressee() const;

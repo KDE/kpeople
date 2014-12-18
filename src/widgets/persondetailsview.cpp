@@ -59,7 +59,7 @@ public:
     virtual ~CoreFieldsPlugin();
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const;
+    virtual QWidget* createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const;
 private:
     KContacts::Field* m_field;
 };
@@ -84,7 +84,7 @@ int CoreFieldsPlugin::sortWeight() const
     return m_field->category()*10;
 }
 
-QWidget* CoreFieldsPlugin::createDetailsWidget(const KContacts::Addressee &person, const KContacts::AddresseeList &contacts, QWidget *parent) const
+QWidget* CoreFieldsPlugin::createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const
 {
     Q_UNUSED(contacts)
     //don't handle emails here - KContacts::Field just lists one which is rubbish. Instead use a custom plugin that lists everything

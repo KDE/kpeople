@@ -28,10 +28,11 @@ add_library(KF5::People ALIAS KPeople)
 target_link_libraries (KPeople
                     PUBLIC
                         KF5::Contacts
+                        Qt5::Widgets #QAction
                     PRIVATE
                         Qt5::Sql
                         Qt5::DBus
-                        KF5::KIOWidgets
+                        KF5::Service
 )
 
 set_target_properties (KPeople PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)

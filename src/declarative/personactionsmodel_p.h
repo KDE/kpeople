@@ -26,11 +26,6 @@
 
 class QAction;
 
-namespace KContacts
-{
-    class Addressee;
-}
-
 namespace KPeople
 {
 class PersonActionsPrivate;

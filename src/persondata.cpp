@@ -22,7 +22,7 @@
 #include "personmanager_p.h"
 #include "personpluginmanager_p.h"
 #include "basepersonsdatasource.h"
-#include "contactmonitor.h"
+#include "backends/contactmonitor.h"
 
 #include <QDebug>
 #include <QStandardPaths>

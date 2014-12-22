@@ -8,9 +8,8 @@ add_subdirectory(widgets)
 
 
 add_library (KPeople
-      global.cpp
-      metacontact.cpp
-    abstractpersonaction.cpp
+    global.cpp
+    metacontact.cpp
     persondata.cpp
     matchessolver.cpp
     match.cpp
@@ -18,10 +17,12 @@ add_library (KPeople
     personsmodel.cpp
     personpluginmanager.cpp
     personmanager.cpp
-    basepersonsdatasource.cpp
-    allcontactsmonitor.cpp
-    contactmonitor.cpp
     defaultcontactmonitor.cpp
+
+    backends/contactmonitor.cpp
+    backends/abstractpersonaction.cpp
+    backends/basepersonsdatasource.cpp
+    backends/allcontactsmonitor.cpp
 )
 add_library(KF5::People ALIAS KPeople)
 
@@ -54,17 +55,12 @@ install (TARGETS KPeople
 
 ecm_generate_headers(KPeople_CamelCase_HEADERS
     HEADER_NAMES
-        AbstractPersonAction
-        AllContactsMonitor
-        BasePersonsDataSource
-        ContactMonitor
         PersonData
         PersonsModel
         Global
     REQUIRED_HEADERS KPeople_HEADERS
     PREFIX KPeople
 )
-
 install (FILES ${KPeople_CamelCase_HEADERS}
          DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/KPeople
          COMPONENT Devel
@@ -73,6 +69,25 @@ install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h
   ${KPeople_HEADERS}
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/kpeople COMPONENT Devel
+)
+
+ecm_generate_headers(KPeopleBackend_CamelCase_HEADERS
+    HEADER_NAMES
+        AbstractPersonAction
+        AllContactsMonitor
+        BasePersonsDataSource
+        ContactMonitor
+    REQUIRED_HEADERS KPeopleBackend_HEADERS
+    PREFIX KPeopleBackend
+    RELATIVE backends
+)
+install (FILES ${KPeopleBackend_CamelCase_HEADERS}
+         DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/KPeopleBackend
+         COMPONENT Devel
+)
+install(FILES
+  ${KPeopleBackend_HEADERS}
+  DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/kpeoplebackend COMPONENT Devel
 )
 
 generate_export_header(KPeople EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)

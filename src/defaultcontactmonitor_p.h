@@ -22,8 +22,8 @@
 #include <QObject>
 #include <QSharedPointer>
 
-#include "contactmonitor.h"
-#include "allcontactsmonitor.h"
+#include "backends/contactmonitor.h"
+#include "backends/allcontactsmonitor.h"
 
 using namespace KPeople;
 

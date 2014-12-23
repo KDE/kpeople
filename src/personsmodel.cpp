@@ -23,7 +23,7 @@
 
 #include "personpluginmanager_p.h"
 #include "metacontact_p.h"
-#include "basepersonsdatasource.h"
+#include "backends/basepersonsdatasource.h"
 #include "personmanager_p.h"
 
 #include <KContacts/Addressee>

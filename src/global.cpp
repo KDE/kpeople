@@ -20,7 +20,7 @@
 
 #include "personmanager_p.h"
 #include "personpluginmanager_p.h"
-#include "abstractpersonaction.h"
+#include "backends/abstractpersonaction.h"
 
 #include <QIcon>
 

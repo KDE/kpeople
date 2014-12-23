@@ -20,8 +20,8 @@
 #ifndef FAKECONTACTSOURCE_H
 #define FAKECONTACTSOURCE_H
 
-#include <basepersonsdatasource.h>
-#include <allcontactsmonitor.h>
+#include <backends/basepersonsdatasource.h>
+#include <backends/allcontactsmonitor.h>
 
 class FakeContactSource : public KPeople::BasePersonsDataSource
 {

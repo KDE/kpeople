@@ -22,8 +22,6 @@
 
 #include "allcontactsmonitor.h"
 
-#include <KContacts/Addressee>
-
 using namespace KPeople;
 
 class KPeople::AllContactsMonitorPrivate
@@ -50,9 +48,9 @@ AllContactsMonitor::~AllContactsMonitor()
     delete d_ptr;
 }
 
-KContacts::Addressee::Map AllContactsMonitor::contacts()
+QMap<QString, AbstractContact::Ptr> AllContactsMonitor::contacts()
 {
-    return KContacts::Addressee::Map();
+    return QMap<QString, AbstractContact::Ptr>();
 }
 
 bool AllContactsMonitor::isInitialFetchComplete() const

@@ -20,7 +20,8 @@
 #include "metacontact_p.h"
 #include "global.h"
 #include <QSharedData>
-#include <KContacts/Addressee>
+#include <QDebug>
+#include <QSet>
 
 namespace KPeople {
 class MetaContactData : public QSharedData
@@ -28,25 +29,61 @@ class MetaContactData : public QSharedData
 public:
     QString personId;
     QStringList contactIds;
-    KContacts::Addressee::List contacts; //TODO vector
-    KContacts::Addressee personAddressee;
+    AbstractContact::List contacts;
+    AbstractContact::Ptr personAddressee;
 };
 }
+
+// TODO: It feels like MetaContact and MetaContactProxy should be merged,
+// still, not today.
+
+class MetaContactProxy : public KPeople::AbstractContact
+{
+public:
+    MetaContactProxy(const AbstractContact::List &contacts)
+        : m_contacts(contacts)
+    {}
+
+    virtual QVariant customProperty(const QString &key) const
+    {
+        if (key.startsWith(QLatin1String("all-"))) {
+            QVariantList ret;
+            const QString prop = key.mid(4);
+            Q_FOREACH (const AbstractContact::Ptr &contact, m_contacts) {
+                QVariant val = contact->customProperty(prop);
+                Q_ASSERT(val.canConvert<QVariantList>() || val.isNull());
+
+                if (!val.isNull())
+                    ret.append(val.toList());
+            }
+            return ret;
+        } else {
+            Q_FOREACH (const AbstractContact::Ptr &contact, m_contacts) {
+                QVariant val = contact->customProperty(key);
+                if (val.isValid()) {
+                    return val;
+                }
+            }
+            return QVariant();
+        }
+    }
+
+    AbstractContact::List m_contacts;
+};
 
 using namespace KPeople;
 
 MetaContact::MetaContact():
 d(new MetaContactData)
 {
-
 }
 
-MetaContact::MetaContact(const QString& personId, const KContacts::Addressee::Map& contacts):
+MetaContact::MetaContact(const QString &personId, const QMap<QString, AbstractContact::Ptr>& contacts):
 d (new MetaContactData)
 {
     d->personId = personId;
 
-    KContacts::Addressee::Map::const_iterator it = contacts.constBegin();
+    QMap<QString, AbstractContact::Ptr>::const_iterator it = contacts.constBegin();
     while (it != contacts.constEnd()) {
         insertContactInternal(it.key(), it.value());
         it++;
@@ -54,7 +91,7 @@ d (new MetaContactData)
     reload();
 }
 
-MetaContact::MetaContact(const QString &contactId, const KContacts::Addressee &contact):
+MetaContact::MetaContact(const QString &contactId, const AbstractContact::Ptr &contact):
 d (new MetaContactData)
 {
     d->personId = contactId;
@@ -97,27 +134,27 @@ QStringList MetaContact::contactIds() const
     return d->contactIds;
 }
 
-KContacts::Addressee MetaContact::contact(const QString& contactId)
+AbstractContact::Ptr MetaContact::contact(const QString &contactId)
 {
     int index = d->contactIds.indexOf(contactId);
     if (index >= 0) {
         return d->contacts[index];
     } else {
-        return KContacts::Addressee();
+        return AbstractContact::Ptr();
     }
 }
 
-KContacts::Addressee::List MetaContact::contacts() const
+AbstractContact::List MetaContact::contacts() const
 {
     return d->contacts;
 }
 
-const KContacts::Addressee& MetaContact::personAddressee() const
+const AbstractContact::Ptr& MetaContact::personAddressee() const
 {
     return d->personAddressee;
 }
 
-int MetaContact::insertContact(const QString &contactId, const KContacts::Addressee &contact)
+int MetaContact::insertContact(const QString &contactId, const AbstractContact::Ptr &contact)
 {
     int index = insertContactInternal(contactId, contact);
     reload();
@@ -125,7 +162,7 @@ int MetaContact::insertContact(const QString &contactId, const KContacts::Addres
 }
 
 
-int MetaContact::insertContactInternal(const QString &contactId, const KContacts::Addressee &contact)
+int MetaContact::insertContactInternal(const QString &contactId, const AbstractContact::Ptr &contact)
 {
     if (d->contactIds.contains(contactId)) {
         //if item is already listed, do nothing.
@@ -139,7 +176,7 @@ int MetaContact::insertContactInternal(const QString &contactId, const KContacts
     }
 }
 
-int MetaContact::updateContact(const QString& contactId, const KContacts::Addressee& contact)
+int MetaContact::updateContact(const QString &contactId, const AbstractContact::Ptr& contact)
 {
     const int index = d->contactIds.indexOf(contactId);
     if (index >= 0) {
@@ -149,7 +186,7 @@ int MetaContact::updateContact(const QString& contactId, const KContacts::Addres
     return index;
 }
 
-int MetaContact::removeContact(const QString& contactId)
+int MetaContact::removeContact(const QString &contactId)
 {
     const int index = d->contactIds.indexOf(contactId);
     if (index >= 0) {
@@ -164,139 +201,7 @@ void MetaContact::reload()
 {
     //always favour the first item
 
-    //TODO - long term goal: resource priority - local vcards for "people" trumps anything else. So we can set a preferred name etc.
-
-    //Optimization, if only one contact use that for everything
-    if (d->contacts.size() == 1) {
-        d->personAddressee = d->contacts.first();
-        return;
-    }
-
-    d->personAddressee = KContacts::Addressee();
-
-    Q_FOREACH(const KContacts::Addressee &contact, d->contacts) {
-        //set items with multiple cardinality
-        Q_FOREACH(const KContacts::Address &address, contact.addresses()) {
-            d->personAddressee.insertAddress(address);
-        }
-        Q_FOREACH(const QString &category, contact.categories()) {
-            d->personAddressee.insertCategory(category);
-        }
-        Q_FOREACH(const QString &email, contact.emails()) {
-            d->personAddressee.insertEmail(email);
-        }
-        Q_FOREACH(const KContacts::Key &key, contact.keys()) {
-            d->personAddressee.insertKey(key);
-        }
-        Q_FOREACH(const KContacts::PhoneNumber &phoneNumber, contact.phoneNumbers()) {
-            d->personAddressee.insertPhoneNumber(phoneNumber);
-        }
-        //TODO customs
-
-        //set items with single cardinality
-        if (d->personAddressee.name().isEmpty() && !contact.name().isEmpty()) {
-            d->personAddressee.setName(contact.name());
-        }
-
-        if (d->personAddressee.formattedName().isEmpty() && !contact.formattedName().isEmpty()) {
-            d->personAddressee.setFormattedName(contact.formattedName());
-        }
-
-        //TODO all the remaining items below.
-
-        //Maybe we can use a macro?
-        if (d->personAddressee.familyName().isEmpty() && !contact.familyName().isEmpty()) {
-            d->personAddressee.setFamilyName(contact.familyName());
-        }
-
-        if (d->personAddressee.givenName().isEmpty() && !contact.givenName().isEmpty()) {
-            d->personAddressee.setGivenName(contact.givenName());
-        }
-
-        if (d->personAddressee.additionalName().isEmpty() && !contact.additionalName().isEmpty()) {
-            d->personAddressee.setAdditionalName(contact.additionalName());
-        }
-
-        if (d->personAddressee.prefix().isEmpty() && !contact.prefix().isEmpty()) {
-            d->personAddressee.setPrefix(contact.prefix());
-        }
-
-        if (d->personAddressee.suffix().isEmpty() && !contact.suffix().isEmpty()) {
-            d->personAddressee.setSuffix(contact.suffix());
-        }
-
-        if (d->personAddressee.nickName().isEmpty() && !contact.nickName().isEmpty()) {
-            d->personAddressee.setNickName(contact.nickName());
-        }
-
-//TODO merge Mck18's magic code that mixes years and dates
-//         void setBirthday( const QDateTime &birthday );
-
-        if (d->personAddressee.birthday().isNull() && !contact.birthday().isNull()) {
-            d->personAddressee.setBirthday(contact.birthday());
-        }
-
-        if (d->personAddressee.mailer().isEmpty() && !contact.mailer().isEmpty()) {
-            d->personAddressee.setMailer(contact.mailer());
-        }
-
-        if (!d->personAddressee.timeZone().isValid() && contact.timeZone().isValid()) {
-            d->personAddressee.setTimeZone(contact.timeZone());
-        }
-
-        if (!d->personAddressee.geo().isValid() && contact.geo().isValid()) {
-            d->personAddressee.setGeo(contact.geo());
-        }
-
-        if (d->personAddressee.title().isEmpty() && !contact.title().isEmpty()) {
-            d->personAddressee.setTitle(contact.title());
-        }
-
-        if (d->personAddressee.role().isEmpty() && !contact.role().isEmpty()) {
-            d->personAddressee.setRole(contact.role());
-        }
-
-        if (d->personAddressee.organization().isEmpty() && !contact.organization().isEmpty()) {
-            d->personAddressee.setOrganization(contact.organization());
-        }
-
-        if (d->personAddressee.department().isEmpty() && !contact.department().isEmpty()) {
-            d->personAddressee.setDepartment(contact.department());
-        }
-
-
-//         void setNote( const QString &note );
-
-//         void setProductId( const QString &productId );
-
-//         don't handle revision - it's useless in this context
-//         don't handle URL - it's not for websites, it's for a remote ID
-
-
-        if (!d->personAddressee.secrecy().isValid() && !contact.secrecy().isValid()) {
-            d->personAddressee.setSecrecy(contact.secrecy());
-        }
-
-        if (d->personAddressee.photo().isEmpty() && !contact.photo().isEmpty()) {
-            d->personAddressee.setPhoto(contact.photo());
-        }
-
-        // find most online presence
-        const QString &contactPresence = contact.custom(QStringLiteral("telepathy"), QStringLiteral("presence"));
-        const QString &currentPersonPresence = d->personAddressee.custom(QStringLiteral("telepathy"), QStringLiteral("presence"));
-
-        // FIXME This needs to be redone when presence changes
-        if (!contactPresence.isEmpty()) {
-            if (KPeople::presenceSortPriority(contactPresence) < KPeople::presenceSortPriority(currentPersonPresence)) {
-                d->personAddressee.insertCustom(QStringLiteral("telepathy"), QStringLiteral("presence"), contactPresence);
-                d->personAddressee.insertCustom(QStringLiteral("telepathy"), QStringLiteral("contactId"), contact.custom(QStringLiteral("telepathy"), QStringLiteral("contactId")));
-                d->personAddressee.insertCustom(QStringLiteral("telepathy"), QStringLiteral("accountPath"), contact.custom(QStringLiteral("telepathy"), QStringLiteral("accountPath")));
-            }
-        }
-
-//         void setSound( const Sound &sound );
-
-        //TODO something clever here
-//         void setCustoms( const QStringList & );
-    }
+    //Optimization, if only one contact re-use that one
+    d->personAddressee = (d->contacts.size() == 1) ? d->contacts.first() : AbstractContact::Ptr(new MetaContactProxy(d->contacts));
+    Q_ASSERT(d->personAddressee);
 }

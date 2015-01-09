@@ -92,7 +92,6 @@ void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsD
 {
     s_instance->m_mutex.lock();
     qDeleteAll(s_instance->dataSourcePlugins);
-    s_instance->dataSourcePlugins.clear();
     s_instance->dataSourcePlugins = dataSources;
     s_instance->m_loadedDataSourcePlugins = true;
     s_instance->m_mutex.unlock();

@@ -25,11 +25,16 @@
 
 #include <kpeople/kpeople_export.h>
 
-#include <KContacts/Addressee>
-
 class QAction;
 namespace KPeople
 {
+    class PersonData;
+
+    /**
+     * Returns a list of actions relevant to the specified @p contactId
+     */
+    KPEOPLE_EXPORT QList<QAction*> actionsForPerson(const QString &contactId, QObject *parent);
+
     /**
      * Merge all ids into a single person.
      * Ids can be a mix of person Ids and contact IDs.
@@ -46,10 +51,6 @@ namespace KPeople
      * @return Whether the unmerge was successful
      */
     KPEOPLE_EXPORT bool unmergeContact(const QString &id);
-
-    KPEOPLE_EXPORT QList<QAction*> actionsForPerson(const KContacts::Addressee &person,
-                                                    const KContacts::Addressee::List &contacts,
-                                                    QObject *parent);
 
     /**
      * Return a QPixmap for a TP presence string

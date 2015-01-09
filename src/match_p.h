@@ -24,6 +24,7 @@
 #include <QPersistentModelIndex>
 #include <QtCore/qnamespace.h>
 
+#include "backends/abstractcontact.h"
 #include "kpeople/kpeople_export.h"
 
 namespace KContacts
@@ -49,8 +50,8 @@ public:
     bool operator==(const Match &m) const;
     bool operator<(const Match &m) const;
     QStringList matchReasons() const;
-    static QString matchValue(MatchReason r, const KContacts::Addressee &addr);
-    static QList<Match::MatchReason> matchAt(const KContacts::Addressee &value, const KContacts::Addressee &toCompare);
+    static QString matchValue(MatchReason r, const AbstractContact::Ptr &addr);
+    static QList<Match::MatchReason> matchAt(const AbstractContact::Ptr &value, const AbstractContact::Ptr &toCompare);
 
     QList<MatchReason> reasons;
     QPersistentModelIndex indexA, indexB;

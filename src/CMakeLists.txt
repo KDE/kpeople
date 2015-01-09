@@ -21,6 +21,7 @@ add_library (KPeople
 
     backends/contactmonitor.cpp
     backends/abstractpersonaction.cpp
+    backends/abstractcontact.cpp
     backends/basepersonsdatasource.cpp
     backends/allcontactsmonitor.cpp
 )
@@ -28,12 +29,13 @@ add_library(KF5::People ALIAS KPeople)
 
 target_link_libraries (KPeople
                     PUBLIC
-                        KF5::Contacts
                         Qt5::Widgets #QAction
                     PRIVATE
                         Qt5::Sql
                         Qt5::DBus
                         KF5::Service
+                        KF5::I18n
+                        KF5::CoreAddons
 )
 
 set_target_properties (KPeople PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
@@ -73,6 +75,7 @@ install(FILES
 
 ecm_generate_headers(KPeopleBackend_CamelCase_HEADERS
     HEADER_NAMES
+        AbstractContact
         AbstractPersonAction
         AllContactsMonitor
         BasePersonsDataSource

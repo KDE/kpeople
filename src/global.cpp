@@ -21,6 +21,7 @@
 #include "personmanager_p.h"
 #include "personpluginmanager_p.h"
 #include "backends/abstractpersonaction.h"
+#include "backends/abstractcontact.h"
 
 #include <QIcon>
 
@@ -37,13 +38,13 @@ bool KPeople::unmergeContact(const QString &id)
     return PersonManager::instance()->unmergeContact(id);
 }
 
-QList<QAction*> KPeople::actionsForPerson(const KContacts::Addressee &person,
-                                          const KContacts::Addressee::List &contacts,
-                                          QObject *parent)
+QList<QAction*> KPeople::actionsForPerson(const QString &contactId, QObject *parent)
 {
+    PersonData person(contactId);
+
     QList<QAction*> actions;
     Q_FOREACH(KPeople::AbstractPersonAction *plugin, PersonPluginManager::actions()) {
-        actions << plugin->actionsForPerson(person, contacts, parent);
+        actions << plugin->actionsForPerson(person, parent);
     }
 
     return actions;

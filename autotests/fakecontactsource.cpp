@@ -43,33 +43,54 @@ void FakeContactSource::changeContact1Email()
 
 //----------------------------------------------------------------------------
 
+class FakeContact : public KPeople::AbstractContact
+{
+public:
+    FakeContact(const QVariantMap& props)
+        : m_properties(props)
+    {}
+
+    virtual QVariant customProperty(const QString& key) const
+    {
+        if (key.startsWith(QLatin1Literal("all-"))) {
+            return QStringList(m_properties[key.mid(4)].toString());
+        } else
+            return m_properties[key];
+    }
+
+
+    QVariantMap m_properties;
+};
 
 FakeAllContactsMonitor::FakeAllContactsMonitor()
 {
 }
 
-KContacts::Addressee::Map FakeAllContactsMonitor::contacts()
+QMap<QString, KPeople::AbstractContact::Ptr> FakeAllContactsMonitor::contacts()
 {
-    KContacts::Addressee::Map contacts;
+    QMap<QString, KPeople::AbstractContact::Ptr> contacts;
 
     {
-        KContacts::Addressee contact1;
-        contact1.setName(QStringLiteral("Contact 1"));
-        contact1.setEmails(QStringList() << QStringLiteral("contact1@example.com"));
+        KPeople::AbstractContact::Ptr contact1(new FakeContact(QVariantMap {
+            { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 1") },
+            { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact1@example.com") }
+        }));
         contacts[QStringLiteral("fakesource://contact1")] = contact1;
     }
 
     {
-        KContacts::Addressee contact2;
-        contact2.setName(QStringLiteral("Person A"));
-        contact2.setEmails(QStringList() << QStringLiteral("contact2@example.com"));
+        KPeople::AbstractContact::Ptr contact2(new FakeContact(QVariantMap {
+            { KPeople::AbstractContact::NameProperty, QStringLiteral("Person A") },
+            { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact2@example.com") }
+        }));
         contacts[QStringLiteral("fakesource://contact2")] = contact2;
     }
 
     {
-        KContacts::Addressee contact3;
-        contact3.setName(QStringLiteral("Person A"));
-        contact3.setEmails(QStringList() << QStringLiteral("contact3@example.com"));
+        KPeople::AbstractContact::Ptr contact3(new FakeContact(QVariantMap {
+            { KPeople::AbstractContact::NameProperty, QStringLiteral("Person A") },
+            { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact3@example.com") }
+        }));
         contacts[QStringLiteral("fakesource://contact3")] = contact3;
     }
 
@@ -78,8 +99,8 @@ KContacts::Addressee::Map FakeAllContactsMonitor::contacts()
 
 void FakeAllContactsMonitor::changeContact1Email()
 {
-    KContacts::Addressee contact1 = contacts()[QStringLiteral("fakesource://contact1")];
-    contact1.setEmails(QStringList() << QStringLiteral("newaddress@yahoo.com"));
+    KPeople::AbstractContact::Ptr contact1 = contacts()[QStringLiteral("fakesource://contact1")];
+    static_cast<FakeContact*>(contact1.data())->m_properties[KPeople::AbstractContact::EmailProperty] = QStringLiteral("newaddress@yahoo.com");
 
     Q_EMIT contactChanged(QStringLiteral("fakesource://contact1"), contact1);
 }

@@ -27,13 +27,3 @@ using namespace KPeople;
 AbstractPersonAction::AbstractPersonAction(QObject *parent) : QObject (parent)
 {
 }
-
-QList< QAction* > AbstractPersonAction::actionsForPerson(const KContacts::Addressee &person,
-                                                         const KContacts::Addressee::List &contacts,
-                                                         QObject *parent) const
-{
-    Q_UNUSED(person);
-    Q_UNUSED(contacts);
-    Q_UNUSED(parent);
-    return QList<QAction*>();
-}

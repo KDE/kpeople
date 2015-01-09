@@ -23,6 +23,7 @@
 
 #include <KPluginFactory>
 #include <KLocalizedString>
+#include <KPeople/PersonData>
 
 // K_PLUGIN_FACTORY( EmailDetailsWidgetFactory, registerPlugin<EmailDetailsWidget>(); )
 // K_EXPORT_PLUGIN( EmailDetailsWidgetFactory("emaildetailswidgetplugin") )
@@ -30,16 +31,15 @@
 using namespace KPeople;
 
 
-QWidget* EmailFieldsPlugin::createDetailsWidget(const KContacts::Addressee& person, const KContacts::Addressee::List &contacts, QWidget* parent) const
+QWidget* EmailFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const
 {
-    Q_UNUSED(contacts);
-    if (person.emails().isEmpty()) {
+    if (person.allEmails().isEmpty()) {
         return 0;
     }
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0,0,0,0);
-    Q_FOREACH(const QString &email, person.emails()) {
+    Q_FOREACH(const QString &email, person.allEmails()) {
         layout->addWidget(new QLabel(email));
     }
     widget->setLayout(layout);

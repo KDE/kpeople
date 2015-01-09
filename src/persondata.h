@@ -23,7 +23,6 @@
 #include <kpeople/kpeople_export.h>
 
 #include <QObject>
-#include <KContacts/Addressee>
 
 #include "global.h"
 
@@ -33,6 +32,14 @@ class PersonDataPrivate;
 
 class PersonData;
 
+/**
+ * @brief Allows to query the information about a given person
+ *
+ * PersonData exposes the information of a given person (in contrast to everyone
+ * available, which is done by PersonsModel).
+ * This class will provide comfortable interfaces so it can be easily adopted
+ * in any application.
+ */
 class KPEOPLE_EXPORT PersonData : public QObject
 {
     Q_OBJECT
@@ -49,15 +56,13 @@ class KPEOPLE_EXPORT PersonData : public QObject
 
         virtual ~PersonData();
 
-        /**
-         * Returns the aggregated contact information from all sources
-         */
-        KContacts::Addressee person() const;
+        /** Returns the person's id */
+        QString personId() const;
 
         /**
-         * Returns information from each contact source
+         * Returns a list of contact ids that identify the PersonData instance.
          */
-        KContacts::Addressee::List contacts() const;
+        QStringList contactIds() const;
 
         /**
          * @returns the name of the person
@@ -73,6 +78,35 @@ class KPEOPLE_EXPORT PersonData : public QObject
          * @returns a pixmap with the photo of the person, or a default one if not available
          */
         QPixmap photo() const;
+
+        /**
+         * @returns the property for a said @p key.
+         */
+        QVariant contactCustomProperty(const QString &key) const;
+
+        /**
+        * Returns the contact's online presence.
+        */
+        QString presence() const;
+
+        /**
+        * Returns the contact's preferred email address.
+        */
+        QString email() const;
+
+        /**
+        * Returns a the url of the picture that represents the contact.
+        */
+        QUrl pictureUrl() const;
+
+        QStringList groups() const;
+        QStringList allEmails() const;
+
+    //     struct PhoneNumber {
+    //         QString name;
+    //         QString number;
+    //     };
+    //     QVector<PhoneNumber> phoneNumbers() const { createPhoneNumbers(customProperty("phoneNumbers")); };
 
     Q_SIGNALS:
         /**

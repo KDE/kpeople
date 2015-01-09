@@ -42,8 +42,8 @@ class ResultPrinter : public QObject
                 QStringList roles = it->matchReasons();
                 QStringList rA, rB;
 
-                KContacts::Addressee aA = it->indexA.data(PersonsModel::PersonVCardRole).value<KContacts::Addressee>();
-                KContacts::Addressee aB = it->indexB.data(PersonsModel::PersonVCardRole).value<KContacts::Addressee>();
+                AbstractContact::Ptr aA = it->indexA.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
+                AbstractContact::Ptr aB = it->indexB.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
 
                 Q_ASSERT(!it->reasons.isEmpty());
                 Q_FOREACH (Match::MatchReason i, it->reasons) {

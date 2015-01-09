@@ -23,7 +23,9 @@
 #include "personpluginmanager_p.h"
 #include "backends/basepersonsdatasource.h"
 #include "backends/contactmonitor.h"
+#include "backends/abstractcontact.h"
 
+#include <QUrl>
 #include <QDebug>
 #include <QStandardPaths>
 
@@ -58,7 +60,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
         d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
     }
 
-    KContacts::Addressee::Map contacts;
+    QMap<QString, AbstractContact::Ptr> contacts;
     Q_FOREACH(const QString &contactId, d->contactIds) {
         //load the correct data source for this contact ID
         const QString sourceId = contactId.left(contactId.indexOf(QStringLiteral("://")));
@@ -69,7 +71,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
 
             //if the data source already has the contact set it already
             //if not it will be loaded when the contactChanged signal is emitted
-            if (!cw->contact().isEmpty()) {
+            if (cw->contact()) {
                 contacts[contactId] = cw->contact();
             }
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
@@ -85,25 +87,25 @@ PersonData::~PersonData()
     delete d_ptr;
 }
 
-KContacts::Addressee PersonData::person() const
+QString PersonData::personId() const
 {
     Q_D(const PersonData);
-    return d->metaContact.personAddressee();
+    return d->metaContact.id();
 }
 
-KContacts::Addressee::List PersonData::contacts() const
+QStringList PersonData::contactIds() const
 {
     Q_D(const PersonData);
-    return d->metaContact.contacts();
+    return d->metaContact.contactIds();
 }
 
 void PersonData::onContactChanged()
 {
     Q_D(PersonData);
 
-
     ContactMonitor *watcher = qobject_cast<ContactMonitor*>(sender());
     if (d->metaContact.contactIds().contains(watcher->contactId())) {
+#warning probably not needed anymore
         d->metaContact.updateContact(watcher->contactId(), watcher->contact());
     } else {
         d->metaContact.insertContact(watcher->contactId(), watcher->contact());
@@ -111,22 +113,16 @@ void PersonData::onContactChanged()
     Q_EMIT dataChanged();
 }
 
-QString PersonData::name() const
-{
-    return person().formattedName();
-}
-
 QPixmap PersonData::photo() const
 {
     Q_D(const PersonData);
     QPixmap avatar;
 
-    KContacts::Picture pic = person().photo();
-    QImage img = pic.data();
-    if (!img.isNull()) {
-        avatar = QPixmap::fromImage(img);
-    } else {
-        avatar = QPixmap(pic.url());
+    QVariant pic = contactCustomProperty(AbstractContact::PictureProperty);
+    if (pic.canConvert<QImage>()) {
+        avatar = QPixmap::fromImage(pic.value<QImage>());
+    } else if (pic.canConvert<QUrl>()) {
+        avatar = QPixmap(pic.toUrl().toLocalFile());
     }
 
     if (avatar.isNull()) {
@@ -135,9 +131,62 @@ QPixmap PersonData::photo() const
     }
     return avatar;
 }
+QVariant PersonData::contactCustomProperty(const QString &key) const
+{
+    Q_D(const PersonData);
+    return d->metaContact.personAddressee()->customProperty(key);
+}
 
 QString PersonData::presenceIconName() const
 {
-    QString contactPresence = person().custom(QStringLiteral("telepathy"), QStringLiteral("presence"));
+    Q_D(const PersonData);
+    QString contactPresence = contactCustomProperty(QStringLiteral("telepathy-presence")).toString();
     return KPeople::iconNameForPresenceString(contactPresence);
 }
+
+QString PersonData::name() const
+{
+    return contactCustomProperty(AbstractContact::NameProperty).toString();
+}
+
+QString PersonData::presence() const
+{
+    return contactCustomProperty(AbstractContact::PresenceProperty).toString();
+}
+
+QUrl PersonData::pictureUrl() const
+{
+    return contactCustomProperty(AbstractContact::PictureProperty).toUrl();
+}
+
+QString PersonData::email() const
+{
+    return contactCustomProperty(AbstractContact::EmailProperty).toString();
+}
+
+QStringList PersonData::groups() const
+{
+//     We might want to cache it eventually?
+
+    QVariantList groups = contactCustomProperty(AbstractContact::GroupsProperty).toList();
+    QStringList ret;
+    Q_FOREACH (const QVariant& g, groups) {
+        Q_ASSERT(g.canConvert<QString>());
+        ret += g.toString();
+    }
+    ret.removeDuplicates();
+    return ret;
+}
+
+QStringList PersonData::allEmails() const
+{
+    QVariantList emails = contactCustomProperty(AbstractContact::AllEmailsProperty).toList();
+    QStringList ret;
+    Q_FOREACH (const QVariant& e, emails) {
+        Q_ASSERT(e.canConvert<QString>());
+        ret += e.toString();
+    }
+    ret.removeDuplicates();
+    return ret;
+}
+

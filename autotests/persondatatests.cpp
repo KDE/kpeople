@@ -83,10 +83,9 @@ void PersonDataTests::loadContact()
     PersonData person(QStringLiteral("fakesource://contact1"));
     //in this case we know the datasource is synchronous, but we should extend the test to cope with it not being async.
 
-    QCOMPARE(person.contacts().size(), 1);
-    QCOMPARE(person.person().name(), QStringLiteral("Contact 1"));
-    QCOMPARE(person.person().emails().size(), 1);
-    QCOMPARE(person.person().emails().first(), QStringLiteral("contact1@example.com"));
+    QCOMPARE(person.contactIds().size(), 1);
+    QCOMPARE(person.name(), QStringLiteral("Contact 1"));
+    QCOMPARE(person.allEmails(), QStringList(QStringLiteral("contact1@example.com")));
 }
 
 void PersonDataTests::loadPerson()
@@ -95,25 +94,25 @@ void PersonDataTests::loadPerson()
     //which is both contact 2 and 3
     PersonData person(QStringLiteral("fakesource://contact2"));
 
-    QCOMPARE(person.contacts().size(), 2);
-    QCOMPARE(person.person().name(), QStringLiteral("Person A"));
-    QCOMPARE(person.person().emails().size(), 2);
+    QCOMPARE(person.contactIds().size(), 2);
+    QCOMPARE(person.name(), QStringLiteral("Person A"));
+    QCOMPARE(person.allEmails().size(), 2);
 
     //convert to set as order is not important
-    QCOMPARE(person.person().emails().toSet(), QSet<QString>() << QStringLiteral("contact2@example.com") << QStringLiteral("contact3@example.com"));
+    QCOMPARE(person.allEmails().toSet(), QSet<QString>() << QStringLiteral("contact2@example.com") << QStringLiteral("contact3@example.com"));
 }
 
 void PersonDataTests::contactChanged()
 {
     PersonData person(QStringLiteral("fakesource://contact1"));
 
-    QCOMPARE(person.person().emails().first(), QStringLiteral("contact1@example.com"));
+    QCOMPARE(person.allEmails().first(), QStringLiteral("contact1@example.com"));
 
     QSignalSpy spy(&person, SIGNAL(dataChanged()));
     m_source->changeContact1Email();
     QCOMPARE(spy.count(), 1);
 
-    QCOMPARE(person.person().emails().first(), QStringLiteral("newaddress@yahoo.com"));
+    QCOMPARE(person.allEmails().first(), QStringLiteral("newaddress@yahoo.com"));
 }
 
 #include "persondatatests.moc"

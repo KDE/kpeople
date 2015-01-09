@@ -42,7 +42,7 @@ class FakeAllContactsMonitor : public KPeople::AllContactsMonitor
 public:
     explicit FakeAllContactsMonitor();
     void changeContact1Email();
-    virtual KContacts::Addressee::Map contacts();
+    virtual QMap<QString, KPeople::AbstractContact::Ptr> contacts();
 };
 
 #endif // FAKECONTACTSOURCE_H

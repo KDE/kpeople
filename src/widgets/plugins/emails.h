@@ -38,7 +38,7 @@ public:
     explicit Emails(QObject *parent = 0);
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget *createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const;
+    virtual QWidget *createDetailsWidget(const AbstractContact::Ptr &person, const AbstractContact::List &contacts, QWidget *parent) const;
 
 private Q_SLOTS:
     void onEmailDoubleClicked(const QModelIndex &clicked);

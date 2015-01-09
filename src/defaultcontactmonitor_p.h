@@ -38,8 +38,8 @@ class DefaultContactMonitor : public ContactMonitor
 public:
     DefaultContactMonitor(const QString &contactId, const AllContactsMonitorPtr &allContactsWatcher);
 private Q_SLOTS:
-    void onContactAdded(const QString &contactId, const KContacts::Addressee &contact);
-    void onContactChanged(const QString &contactId, const KContacts::Addressee &contact);
+    void onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact);
+    void onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact);
     void onContactRemoved(const QString &contactId);
 private:
     AllContactsMonitorPtr m_allContactsMonitor;

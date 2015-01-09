@@ -26,8 +26,6 @@
 #include <Akonadi/CollectionFetchScope>
 #include <Akonadi/ServerManager>
 
-#include <KContacts/Addressee>
-
 #include <KPluginFactory>
 #include <KPluginLoader>
 
@@ -41,7 +39,7 @@ class AkonadiAllContacts : public KPeople::AllContactsMonitor
 public:
     AkonadiAllContacts();
     ~AkonadiAllContacts();
-    virtual KContacts::Addressee::Map contacts();
+    virtual QMap<QString, AbstractContact::Ptr> contacts();
 private Q_SLOTS:
     void onCollectionsFetched(KJob* job);
     void onItemsFetched(KJob* job);
@@ -51,7 +49,7 @@ private Q_SLOTS:
     void onServerStateChanged(Akonadi::ServerManager::State);
 private:
     Akonadi::Monitor *m_monitor;
-    KContacts::Addressee::Map m_contacts;
+    QMap<QString, AbstractContact::Ptr> m_contacts;
     int m_activeFetchJobsCount;
     bool m_fetchError;
 };
@@ -84,7 +82,7 @@ AkonadiAllContacts::~AkonadiAllContacts()
 {
 }
 
-KContacts::Addressee::Map AkonadiAllContacts::contacts()
+QMap<QString, AbstractContact::Ptr> AkonadiAllContacts::contacts()
 {
     return m_contacts;
 }
@@ -97,29 +95,29 @@ QString AkonadiDataSource::sourcePluginId() const
 
 void AkonadiAllContacts::onItemAdded(const Item& item)
 {
-    if(!item.hasPayload<KContacts::Addressee>()) {
+    if (!item.hasPayload<AbstractContact::Ptr>()) {
         return;
     }
     const QString id = item.url().prettyUrl();
-    const KContacts::Addressee contact = item.payload<KContacts::Addressee>();
+    const AbstractContact::Ptr contact = item.payload<AbstractContact::Ptr>();
     m_contacts[id] = contact;
     Q_EMIT contactAdded(item.url().prettyUrl(), contact);
 }
 
 void AkonadiAllContacts::onItemChanged(const Item& item)
 {
-    if(!item.hasPayload<KContacts::Addressee>()) {
+    if (!item.hasPayload<AbstractContact::Ptr>()) {
         return;
     }
     const QString id = item.url().prettyUrl();
-    const KContacts::Addressee contact = item.payload<KContacts::Addressee>();
+    const AbstractContact::Ptr contact = item.payload<AbstractContact::Ptr>();
     m_contacts[id] = contact;
     Q_EMIT contactChanged(item.url().prettyUrl(), contact);
 }
 
 void AkonadiAllContacts::onItemRemoved(const Item& item)
 {
-    if(!item.hasPayload<KContacts::Addressee>()) {
+    if (!item.hasPayload<AbstractContact::Ptr>()) {
         return;
     }
     const QString id = item.url().prettyUrl();
@@ -159,7 +157,7 @@ void AkonadiAllContacts::onCollectionsFetched(KJob* job)
             if (collection.isVirtual()) {
                 continue;
             }
-            if (collection.contentMimeTypes().contains( KContacts::Addressee::mimeType() ) ) {
+            if (collection.contentMimeTypes().contains( AbstractContact::Ptr::mimeType() ) ) {
                 ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
                 itemFetchJob->fetchScope().fetchFullPayload();
                 connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onItemsFetched(KJob*)));
@@ -229,8 +227,8 @@ AkonadiContact::~AkonadiContact()
 void AkonadiContact::onContactFetched(KJob *job)
 {
     ItemFetchJob* fetchJob = qobject_cast<ItemFetchJob*>(job);
-    if (fetchJob->items().count() && fetchJob->items().first().hasPayload<KContacts::Addressee>()) {
-        setContact(fetchJob->items().first().payload<KContacts::Addressee>());
+    if (fetchJob->items().count() && fetchJob->items().first().hasPayload<AbstractContact::Ptr>()) {
+        setContact(fetchJob->items().first().payload<AbstractContact::Ptr>());
     }
 }
 
@@ -239,10 +237,10 @@ void AkonadiContact::onContactChanged(const Item &item)
     if (item != m_item) {
         return;
     }
-    if(!item.hasPayload<KContacts::Addressee>()) {
+    if (!item.hasPayload<AbstractContact::Ptr>()) {
         return;
     }
-    setContact(item.payload<KContacts::Addressee>());
+    setContact(item.payload<AbstractContact::Ptr>());
 }
 
 

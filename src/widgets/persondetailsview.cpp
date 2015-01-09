@@ -55,16 +55,16 @@ using namespace KPeople;
 class CoreFieldsPlugin : public AbstractFieldWidgetFactory
 {
 public:
-    CoreFieldsPlugin(KContacts::Field *field);
+    CoreFieldsPlugin(const QString &field);
     virtual ~CoreFieldsPlugin();
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const;
+    virtual QWidget* createDetailsWidget(const PersonData &person, QWidget *parent) const;
 private:
-    KContacts::Field* m_field;
+    QString m_field;
 };
 
-CoreFieldsPlugin::CoreFieldsPlugin(KContacts::Field* field):
+CoreFieldsPlugin::CoreFieldsPlugin(const QString &field):
     m_field(field)
 {
 }
@@ -76,23 +76,23 @@ CoreFieldsPlugin::~CoreFieldsPlugin()
 
 QString CoreFieldsPlugin::label() const
 {
-    return m_field->label();
+#warning fixme, should be made user-visible somehow
+    return m_field;
 }
 
 int CoreFieldsPlugin::sortWeight() const
 {
-    return m_field->category()*10;
+    return 1;
 }
 
-QWidget* CoreFieldsPlugin::createDetailsWidget(const KContacts::Addressee &person, const KContacts::Addressee::List &contacts, QWidget *parent) const
+QWidget* CoreFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const
 {
-    Q_UNUSED(contacts)
-    //don't handle emails here - KContacts::Field just lists one which is rubbish. Instead use a custom plugin that lists everything
-    if (m_field->category() & KContacts::Field::Email) {
+//  we have a plugin specific for e-mails.
+    if (m_field == QLatin1String("email")) {
         return 0;
     }
 
-    const QString &text = m_field->value(person);
+    const QString &text = person.contactCustomProperty(m_field).toString();
     if (text.isEmpty()) {
         return 0;
     }
@@ -117,7 +117,9 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     //create plugins
-    Q_FOREACH(KContacts::Field *field, KContacts::Field::allFields()) {
+#warning figure out a way to list properties
+    QStringList fields { QStringLiteral("name"), QStringLiteral("all-email") };
+    Q_FOREACH (const QString &field, fields) {
         d->m_plugins << new CoreFieldsPlugin(field);
     }
 
@@ -191,7 +193,7 @@ void PersonDetailsView::reload()
 
     Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + QLatin1Char(':');
-        QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->person(), d->m_person->contacts(), this);
+        QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->personId(), this);
 
         if (widget) {
             QFont font = widget->font();

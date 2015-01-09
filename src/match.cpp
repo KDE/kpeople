@@ -18,7 +18,7 @@
 */
 
 #include "match_p.h"
-#include <KContacts/Addressee>
+#include <KLocalizedString>
 
 using namespace KPeople;
 
@@ -49,32 +49,34 @@ QStringList Match::matchReasons() const
     for(MatchReason r: reasons) {
         switch(r) {
             case NameMatch:
-                ret += KContacts::Addressee::nameLabel();
+                ret += i18n("Name");
                 break;
             case EmailMatch:
-                ret += KContacts::Addressee::emailLabel();
+                ret += i18n("E-mail");
                 break;
         }
     }
     return ret;
 }
 
-QString Match::matchValue(MatchReason r, const KContacts::Addressee &addr)
+QString Match::matchValue(MatchReason r, const AbstractContact::Ptr &addr)
 {
     switch(r) {
         case NameMatch:
-            return addr.formattedName();
+#warning turn into variables
+            return addr->customProperty(AbstractContact::NameProperty).toString();
         case EmailMatch:
-            return addr.preferredEmail();
+            return addr->customProperty(AbstractContact::EmailProperty).toString();
     }
     Q_UNREACHABLE();
 }
 
-QList<Match::MatchReason> Match::matchAt(const KContacts::Addressee &value, const KContacts::Addressee &toCompare)
+QList<Match::MatchReason> Match::matchAt(const AbstractContact::Ptr &value, const AbstractContact::Ptr &toCompare)
 {
     QList<Match::MatchReason> ret;
 
-    if (!value.formattedName().isEmpty() && value.formattedName() == toCompare.formattedName())
+    QVariant name = value->customProperty(AbstractContact::NameProperty);
+    if (name.isValid() && name == toCompare->customProperty(AbstractContact::NameProperty))
         ret.append(Match::NameMatch);
 
     return ret;

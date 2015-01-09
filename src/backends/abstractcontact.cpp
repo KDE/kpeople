@@ -1,5 +1,5 @@
 /*
-    Copyright (C) 2013  David Edmundson <davidedmundson@kde.org>
+    Copyright (C) 2014 Aleix Pol i Gonzalez <aleixpol@blue-systems.com>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Lesser General Public
@@ -16,33 +16,21 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "abstractcontact.h"
 
+using namespace KPeople;
 
-#ifndef ABSTRACTFIELDWIDGETFACTORY_H
-#define ABSTRACTFIELDWIDGETFACTORY_H
+const QString AbstractContact::NameProperty = QStringLiteral("name");
+const QString AbstractContact::EmailProperty = QStringLiteral("email");
+const QString AbstractContact::PresenceProperty = QStringLiteral("presence");
+const QString AbstractContact::AllEmailsProperty = QStringLiteral("all-email");
+const QString AbstractContact::PictureProperty = QStringLiteral("picture");
+const QString AbstractContact::GroupsProperty = QStringLiteral("all-groups");
 
-#include <QWidget>
-#include <QIcon>
-
-#include <kpeople/kpeople_export.h>
-
-namespace KPeople
+AbstractContact::AbstractContact()
 {
-class AbstractFieldWidgetFactoryPrivate;
-class PersonData;
-
-class KPEOPLE_EXPORT AbstractFieldWidgetFactory : public QObject
-{
-    Q_OBJECT
-public:
-    explicit AbstractFieldWidgetFactory(QObject *parent=0);
-    virtual ~AbstractFieldWidgetFactory();
-
-    virtual QString label() const = 0;
-    virtual int sortWeight() const {return 100;}
-
-    virtual QWidget *createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const = 0;
-};
 }
 
-#endif // ABSTRACTFIELDWIDGETFACTORY_H
+AbstractContact::~AbstractContact()
+{
+}

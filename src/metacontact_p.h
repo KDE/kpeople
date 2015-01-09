@@ -21,9 +21,7 @@
 #define METACONTACT_H
 
 #include <QSharedDataPointer>
-
-
-#include <KContacts/Addressee>
+#include "backends/abstractcontact.h"
 
 #include <kpeople/kpeople_export.h>
 
@@ -34,43 +32,46 @@ class MetaContact
 {
 public:
     MetaContact();
+
     /** Create a 'MetaContact' from a single contact*/
-    MetaContact(const QString &contactId, const KContacts::Addressee &contact);
+    MetaContact(const QString &contactId, const AbstractContact::Ptr &contact);
 
     /** Create a MetaContact with a given person ID and a map of all associated contacts*/
-    MetaContact(const QString &personId, const KContacts::Addressee::Map& contacts);
+    MetaContact(const QString &personId, const QMap<QString, AbstractContact::Ptr> &contacts);
     MetaContact(const MetaContact &other);
     ~MetaContact();
 
-    MetaContact& operator=(const MetaContact& other);
+    MetaContact& operator=(const MetaContact &other);
 
     QString id() const;
     bool isValid() const;
 
     QStringList contactIds() const;
-    KContacts::Addressee::List contacts() const;
+    AbstractContact::List contacts() const;
 
-    KContacts::Addressee contact(const QString &contactId);
-    const KContacts::Addressee& personAddressee() const;
+    AbstractContact::Ptr contact(const QString &contactId);
+    const AbstractContact::Ptr& personAddressee() const;
 
     //update one of the stored contacts in this metacontact object
     //@return the index of the contact which was inserted
 
-    int insertContact(const QString &contactId, const KContacts::Addressee &contact);
+    int insertContact(const QString &contactId, const AbstractContact::Ptr &contact);
 
-    int updateContact(const QString &contactId, const KContacts::Addressee &contact);
+    int updateContact(const QString &contactId, const AbstractContact::Ptr &contact);
 
     int removeContact(const QString &contactId);
 
 private:
     //does the real inserting contacts. Split so that we don't call the expensive "reload" function
     //multiple times at startup
-    int insertContactInternal(const QString &contactId, const KContacts::Addressee &contact);
+    int insertContactInternal(const QString &contactId, const AbstractContact::Ptr &contact);
 
     void reload();
 
     QSharedDataPointer<MetaContactData> d;
 };
 }
+
+Q_DECLARE_TYPEINFO(KPeople::MetaContact, Q_MOVABLE_TYPE);
 
 #endif // METACONTACT_H

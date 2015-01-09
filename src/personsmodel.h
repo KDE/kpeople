@@ -24,10 +24,9 @@
 #define PERSONS_MODEL_H
 
 #include <kpeople/kpeople_export.h>
-
+#include <kpeoplebackend/abstractcontact.h>
 #include <QAbstractItemModel>
 
-#include <KContacts/Addressee>
 #include "global.h"
 
 namespace KPeople
@@ -52,8 +51,8 @@ public:
         FormattedNameRole = Qt::DisplayRole,//QString best name for this person
         PhotoRole = Qt::DecorationRole, //QPixmap best photo for this person
         PersonIdRole = Qt::UserRole, //QString ID of this person
-        PersonVCardRole, //KContacts::Addressee
-        ContactsVCardRole, //KContacts::Addressee::List (FIXME or map?)
+        PersonVCardRole, //AbstractContact::Ptr
+        ContactsVCardRole, //AbstractContact::List (FIXME or map?)
 
         GroupsRole, ///groups QStringList
 
@@ -80,6 +79,13 @@ public:
     /** Helper class to ease model access through QML */
     Q_SCRIPTABLE QVariant get(int row, int role);
 
+    /**
+     * Makes it possible to access custom properties that are not available to the model
+     *
+     * @returns the property for the contact at @p index defined by the @p key
+     */
+    QVariant contactCustomProperty(const QModelIndex &index, const QString &key) const;
+
 Q_SIGNALS:
     void modelInitialized(bool success);
 
@@ -87,8 +93,8 @@ private Q_SLOTS:
     void onContactsFetched();
 
     //update when a resource signals a contact has changed
-    void onContactAdded(const QString &contactId, const KContacts::Addressee &contact);
-    void onContactChanged(const QString &contactId, const KContacts::Addressee &contact);
+    void onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact);
+    void onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact);
     void onContactRemoved(const QString &contactId);
 
     //update on metadata changes
@@ -106,14 +112,14 @@ private:
     void personChanged(const QString &personId);
 
     QString personIdForContact(const QString &contactId) const;
-    QVariant dataForAddressee(const QString &personId, const KContacts::Addressee &contact, int role) const;
+    QVariant dataForAddressee(const QString &personId, const AbstractContact::Ptr &contact, int role) const;
 
     PersonsModelPrivate * const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);
 };
 }
 
-// Q_DECLARE_METATYPE(KContacts::Addressee)
-Q_DECLARE_METATYPE(KContacts::Addressee::List)
+// Q_DECLARE_METATYPE(AbstractContact::Ptr)
+Q_DECLARE_METATYPE(KPeople::AbstractContact::List)
 
 #endif // PERSONS_MODEL_H

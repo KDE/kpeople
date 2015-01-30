@@ -134,12 +134,25 @@ QVariant PersonsModel::dataForAddressee(const QString &personId, const AbstractC
     case PhotoRole: {
         QVariant pic = person->customProperty(AbstractContact::PictureProperty);
         if (pic.canConvert<QImage>()) {
-            return pic.value<QImage>();
+            QImage avatar = pic.value<QImage>();
+            if (!avatar.isNull()) {
+                return avatar;
+            }
+        } else if (pic.canConvert<QPixmap>()) {
+            QPixmap avatar = pic.value<QPixmap>();
+            if (!avatar.isNull()) {
+                return avatar;
+            }
         } else if (pic.canConvert<QUrl>() && pic.toUrl().isLocalFile()) {
-            return QPixmap(pic.toUrl().toLocalFile());
-        } else {
-            return QPixmap(d->genericAvatarImagePath);
+            QPixmap avatar = QPixmap(pic.toUrl().toLocalFile());
+            if (!avatar.isNull()) {
+                return avatar;
+            }
         }
+
+        // If none of the above were valid images,
+        // return the generic one
+        return QPixmap(d->genericAvatarImagePath);
     }
     case PersonIdRole:
         return personId;

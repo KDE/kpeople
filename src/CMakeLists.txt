@@ -20,7 +20,6 @@ add_library (KPeople
     defaultcontactmonitor.cpp
 
     backends/contactmonitor.cpp
-    backends/abstractpersonaction.cpp
     backends/abstractcontact.cpp
     backends/basepersonsdatasource.cpp
     backends/allcontactsmonitor.cpp
@@ -29,7 +28,7 @@ add_library(KF5::People ALIAS KPeople)
 
 target_link_libraries (KPeople
                     PUBLIC
-                        Qt5::Widgets #QAction
+                        Qt5::Gui
                     PRIVATE
                         Qt5::Sql
                         Qt5::DBus

@@ -20,8 +20,6 @@
 #include "personpluginmanager_p.h"
 #include "backends/basepersonsdatasource.h"
 
-#include "backends/abstractpersonaction.h"
-
 #include <KService>
 #include <KServiceTypeTrader>
 #include <KPluginInfo>
@@ -36,13 +34,10 @@ class PersonPluginManagerPrivate
 public:
     PersonPluginManagerPrivate();
     ~PersonPluginManagerPrivate();
-    QList<AbstractPersonAction*> actionPlugins;
     QHash<QString /* SourceName*/, BasePersonsDataSource*> dataSourcePlugins;
 
     void loadDataSourcePlugins();
-    void loadActionsPlugins();
     bool m_loadedDataSourcePlugins;
-    bool m_loadedActionsPlugins;
     QMutex m_mutex;
 
 };
@@ -50,15 +45,13 @@ public:
 Q_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate():
-    m_loadedDataSourcePlugins(false),
-    m_loadedActionsPlugins(false)
+    m_loadedDataSourcePlugins(false)
 {
 }
 
 PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 {
     qDeleteAll(dataSourcePlugins);
-    qDeleteAll(actionPlugins);
 }
 
 void PersonPluginManagerPrivate::loadDataSourcePlugins()
@@ -73,19 +66,6 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
         }
     }
     m_loadedDataSourcePlugins = true;
-}
-
-void PersonPluginManagerPrivate::loadActionsPlugins()
-{
-    KService::List personPluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
-    Q_FOREACH(const KService::Ptr &service, personPluginList) {
-        AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
-        if (plugin) {
-//             qDebug() << "found plugin" << service->name();
-            actionPlugins << plugin;
-        }
-    }
-    m_loadedActionsPlugins = true;
 }
 
 void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource* > &dataSources)
@@ -116,15 +96,4 @@ BasePersonsDataSource* PersonPluginManager::dataSource(const QString &sourceId)
     s_instance->m_mutex.unlock();
 
     return s_instance->dataSourcePlugins[sourceId];
-}
-
-QList<AbstractPersonAction*> PersonPluginManager::actions()
-{
-    s_instance->m_mutex.lock();
-    if (!s_instance->m_loadedActionsPlugins) {
-        s_instance->loadActionsPlugins();
-    }
-    s_instance->m_mutex.unlock();
-
-    return s_instance->actionPlugins;
 }

@@ -23,6 +23,7 @@
 #include <kpeople/kpeople_export.h>
 
 #include <QObject>
+#include <QPixmap>
 
 #include "global.h"
 

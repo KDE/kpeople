@@ -21,19 +21,12 @@
 
 #include <QString>
 #include <QStringList>
-#include <QIcon>
 
 #include <kpeople/kpeople_export.h>
 
-class QAction;
 namespace KPeople
 {
     class PersonData;
-
-    /**
-     * Returns a list of actions relevant to the specified @p contactId
-     */
-    KPEOPLE_EXPORT QList<QAction*> actionsForPerson(const QString &contactId, QObject *parent);
 
     /**
      * Merge all ids into a single person.

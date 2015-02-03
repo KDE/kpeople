@@ -5,6 +5,8 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     persondetailsdialog.cpp
     plugins/emaildetailswidget.cpp
     abstractfieldwidgetfactory.cpp
+    actions.cpp
+    ../backends/abstractpersonaction.cpp
 
     mergedialog.cpp
     mergedelegate.cpp
@@ -66,6 +68,7 @@ ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
             MergeDialog
             PersonDetailsDialog
             PersonEmailView
+            Actions
     REQUIRED_HEADERS KPeopleWidgets_HEADERS
     PREFIX KPeople
 )

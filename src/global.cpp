@@ -20,10 +20,7 @@
 
 #include "personmanager_p.h"
 #include "personpluginmanager_p.h"
-#include "backends/abstractpersonaction.h"
 #include "backends/abstractcontact.h"
-
-#include <QIcon>
 
 //these namespace members expose the useful bits of PersonManager
 //global.h should be included from every exported header file so namespace members are always visible
@@ -36,18 +33,6 @@ QString KPeople::mergeContacts(const QStringList &ids)
 bool KPeople::unmergeContact(const QString &id)
 {
     return PersonManager::instance()->unmergeContact(id);
-}
-
-QList<QAction*> KPeople::actionsForPerson(const QString &contactId, QObject *parent)
-{
-    PersonData person(contactId);
-
-    QList<QAction*> actions;
-    Q_FOREACH(KPeople::AbstractPersonAction *plugin, PersonPluginManager::actions()) {
-        actions << plugin->actionsForPerson(person, parent);
-    }
-
-    return actions;
 }
 
 QString KPeople::iconNameForPresenceString(const QString& presenceName)

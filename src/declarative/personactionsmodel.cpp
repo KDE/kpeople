@@ -18,8 +18,8 @@
 
 
 #include "personactionsmodel_p.h"
-#include "../persondata.h"
 #include <kpeople/persondata.h>
+#include <kpeople/actions.h>
 #include <QAction>
 #include <QDebug>
 #include <QPointer>

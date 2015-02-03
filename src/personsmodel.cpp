@@ -453,8 +453,9 @@ QString PersonsModel::personIdForContact(const QString &contactId) const
     Q_D(const PersonsModel);
 
     //TODO optimize with constFind()
-    if (d->contactToPersons.contains(contactId)) {
-        return d->contactToPersons[contactId];
+    QHash<QString,QString>::const_iterator it = d->contactToPersons.constFind(contactId);
+    if (it != d->contactToPersons.constEnd()) {
+        return *it;
     } else {
         return contactId;
     }

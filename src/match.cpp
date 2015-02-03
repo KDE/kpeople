@@ -63,7 +63,6 @@ QString Match::matchValue(MatchReason r, const AbstractContact::Ptr &addr)
 {
     switch(r) {
         case NameMatch:
-#warning turn into variables
             return addr->customProperty(AbstractContact::NameProperty).toString();
         case EmailMatch:
             return addr->customProperty(AbstractContact::EmailProperty).toString();

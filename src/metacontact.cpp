@@ -156,7 +156,10 @@ const AbstractContact::Ptr& MetaContact::personAddressee() const
 int MetaContact::insertContact(const QString &contactId, const AbstractContact::Ptr &contact)
 {
     int index = insertContactInternal(contactId, contact);
-    reload();
+    if (index>=0) {
+        reload();
+    } else
+        qWarning() << "Inserting an already-present contact" << contactId;
     return index;
 }
 
@@ -181,7 +184,6 @@ int MetaContact::updateContact(const QString &contactId, const AbstractContact::
     if (index >= 0) {
         d->contacts[index] = contact;
     }
-    reload();
     return index;
 }
 

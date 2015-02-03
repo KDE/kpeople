@@ -19,8 +19,6 @@
 #ifndef ABSTRACT_PERSON_ACTION_H
 #define ABSTRACT_PERSON_ACTION_H
 
-class PersonData;
-
 #include <QObject>
 #include <QAction>
 
@@ -29,6 +27,7 @@ class PersonData;
 
 namespace KPeople
 {
+class PersonData;
 
 class KPEOPLE_EXPORT AbstractPersonAction : public QObject
 {

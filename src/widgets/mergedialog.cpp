@@ -217,6 +217,8 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(bool isParent, const Match
         icon = deco.value<QIcon>();
     } else if (deco.type() == (QVariant::Pixmap)) {
         icon = QIcon(deco.value<QPixmap>());
+    } else if (deco.type() == (QVariant::Image)) {
+        icon = QIcon(QPixmap::fromImage(deco.value<QImage>()));
     } else
         qWarning() << "unknown decoration type" << deco.typeName();
     item->setIcon(icon);

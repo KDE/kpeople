@@ -444,7 +444,7 @@ void PersonsModel::personChanged(const QString &personId)
     int row = d->personIndex[personId].row();
     if (row >= 0) {
         const QModelIndex personIndex = index(row);
-        dataChanged(personIndex, personIndex);
+        Q_EMIT dataChanged(personIndex, personIndex);
     }
 }
 

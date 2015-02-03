@@ -48,9 +48,8 @@ public:
     {
         if (key.startsWith(QLatin1String("all-"))) {
             QVariantList ret;
-            const QString prop = key.mid(4);
             Q_FOREACH (const AbstractContact::Ptr &contact, m_contacts) {
-                QVariant val = contact->customProperty(prop);
+                QVariant val = contact->customProperty(key);
                 Q_ASSERT(val.canConvert<QVariantList>() || val.isNull());
 
                 if (!val.isNull())

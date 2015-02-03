@@ -37,8 +37,7 @@ public:
     /** A list of actions that can be executed for a contact
      * Disabled actions should not be added
      *
-     * @arg person the person AbstractContact::Ptr object
-     * @arg contacts person's list of subcontacts
+     * @arg data passes the person we're creating the actions for
      * @arg parent parent object for newly created actions
      */
     virtual QList<QAction*> actionsForPerson(const PersonData &data, QObject *parent) const = 0;

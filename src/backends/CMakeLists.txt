@@ -1,4 +1,4 @@
-add_library (KPeopleBackends
+add_library (KPeopleBackend
     contactmonitor.cpp
     abstractcontact.cpp
     basepersonsdatasource.cpp
@@ -6,14 +6,17 @@ add_library (KPeopleBackends
     defaultcontactmonitor.cpp
     abstractpersonaction.cpp
 )
-add_library (KF5::PeopleBackends ALIAS KPeopleBackends)
+add_library (KF5::PeopleBackend ALIAS KPeopleBackend)
 
-target_link_libraries (KPeopleBackends
+target_link_libraries (KPeopleBackend
                     PUBLIC
                         Qt5::Widgets #needed for QAction, otherwise QtGui
 )
 
-install (TARGETS KPeopleBackends
+target_include_directories (KPeopleBackend INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KPeople>")
+set_target_properties (KPeopleBackend PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME PeopleBackend)
+
+install (TARGETS KPeopleBackend
          EXPORT KPeopleTargets
          ${KF5_INSTALL_TARGETS_DEFAULT_ARGS}
 )

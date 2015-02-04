@@ -34,7 +34,7 @@ target_link_libraries (KPeopleWidgets
                         KF5::Service
                         KF5::ItemViews
                         KF5::WidgetsAddons
-                        KPeopleBackends
+                        KPeopleBackend
 )
 
 if (Baloo_FOUND)

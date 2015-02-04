@@ -5,5 +5,5 @@ target_link_libraries(persondatatest
     Qt5::Sql
     Qt5::Test
     KPeople
-    KPeopleBackends
+    KPeopleBackend
 )

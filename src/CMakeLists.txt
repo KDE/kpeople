@@ -29,7 +29,7 @@ target_link_libraries (KPeople
                         KF5::Service
                         KF5::I18n
                         KF5::CoreAddons
-                        KF5::PeopleBackends
+                        KF5::PeopleBackend
 )
 
 set_target_properties (KPeople PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)

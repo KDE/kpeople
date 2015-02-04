@@ -114,7 +114,7 @@ private:
     QString personIdForContact(const QString &contactId) const;
     QVariant dataForAddressee(const QString &personId, const AbstractContact::Ptr &contact, int role) const;
 
-    PersonsModelPrivate * const d_ptr;
+    QScopedPointer<PersonsModelPrivate> const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);
 };
 }

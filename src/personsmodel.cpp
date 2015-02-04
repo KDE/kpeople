@@ -34,7 +34,8 @@
 #include <QDebug>
 
 namespace KPeople {
-class PersonsModelPrivate{
+class PersonsModelPrivate
+{
 public:
     //NOTE This is the opposite way round to the return value from contactMapping() for easier lookups
     QHash<QString /*contactId*/, QString /*PersonId*/> contactToPersons;

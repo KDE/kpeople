@@ -6,7 +6,6 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     plugins/emaildetailswidget.cpp
     abstractfieldwidgetfactory.cpp
     actions.cpp
-    ../backends/abstractpersonaction.cpp
 
     mergedialog.cpp
     mergedelegate.cpp
@@ -35,6 +34,7 @@ target_link_libraries (KPeopleWidgets
                         KF5::Service
                         KF5::ItemViews
                         KF5::WidgetsAddons
+                        KPeopleBackends
 )
 
 if (Baloo_FOUND)

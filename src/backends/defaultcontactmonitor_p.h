@@ -32,7 +32,7 @@ using namespace KPeople;
  * ideally plugins (especially slow ones) will implement their own contact monitor.
 */
 
-class DefaultContactMonitor : public ContactMonitor
+class KPEOPLE_EXPORT DefaultContactMonitor : public ContactMonitor
 {
     Q_OBJECT
 public:

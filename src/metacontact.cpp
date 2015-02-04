@@ -181,8 +181,9 @@ int MetaContact::insertContactInternal(const QString &contactId, const AbstractC
 int MetaContact::updateContact(const QString &contactId, const AbstractContact::Ptr& contact)
 {
     const int index = d->contactIds.indexOf(contactId);
-    if (index >= 0) {
-        d->contacts[index] = contact;
+    Q_ASSERT(index < 0 || d->contacts[index] == contact);
+    if (index < 0) {
+        qWarning() << "contact not part of the metacontact";
     }
     return index;
 }

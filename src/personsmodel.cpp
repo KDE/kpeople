@@ -34,9 +34,20 @@
 #include <QDebug>
 
 namespace KPeople {
-class PersonsModelPrivate
+class PersonsModelPrivate : public QObject
 {
+Q_OBJECT
 public:
+    PersonsModelPrivate(PersonsModel* q)
+        : q(q)
+        , genericAvatarImagePath(QStandardPaths::locate(QStandardPaths::QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png")))
+        , initialFetchesDoneCount(0)
+        , isInitialized(false)
+        , hasError(false)
+    {
+    }
+    PersonsModel * const q;
+
     //NOTE This is the opposite way round to the return value from contactMapping() for easier lookups
     QHash<QString /*contactId*/, QString /*PersonId*/> contactToPersons;
 
@@ -53,6 +64,26 @@ public:
 
     bool isInitialized;
     bool hasError;
+
+    //methods that manipulate the model
+    void addPerson(const MetaContact &mc);
+    void removePerson(const QString &id);
+    void personChanged(const QString &personId);
+    QString personIdForContact(const QString &contactId) const;
+    QVariant dataForContact(const QString &personId, const AbstractContact::Ptr &contact, int role) const;
+
+//     SLOTS
+    void onContactsFetched();
+    //update when a resource signals a contact has changed
+    void onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact);
+    void onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact);
+    void onContactRemoved(const QString &contactId);
+
+    //update on metadata changes
+    void onAddContactToPerson(const QString &contactId, const QString &newPersonId);
+    void onRemoveContactsFromPerson(const QString &contactId);
+
+    void onMonitorInitialFetchComplete(bool success = true);
 };
 }
 
@@ -60,14 +91,9 @@ using namespace KPeople;
 
 PersonsModel::PersonsModel(QObject *parent):
     QAbstractItemModel(parent),
-    d_ptr(new PersonsModelPrivate)
+    d_ptr(new PersonsModelPrivate(this))
 {
     Q_D(PersonsModel);
-
-    d->genericAvatarImagePath = QStandardPaths::locate(QStandardPaths::QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png"));
-    d->initialFetchesDoneCount = 0;
-    d->isInitialized = false;
-    d->hasError = false;
 
     Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
         const AllContactsMonitorPtr monitor = dataSource->allContactsMonitor();
@@ -79,10 +105,10 @@ PersonsModel::PersonsModel(QObject *parent):
         }
         d->m_sourceMonitors << monitor;
     }
-    onContactsFetched();
+    d->onContactsFetched();
 
-    connect(PersonManager::instance(), SIGNAL(contactAddedToPerson(QString,QString)), SLOT(onAddContactToPerson(QString,QString)));
-    connect(PersonManager::instance(), SIGNAL(contactRemovedFromPerson(QString)), SLOT(onRemoveContactsFromPerson(QString)));
+    connect(PersonManager::instance(), &PersonManager::contactAddedToPerson, d, &PersonsModelPrivate::onAddContactToPerson);
+    connect(PersonManager::instance(), &PersonManager::contactRemovedFromPerson, d, &PersonsModelPrivate::onRemoveContactsFromPerson);
 }
 
 PersonsModel::~PersonsModel()
@@ -100,7 +126,6 @@ QHash<int, QByteArray> PersonsModel::roleNames() const
 
 QVariant PersonsModel::data(const QModelIndex &index, int role) const
 {
-
     Q_D(const PersonsModel);
 
     //optimization - if we don't cover this role, ignore it
@@ -118,21 +143,19 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
         }
         const MetaContact &mc = d->metacontacts.at(index.parent().row());
 
-        return dataForAddressee(mc.id(), mc.contacts().at(index.row()), role);
+        return d->dataForContact(mc.id(), mc.contacts().at(index.row()), role);
     } else {
         const MetaContact &mc = d->metacontacts.at(index.row());
-        return dataForAddressee(mc.id(), mc.personAddressee(), role);
+        return d->dataForContact(mc.id(), mc.personAddressee(), role);
     }
 }
 
-QVariant PersonsModel::dataForAddressee(const QString &personId, const AbstractContact::Ptr &person, int role) const
+QVariant PersonsModelPrivate::dataForContact(const QString &personId, const AbstractContact::Ptr &person, int role) const
 {
-    Q_D(const PersonsModel);
-
     switch(role) {
-    case FormattedNameRole:
+    case PersonsModel::FormattedNameRole:
         return person->customProperty(AbstractContact::NameProperty);
-    case PhotoRole: {
+    case PersonsModel::PhotoRole: {
         QVariant pic = person->customProperty(AbstractContact::PictureProperty);
         if (pic.canConvert<QImage>()) {
             QImage avatar = pic.value<QImage>();
@@ -153,15 +176,15 @@ QVariant PersonsModel::dataForAddressee(const QString &personId, const AbstractC
 
         // If none of the above were valid images,
         // return the generic one
-        return QPixmap(d->genericAvatarImagePath);
+        return QPixmap(genericAvatarImagePath);
     }
-    case PersonIdRole:
+    case PersonsModel::PersonIdRole:
         return personId;
-    case PersonVCardRole:
+    case PersonsModel::PersonVCardRole:
         return QVariant::fromValue<AbstractContact::Ptr>(person);
-    case ContactsVCardRole:
-        return QVariant::fromValue<AbstractContact::List>(d->metacontacts[d->personIndex[personId].row()].contacts());
-    case GroupsRole:
+    case PersonsModel::ContactsVCardRole:
+        return QVariant::fromValue<AbstractContact::List>(metacontacts[personIndex[personId].row()].contacts());
+    case PersonsModel::GroupsRole:
         return person->customProperty(QStringLiteral("all-groups"));
     }
     return QVariant();
@@ -218,39 +241,35 @@ QModelIndex PersonsModel::parent(const QModelIndex &childIndex) const
     return index(childIndex.internalId(), 0, QModelIndex());
 }
 
-void PersonsModel::onMonitorInitialFetchComplete(bool success)
+void PersonsModelPrivate::onMonitorInitialFetchComplete(bool success)
 {
-    Q_D(PersonsModel);
-
-    d->initialFetchesDoneCount++;
+    initialFetchesDoneCount++;
     if (!success) {
-        d->hasError = true;
+        hasError = true;
     }
-    Q_ASSERT(d->initialFetchesDoneCount <= d->m_sourceMonitors.count());
-    if (d->initialFetchesDoneCount == d->m_sourceMonitors.count()) {
-        d->isInitialized = true;
-        Q_EMIT modelInitialized(!d->hasError);
+    Q_ASSERT(initialFetchesDoneCount <= m_sourceMonitors.count());
+    if (initialFetchesDoneCount == m_sourceMonitors.count()) {
+        isInitialized = true;
+        Q_EMIT q->modelInitialized(!hasError);
     }
 }
 
-void PersonsModel::onContactsFetched()
+void PersonsModelPrivate::onContactsFetched()
 {
-    Q_D(PersonsModel);
-
     QMap<QString, AbstractContact::Ptr> addresseeMap;
 
     //fetch all already loaded contacts from plugins
-    Q_FOREACH (const AllContactsMonitorPtr &contactWatcher, d->m_sourceMonitors) {
+    Q_FOREACH (const AllContactsMonitorPtr &contactWatcher, m_sourceMonitors) {
         addresseeMap.unite(contactWatcher->contacts());
     }
 
     //add metacontacts
-    QMultiHash<QString, QString> contactMapping = PersonManager::instance()->allPersons();
+    const QMultiHash<QString, QString> contactMapping = PersonManager::instance()->allPersons();
 
     Q_FOREACH (const QString &key, contactMapping.uniqueKeys()) {
         QMap<QString, AbstractContact::Ptr> contacts;
         Q_FOREACH (const QString &contact, contactMapping.values(key)) {
-            d->contactToPersons[contact] = key;
+            contactToPersons[contact] = key;
             if (addresseeMap.contains(contact)) {
                 contacts[contact] = addresseeMap.take(contact);
             }
@@ -266,22 +285,20 @@ void PersonsModel::onContactsFetched()
         addPerson(MetaContact(i.key(), i.value()));
     }
 
-    Q_FOREACH(const AllContactsMonitorPtr monitor, d->m_sourceMonitors) {
-        connect(monitor.data(), SIGNAL(contactAdded(QString,AbstractContact::Ptr)), SLOT(onContactAdded(QString,AbstractContact::Ptr)));
-        connect(monitor.data(), SIGNAL(contactChanged(QString,AbstractContact::Ptr)), SLOT(onContactChanged(QString,AbstractContact::Ptr)));
-        connect(monitor.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
+    Q_FOREACH(const AllContactsMonitorPtr monitor, m_sourceMonitors) {
+        connect(monitor.data(), &AllContactsMonitor::contactAdded, this, &PersonsModelPrivate::onContactAdded);
+        connect(monitor.data(), &AllContactsMonitor::contactChanged, this, &PersonsModelPrivate::onContactChanged);
+        connect(monitor.data(), &AllContactsMonitor::contactRemoved, this, &PersonsModelPrivate::onContactRemoved);
     }
 }
 
-void PersonsModel::onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact)
+void PersonsModelPrivate::onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact)
 {
-    Q_D(PersonsModel);
-
     const QString &personId = personIdForContact(contactId);
 
-    if (d->personIndex.contains(personId)) {
-        int personRow = d->personIndex[personId].row();
-        MetaContact &mc = d->metacontacts[personRow];
+    if (personIndex.contains(personId)) {
+        int personRow = personIndex[personId].row();
+        MetaContact &mc = metacontacts[personRow];
 
         //if the MC object already contains this object, we want to update the row, not do an insert
         if (mc.contactIds().contains(contactId)) {
@@ -289,9 +306,9 @@ void PersonsModel::onContactAdded(const QString &contactId, const AbstractContac
             onContactChanged(contactId, contact);
         } else {
             int newContactPos = mc.contacts().size();
-            beginInsertRows(index(personRow), newContactPos, newContactPos);
+            q->beginInsertRows(q->index(personRow), newContactPos, newContactPos);
             mc.insertContact(contactId, contact);
-            endInsertRows();
+            q->endInsertRows();
             personChanged(personId);
         }
     } else { //new contact -> new person
@@ -301,36 +318,32 @@ void PersonsModel::onContactAdded(const QString &contactId, const AbstractContac
     }
 }
 
-void PersonsModel::onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact)
+void PersonsModelPrivate::onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact)
 {
-    Q_D(PersonsModel);
-
     const QString &personId = personIdForContact(contactId);
-    int personRow = d->personIndex[personId].row();
-    int contactRow = d->metacontacts[personRow].updateContact(contactId, contact);
+    int personRow = personIndex[personId].row();
+    int contactRow = metacontacts[personRow].updateContact(contactId, contact);
 
-    const QModelIndex contactIndex = index(contactRow,
-                                           0,
-                                           index(personRow));
+    const QModelIndex contactIndex = q->index(contactRow,
+                                              0,
+                                              q->index(personRow));
 
-    Q_EMIT dataChanged(contactIndex, contactIndex);
+    Q_EMIT q->dataChanged(contactIndex, contactIndex);
 
     personChanged(personId);
 }
 
-void PersonsModel::onContactRemoved(const QString &contactId)
+void PersonsModelPrivate::onContactRemoved(const QString &contactId)
 {
-    Q_D(PersonsModel);
-
     const QString &personId = personIdForContact(contactId);
 
-    int personRow = d->personIndex[personId].row();
+    int personRow = personIndex[personId].row();
 
-    MetaContact &mc = d->metacontacts[personRow];
+    MetaContact &mc = metacontacts[personRow];
     int contactPosition = mc.contactIds().indexOf(contactId);
-    beginRemoveRows(index(personRow, 0), contactPosition, contactPosition);
+    q->beginRemoveRows(q->index(personRow, 0), contactPosition, contactPosition);
     mc.removeContact(contactId);
-    endRemoveRows();
+    q->endRemoveRows();
 
     //if MC object is now invalid remove the person from the list
     if (!mc.isValid()) {
@@ -339,29 +352,27 @@ void PersonsModel::onContactRemoved(const QString &contactId)
     personChanged(personId);
 }
 
-void PersonsModel::onAddContactToPerson(const QString &contactId, const QString &newPersonId)
+void PersonsModelPrivate::onAddContactToPerson(const QString &contactId, const QString &newPersonId)
 {
-    Q_D(PersonsModel);
-
     const QString oldPersonId = personIdForContact(contactId);
 
-    d->contactToPersons.insert(contactId, newPersonId);
+    contactToPersons.insert(contactId, newPersonId);
 
-    int oldPersonRow = d->personIndex[oldPersonId].row();
+    int oldPersonRow = personIndex[oldPersonId].row();
 
     if (oldPersonRow < 0) {
         return;
     }
 
-    MetaContact &oldMc = d->metacontacts[oldPersonRow];
+    MetaContact &oldMc = metacontacts[oldPersonRow];
 
     //get contact already in the model, remove it from the previous contact
     int contactPosition = oldMc.contactIds().indexOf(contactId);
     const AbstractContact::Ptr contact = oldMc.contacts().at(contactPosition);
 
-    beginRemoveRows(index(oldPersonRow), contactPosition, contactPosition);
+    q->beginRemoveRows(q->index(oldPersonRow), contactPosition, contactPosition);
     oldMc.removeContact(contactId);
-    endRemoveRows();
+    q->endRemoveRows();
 
     if (!oldMc.isValid()) {
         removePerson(oldPersonId);
@@ -370,13 +381,13 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
     }
 
     //if the new person is already in the model, add the contact to it
-    if (d->personIndex.contains(newPersonId)) {
-        int newPersonRow = d->personIndex[newPersonId].row();
-        MetaContact &newMc = d->metacontacts[newPersonRow];
+    if (personIndex.contains(newPersonId)) {
+        int newPersonRow = personIndex[newPersonId].row();
+        MetaContact &newMc = metacontacts[newPersonRow];
         int newContactPos = newMc.contacts().size();
-        beginInsertRows(index(newPersonRow), newContactPos, newContactPos);
+        q->beginInsertRows(q->index(newPersonRow), newContactPos, newContactPos);
         newMc.insertContact(contactId, contact);
-        endInsertRows();
+        q->endInsertRows();
         personChanged(newPersonId);
     } else { //if the person is not in the model, create a new person and insert it
         QMap<QString, AbstractContact::Ptr> contacts;
@@ -386,17 +397,15 @@ void PersonsModel::onAddContactToPerson(const QString &contactId, const QString 
 }
 
 
-void PersonsModel::onRemoveContactsFromPerson(const QString &contactId)
+void PersonsModelPrivate::onRemoveContactsFromPerson(const QString &contactId)
 {
-    Q_D(PersonsModel);
-
     const QString personId = personIdForContact(contactId);
-    int personRow = d->personIndex[personId].row();
-    MetaContact &mc = d->metacontacts[personRow];
+    int personRow = personIndex[personId].row();
+    MetaContact &mc = metacontacts[personRow];
 
     const AbstractContact::Ptr &contact = mc.contact(contactId);
     mc.removeContact(contactId);
-    d->contactToPersons.remove(contactId);
+    contactToPersons.remove(contactId);
 
     //if we don't want the person object anymore
     if (!mc.isValid()) {
@@ -410,52 +419,43 @@ void PersonsModel::onRemoveContactsFromPerson(const QString &contactId)
     addPerson(MetaContact(contactId, contact));
 }
 
-void PersonsModel::addPerson(const KPeople::MetaContact &mc)
+void PersonsModelPrivate::addPerson(const KPeople::MetaContact &mc)
 {
-    Q_D(PersonsModel);
-
     const QString &id = mc.id();
 
-    int row = d->metacontacts.size();
-    beginInsertRows(QModelIndex(), row, row);
-    d->metacontacts.append(mc);
-    d->personIndex[id] = index(row);
-    endInsertRows();
+    int row = metacontacts.size();
+    q->beginInsertRows(QModelIndex(), row, row);
+    metacontacts.append(mc);
+    personIndex[id] = q->index(row);
+    q->endInsertRows();
 }
 
-void PersonsModel::removePerson(const QString& id)
+void PersonsModelPrivate::removePerson(const QString& id)
 {
-    Q_D(PersonsModel);
-
-    QPersistentModelIndex index = d->personIndex.value(id);
+    QPersistentModelIndex index = personIndex.value(id);
     if (!index.isValid()) { //item not found
         return;
     }
 
-    beginRemoveRows(QModelIndex(), index.row(), index.row());
-    d->personIndex.remove(id);
-    d->metacontacts.removeAt(index.row());
-    endRemoveRows();
+    q->beginRemoveRows(QModelIndex(), index.row(), index.row());
+    personIndex.remove(id);
+    metacontacts.removeAt(index.row());
+    q->endRemoveRows();
 }
 
-void PersonsModel::personChanged(const QString &personId)
+void PersonsModelPrivate::personChanged(const QString &personId)
 {
-    Q_D(const PersonsModel);
-
-    int row = d->personIndex[personId].row();
+    int row = personIndex[personId].row();
     if (row >= 0) {
-        const QModelIndex personIndex = index(row);
-        Q_EMIT dataChanged(personIndex, personIndex);
+        const QModelIndex personIndex = q->index(row);
+        Q_EMIT q->dataChanged(personIndex, personIndex);
     }
 }
 
-QString PersonsModel::personIdForContact(const QString &contactId) const
+QString PersonsModelPrivate::personIdForContact(const QString &contactId) const
 {
-    Q_D(const PersonsModel);
-
-    //TODO optimize with constFind()
-    QHash<QString,QString>::const_iterator it = d->contactToPersons.constFind(contactId);
-    if (it != d->contactToPersons.constEnd()) {
+    QHash<QString,QString>::const_iterator it = contactToPersons.constFind(contactId);
+    if (it != contactToPersons.constEnd()) {
         return *it;
     } else {
         return contactId;
@@ -485,3 +485,5 @@ QVariant PersonsModel::contactCustomProperty(const QModelIndex &index, const QSt
         return mc.personAddressee()->customProperty(key);
     }
 }
+
+#include "personsmodel.moc"

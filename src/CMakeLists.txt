@@ -34,7 +34,6 @@ target_link_libraries (KPeople
 
 set_target_properties (KPeople PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
 target_include_directories (KPeople PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
-                                           "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/backends>"
                                     INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KPeople>"
 )
 

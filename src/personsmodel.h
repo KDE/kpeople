@@ -24,7 +24,6 @@
 #define PERSONS_MODEL_H
 
 #include <kpeople/kpeople_export.h>
-#include <kpeoplebackend/abstractcontact.h>
 #include <QAbstractItemModel>
 
 #include "global.h"
@@ -89,37 +88,13 @@ public:
 Q_SIGNALS:
     void modelInitialized(bool success);
 
-private Q_SLOTS:
-    void onContactsFetched();
-
-    //update when a resource signals a contact has changed
-    void onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact);
-    void onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact);
-    void onContactRemoved(const QString &contactId);
-
-    //update on metadata changes
-    void onAddContactToPerson(const QString &contactId, const QString &newPersonId);
-    void onRemoveContactsFromPerson(const QString &contactId);
-
-    void onMonitorInitialFetchComplete(bool success = true);
-
 private:
     Q_DISABLE_COPY(PersonsModel)
-
-    //methods that manipulate the model
-    void addPerson(const MetaContact &mc);
-    void removePerson(const QString &id);
-    void personChanged(const QString &personId);
-
-    QString personIdForContact(const QString &contactId) const;
-    QVariant dataForAddressee(const QString &personId, const AbstractContact::Ptr &contact, int role) const;
 
     QScopedPointer<PersonsModelPrivate> const d_ptr;
     Q_DECLARE_PRIVATE(PersonsModel);
 };
 }
 
-// Q_DECLARE_METATYPE(AbstractContact::Ptr)
-Q_DECLARE_METATYPE(KPeople::AbstractContact::List)
 
 #endif // PERSONS_MODEL_H

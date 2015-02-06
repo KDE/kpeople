@@ -80,6 +80,7 @@ private:
 
 }
 
+Q_DECLARE_METATYPE(KPeople::AbstractContact::List)
 Q_DECLARE_METATYPE(KPeople::AbstractContact::Ptr)
 
 #endif

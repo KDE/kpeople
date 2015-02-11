@@ -30,16 +30,15 @@
 
 using namespace KPeople;
 
-
-QWidget* EmailFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const
+QWidget *EmailFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const
 {
     if (person.allEmails().isEmpty()) {
         return 0;
     }
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(widget);
-    layout->setContentsMargins(0,0,0,0);
-    Q_FOREACH(const QString &email, person.allEmails()) {
+    layout->setContentsMargins(0, 0, 0, 0);
+    Q_FOREACH (const QString &email, person.allEmails()) {
         layout->addWidget(new QLabel(email));
     }
     widget->setLayout(layout);

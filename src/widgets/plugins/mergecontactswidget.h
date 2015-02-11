@@ -16,7 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef MERGE_CONTACT_WIDGET_H
 #define MERGE_CONTACT_WIDGET_H
 
@@ -27,7 +26,8 @@
 class QPushButton;
 class PersonPresentationWidget;
 
-namespace KPeople {
+namespace KPeople
+{
 class DuplicatesFinder;
 }
 
@@ -42,7 +42,7 @@ public:
     void searchForDuplicates();
     void fillDuplicatesWidget(const QList<QPersistentModelIndex> &duplicates);
 
-    QList<QPersistentModelIndex> duplicateBusterFromPerson(const QUrl& uri) const;
+    QList<QPersistentModelIndex> duplicateBusterFromPerson(const QUrl &uri) const;
     QList<QPersistentModelIndex> getContactsCheckedToMerge() const;
 
 private Q_SLOTS:
@@ -56,8 +56,7 @@ private:
 
     QWidget *m_containerListDetails;
     KPeople::DuplicatesFinder *m_duplicatesBuster;
-    QList< QPair<QPersistentModelIndex, PersonPresentationWidget*> > m_listMergeContacts;
+    QList< QPair<QPersistentModelIndex, PersonPresentationWidget *> > m_listMergeContacts;
 };
-
 
 #endif // MERGE_CONTACT_WIDGET_H

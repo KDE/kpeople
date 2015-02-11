@@ -39,14 +39,16 @@
 
 #include "ui_person-details-presentation.h"
 
-namespace KPeople {
+namespace KPeople
+{
 
-class PersonDetailsViewPrivate{
+class PersonDetailsViewPrivate
+{
 public:
     PersonData  *m_person;
     Ui::PersonDetailsPresentation *m_personDetailsPresentation;
     QWidget *m_mainWidget;
-    QList<AbstractFieldWidgetFactory*> m_plugins;
+    QList<AbstractFieldWidgetFactory *> m_plugins;
 };
 }
 
@@ -59,7 +61,7 @@ public:
     virtual ~CoreFieldsPlugin();
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const PersonData &person, QWidget *parent) const;
+    virtual QWidget *createDetailsWidget(const PersonData &person, QWidget *parent) const;
 private:
     QString m_field;
 };
@@ -85,7 +87,7 @@ int CoreFieldsPlugin::sortWeight() const
     return 1;
 }
 
-QWidget* CoreFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const
+QWidget *CoreFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const
 {
 //  we have a plugin specific for e-mails.
     if (m_field == QLatin1String("email")) {
@@ -98,7 +100,6 @@ QWidget* CoreFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget
     }
     return new QLabel(text, parent);
 }
-
 
 PersonDetailsView::PersonDetailsView(QWidget *parent)
     : QWidget(parent),
@@ -126,19 +127,17 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     d->m_plugins << new EmailFieldsPlugin();
 
     // load every KPeopleWidgets Plugin
-    KService::List pluginList = KServiceTypeTrader::self()->query( QLatin1String("KPeopleWidgets/Plugin"));
+    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeopleWidgets/Plugin"));
 
     QList<KPluginInfo> plugins = KPluginInfo::fromServices(pluginList);
 
-    Q_FOREACH(const KPluginInfo &p, plugins) {
+    Q_FOREACH (const KPluginInfo &p, plugins) {
         QString error;
         AbstractFieldWidgetFactory *f = p.service()->createInstance<AbstractFieldWidgetFactory>(this, QVariantList(), &error);
         if (f) {
             d->m_plugins << f;
         }
     }
-
-
 
     //TODO Sort plugins
 }
@@ -177,7 +176,7 @@ void PersonDetailsView::reload()
     layout()->takeAt(layoutIndex);
     d->m_mainWidget->deleteLater();
     d->m_mainWidget = new QWidget(this);
-    dynamic_cast<QVBoxLayout*>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
+    dynamic_cast<QVBoxLayout *>(layout())->insertWidget(layoutIndex, d->m_mainWidget);
 
     QFormLayout *layout = new QFormLayout(d->m_mainWidget);
     layout->setSpacing(4);
@@ -191,7 +190,7 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(QIcon::fromTheme(d->m_person->presenceIconName()).pixmap(32, 32)); //FIXME
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->name());
 
-    Q_FOREACH(AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
+    Q_FOREACH (AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + QLatin1Char(':');
         QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->personId(), this);
 

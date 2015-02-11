@@ -28,7 +28,8 @@
 #include <kpeople/kpeople_export.h>
 #include <kpeoplebackend/abstractcontact.h>
 
-namespace KPeople {
+namespace KPeople
+{
 
 class AllContactsMonitorPrivate;
 
@@ -53,7 +54,7 @@ public:
 
     //TODO redo as a state enum - InitialLoad, Fail, Loaded
     bool isInitialFetchComplete() const;
-    
+
     bool initialFetchSuccess() const;
 
 Q_SIGNALS:
@@ -80,7 +81,7 @@ Q_SIGNALS:
      *
      * @param success True when the fetch was successful, False when an error occurred.
      */
-    void initialFetchComplete( bool success );
+    void initialFetchComplete(bool success);
 
 protected Q_SLOTS:
     /**
@@ -91,7 +92,7 @@ protected Q_SLOTS:
      *
      * @p success Whether the fetch was successful.
      */
-    void emitInitialFetchComplete( bool success );
+    void emitInitialFetchComplete(bool success);
 
 private:
     Q_DISABLE_COPY(AllContactsMonitor)

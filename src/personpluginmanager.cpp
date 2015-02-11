@@ -16,7 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "personpluginmanager_p.h"
 #include "backends/basepersonsdatasource.h"
 
@@ -34,7 +33,7 @@ class PersonPluginManagerPrivate
 public:
     PersonPluginManagerPrivate();
     ~PersonPluginManagerPrivate();
-    QHash<QString /* SourceName*/, BasePersonsDataSource*> dataSourcePlugins;
+    QHash<QString /* SourceName*/, BasePersonsDataSource *> dataSourcePlugins;
 
     void loadDataSourcePlugins();
     bool m_loadedDataSourcePlugins;
@@ -57,8 +56,8 @@ PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 void PersonPluginManagerPrivate::loadDataSourcePlugins()
 {
     KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
-    Q_FOREACH(const KService::Ptr &service, pluginList) {
-        BasePersonsDataSource* dataSource = service->createInstance<BasePersonsDataSource>(0);
+    Q_FOREACH (const KService::Ptr &service, pluginList) {
+        BasePersonsDataSource *dataSource = service->createInstance<BasePersonsDataSource>(0);
         if (dataSource) {
             dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
         } else {
@@ -68,7 +67,7 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
     m_loadedDataSourcePlugins = true;
 }
 
-void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource* > &dataSources)
+void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource * > &dataSources)
 {
     s_instance->m_mutex.lock();
     qDeleteAll(s_instance->dataSourcePlugins);
@@ -77,7 +76,7 @@ void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsD
     s_instance->m_mutex.unlock();
 }
 
-QList<BasePersonsDataSource*> PersonPluginManager::dataSourcePlugins()
+QList<BasePersonsDataSource *> PersonPluginManager::dataSourcePlugins()
 {
     s_instance->m_mutex.lock();
     if (!s_instance->m_loadedDataSourcePlugins) {
@@ -87,7 +86,7 @@ QList<BasePersonsDataSource*> PersonPluginManager::dataSourcePlugins()
     return s_instance->dataSourcePlugins.values();
 }
 
-BasePersonsDataSource* PersonPluginManager::dataSource(const QString &sourceId)
+BasePersonsDataSource *PersonPluginManager::dataSource(const QString &sourceId)
 {
     s_instance->m_mutex.lock();
     if (!s_instance->m_loadedDataSourcePlugins) {

@@ -16,8 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-
 #ifndef ABSTRACTFIELDWIDGETFACTORY_H
 #define ABSTRACTFIELDWIDGETFACTORY_H
 
@@ -35,11 +33,14 @@ class KPEOPLE_EXPORT AbstractFieldWidgetFactory : public QObject
 {
     Q_OBJECT
 public:
-    explicit AbstractFieldWidgetFactory(QObject *parent=0);
+    explicit AbstractFieldWidgetFactory(QObject *parent = 0);
     virtual ~AbstractFieldWidgetFactory();
 
     virtual QString label() const = 0;
-    virtual int sortWeight() const {return 100;}
+    virtual int sortWeight() const
+    {
+        return 100;
+    }
 
     virtual QWidget *createDetailsWidget(const KPeople::PersonData &person, QWidget *parent) const = 0;
 };

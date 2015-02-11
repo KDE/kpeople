@@ -27,7 +27,8 @@
 class QLabel;
 class QVBoxLayout;
 
-namespace KPeople {
+namespace KPeople
+{
 class PersonEmailsViewPrivate;
 
 class KPEOPLE_EXPORT PersonEmailsView : public QWidget

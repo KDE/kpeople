@@ -32,8 +32,8 @@
 #include <KDebug>
 #include <KPluginFactory>
 
-K_PLUGIN_FACTORY( MergeContactsWidgetFactory, registerPlugin<MergeContactsWidget>(); )
-K_EXPORT_PLUGIN( MergeContactsWidgetFactory("mergecontactswidgetplugin") )
+K_PLUGIN_FACTORY(MergeContactsWidgetFactory, registerPlugin<MergeContactsWidget>();)
+K_EXPORT_PLUGIN(MergeContactsWidgetFactory("mergecontactswidgetplugin"))
 
 using namespace KPeople;
 
@@ -90,8 +90,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     m_containerListDetails->layout()->addWidget(triggerButton);
 
     // building personPresentationWidget to fill up the list
-    Q_FOREACH (const QPersistentModelIndex &duplicate, duplicates)
-    {
+    Q_FOREACH (const QPersistentModelIndex &duplicate, duplicates) {
         // displaying contact in a user friendly way
         kDebug() << "Name retireved form the duplicate :" << duplicate.data(Qt::DisplayRole).toString();
 
@@ -144,14 +143,14 @@ void MergeContactsWidget::searchForDuplicates()
         return;
     }
     m_duplicatesBuster = new DuplicatesFinder(m_model , this);
-    connect (m_duplicatesBuster, SIGNAL(result(KJob*)), SLOT(searchForDuplicatesFinished()));
+    connect(m_duplicatesBuster, SIGNAL(result(KJob*)), SLOT(searchForDuplicatesFinished()));
     m_duplicatesBuster->setSpecificPerson(m_person->uri());
     m_duplicatesBuster->start();
 }
 
 void MergeContactsWidget::searchForDuplicatesFinished()
 {
-    QList<QPersistentModelIndex> duplicates = duplicateBusterFromPerson(m_person->uri() );
+    QList<QPersistentModelIndex> duplicates = duplicateBusterFromPerson(m_person->uri());
 
     fillDuplicatesWidget(duplicates);
     m_duplicatesBuster = 0;
@@ -182,7 +181,7 @@ QList<QPersistentModelIndex> MergeContactsWidget::getContactsCheckedToMerge() co
     QList<QPersistentModelIndex> indexesToMerge;
 
     // retrieve all the widget where the box is checked
-    QPair<QPersistentModelIndex, PersonPresentationWidget*> mergeContact ;
+    QPair<QPersistentModelIndex, PersonPresentationWidget *> mergeContact ;
     Q_FOREACH (mergeContact, m_listMergeContacts) {
         if (mergeContact.second->isContactSelected()) {
             indexesToMerge.append(mergeContact.first);

@@ -39,7 +39,8 @@
 
 using namespace KPeople;
 
-class MergeDialogPrivate {
+class MergeDialogPrivate
+{
 public:
     PersonsModel *personsModel;
     QListView *view;
@@ -47,7 +48,7 @@ public:
 
     QStandardItemModel *model;
     DuplicatesFinder *duplicatesFinder;
-    KPixmapSequenceWidget* sequence;
+    KPixmapSequenceWidget *sequence;
 };
 
 MergeDialog::MergeDialog(QWidget *parent)
@@ -71,7 +72,7 @@ MergeDialog::MergeDialog(QWidget *parent)
 
     QLabel *topLabel = new QLabel(i18n("Select contacts to be merged"));
 
-    QDialogButtonBox* buttons = new QDialogButtonBox(this);
+    QDialogButtonBox *buttons = new QDialogButtonBox(this);
     buttons->addButton(QDialogButtonBox::Ok);
     buttons->addButton(QDialogButtonBox::Cancel);
     connect(buttons, SIGNAL(accepted()), SLOT(onMergeButtonClicked()));
@@ -90,7 +91,7 @@ MergeDialog::MergeDialog(QWidget *parent)
 
 MergeDialog::~MergeDialog()
 {
-   delete d_ptr;
+    delete d_ptr;
 }
 
 void MergeDialog::setPersonsModel(PersonsModel *model)
@@ -111,7 +112,7 @@ void MergeDialog::searchForDuplicates()
         return;
     }
     d->duplicatesFinder = new DuplicatesFinder(d->personsModel);
-    connect (d->duplicatesFinder, SIGNAL(result(KJob*)), SLOT(searchForDuplicatesFinished(KJob*)));
+    connect(d->duplicatesFinder, SIGNAL(result(KJob*)), SLOT(searchForDuplicatesFinished(KJob*)));
     d->duplicatesFinder->start();
 }
 
@@ -119,24 +120,24 @@ void MergeDialog::onMergeButtonClicked()
 {
     Q_D(MergeDialog);
     QList<Match> matches;
-    for (int i = 0, rows = d->model->rowCount(); i<rows; i++) {
+    for (int i = 0, rows = d->model->rowCount(); i < rows; i++) {
         QStandardItem *item = d->model->item(i, 0);
         if (item->checkState() == Qt::Checked) {
-            for(int j=0, contactsCount=item->rowCount(); j<contactsCount; ++j) {
+            for (int j = 0, contactsCount = item->rowCount(); j < contactsCount; ++j) {
                 QStandardItem *matchItem = item->child(j);
                 matches << matchItem->data(MergeDialog::MergeReasonRole).value<Match>();
             }
         }
     }
 
-    MatchesSolver* solverJob = new MatchesSolver(matches, d->personsModel, this);
+    MatchesSolver *solverJob = new MatchesSolver(matches, d->personsModel, this);
     solverJob->start();
     d->sequence->setVisible(true);
     d->view->setEnabled(false);
     connect(solverJob, SIGNAL(finished(KJob*)), this, SLOT(accept()));
 }
 
-void MergeDialog::searchForDuplicatesFinished(KJob*)
+void MergeDialog::searchForDuplicatesFinished(KJob *)
 {
     Q_D(MergeDialog);
     feedDuplicateModelFromMatches(d->duplicatesFinder->results());
@@ -145,8 +146,8 @@ void MergeDialog::searchForDuplicatesFinished(KJob*)
     d->view->setItemDelegate(d->delegate);
 
     // To extend the selected item
-    connect(d->view->selectionModel(), SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-            d->delegate, SLOT(onSelectedContactsChanged(QItemSelection, QItemSelection)));
+    connect(d->view->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
+            d->delegate, SLOT(onSelectedContactsChanged(QItemSelection,QItemSelection)));
     // To contract an already selected item
     connect(d->view, SIGNAL(doubleClicked(QModelIndex)),
             d->delegate, SLOT(onClickContactParent(QModelIndex)));
@@ -186,7 +187,7 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
     rootItem->sortChildren(0);
 }
 
-QStandardItem* MergeDialog::itemMergeContactFromMatch(bool isParent, const Match &match)
+QStandardItem *MergeDialog::itemMergeContactFromMatch(bool isParent, const Match &match)
 {
     QStandardItem *item = new QStandardItem;
 
@@ -219,8 +220,9 @@ QStandardItem* MergeDialog::itemMergeContactFromMatch(bool isParent, const Match
         icon = QIcon(deco.value<QPixmap>());
     } else if (deco.type() == (QVariant::Image)) {
         icon = QIcon(QPixmap::fromImage(deco.value<QImage>()));
-    } else
+    } else {
         qWarning() << "unknown decoration type" << deco.typeName();
+    }
     item->setIcon(icon);
     return item;
 }

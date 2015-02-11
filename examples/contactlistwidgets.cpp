@@ -40,12 +40,12 @@ public:
     PersonsDelegate(QObject *parent = 0);
     ~PersonsDelegate();
 
-    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
-    QSize sizeHint(const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
 PersonsDelegate::PersonsDelegate(QObject *parent)
-:QStyledItemDelegate(parent)
+    : QStyledItemDelegate(parent)
 {
 }
 
@@ -88,14 +88,12 @@ void PersonsDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     painter->restore();
 }
 
-QSize PersonsDelegate::sizeHint (const QStyleOptionViewItem& option, const QModelIndex& index) const
+QSize PersonsDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     Q_UNUSED(option)
     Q_UNUSED(index)
     return QSize(128, 48);
 }
-
-
 
 class ContactListApp : public QWidget
 {
@@ -139,7 +137,7 @@ void ContactListApp::onMergeClicked()
 {
     QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
     QStringList ids;
-    Q_FOREACH(const QModelIndex &index, indexes) {
+    Q_FOREACH (const QModelIndex &index, indexes) {
         ids << index.data(PersonsModel::PersonIdRole).toString();
     }
 
@@ -157,8 +155,7 @@ void ContactListApp::onUnmergeClicked()
     }
 }
 
-
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
 

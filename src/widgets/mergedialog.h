@@ -29,7 +29,8 @@ class QStandardItem;
 class KJob;
 class MergeDialogPrivate;
 
-namespace KPeople {
+namespace KPeople
+{
 class PersonsModel;
 class Match;
 
@@ -66,10 +67,10 @@ private Q_SLOTS:
     void onMergeButtonClicked();
 
 private:
-    QStandardItem* itemMergeContactFromMatch(bool parent, const KPeople::Match& match);
+    QStandardItem *itemMergeContactFromMatch(bool parent, const KPeople::Match &match);
     void feedDuplicateModelFromMatches(const QList<Match> &matches);
 
-    MergeDialogPrivate * const d_ptr;
+    MergeDialogPrivate *const d_ptr;
     Q_DECLARE_PRIVATE(MergeDialog)
 };
 

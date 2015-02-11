@@ -17,7 +17,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef CONTACTMONITOR_H
 #define CONTACTMONITOR_H
 
@@ -27,7 +26,8 @@
 
 #include "abstractcontact.h"
 
-namespace KPeople {
+namespace KPeople
+{
 
 class ContactMonitorPrivate;
 
@@ -41,7 +41,7 @@ class ContactMonitorPrivate;
  */
 class KPEOPLE_EXPORT ContactMonitor: public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
     ContactMonitor(const QString &contactId);
     virtual ~ContactMonitor();

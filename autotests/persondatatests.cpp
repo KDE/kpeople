@@ -40,14 +40,12 @@ QTEST_MAIN(PersonDataTests);
 //contact2 - PersonA     - contact2@example.com
 //contact3 - PersonA     - contact3@example.com
 
-
 using namespace KPeople;
 
 //this tests PersonData but also implicitly tests the private classes
 // - BasePersonsDataSource
 // - DefaultContactMonitor
 // - MetaContact
-
 
 void PersonDataTests::initTestCase()
 {
@@ -56,7 +54,7 @@ void PersonDataTests::initTestCase()
     PersonManager::instance()->mergeContacts(QStringList() << QStringLiteral("fakesource://contact2") << QStringLiteral("fakesource://contact3"));
 
     m_source = new FakeContactSource(0); //don't own. PersonPluginManager removes it on destruction
-    QHash<QString, BasePersonsDataSource*> sources;
+    QHash<QString, BasePersonsDataSource *> sources;
     sources[QStringLiteral("fakesource")] = m_source;
     PersonPluginManager::setDataSourcePlugins(sources);
 }
@@ -76,7 +74,6 @@ void PersonDataTests::cleanup()
 {
     // Called after every testfunction
 }
-
 
 void PersonDataTests::loadContact()
 {

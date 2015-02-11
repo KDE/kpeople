@@ -16,8 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-
 #ifndef EMAIL_DETAILS_WIDGET_H
 #define EMAIL_DETAILS_WIDGET_H
 
@@ -30,7 +28,7 @@ class EmailFieldsPlugin : public AbstractFieldWidgetFactory
 public:
     virtual QString label() const;
     virtual int sortWeight() const;
-    virtual QWidget* createDetailsWidget(const PersonData& person, QWidget* parent) const;
+    virtual QWidget *createDetailsWidget(const PersonData &person, QWidget *parent) const;
 };
 
 #endif // EMAIL_DETAILS_WIDGET_H

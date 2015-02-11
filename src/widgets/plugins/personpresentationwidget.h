@@ -28,10 +28,13 @@ class PersonPresentationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    PersonPresentationWidget(const QString& name, const QIcon& avatar, QWidget* parent = 0);
+    PersonPresentationWidget(const QString &name, const QIcon &avatar, QWidget *parent = 0);
     ~PersonPresentationWidget();
 
-    bool isContactSelected() const { return m_selected->isChecked() ; }
+    bool isContactSelected() const
+    {
+        return m_selected->isChecked() ;
+    }
 private:
     void draw();
     QLabel *m_pixmap;

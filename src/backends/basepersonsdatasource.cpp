@@ -17,7 +17,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "basepersonsdatasource.h"
 
 #include <QDebug>
@@ -33,7 +32,6 @@ public:
     QWeakPointer<AllContactsMonitor> m_allContactsMonitor;
     QHash<QString, QWeakPointer<ContactMonitor> > m_contactMonitors;
 };
-
 
 BasePersonsDataSource::BasePersonsDataSource(QObject *parent, const QVariantList &args)
     : QObject(parent),
@@ -61,7 +59,7 @@ AllContactsMonitorPtr BasePersonsDataSource::allContactsMonitor()
     return d->m_allContactsMonitor.toStrongRef();
 }
 
-ContactMonitorPtr BasePersonsDataSource::contactMonitor(const QString& contactId)
+ContactMonitorPtr BasePersonsDataSource::contactMonitor(const QString &contactId)
 {
     Q_D(BasePersonsDataSource);
 
@@ -73,7 +71,7 @@ ContactMonitorPtr BasePersonsDataSource::contactMonitor(const QString& contactId
     return d->m_contactMonitors[contactId].toStrongRef();
 }
 
-ContactMonitor* BasePersonsDataSource::createContactMonitor(const QString &contactId)
+ContactMonitor *BasePersonsDataSource::createContactMonitor(const QString &contactId)
 {
     return new DefaultContactMonitor(contactId, allContactsMonitor());
 }

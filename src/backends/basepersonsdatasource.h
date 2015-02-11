@@ -17,7 +17,6 @@
  *    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-
 #ifndef BASE_PERSONS_DATA_SOURCE_H
 #define BASE_PERSONS_DATA_SOURCE_H
 
@@ -59,17 +58,17 @@ public:
     virtual QString sourcePluginId() const = 0;
 
 protected:
-    virtual AllContactsMonitor* createAllContactsMonitor() = 0;
+    virtual AllContactsMonitor *createAllContactsMonitor() = 0;
 
     /**
      * Base classes can implement this in order to not load every contact
      * otherwise the AllContactWatcher will be used and filtered.
      */
-    virtual ContactMonitor* createContactMonitor(const QString &contactId);
+    virtual ContactMonitor *createContactMonitor(const QString &contactId);
 private:
     Q_DISABLE_COPY(BasePersonsDataSource)
     Q_DECLARE_PRIVATE(BasePersonsDataSource)
-    BasePersonsDataSourcePrivate * d_ptr;
+    BasePersonsDataSourcePrivate *d_ptr;
 };
 
 }

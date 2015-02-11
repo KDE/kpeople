@@ -27,12 +27,12 @@
 class QAction;
 namespace KPeople
 {
-    class PersonData;
+class PersonData;
 
-    /**
-     * Returns a list of actions relevant to the specified @p contactId
-     */
-    KPEOPLE_EXPORT QList<QAction*> actionsForPerson(const QString &contactId, QObject *parent);
+/**
+ * Returns a list of actions relevant to the specified @p contactId
+ */
+KPEOPLE_EXPORT QList<QAction *> actionsForPerson(const QString &contactId, QObject *parent);
 };
 
 #endif // KPEOPLEWIDGETS_GLOBAL_H

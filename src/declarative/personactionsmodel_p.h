@@ -16,7 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef PERSON_ACTIONS_H
 #define PERSON_ACTIONS_H
 
@@ -49,9 +48,9 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
     QString personId() const;
-    void setPersonId(const QString& personId);
+    void setPersonId(const QString &personId);
 
-    QList<QAction*> actions() const;
+    QList<QAction *> actions() const;
 
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
@@ -64,7 +63,7 @@ private:
     void resetActions();
 
     Q_DECLARE_PRIVATE(PersonActions);
-    PersonActionsPrivate * const d_ptr;
+    PersonActionsPrivate *const d_ptr;
 };
 }
 

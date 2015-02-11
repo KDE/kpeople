@@ -24,7 +24,7 @@
 
 #include <kdeclarative.h>
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
     KCmdLineArgs::init(argc, argv, QByteArray("sweetpeople"), "", ki18n("SweetPeople - KPeople Example"), "0.1");
 

@@ -25,7 +25,8 @@
 class KJob;
 class QModelIndex;
 
-namespace KContacts {
+namespace KContacts
+{
 class Addressee;
 class Addressee::List;
 }

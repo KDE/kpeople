@@ -26,9 +26,11 @@
 #include <QVBoxLayout>
 #include <QFormLayout>
 
-namespace KPeople {
+namespace KPeople
+{
 
-class PersonEmailsViewPrivate {
+class PersonEmailsViewPrivate
+{
 public:
     PersonData  *person;
     QWidget *mainWidget;

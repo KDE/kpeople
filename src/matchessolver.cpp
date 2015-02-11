@@ -44,14 +44,14 @@ void MatchesSolver::startMatching()
     QHash<QString, QSet<QString> > jobsData;
     // has a relation of each person, to know where it is
     QHash<QString, QString> destinationResolver;
-    Q_FOREACH(const Match &m, m_matches) {
+    Q_FOREACH (const Match &m, m_matches) {
         QString urlA = m.indexA.data(PersonsModel::PersonIdRole).toString();
         QString urlB = m.indexB.data(PersonsModel::PersonIdRole).toString();
         Q_ASSERT(urlA != urlB);
 
         const bool inA = destinationResolver.contains(urlA);
         const bool inB = destinationResolver.contains(urlB);
-        if(inA && inB) {
+        if (inA && inB) {
             //Both are in already, so we have to merge both sets
             destinationResolver[urlB] = urlA;
             jobsData[urlA] = jobsData.take(urlB);
@@ -60,18 +60,18 @@ void MatchesSolver::startMatching()
             //now we re-assign anything pointing to B as pointing to A
             //because they are the same
             QList<QString> keys = destinationResolver.keys(urlB);
-            foreach(const QString& key, keys) {
+            foreach (const QString &key, keys) {
                 destinationResolver[key] = urlA;
             }
         } else {
             //if A is in but not B, we want B wherever A is
-            if(inA) {
+            if (inA) {
                 qSwap(urlB, urlA);
             }
             //in case B is anywhere, add A to that set, otherwise just insert B
             const QString mergeUrl = destinationResolver.value(urlB, urlB);
 
-            QSet<QString>& jobs = jobsData[mergeUrl];
+            QSet<QString> &jobs = jobsData[mergeUrl];
             jobs.insert(urlB);
             jobs.insert(urlA);
 
@@ -84,7 +84,7 @@ void MatchesSolver::startMatching()
         }
     }
 
-    Q_FOREACH(const QSet<QString>& uris, jobsData) {
+    Q_FOREACH (const QSet<QString> &uris, jobsData) {
         if (PersonManager::instance()->mergeContacts(uris.toList()).isEmpty()) {
             qWarning() << "error: failing to merge contacts: " << uris;
         }

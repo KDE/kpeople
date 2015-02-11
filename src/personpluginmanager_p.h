@@ -16,8 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-
 #ifndef PERSON_PLUGIN_MANAGER_H
 #define PERSON_PLUGIN_MANAGER_H
 
@@ -36,16 +34,15 @@ class BasePersonsDataSource;
 class KPEOPLE_EXPORT PersonPluginManager
 {
 public:
-    static QList<BasePersonsDataSource*> dataSourcePlugins();
-    static BasePersonsDataSource* dataSource(const QString &sourceId);
-    static QList<AbstractPersonAction*> actions();
-
+    static QList<BasePersonsDataSource *> dataSourcePlugins();
+    static BasePersonsDataSource *dataSource(const QString &sourceId);
+    static QList<AbstractPersonAction *> actions();
 
     /**
      * Instead of loading datasources from plugins, set sources manually
      * This is for unit tests only
      */
-    static void setDataSourcePlugins(const QHash<QString, BasePersonsDataSource*> &dataSources);
+    static void setDataSourcePlugins(const QHash<QString, BasePersonsDataSource *> &dataSources);
 };
 }
 

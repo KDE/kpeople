@@ -38,11 +38,11 @@ PersonPresentationWidget::PersonPresentationWidget(const QString &name, const QI
     m_name->setText(name);
 
     // Scaling the pixmap size to the name font
-    int pixmapHeight = m_name->fontMetrics().height()*3;
-    QSize pixSize(pixmapHeight,pixmapHeight);
+    int pixmapHeight = m_name->fontMetrics().height() * 3;
+    QSize pixSize(pixmapHeight, pixmapHeight);
 
-    m_pixmap->setPixmap( avatar.pixmap(pixSize)
-                .scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    m_pixmap->setPixmap(avatar.pixmap(pixSize)
+                        .scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     draw() ;
 }
 

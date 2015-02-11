@@ -16,7 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef METACONTACT_H
 #define METACONTACT_H
 
@@ -25,7 +24,8 @@
 
 #include <kpeople/kpeople_export.h>
 
-namespace KPeople {
+namespace KPeople
+{
 class MetaContactData;
 
 class MetaContact
@@ -41,7 +41,7 @@ public:
     MetaContact(const MetaContact &other);
     ~MetaContact();
 
-    MetaContact& operator=(const MetaContact &other);
+    MetaContact &operator=(const MetaContact &other);
 
     QString id() const;
     bool isValid() const;
@@ -50,7 +50,7 @@ public:
     AbstractContact::List contacts() const;
 
     AbstractContact::Ptr contact(const QString &contactId);
-    const AbstractContact::Ptr& personAddressee() const;
+    const AbstractContact::Ptr &personAddressee() const;
 
     //update one of the stored contacts in this metacontact object
     //@return the index of the contact which was inserted

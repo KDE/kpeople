@@ -16,7 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "personactionsmodel_p.h"
 #include <kpeople/persondata.h>
 #include <kpeople/actions.h>
@@ -24,24 +23,24 @@
 #include <QDebug>
 #include <QPointer>
 
-namespace KPeople {
+namespace KPeople
+{
 struct PersonActionsPrivate {
     PersonActionsPrivate()
         : person(0)
     {}
 
-    QList<QAction*> actions;
+    QList<QAction *> actions;
     QString id;
-    KPeople::PersonData* person;
+    KPeople::PersonData *person;
 };
 }
 
 using namespace KPeople;
 
-
 PersonActionsModel::PersonActionsModel(QObject *parent)
     : QAbstractListModel(parent),
-    d_ptr(new PersonActionsPrivate)
+      d_ptr(new PersonActionsPrivate)
 {
 }
 
@@ -58,7 +57,7 @@ QHash<int, QByteArray> PersonActionsModel::roleNames() const
     return roles;
 }
 
-void PersonActionsModel::setPersonId(const QString& id)
+void PersonActionsModel::setPersonId(const QString &id)
 {
     Q_D(PersonActions);
 
@@ -96,16 +95,16 @@ QVariant PersonActionsModel::data(const QModelIndex &index, int role) const
     }
 
     switch (role) {
-        case Qt::DisplayRole:
-            return d->actions[index.row()]->text();
-        case Qt::DecorationRole:
-            return d->actions[index.row()]->icon();
-        case Qt::ToolTip:
-            return d->actions[index.row()]->toolTip();
-        case IconNameRole:
-            return d->actions[index.row()]->icon().name();
-        case ActionRole:
-            return QVariant::fromValue<QObject*>(d->actions[index.row()]);
+    case Qt::DisplayRole:
+        return d->actions[index.row()]->text();
+    case Qt::DecorationRole:
+        return d->actions[index.row()]->icon();
+    case Qt::ToolTip:
+        return d->actions[index.row()]->toolTip();
+    case IconNameRole:
+        return d->actions[index.row()]->icon().name();
+    case ActionRole:
+        return QVariant::fromValue<QObject *>(d->actions[index.row()]);
     }
 
     return QVariant();
@@ -124,7 +123,7 @@ void PersonActionsModel::triggerAction(int row) const
     d->actions[row]->trigger();
 }
 
-QList< QAction* > PersonActionsModel::actions() const
+QList< QAction * > PersonActionsModel::actions() const
 {
     Q_D(const PersonActions);
     return d->actions;

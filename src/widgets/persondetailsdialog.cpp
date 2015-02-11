@@ -17,7 +17,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "persondetailsdialog.h"
 #include <QVBoxLayout>
 #include <QDialogButtonBox>
@@ -26,8 +25,10 @@
 
 using namespace KPeople;
 
-namespace KPeople {
-class PersonDetailsDialogPrivate {
+namespace KPeople
+{
+class PersonDetailsDialogPrivate
+{
 public:
     PersonDetailsView *view;
 };
@@ -64,6 +65,5 @@ void PersonDetailsDialog::setPerson(PersonData *person)
 
     setWindowTitle(person->name());
 }
-
 
 #include "persondetailsdialog.moc"

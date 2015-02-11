@@ -38,26 +38,26 @@ class PersonsModel;
 class KPEOPLE_EXPORT DuplicatesFinder : public KJob
 {
     Q_OBJECT
-    public:
-        explicit DuplicatesFinder(PersonsModel *model, QObject *parent = 0);
+public:
+    explicit DuplicatesFinder(PersonsModel *model, QObject *parent = 0);
 
-        /** Specifies a @p personId id to look contacts for, in contrast to the whole contact list. */
-        void setSpecificPerson(const QString &personId);
+    /** Specifies a @p personId id to look contacts for, in contrast to the whole contact list. */
+    void setSpecificPerson(const QString &personId);
 
-        /** Returns the match results. */
-        QList<Match> results() const;
+    /** Returns the match results. */
+    QList<Match> results() const;
 
-    public Q_SLOTS:
-        virtual void start() Q_DECL_OVERRIDE;
+public Q_SLOTS:
+    virtual void start() Q_DECL_OVERRIDE;
 
-    private Q_SLOTS:
-        void doSearch();
-        void doSpecificSearch();
+private Q_SLOTS:
+    void doSearch();
+    void doSpecificSearch();
 
-    private:
-        PersonsModel *m_model;
-        QList<Match> m_matches;
-        QString m_personId;
+private:
+    PersonsModel *m_model;
+    QList<Match> m_matches;
+    QString m_personId;
 };
 }
 

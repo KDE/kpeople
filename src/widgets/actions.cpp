@@ -26,11 +26,11 @@
 namespace KPeople
 {
 
-static QList<AbstractPersonAction*> actionsPlugins()
+static QList<AbstractPersonAction *> actionsPlugins()
 {
-    QList<AbstractPersonAction*> actionPlugins;
+    QList<AbstractPersonAction *> actionPlugins;
     KService::List personPluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
-    Q_FOREACH(const KService::Ptr &service, personPluginList) {
+    Q_FOREACH (const KService::Ptr &service, personPluginList) {
         AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
         if (plugin) {
 //             qDebug() << "found plugin" << service->name();
@@ -38,8 +38,7 @@ static QList<AbstractPersonAction*> actionsPlugins()
         }
     }
 
-
-    Q_FOREACH(const KService::Ptr &service, personPluginList) {
+    Q_FOREACH (const KService::Ptr &service, personPluginList) {
         AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
         if (plugin) {
 //             qDebug() << "found plugin" << service->name();
@@ -49,12 +48,12 @@ static QList<AbstractPersonAction*> actionsPlugins()
     return actionPlugins;
 }
 
-QList<QAction*> actionsForPerson(const QString &contactId, QObject *parent)
+QList<QAction *> actionsForPerson(const QString &contactId, QObject *parent)
 {
     PersonData person(contactId);
 
-    QList<QAction*> actions;
-    Q_FOREACH(KPeople::AbstractPersonAction *plugin, actionsPlugins()) {
+    QList<QAction *> actions;
+    Q_FOREACH (KPeople::AbstractPersonAction *plugin, actionsPlugins()) {
         actions << plugin->actionsForPerson(person, parent);
     }
 

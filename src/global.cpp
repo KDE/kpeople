@@ -35,7 +35,7 @@ bool KPeople::unmergeContact(const QString &id)
     return PersonManager::instance()->unmergeContact(id);
 }
 
-QString KPeople::iconNameForPresenceString(const QString& presenceName)
+QString KPeople::iconNameForPresenceString(const QString &presenceName)
 {
     if (presenceName == QLatin1String("available")) {
         return QStringLiteral("user-online");
@@ -60,7 +60,7 @@ QString KPeople::iconNameForPresenceString(const QString& presenceName)
     return QStringLiteral("user-offline");
 }
 
-int KPeople::presenceSortPriority(const QString& presenceName)
+int KPeople::presenceSortPriority(const QString &presenceName)
 {
     if (presenceName == QLatin1String("available")) {
         return 0;

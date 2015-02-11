@@ -16,8 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-
 #ifndef PERSON_DETAILS_VIEW_H
 #define PERSON_DETAILS_VIEW_H
 
@@ -31,7 +29,8 @@
 class QLabel;
 class QVBoxLayout;
 
-namespace KPeople {
+namespace KPeople
+{
 class PersonDetailsViewPrivate;
 
 /**
@@ -55,7 +54,7 @@ private Q_SLOTS:
 
 private:
     Q_DECLARE_PRIVATE(PersonDetailsView)
-    PersonDetailsViewPrivate* d_ptr;
+    PersonDetailsViewPrivate *d_ptr;
 };
 }
 

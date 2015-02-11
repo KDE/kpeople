@@ -16,7 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef AKONADIDATASOURCE_H
 #define AKONADIDATASOURCE_H
 
@@ -29,8 +28,8 @@ class AkonadiDataSource : public KPeople::BasePersonsDataSource
 public:
     AkonadiDataSource(QObject *parent, const QVariantList &args = QVariantList());
     virtual ~AkonadiDataSource();
-    virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
-    virtual KPeople::ContactMonitor* createContactMonitor(const QString& contactId);
+    virtual KPeople::AllContactsMonitor *createAllContactsMonitor();
+    virtual KPeople::ContactMonitor *createContactMonitor(const QString &contactId);
     virtual QString sourcePluginId() const;
 private:
     Akonadi::Monitor *m_monitor;

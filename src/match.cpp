@@ -25,7 +25,7 @@ using namespace KPeople;
 Match::Match(const QList<MatchReason> &reasons, const QPersistentModelIndex &a, const QPersistentModelIndex &b)
     : reasons(reasons), indexA(a), indexB(b)
 {
-    if (indexB<indexA) {
+    if (indexB < indexA) {
         qSwap(indexA, indexB);
     }
 }
@@ -46,14 +46,14 @@ bool Match::operator<(const Match &m) const
 QStringList Match::matchReasons() const
 {
     QStringList ret;
-    for(MatchReason r: reasons) {
-        switch(r) {
-            case NameMatch:
-                ret += i18n("Name");
-                break;
-            case EmailMatch:
-                ret += i18n("E-mail");
-                break;
+    for (MatchReason r : reasons) {
+        switch (r) {
+        case NameMatch:
+            ret += i18n("Name");
+            break;
+        case EmailMatch:
+            ret += i18n("E-mail");
+            break;
         }
     }
     return ret;
@@ -61,11 +61,11 @@ QStringList Match::matchReasons() const
 
 QString Match::matchValue(MatchReason r, const AbstractContact::Ptr &addr)
 {
-    switch(r) {
-        case NameMatch:
-            return addr->customProperty(AbstractContact::NameProperty).toString();
-        case EmailMatch:
-            return addr->customProperty(AbstractContact::EmailProperty).toString();
+    switch (r) {
+    case NameMatch:
+        return addr->customProperty(AbstractContact::NameProperty).toString();
+    case EmailMatch:
+        return addr->customProperty(AbstractContact::EmailProperty).toString();
     }
     Q_UNREACHABLE();
 }
@@ -75,8 +75,9 @@ QList<Match::MatchReason> Match::matchAt(const AbstractContact::Ptr &value, cons
     QList<Match::MatchReason> ret;
 
     QVariant name = value->customProperty(AbstractContact::NameProperty);
-    if (name.isValid() && name == toCompare->customProperty(AbstractContact::NameProperty))
+    if (name.isValid() && name == toCompare->customProperty(AbstractContact::NameProperty)) {
         ret.append(Match::NameMatch);
+    }
 
     return ret;
 }

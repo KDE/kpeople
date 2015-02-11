@@ -19,7 +19,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef PERSONS_MODEL_H
 #define PERSONS_MODEL_H
 
@@ -63,7 +62,7 @@ public:
 
     virtual ~PersonsModel();
 
-    virtual int columnCount (const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    virtual int columnCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
     virtual QModelIndex index(int row, int column = 0, const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     virtual QModelIndex parent(const QModelIndex &index) const Q_DECL_OVERRIDE;
@@ -71,7 +70,7 @@ public:
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
     /** @returns the index for a given @p personId */
-    QModelIndex indexForPersonId(const QString& personId) const;
+    QModelIndex indexForPersonId(const QString &personId) const;
 
     /** Returns if all the backends have been initialized yet. */
     bool isInitialized() const;
@@ -97,6 +96,5 @@ private:
     Q_DECLARE_PRIVATE(PersonsModel);
 };
 }
-
 
 #endif // PERSONS_MODEL_H

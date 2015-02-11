@@ -19,7 +19,7 @@
 
 #include "defaultcontactmonitor_p.h"
 
-DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const AllContactsMonitorPtr& allContactsWatcher):
+DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const AllContactsMonitorPtr &allContactsWatcher):
     ContactMonitor(contactId),
     m_allContactsMonitor(allContactsWatcher)
 {
@@ -34,27 +34,25 @@ DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const All
     }
 }
 
-void DefaultContactMonitor::onContactAdded(const QString& id, const AbstractContact::Ptr& contact)
+void DefaultContactMonitor::onContactAdded(const QString &id, const AbstractContact::Ptr &contact)
 {
     if (id == contactId()) {
         setContact(contact);
     }
 }
 
-void DefaultContactMonitor::onContactChanged(const QString& id, const AbstractContact::Ptr& contact)
+void DefaultContactMonitor::onContactChanged(const QString &id, const AbstractContact::Ptr &contact)
 {
     if (id == contactId()) {
         setContact(contact);
     }
 }
 
-void DefaultContactMonitor::onContactRemoved(const QString& id)
+void DefaultContactMonitor::onContactRemoved(const QString &id)
 {
     if (id == contactId()) {
         setContact(AbstractContact::Ptr());
     }
 }
-
-
 
 #include "defaultcontactmonitor.moc"

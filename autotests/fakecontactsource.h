@@ -26,12 +26,12 @@
 class FakeContactSource : public KPeople::BasePersonsDataSource
 {
 public:
-    FakeContactSource(QObject* parent, const QVariantList& args = QVariantList());
+    FakeContactSource(QObject *parent, const QVariantList &args = QVariantList());
     virtual QString sourcePluginId() const;
 
     void changeContact1Email();
 protected:
-    virtual KPeople::AllContactsMonitor* createAllContactsMonitor();
+    virtual KPeople::AllContactsMonitor *createAllContactsMonitor();
 };
 
 //----------------------------------------------------------------------------

@@ -28,8 +28,6 @@ public:
     AbstractContact::Ptr m_contact;
 };
 
-
-
 ContactMonitor::ContactMonitor(const QString &contactId)
     : QObject(0),
       d_ptr(new ContactMonitorPrivate)
@@ -64,6 +62,5 @@ QString ContactMonitor::contactId() const
 
     return d->m_contactId;
 }
-
 
 #include "contactmonitor.moc"

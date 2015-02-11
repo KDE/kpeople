@@ -33,12 +33,13 @@
 #include <QUrl>
 #include <QDebug>
 
-namespace KPeople {
+namespace KPeople
+{
 class PersonsModelPrivate : public QObject
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-    PersonsModelPrivate(PersonsModel* q)
+    PersonsModelPrivate(PersonsModel *q)
         : q(q)
         , genericAvatarImagePath(QStandardPaths::locate(QStandardPaths::QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png")))
         , initialFetchesDoneCount(0)
@@ -46,7 +47,7 @@ public:
         , hasError(false)
     {
     }
-    PersonsModel * const q;
+    PersonsModel *const q;
 
     //NOTE This is the opposite way round to the return value from contactMapping() for easier lookups
     QHash<QString /*contactId*/, QString /*PersonId*/> contactToPersons;
@@ -95,7 +96,7 @@ PersonsModel::PersonsModel(QObject *parent):
 {
     Q_D(PersonsModel);
 
-    Q_FOREACH (BasePersonsDataSource* dataSource, PersonPluginManager::dataSourcePlugins()) {
+    Q_FOREACH (BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {
         const AllContactsMonitorPtr monitor = dataSource->allContactsMonitor();
         if (monitor->isInitialFetchComplete()) {
             QTimer::singleShot(0, this, SLOT(onMonitorInitialFetchComplete(monitor->initialFetchSucccess())));
@@ -152,7 +153,7 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
 
 QVariant PersonsModelPrivate::dataForContact(const QString &personId, const AbstractContact::Ptr &person, int role) const
 {
-    switch(role) {
+    switch (role) {
     case PersonsModel::FormattedNameRole:
         return person->customProperty(AbstractContact::NameProperty);
     case PersonsModel::PhotoRole: {
@@ -285,7 +286,7 @@ void PersonsModelPrivate::onContactsFetched()
         addPerson(MetaContact(i.key(), i.value()));
     }
 
-    Q_FOREACH(const AllContactsMonitorPtr monitor, m_sourceMonitors) {
+    Q_FOREACH (const AllContactsMonitorPtr monitor, m_sourceMonitors) {
         connect(monitor.data(), &AllContactsMonitor::contactAdded, this, &PersonsModelPrivate::onContactAdded);
         connect(monitor.data(), &AllContactsMonitor::contactChanged, this, &PersonsModelPrivate::onContactChanged);
         connect(monitor.data(), &AllContactsMonitor::contactRemoved, this, &PersonsModelPrivate::onContactRemoved);
@@ -325,8 +326,8 @@ void PersonsModelPrivate::onContactChanged(const QString &contactId, const Abstr
     int contactRow = metacontacts[personRow].updateContact(contactId, contact);
 
     const QModelIndex contactIndex = q->index(contactRow,
-                                              0,
-                                              q->index(personRow));
+                                     0,
+                                     q->index(personRow));
 
     Q_EMIT q->dataChanged(contactIndex, contactIndex);
 
@@ -396,7 +397,6 @@ void PersonsModelPrivate::onAddContactToPerson(const QString &contactId, const Q
     }
 }
 
-
 void PersonsModelPrivate::onRemoveContactsFromPerson(const QString &contactId)
 {
     const QString personId = personIdForContact(contactId);
@@ -430,7 +430,7 @@ void PersonsModelPrivate::addPerson(const KPeople::MetaContact &mc)
     q->endInsertRows();
 }
 
-void PersonsModelPrivate::removePerson(const QString& id)
+void PersonsModelPrivate::removePerson(const QString &id)
 {
     QPersistentModelIndex index = personIndex.value(id);
     if (!index.isValid()) { //item not found
@@ -454,7 +454,7 @@ void PersonsModelPrivate::personChanged(const QString &personId)
 
 QString PersonsModelPrivate::personIdForContact(const QString &contactId) const
 {
-    QHash<QString,QString>::const_iterator it = contactToPersons.constFind(contactId);
+    QHash<QString, QString>::const_iterator it = contactToPersons.constFind(contactId);
     if (it != contactToPersons.constEnd()) {
         return *it;
     } else {
@@ -462,7 +462,7 @@ QString PersonsModelPrivate::personIdForContact(const QString &contactId) const
     }
 }
 
-QModelIndex PersonsModel::indexForPersonId(const QString& personId) const
+QModelIndex PersonsModel::indexForPersonId(const QString &personId) const
 {
     Q_D(const PersonsModel);
     return d->personIndex.value(personId);

@@ -26,7 +26,6 @@
 #include <QItemDelegate>
 #include <KExtendableItemDelegate>
 
-
 class QAbstractItemView;
 class QItemSelection;
 
@@ -47,8 +46,8 @@ public Q_SLOTS:
 private:
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index)const;
-    QWidget* buildExtensionWidget(const QModelIndex& idx);
-    QWidget* buildMultipleLineLabel(const QModelIndex &idx);
+    QWidget *buildExtensionWidget(const QModelIndex &idx);
+    QWidget *buildMultipleLineLabel(const QModelIndex &idx);
 
     static QSize s_arrowSize;
     static QSize s_decorationSize;

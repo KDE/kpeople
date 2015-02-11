@@ -26,38 +26,38 @@
 
 namespace KPeople
 {
-    class PersonData;
+class PersonData;
 
-    /**
-     * Merge all ids into a single person.
-     * Ids can be a mix of person Ids and contact IDs.
-     *
-     * @arg ids a list of all identifiers to be merged
-     *
-     * @return the identifier of the new person or an empty string upon failure
-     */
-    KPEOPLE_EXPORT QString mergeContacts(const QStringList &ids);
+/**
+ * Merge all ids into a single person.
+ * Ids can be a mix of person Ids and contact IDs.
+ *
+ * @arg ids a list of all identifiers to be merged
+ *
+ * @return the identifier of the new person or an empty string upon failure
+ */
+KPEOPLE_EXPORT QString mergeContacts(const QStringList &ids);
 
-    /**
-     * Unmerge a contact. Either remove a contact from a given person or remove a person
-     *
-     * @return Whether the unmerge was successful
-     */
-    KPEOPLE_EXPORT bool unmergeContact(const QString &id);
+/**
+ * Unmerge a contact. Either remove a contact from a given person or remove a person
+ *
+ * @return Whether the unmerge was successful
+ */
+KPEOPLE_EXPORT bool unmergeContact(const QString &id);
 
-    /**
-     * Return a QPixmap for a TP presence string
-     *
-     * @return QPixmap with the Tp presence icon
-     */
-    KPEOPLE_EXPORT QString iconNameForPresenceString(const QString &presenceName);
+/**
+ * Return a QPixmap for a TP presence string
+ *
+ * @return QPixmap with the Tp presence icon
+ */
+KPEOPLE_EXPORT QString iconNameForPresenceString(const QString &presenceName);
 
-    /**
-     * Returns a sort priority for the given presenceName
-     *
-     * @return sort priority of the given presence
-     */
-    KPEOPLE_EXPORT int presenceSortPriority(const QString &presenceName);
+/**
+ * Returns a sort priority for the given presenceName
+ *
+ * @return sort priority of the given presence
+ */
+KPEOPLE_EXPORT int presenceSortPriority(const QString &presenceName);
 
 };
 

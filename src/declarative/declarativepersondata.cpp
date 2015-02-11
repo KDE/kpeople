@@ -16,7 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "declarativepersondata.h"
 
 #include <QDebug>
@@ -28,20 +27,21 @@ DeclarativePersonData::DeclarativePersonData(QObject *parent)
 {
 }
 
-void DeclarativePersonData::setPersonId(const QString& id)
+void DeclarativePersonData::setPersonId(const QString &id)
 {
     m_id = id;
     delete m_person;
     if (m_id.isEmpty()) {
         delete m_person;
         m_person = 0;
-    } else
+    } else {
         m_person = new KPeople::PersonData(id, this);
+    }
 
     emit personChanged();
 }
 
-KPeople::PersonData* DeclarativePersonData::person() const
+KPeople::PersonData *DeclarativePersonData::person() const
 {
     return m_person;
 }

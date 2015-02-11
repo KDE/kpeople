@@ -26,7 +26,7 @@ using namespace KPeople;
 
 class KPeople::AllContactsMonitorPrivate
 {
-  public:
+public:
     AllContactsMonitorPrivate():
         m_initialFetchDone(false),
         m_initialFetchSucccess(false)
@@ -69,7 +69,5 @@ void AllContactsMonitor::emitInitialFetchComplete(bool success)
     d_ptr->m_initialFetchSucccess = success;
     Q_EMIT initialFetchComplete(success);
 }
-
-
 
 #include "allcontactsmonitor.moc"

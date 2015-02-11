@@ -16,8 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
-
 #ifndef DECLARATIVEPERSONDATA_H
 #define DECLARATIVEPERSONDATA_H
 
@@ -30,22 +28,22 @@ class DeclarativePersonData : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString personId READ personId WRITE setPersonId NOTIFY personChanged);
-    Q_PROPERTY(KPeople::PersonData* person READ person NOTIFY personChanged);
+    Q_PROPERTY(KPeople::PersonData *person READ person NOTIFY personChanged);
 
 public:
-    DeclarativePersonData(QObject *parent=0);
+    DeclarativePersonData(QObject *parent = 0);
 
     void setPersonId(const QString &id);
     QString personId() const;
 
-    KPeople::PersonData* person() const;
+    KPeople::PersonData *person() const;
 
 Q_SIGNALS:
     void personChanged();
 
 private:
     QString m_id;
-    KPeople::PersonData* m_person;
+    KPeople::PersonData *m_person;
 };
 
 #endif // DECLARATIVEPERSONDATA_H

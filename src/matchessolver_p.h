@@ -45,27 +45,27 @@ class PersonsModel;
 class KPEOPLE_EXPORT MatchesSolver : public KJob
 {
     Q_OBJECT
-    public:
-        /**
-         * Constructs a solver given the @p matches against a @p model.
-         *
-         * Note: Obviously, the @p model should be the same @p matches refers to.
-         */
-        explicit MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent = 0);
+public:
+    /**
+     * Constructs a solver given the @p matches against a @p model.
+     *
+     * Note: Obviously, the @p model should be the same @p matches refers to.
+     */
+    explicit MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent = 0);
 
-        /**
-         * Start doing some crazy matching!
-         *
-         * @see KJob::finished()
-         */
-        virtual void start();
+    /**
+     * Start doing some crazy matching!
+     *
+     * @see KJob::finished()
+     */
+    virtual void start();
 
-    private Q_SLOTS:
-        void startMatching();
+private Q_SLOTS:
+    void startMatching();
 
-    private:
-        QList<Match> m_matches;
-        PersonsModel *m_model;
+private:
+    QList<Match> m_matches;
+    PersonsModel *m_model;
 };
 }
 

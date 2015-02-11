@@ -17,7 +17,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef PERSONMANAGER_H
 #define PERSONMANAGER_H
 
@@ -50,7 +49,7 @@ public:
      * If null the correct database is used.
      * This is for testing purposes only.
      */
-    static PersonManager* instance(const QString &databasePath = QString());
+    static PersonManager *instance(const QString &databasePath = QString());
 
 //DATA RETRIEVAL------------
 
@@ -68,7 +67,6 @@ public:
      */
     QStringList contactsForPersonId(const QString &personId) const;
 
-
 public Q_SLOTS:
     //merge all ids (person IDs and contactIds into a single person)
     //returns the ID that will be created
@@ -84,7 +82,7 @@ Q_SIGNALS:
     void contactAddedToPerson(const QString &contactId, const QString &newPersonId);
 
 protected:
-    explicit PersonManager(const QString &databasePath, QObject* parent = 0);
+    explicit PersonManager(const QString &databasePath, QObject *parent = 0);
     virtual ~PersonManager();
 
 private:

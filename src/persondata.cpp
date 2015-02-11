@@ -29,18 +29,20 @@
 #include <QDebug>
 #include <QStandardPaths>
 
-namespace KPeople {
-    class PersonDataPrivate {
-    public:
-        QStringList contactIds;
-        MetaContact metaContact;
-        QList<ContactMonitorPtr> watchers;
-    };
+namespace KPeople
+{
+class PersonDataPrivate
+{
+public:
+    QStringList contactIds;
+    MetaContact metaContact;
+    QList<ContactMonitorPtr> watchers;
+};
 }
 
 using namespace KPeople;
 
-KPeople::PersonData::PersonData(const QString &id, QObject* parent):
+KPeople::PersonData::PersonData(const QString &id, QObject *parent):
     QObject(parent),
     d_ptr(new PersonDataPrivate)
 {
@@ -61,7 +63,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
     }
 
     QMap<QString, AbstractContact::Ptr> contacts;
-    Q_FOREACH(const QString &contactId, d->contactIds) {
+    Q_FOREACH (const QString &contactId, d->contactIds) {
         //load the correct data source for this contact ID
         const QString sourceId = contactId.left(contactId.indexOf(QStringLiteral("://")));
         BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
@@ -77,7 +79,6 @@ KPeople::PersonData::PersonData(const QString &id, QObject* parent):
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
         }
     }
-
 
     d->metaContact = MetaContact(personId, contacts);
 }
@@ -103,7 +104,7 @@ void PersonData::onContactChanged()
 {
     Q_D(PersonData);
 
-    ContactMonitor *watcher = qobject_cast<ContactMonitor*>(sender());
+    ContactMonitor *watcher = qobject_cast<ContactMonitor *>(sender());
     if (d->metaContact.contactIds().contains(watcher->contactId())) {
 #warning probably not needed anymore
         d->metaContact.updateContact(watcher->contactId(), watcher->contact());
@@ -170,7 +171,7 @@ QStringList PersonData::groups() const
 
     QVariantList groups = contactCustomProperty(AbstractContact::GroupsProperty).toList();
     QStringList ret;
-    Q_FOREACH (const QVariant& g, groups) {
+    Q_FOREACH (const QVariant &g, groups) {
         Q_ASSERT(g.canConvert<QString>());
         ret += g.toString();
     }
@@ -182,7 +183,7 @@ QStringList PersonData::allEmails() const
 {
     QVariantList emails = contactCustomProperty(AbstractContact::AllEmailsProperty).toList();
     QStringList ret;
-    Q_FOREACH (const QVariant& e, emails) {
+    Q_FOREACH (const QVariant &e, emails) {
         Q_ASSERT(e.canConvert<QString>());
         ret += e.toString();
     }

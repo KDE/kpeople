@@ -102,7 +102,7 @@ void Emails::jobFinished(KJob *job)
     const Akonadi::Item::List items = fetchJob->items();
     KMime::Message msg;
 
-    foreach (const Akonadi::Item & item, items) {
+    foreach (const Akonadi::Item &item, items) {
         msg.setContent(item.payloadData());
         msg.setFrozen(true);
         msg.parse();

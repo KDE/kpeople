@@ -39,7 +39,7 @@ private:
     bool m_cancelled;
 };
 
-Transaction::Transaction(const QSqlDatabase& db) :
+Transaction::Transaction(const QSqlDatabase &db) :
     m_db(db),
     m_cancelled(false)
 {
@@ -64,16 +64,17 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE")))
 {
     m_db.setDatabaseName(databasePath);
-    if (!m_db.open())
+    if (!m_db.open()) {
         qWarning() << "Couldn't open the database at" << databasePath;
+    }
     m_db.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS persons (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)"));
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)"));
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS personIdIndex ON persons (personId)"));
 
     QDBusConnection::sessionBus().connect(QString(), QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"),
-        QStringLiteral("ContactAddedToPerson"), this, SIGNAL(contactAddedToPerson(QString,QString)));
+                                          QStringLiteral("ContactAddedToPerson"), this, SIGNAL(contactAddedToPerson(QString,QString)));
     QDBusConnection::sessionBus().connect(QString(), QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"),
-        QStringLiteral("ContactRemovedFromPerson"), this, SIGNAL(contactRemovedFromPerson(QString)));
+                                          QStringLiteral("ContactRemovedFromPerson"), this, SIGNAL(contactRemovedFromPerson(QString)));
 }
 
 PersonManager::~PersonManager()
@@ -94,7 +95,7 @@ QMultiHash< QString, QString > PersonManager::allPersons() const
     return contactMapping;
 }
 
-QStringList PersonManager::contactsForPersonId(const QString& personId) const
+QStringList PersonManager::contactsForPersonId(const QString &personId) const
 {
     if (!personId.startsWith(QLatin1String("kpeople://"))) {
         return QStringList();
@@ -113,20 +114,19 @@ QStringList PersonManager::contactsForPersonId(const QString& personId) const
     return contactIds;
 }
 
-QString PersonManager::personIdForContact(const QString& contactId) const
+QString PersonManager::personIdForContact(const QString &contactId) const
 {
     QSqlQuery query(m_db);
     query.prepare(QStringLiteral("SELECT personId FROM persons WHERE contactId = ?"));
     query.bindValue(0, contactId);
     query.exec();
     if (query.next()) {
-        return QLatin1String("kpeople://")+query.value(0).toString();
+        return QLatin1String("kpeople://") + query.value(0).toString();
     }
     return QString();
 }
 
-
-QString PersonManager::mergeContacts(const QStringList& ids)
+QString PersonManager::mergeContacts(const QStringList &ids)
 {
     // no merging if we have only 0 || 1 ids
     if (ids.size() < 2) {
@@ -191,15 +191,15 @@ QString PersonManager::mergeContacts(const QStringList& ids)
             }
 
             QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                                              QLatin1String("org.kde.KPeople"),
-                                                              QLatin1String("ContactRemovedFromPerson"));
+                                   QLatin1String("org.kde.KPeople"),
+                                   QLatin1String("ContactRemovedFromPerson"));
 
             message.setArguments(QVariantList() << id);
             pendingMessages << message;
 
             message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                                              QLatin1String("org.kde.KPeople"),
-                                                              QLatin1String("ContactAddedToPerson"));
+                                                 QLatin1String("org.kde.KPeople"),
+                                                 QLatin1String("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personIdString);
 
@@ -208,7 +208,6 @@ QString PersonManager::mergeContacts(const QStringList& ids)
 
     // process passed contacts
     if (contacts.size() > 0) {
-
 
         Q_FOREACH (const QString &id, contacts) {
             QSqlQuery insertQuery(m_db);
@@ -221,8 +220,8 @@ QString PersonManager::mergeContacts(const QStringList& ids)
 
             //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                                        QLatin1String("org.kde.KPeople"),
-                                                        QLatin1String("ContactAddedToPerson"));
+                                   QLatin1String("org.kde.KPeople"),
+                                   QLatin1String("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personIdString);
             pendingMessages << message;
@@ -232,7 +231,7 @@ QString PersonManager::mergeContacts(const QStringList& ids)
     //if success send all messages to other clients
     //otherwise roll back our database changes and return an empty string
     if (rc) {
-        Q_FOREACH(const QDBusMessage &message, pendingMessages) {
+        Q_FOREACH (const QDBusMessage &message, pendingMessages) {
             QDBusConnection::sessionBus().send(message);
         }
     } else {
@@ -254,11 +253,11 @@ bool PersonManager::unmergeContact(const QString &id)
         query.bindValue(0, id.mid(strlen("kpeople://")));
         query.exec();
 
-        Q_FOREACH(const QString &contactId, contactIds) {
+        Q_FOREACH (const QString &contactId, contactIds) {
             //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                                      QLatin1String("org.kde.KPeople"),
-                                                      QLatin1String("ContactRemovedFromPerson"));
+                                   QLatin1String("org.kde.KPeople"),
+                                   QLatin1String("ContactRemovedFromPerson"));
 
             message.setArguments(QVariantList() << contactId);
             QDBusConnection::sessionBus().send(message);
@@ -276,9 +275,9 @@ bool PersonManager::unmergeContact(const QString &id)
     return true;
 }
 
-PersonManager* PersonManager::instance(const QString &databasePath)
+PersonManager *PersonManager::instance(const QString &databasePath)
 {
-    static PersonManager* s_instance = 0;
+    static PersonManager *s_instance = 0;
     if (!s_instance) {
         QString path = databasePath;
         if (path.isEmpty()) {

@@ -16,14 +16,14 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "metacontact_p.h"
 #include "global.h"
 #include <QSharedData>
 #include <QDebug>
 #include <QSet>
 
-namespace KPeople {
+namespace KPeople
+{
 class MetaContactData : public QSharedData
 {
 public:
@@ -52,8 +52,9 @@ public:
                 QVariant val = contact->customProperty(key);
                 Q_ASSERT(val.canConvert<QVariantList>() || val.isNull());
 
-                if (!val.isNull())
+                if (!val.isNull()) {
                     ret.append(val.toList());
+                }
             }
             return ret;
         } else {
@@ -73,12 +74,12 @@ public:
 using namespace KPeople;
 
 MetaContact::MetaContact():
-d(new MetaContactData)
+    d(new MetaContactData)
 {
 }
 
-MetaContact::MetaContact(const QString &personId, const QMap<QString, AbstractContact::Ptr>& contacts):
-d (new MetaContactData)
+MetaContact::MetaContact(const QString &personId, const QMap<QString, AbstractContact::Ptr> &contacts):
+    d(new MetaContactData)
 {
     d->personId = personId;
 
@@ -91,26 +92,26 @@ d (new MetaContactData)
 }
 
 MetaContact::MetaContact(const QString &contactId, const AbstractContact::Ptr &contact):
-d (new MetaContactData)
+    d(new MetaContactData)
 {
     d->personId = contactId;
     insertContactInternal(contactId, contact);
     reload();
 }
 
-
 MetaContact::MetaContact(const MetaContact &other)
-:d (other.d)
+    : d(other.d)
 {
 
 }
 
-MetaContact& MetaContact::operator=( const MetaContact &other )
+MetaContact &MetaContact::operator=(const MetaContact &other)
 {
-  if ( this != &other )
-    d = other.d;
+    if (this != &other) {
+        d = other.d;
+    }
 
-  return *this;
+    return *this;
 }
 
 MetaContact::~MetaContact()
@@ -148,7 +149,7 @@ AbstractContact::List MetaContact::contacts() const
     return d->contacts;
 }
 
-const AbstractContact::Ptr& MetaContact::personAddressee() const
+const AbstractContact::Ptr &MetaContact::personAddressee() const
 {
     return d->personAddressee;
 }
@@ -156,13 +157,13 @@ const AbstractContact::Ptr& MetaContact::personAddressee() const
 int MetaContact::insertContact(const QString &contactId, const AbstractContact::Ptr &contact)
 {
     int index = insertContactInternal(contactId, contact);
-    if (index>=0) {
+    if (index >= 0) {
         reload();
-    } else
+    } else {
         qWarning() << "Inserting an already-present contact" << contactId;
+    }
     return index;
 }
-
 
 int MetaContact::insertContactInternal(const QString &contactId, const AbstractContact::Ptr &contact)
 {
@@ -178,7 +179,7 @@ int MetaContact::insertContactInternal(const QString &contactId, const AbstractC
     }
 }
 
-int MetaContact::updateContact(const QString &contactId, const AbstractContact::Ptr& contact)
+int MetaContact::updateContact(const QString &contactId, const AbstractContact::Ptr &contact)
 {
     const int index = d->contactIds.indexOf(contactId);
     Q_ASSERT(index < 0 || d->contacts[index] == contact);

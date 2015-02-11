@@ -16,7 +16,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #include "abstractpersonaction.h"
 
 #include <QList>
@@ -24,6 +23,6 @@
 
 using namespace KPeople;
 
-AbstractPersonAction::AbstractPersonAction(QObject *parent) : QObject (parent)
+AbstractPersonAction::AbstractPersonAction(QObject *parent) : QObject(parent)
 {
 }

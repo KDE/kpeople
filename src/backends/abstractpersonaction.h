@@ -40,7 +40,7 @@ public:
      * @arg data passes the person we're creating the actions for
      * @arg parent parent object for newly created actions
      */
-    virtual QList<QAction*> actionsForPerson(const PersonData &data, QObject *parent) const = 0;
+    virtual QList<QAction *> actionsForPerson(const PersonData &data, QObject *parent) const = 0;
 };
 
 }

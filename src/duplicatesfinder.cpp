@@ -37,7 +37,7 @@ void DuplicatesFinder::setSpecificPerson(const QString &personId)
 
 void DuplicatesFinder::start()
 {
-    if(m_personId.isEmpty()) {
+    if (m_personId.isEmpty()) {
         QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
     } else {
         QMetaObject::invokeMethod(this, "doSpecificSearch", Qt::QueuedConnection);
@@ -89,8 +89,8 @@ void DuplicatesFinder::doSpecificSearch()
     QModelIndex idx = m_model->indexForPersonId(m_personId);
     AbstractContact::Ptr values = idx.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
 
-    for (int i = 0, rows = m_model->rowCount(); i<rows; i++) {
-        QModelIndex idx2 = m_model->index(i,0);
+    for (int i = 0, rows = m_model->rowCount(); i < rows; i++) {
+        QModelIndex idx2 = m_model->index(i, 0);
 
         if (idx2.data(PersonsModel::PersonIdRole) == m_personId) {
             continue;

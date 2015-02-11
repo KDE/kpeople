@@ -17,7 +17,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-
 #ifndef PERSONDETAILSDIALOG_H
 #define PERSONDETAILSDIALOG_H
 
@@ -35,14 +34,14 @@ class KPEOPLE_EXPORT PersonDetailsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PersonDetailsDialog(QWidget *parent=0, Qt::WindowFlags f=0);
+    explicit PersonDetailsDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
     virtual ~PersonDetailsDialog();
 
     void setPerson(PersonData *person);
 
 private:
     Q_DECLARE_PRIVATE(PersonDetailsDialog)
-    PersonDetailsDialogPrivate* d_ptr;
+    PersonDetailsDialogPrivate *d_ptr;
 };
 
 }

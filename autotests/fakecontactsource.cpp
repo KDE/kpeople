@@ -29,35 +29,33 @@ QString FakeContactSource::sourcePluginId() const
     return QStringLiteral("fakesource://");
 }
 
-KPeople::AllContactsMonitor* FakeContactSource::createAllContactsMonitor()
+KPeople::AllContactsMonitor *FakeContactSource::createAllContactsMonitor()
 {
     return new FakeAllContactsMonitor();
 }
 
-
 void FakeContactSource::changeContact1Email()
 {
-    qobject_cast<FakeAllContactsMonitor*>(allContactsMonitor().data())->changeContact1Email();
+    qobject_cast<FakeAllContactsMonitor *>(allContactsMonitor().data())->changeContact1Email();
 }
-
 
 //----------------------------------------------------------------------------
 
 class FakeContact : public KPeople::AbstractContact
 {
 public:
-    FakeContact(const QVariantMap& props)
+    FakeContact(const QVariantMap &props)
         : m_properties(props)
     {}
 
-    virtual QVariant customProperty(const QString& key) const
+    virtual QVariant customProperty(const QString &key) const
     {
         if (key.startsWith(QLatin1Literal("all-"))) {
             return QStringList(m_properties[key.mid(4)].toString());
-        } else
+        } else {
             return m_properties[key];
+        }
     }
-
 
     QVariantMap m_properties;
 };
@@ -103,7 +101,7 @@ void FakeAllContactsMonitor::changeContact1Email()
 {
     KPeople::AbstractContact::Ptr contact1 = contacts()[QStringLiteral("fakesource://contact1")];
     const QString newEmail = QStringLiteral("newaddress@yahoo.com");
-    static_cast<FakeContact*>(contact1.data())->m_properties[KPeople::AbstractContact::EmailProperty] = newEmail;
+    static_cast<FakeContact *>(contact1.data())->m_properties[KPeople::AbstractContact::EmailProperty] = newEmail;
     Q_ASSERT(contact1->customProperty(KPeople::AbstractContact::EmailProperty) == newEmail);
 
     Q_EMIT contactChanged(QStringLiteral("fakesource://contact1"), contact1);

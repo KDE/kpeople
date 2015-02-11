@@ -29,7 +29,7 @@
 
 namespace KContacts
 {
-    class Addressee;
+class Addressee;
 }
 
 namespace KPeople
@@ -37,7 +37,7 @@ namespace KPeople
 
 class KPEOPLE_EXPORT Match
 {
-Q_GADGET
+    Q_GADGET
 public:
     enum MatchReason {
         NameMatch,
@@ -46,7 +46,7 @@ public:
     Q_ENUMS(MatchReason);
 
     Match() {}
-    Match(const QList<MatchReason>& roles, const QPersistentModelIndex& a, const QPersistentModelIndex& b);
+    Match(const QList<MatchReason> &roles, const QPersistentModelIndex &a, const QPersistentModelIndex &b);
     bool operator==(const Match &m) const;
     bool operator<(const Match &m) const;
     QStringList matchReasons() const;

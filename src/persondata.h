@@ -48,63 +48,63 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_PROPERTY(QPixmap photo READ photo NOTIFY dataChanged)
     Q_PROPERTY(QString presenceIconName READ presenceIconName NOTIFY dataChanged)
 
-    public:
-        /** Creates a Person object from a given ID.
-         * The ID can be either a local application specific ID (such as akonadi://?item=15)
-         * or a kpeople ID in the form kpeople://15
-         */
-        PersonData(const QString &id, QObject *parent=0);
+public:
+    /** Creates a Person object from a given ID.
+     * The ID can be either a local application specific ID (such as akonadi://?item=15)
+     * or a kpeople ID in the form kpeople://15
+     */
+    PersonData(const QString &id, QObject *parent = 0);
 
-        virtual ~PersonData();
+    virtual ~PersonData();
 
-        /** Returns the person's id */
-        QString personId() const;
+    /** Returns the person's id */
+    QString personId() const;
 
-        /**
-         * Returns a list of contact ids that identify the PersonData instance.
-         */
-        QStringList contactIds() const;
+    /**
+     * Returns a list of contact ids that identify the PersonData instance.
+     */
+    QStringList contactIds() const;
 
-        /**
-         * @returns the name of the person
-         */
-        QString name() const;
+    /**
+     * @returns the name of the person
+     */
+    QString name() const;
 
-        /**
-         * @returns an icon name that represents the IM status of the person
-         */
-        QString presenceIconName() const;
+    /**
+     * @returns an icon name that represents the IM status of the person
+     */
+    QString presenceIconName() const;
 
-        /**
-         * @returns a pixmap with the photo of the person, or a default one if not available
-         */
-        QPixmap photo() const;
+    /**
+     * @returns a pixmap with the photo of the person, or a default one if not available
+     */
+    QPixmap photo() const;
 
-        /**
-         * @returns the property for a said @p key.
-         */
-        QVariant contactCustomProperty(const QString &key) const;
+    /**
+     * @returns the property for a said @p key.
+     */
+    QVariant contactCustomProperty(const QString &key) const;
 
-        /**
-        * Returns the contact's online presence.
-        */
-        QString presence() const;
+    /**
+    * Returns the contact's online presence.
+    */
+    QString presence() const;
 
-        /**
-        * Returns the contact's preferred email address.
-        */
-        QString email() const;
+    /**
+    * Returns the contact's preferred email address.
+    */
+    QString email() const;
 
-        /**
-        * Returns a the url of the picture that represents the contact.
-        */
-        QUrl pictureUrl() const;
+    /**
+    * Returns a the url of the picture that represents the contact.
+    */
+    QUrl pictureUrl() const;
 
-        /** Returns all groups the person is in. */
-        QStringList groups() const;
+    /** Returns all groups the person is in. */
+    QStringList groups() const;
 
-        /** Returns all e-mail addresses from the person. */
-        QStringList allEmails() const;
+    /** Returns all e-mail addresses from the person. */
+    QStringList allEmails() const;
 
     //     struct PhoneNumber {
     //         QString name;
@@ -112,19 +112,19 @@ class KPEOPLE_EXPORT PersonData : public QObject
     //     };
     //     QVector<PhoneNumber> phoneNumbers() const { createPhoneNumbers(customProperty("phoneNumbers")); };
 
-    Q_SIGNALS:
-        /**
-         * One of the contact sources has changed
-         */
-        void dataChanged();
+Q_SIGNALS:
+    /**
+     * One of the contact sources has changed
+     */
+    void dataChanged();
 
-    private Q_SLOTS:
-        void onContactChanged();
+private Q_SLOTS:
+    void onContactChanged();
 
-    private:
-        Q_DISABLE_COPY(PersonData)
-        Q_DECLARE_PRIVATE(PersonData)
-        PersonDataPrivate * d_ptr;
+private:
+    Q_DISABLE_COPY(PersonData)
+    Q_DECLARE_PRIVATE(PersonData)
+    PersonDataPrivate *d_ptr;
 };
 }
 

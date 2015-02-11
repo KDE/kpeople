@@ -84,6 +84,7 @@ public:
     void onAddContactToPerson(const QString &contactId, const QString &newPersonId);
     void onRemoveContactsFromPerson(const QString &contactId);
 
+public Q_SLOTS:
     void onMonitorInitialFetchComplete(bool success = true);
 };
 }

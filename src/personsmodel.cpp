@@ -99,7 +99,7 @@ PersonsModel::PersonsModel(QObject *parent):
     Q_FOREACH (BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {
         const AllContactsMonitorPtr monitor = dataSource->allContactsMonitor();
         if (monitor->isInitialFetchComplete()) {
-            QTimer::singleShot(0, this, SLOT(onMonitorInitialFetchComplete(monitor->initialFetchSucccess())));
+            QMetaObject::invokeMethod(this, SLOT(onMonitorInitialFetchComplete(bool)), Qt::QueuedConnection, Q_ARG(bool, monitor->initialFetchSuccess()));
         } else {
             connect(monitor.data(), SIGNAL(initialFetchComplete(bool)),
                     this, SLOT(onMonitorInitialFetchComplete(bool)));

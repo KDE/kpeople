@@ -17,7 +17,7 @@
  *
  */
 
-#include "persondatatests.h"
+#include "personsmodeltest.h"
 
 #include <QtTest>
 #include <QFile>
@@ -27,11 +27,11 @@
 #include "personpluginmanager_p.h"
 
 //public kpeople includes
-#include <persondata.h>
+#include <personsmodel.h>
 
 #include "fakecontactsource.h"
 
-QTEST_MAIN(PersonDataTests);
+QTEST_MAIN(PersonsModelTest);
 
 //the fake datasource is configured with
 
@@ -42,12 +42,7 @@ QTEST_MAIN(PersonDataTests);
 
 using namespace KPeople;
 
-//this tests PersonData but also implicitly tests the private classes
-// - BasePersonsDataSource
-// - DefaultContactMonitor
-// - MetaContact
-
-void PersonDataTests::initTestCase()
+void PersonsModelTest::initTestCase()
 {
     // Called before the first testfunction is executed
     PersonManager::instance(QStringLiteral("/tmp/kpeople_test_db"));
@@ -57,57 +52,19 @@ void PersonDataTests::initTestCase()
     QHash<QString, BasePersonsDataSource *> sources;
     sources[QStringLiteral("fakesource")] = m_source;
     PersonPluginManager::setDataSourcePlugins(sources);
+
+    m_model = new KPeople::PersonsModel(this);
 }
 
-void PersonDataTests::cleanupTestCase()
+void PersonsModelTest::cleanupTestCase()
 {
     // Called after the last testfunction was executed
     QFile::remove(QStringLiteral("/tmp/kpeople_test_db"));
 }
 
-void PersonDataTests::init()
+void PersonsModelTest::loadModel()
 {
-    // Called before each testfunction is executed
-}
-
-void PersonDataTests::cleanup()
-{
-    // Called after every testfunction
-}
-
-void PersonDataTests::loadContact()
-{
-    PersonData person(QStringLiteral("fakesource://contact1"));
-    //in this case we know the datasource is synchronous, but we should extend the test to cope with it not being async.
-
-    QCOMPARE(person.contactIds().size(), 1);
-    QCOMPARE(person.name(), QStringLiteral("Contact 1"));
-    QCOMPARE(person.allEmails(), QStringList(QStringLiteral("contact1@example.com")));
-}
-
-void PersonDataTests::loadPerson()
-{
-    //loading contact 2 which is already merged should return person1
-    //which is both contact 2 and 3
-    PersonData person(QStringLiteral("fakesource://contact2"));
-
-    QCOMPARE(person.contactIds().size(), 2);
-    QCOMPARE(person.name(), QStringLiteral("Person A"));
-    QCOMPARE(person.allEmails().size(), 2);
-
-    //convert to set as order is not important
-    QCOMPARE(person.allEmails().toSet(), QSet<QString>() << QStringLiteral("contact2@example.com") << QStringLiteral("contact3@example.com"));
-}
-
-void PersonDataTests::contactChanged()
-{
-    PersonData person(QStringLiteral("fakesource://contact1"));
-
-    QCOMPARE(person.allEmails().first(), QStringLiteral("contact1@example.com"));
-
-    QSignalSpy spy(&person, SIGNAL(dataChanged()));
-    m_source->changeContact1Email();
-    QCOMPARE(spy.count(), 1);
-
-    QCOMPARE(person.allEmails().first(), QStringLiteral("newaddress@yahoo.com"));
+    QCOMPARE(m_model->rowCount(), 2);
+    QCOMPARE(m_model->data(m_model->index(0)).toString(), QStringLiteral("Person A"));
+    QCOMPARE(m_model->data(m_model->index(1)).toString(), QStringLiteral("Contact 1"));
 }

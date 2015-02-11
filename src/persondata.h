@@ -100,7 +100,10 @@ class KPEOPLE_EXPORT PersonData : public QObject
         */
         QUrl pictureUrl() const;
 
+        /** Returns all groups the person is in. */
         QStringList groups() const;
+
+        /** Returns all e-mail addresses from the person. */
         QStringList allEmails() const;
 
     //     struct PhoneNumber {

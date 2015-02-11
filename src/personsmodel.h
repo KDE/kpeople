@@ -73,6 +73,7 @@ public:
     /** @returns the index for a given @p personId */
     QModelIndex indexForPersonId(const QString& personId) const;
 
+    /** Returns if all the backends have been initialized yet. */
     bool isInitialized() const;
 
     /** Helper class to ease model access through QML */
@@ -86,6 +87,7 @@ public:
     QVariant contactCustomProperty(const QModelIndex &index, const QString &key) const;
 
 Q_SIGNALS:
+    /** Will emit when the model is finally initialized. @p success will specify if it succeeded */
     void modelInitialized(bool success);
 
 private:

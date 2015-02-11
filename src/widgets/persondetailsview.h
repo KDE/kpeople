@@ -34,6 +34,10 @@ class QVBoxLayout;
 namespace KPeople {
 class PersonDetailsViewPrivate;
 
+/**
+ * Use PersonDetailsView to integrate a person's information
+ * in the GUI.
+ */
 class KPEOPLE_EXPORT PersonDetailsView : public QWidget
 {
     Q_OBJECT
@@ -42,6 +46,7 @@ public:
     virtual ~PersonDetailsView();
 
 public Q_SLOTS:
+    /** Specifies the @p person for which the details will be displayed. */
     void setPerson(PersonData *person);
 //     void setPersonsModel(PersonsModel *model);
 

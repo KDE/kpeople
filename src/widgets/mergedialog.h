@@ -33,6 +33,13 @@ namespace KPeople {
 class PersonsModel;
 class Match;
 
+/**
+ * The merge dialog will be used to provide a GUI to attempt to
+ * figure out what contacts should be merged.
+ *
+ * By properly mergeing contacts, the user will end up with having more
+ * information on each person.
+ */
 class KPEOPLE_EXPORT MergeDialog : public QDialog
 {
     Q_OBJECT
@@ -47,6 +54,10 @@ public:
 
     explicit MergeDialog(QWidget *parent = 0);
     ~MergeDialog();
+
+    /**
+     * Specifies which PersonsModel will be used to look for duplicates.
+     */
     void setPersonsModel(PersonsModel *model);
 
 private Q_SLOTS:

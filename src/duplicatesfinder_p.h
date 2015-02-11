@@ -40,12 +40,15 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
     Q_OBJECT
     public:
         explicit DuplicatesFinder(PersonsModel *model, QObject *parent = 0);
+
+        /** Specifies a @p personId id to look contacts for, in contrast to the whole contact list. */
         void setSpecificPerson(const QString &personId);
 
+        /** Returns the match results. */
         QList<Match> results() const;
 
     public Q_SLOTS:
-        virtual void start();
+        virtual void start() Q_DECL_OVERRIDE;
 
     private Q_SLOTS:
         void doSearch();

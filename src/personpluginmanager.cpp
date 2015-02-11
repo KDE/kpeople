@@ -94,5 +94,5 @@ BasePersonsDataSource *PersonPluginManager::dataSource(const QString &sourceId)
     }
     s_instance->m_mutex.unlock();
 
-    return s_instance->dataSourcePlugins[sourceId];
+    return s_instance->dataSourcePlugins.value(sourceId);
 }

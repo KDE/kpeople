@@ -61,17 +61,17 @@ Q_SIGNALS:
     /**
      * DataSources should emit this whenever a known contact changes
      */
-    void contactChanged(const QString &contactId, const AbstractContact::Ptr &contact);
+    void contactChanged(const QString &contactUri, const AbstractContact::Ptr &contact);
 
     /**
      * DataSources should emit this whenever a contact is added
      */
-    void contactAdded(const QString &contactId, const AbstractContact::Ptr &contact);
+    void contactAdded(const QString &contactUri, const AbstractContact::Ptr &contact);
 
     /**
      * DataSources should emit this whenever a contact is removed and they are no longer able to supply up-to-date data on a contact
      */
-    void contactRemoved(const QString &contactId);
+    void contactRemoved(const QString &contactUri);
 
     /**
      * Notifies that the DataSource has completed it's initial fetch.

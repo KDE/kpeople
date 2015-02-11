@@ -24,16 +24,16 @@ using namespace KPeople;
 class KPeople::ContactMonitorPrivate
 {
 public:
-    QString m_contactId;
+    QString m_contactUri;
     AbstractContact::Ptr m_contact;
 };
 
-ContactMonitor::ContactMonitor(const QString &contactId)
+ContactMonitor::ContactMonitor(const QString &contactUri)
     : QObject(0),
       d_ptr(new ContactMonitorPrivate)
 {
     Q_D(ContactMonitor);
-    d->m_contactId = contactId;
+    d->m_contactUri = contactUri;
 }
 
 ContactMonitor::~ContactMonitor()
@@ -56,11 +56,11 @@ AbstractContact::Ptr ContactMonitor::contact() const
     return d->m_contact;
 }
 
-QString ContactMonitor::contactId() const
+QString ContactMonitor::contactUri() const
 {
     Q_D(const ContactMonitor);
 
-    return d->m_contactId;
+    return d->m_contactUri;
 }
 
 #include "contactmonitor.moc"

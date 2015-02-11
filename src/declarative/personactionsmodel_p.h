@@ -33,7 +33,7 @@ class KPEOPLE_EXPORT PersonActionsModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY personChanged)
-    Q_PROPERTY(QString personId READ personId WRITE setPersonId NOTIFY personChanged)
+    Q_PROPERTY(QString personUri READ personUri WRITE setPersonUri NOTIFY personChanged)
 
 public:
     enum Roles {
@@ -47,8 +47,8 @@ public:
     virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    QString personId() const;
-    void setPersonId(const QString &personId);
+    QString personUri() const;
+    void setPersonUri(const QString &personUri);
 
     QList<QAction *> actions() const;
 

@@ -34,7 +34,7 @@ namespace KPeople
 class PersonDataPrivate
 {
 public:
-    QStringList contactIds;
+    QStringList contactUris;
     MetaContact metaContact;
     QList<ContactMonitorPtr> watchers;
 };
@@ -48,40 +48,40 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
 {
     Q_D(PersonData);
 
-    QString personId;
+    QString personUri;
     //query DB
     if (id.startsWith(QLatin1String("kpeople://"))) {
-        personId = id;
+        personUri = id;
     } else {
-        personId = PersonManager::instance()->personIdForContact(id);
+        personUri = PersonManager::instance()->personUriForContact(id);
     }
 
-    if (personId.isEmpty()) {
-        d->contactIds = QStringList() << id;
+    if (personUri.isEmpty()) {
+        d->contactUris = QStringList() << id;
     } else {
-        d->contactIds = PersonManager::instance()->contactsForPersonId(personId);
+        d->contactUris = PersonManager::instance()->contactsForPersonUri(personUri);
     }
 
     QMap<QString, AbstractContact::Ptr> contacts;
-    Q_FOREACH (const QString &contactId, d->contactIds) {
+    Q_FOREACH (const QString &contactUri, d->contactUris) {
         //load the correct data source for this contact ID
-        const QString sourceId = contactId.left(contactId.indexOf(QStringLiteral("://")));
+        const QString sourceId = contactUri.left(contactUri.indexOf(QStringLiteral("://")));
         BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
         if (dataSource) {
-            ContactMonitorPtr cw = dataSource->contactMonitor(contactId);
+            ContactMonitorPtr cw = dataSource->contactMonitor(contactUri);
             d->watchers << cw;
 
             //if the data source already has the contact set it already
             //if not it will be loaded when the contactChanged signal is emitted
             if (cw->contact()) {
-                contacts[contactId] = cw->contact();
+                contacts[contactUri] = cw->contact();
             }
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
         } else
-            qWarning() << "error: creating PersonData for unknown contact" << contactId;
+            qWarning() << "error: creating PersonData for unknown contact" << contactUri;
     }
 
-    d->metaContact = MetaContact(personId, contacts);
+    d->metaContact = MetaContact(personUri, contacts);
 }
 
 PersonData::~PersonData()
@@ -89,16 +89,16 @@ PersonData::~PersonData()
     delete d_ptr;
 }
 
-QString PersonData::personId() const
+QString PersonData::personUri() const
 {
     Q_D(const PersonData);
     return d->metaContact.id();
 }
 
-QStringList PersonData::contactIds() const
+QStringList PersonData::contactUris() const
 {
     Q_D(const PersonData);
-    return d->metaContact.contactIds();
+    return d->metaContact.contactUris();
 }
 
 void PersonData::onContactChanged()
@@ -106,11 +106,11 @@ void PersonData::onContactChanged()
     Q_D(PersonData);
 
     ContactMonitor *watcher = qobject_cast<ContactMonitor *>(sender());
-    if (d->metaContact.contactIds().contains(watcher->contactId())) {
+    if (d->metaContact.contactUris().contains(watcher->contactUri())) {
 #warning probably not needed anymore
-        d->metaContact.updateContact(watcher->contactId(), watcher->contact());
+        d->metaContact.updateContact(watcher->contactUri(), watcher->contact());
     } else {
-        d->metaContact.insertContact(watcher->contactId(), watcher->contact());
+        d->metaContact.insertContact(watcher->contactUri(), watcher->contact());
     }
     Q_EMIT dataChanged();
 }

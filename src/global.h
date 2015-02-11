@@ -29,21 +29,22 @@ namespace KPeople
 class PersonData;
 
 /**
- * Merge all ids into a single person.
+ * Merge all uris into a single person.
  * Ids can be a mix of person Ids and contact IDs.
  *
- * @arg ids a list of all identifiers to be merged
+ * @arg uris a list of all identifiers to be merged
  *
  * @return the identifier of the new person or an empty string upon failure
  */
-KPEOPLE_EXPORT QString mergeContacts(const QStringList &ids);
+KPEOPLE_EXPORT QString mergeContacts(const QStringList &uris);
 
 /**
  * Unmerge a contact. Either remove a contact from a given person or remove a person
+ * identified by @p uri.
  *
  * @return Whether the unmerge was successful
  */
-KPEOPLE_EXPORT bool unmergeContact(const QString &id);
+KPEOPLE_EXPORT bool unmergeContact(const QString &uri);
 
 /**
  * Return a QPixmap for a TP presence string

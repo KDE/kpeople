@@ -30,14 +30,14 @@ DuplicatesFinder::DuplicatesFinder(PersonsModel *model, QObject *parent)
 {
 }
 
-void DuplicatesFinder::setSpecificPerson(const QString &personId)
+void DuplicatesFinder::setSpecificPerson(const QString &personUri)
 {
-    m_personId = personId;
+    m_personUri = personUri;
 }
 
 void DuplicatesFinder::start()
 {
-    if (m_personId.isEmpty()) {
+    if (m_personUri.isEmpty()) {
         QMetaObject::invokeMethod(this, "doSearch", Qt::QueuedConnection);
     } else {
         QMetaObject::invokeMethod(this, "doSpecificSearch", Qt::QueuedConnection);
@@ -86,13 +86,13 @@ void DuplicatesFinder::doSpecificSearch()
 {
     m_matches.clear();
 
-    QModelIndex idx = m_model->indexForPersonId(m_personId);
+    QModelIndex idx = m_model->indexForPersonUri(m_personUri);
     AbstractContact::Ptr values = idx.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
 
     for (int i = 0, rows = m_model->rowCount(); i < rows; i++) {
         QModelIndex idx2 = m_model->index(i, 0);
 
-        if (idx2.data(PersonsModel::PersonIdRole) == m_personId) {
+        if (idx2.data(PersonsModel::PersonUriRole) == m_personUri) {
             continue;
         }
 

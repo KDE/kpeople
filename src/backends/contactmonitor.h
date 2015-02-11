@@ -43,13 +43,13 @@ class KPEOPLE_EXPORT ContactMonitor: public QObject
 {
     Q_OBJECT
 public:
-    ContactMonitor(const QString &contactId);
+    ContactMonitor(const QString &contactUri);
     virtual ~ContactMonitor();
 
     /**
      * The ID of the contact being loaded
      */
-    QString contactId() const;
+    QString contactUri() const;
 
     /**
      * The currently loaded information on this contact.

@@ -198,7 +198,7 @@ QStandardItem *MergeDialog::itemMergeContactFromMatch(bool isParent, const Match
 
     QVariant deco;
     if (!isParent) { // child
-        QString uri = match.indexB.data(PersonsModel::PersonIdRole).toString();
+        QString uri = match.indexB.data(PersonsModel::PersonUriRole).toString();
         item->setData(uri, UriRole);
 
         item->setData(qVariantFromValue<Match>(match), MergeReasonRole);
@@ -206,7 +206,7 @@ QStandardItem *MergeDialog::itemMergeContactFromMatch(bool isParent, const Match
         deco = match.indexB.data(Qt::DecorationRole);
 
     } else { // parent
-        QString uri = match.indexA.data(PersonsModel::PersonIdRole).toString();
+        QString uri = match.indexA.data(PersonsModel::PersonUriRole).toString();
         item->setData(uri, UriRole);
 
         item->setText(match.indexA.data(Qt::DisplayRole).toString());

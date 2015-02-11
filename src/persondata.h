@@ -58,12 +58,12 @@ public:
     virtual ~PersonData();
 
     /** Returns the person's id */
-    QString personId() const;
+    QString personUri() const;
 
     /**
      * Returns a list of contact ids that identify the PersonData instance.
      */
-    QStringList contactIds() const;
+    QStringList contactUris() const;
 
     /**
      * @returns the name of the person

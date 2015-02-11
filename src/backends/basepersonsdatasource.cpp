@@ -59,19 +59,19 @@ AllContactsMonitorPtr BasePersonsDataSource::allContactsMonitor()
     return d->m_allContactsMonitor.toStrongRef();
 }
 
-ContactMonitorPtr BasePersonsDataSource::contactMonitor(const QString &contactId)
+ContactMonitorPtr BasePersonsDataSource::contactMonitor(const QString &contactUri)
 {
     Q_D(BasePersonsDataSource);
 
     ContactMonitorPtr c;
-    if (!d->m_contactMonitors[contactId].toStrongRef()) {
-        c = ContactMonitorPtr(createContactMonitor(contactId));
-        d->m_contactMonitors[contactId] = c;
+    if (!d->m_contactMonitors[contactUri].toStrongRef()) {
+        c = ContactMonitorPtr(createContactMonitor(contactUri));
+        d->m_contactMonitors[contactUri] = c;
     }
-    return d->m_contactMonitors[contactId].toStrongRef();
+    return d->m_contactMonitors[contactUri].toStrongRef();
 }
 
-ContactMonitor *BasePersonsDataSource::createContactMonitor(const QString &contactId)
+ContactMonitor *BasePersonsDataSource::createContactMonitor(const QString &contactUri)
 {
-    return new DefaultContactMonitor(contactId, allContactsMonitor());
+    return new DefaultContactMonitor(contactUri, allContactsMonitor());
 }

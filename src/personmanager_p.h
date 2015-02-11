@@ -54,21 +54,21 @@ public:
 //DATA RETRIEVAL------------
 
     /** Retuns a list of all known personIDs in the database*/
-    QMultiHash< QString /*PersonID*/, QString /*ContactId*/> allPersons() const;
+    QMultiHash< QString /*PersonUri*/, QString /*ContactUri*/> allPersons() const;
 
     /**
      * Returns the ID of a person associated with a given contact
      * If no person for that contact exists, an empty string is returned
      */
-    QString personIdForContact(const QString &contactId) const;
+    QString personUriForContact(const QString &contactUri) const;
 
     /**
-     * Returns a list of contactIds associated with a given person
+     * Returns a list of contactUris associated with a given person
      */
-    QStringList contactsForPersonId(const QString &personId) const;
+    QStringList contactsForPersonUri(const QString &personUri) const;
 
 public Q_SLOTS:
-    //merge all ids (person IDs and contactIds into a single person)
+    //merge all ids (person IDs and contactUris into a single person)
     //returns the ID that will be created
     //users should KPeople::mergeContacts from global.h
     QString mergeContacts(const QStringList &ids);
@@ -78,8 +78,8 @@ public Q_SLOTS:
     bool unmergeContact(const QString &id);
 
 Q_SIGNALS:
-    void contactRemovedFromPerson(const QString &contactId);
-    void contactAddedToPerson(const QString &contactId, const QString &newPersonId);
+    void contactRemovedFromPerson(const QString &contactUri);
+    void contactAddedToPerson(const QString &contactUri, const QString &newPersonUri);
 
 protected:
     explicit PersonManager(const QString &databasePath, QObject *parent = 0);

@@ -108,9 +108,9 @@ Rectangle {
                         enabled: true
                         onClicked: {
                             contactItem.contactData = model
-                            personActions.personId = model.personId
+                            personActions.personUri = model.personUri
                             if(areWeMerging.checked)
-                                toMergeItems.addUri(model.personId, model.display)
+                                toMergeItems.addUri(model.personUri, model.display)
                         }
                     }
     }
@@ -232,7 +232,7 @@ Rectangle {
                         Row {
                             spacing: 5
                             CheckBox { id: willUnmerge }
-                            Label { text: display+" - "+contactId }
+                            Label { text: display+" - "+contactUri }
                         }
                     }
                 }

@@ -36,11 +36,11 @@ class KPEOPLE_EXPORT DefaultContactMonitor : public ContactMonitor
 {
     Q_OBJECT
 public:
-    DefaultContactMonitor(const QString &contactId, const AllContactsMonitorPtr &allContactsWatcher);
+    DefaultContactMonitor(const QString &contactUri, const AllContactsMonitorPtr &allContactsWatcher);
 private Q_SLOTS:
-    void onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact);
-    void onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact);
-    void onContactRemoved(const QString &contactId);
+    void onContactAdded(const QString &contactUri, const AbstractContact::Ptr &contact);
+    void onContactChanged(const QString &contactUri, const AbstractContact::Ptr &contact);
+    void onContactRemoved(const QString &contactUri);
 private:
     AllContactsMonitorPtr m_allContactsMonitor;
 };

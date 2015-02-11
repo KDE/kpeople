@@ -25,14 +25,14 @@
 //these namespace members expose the useful bits of PersonManager
 //global.h should be included from every exported header file so namespace members are always visible
 
-QString KPeople::mergeContacts(const QStringList &ids)
+QString KPeople::mergeContacts(const QStringList &uris)
 {
-    return PersonManager::instance()->mergeContacts(ids);
+    return PersonManager::instance()->mergeContacts(uris);
 }
 
-bool KPeople::unmergeContact(const QString &id)
+bool KPeople::unmergeContact(const QString &uri)
 {
-    return PersonManager::instance()->unmergeContact(id);
+    return PersonManager::instance()->unmergeContact(uri);
 }
 
 QString KPeople::iconNameForPresenceString(const QString &presenceName)

@@ -48,7 +48,7 @@ public:
     enum Role {
         FormattedNameRole = Qt::DisplayRole,//QString best name for this person
         PhotoRole = Qt::DecorationRole, //QPixmap best photo for this person
-        PersonIdRole = Qt::UserRole, //QString ID of this person
+        PersonUriRole = Qt::UserRole, //QString ID of this person
         PersonVCardRole, //AbstractContact::Ptr
         ContactsVCardRole, //AbstractContact::List (FIXME or map?)
 
@@ -69,8 +69,8 @@ public:
     virtual int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
     virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
-    /** @returns the index for a given @p personId */
-    QModelIndex indexForPersonId(const QString &personId) const;
+    /** @returns the index for a given @p personUri */
+    QModelIndex indexForPersonUri(const QString &personUri) const;
 
     /** Returns if all the backends have been initialized yet. */
     bool isInitialized() const;

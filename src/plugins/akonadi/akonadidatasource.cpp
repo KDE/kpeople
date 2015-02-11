@@ -187,7 +187,7 @@ class AkonadiContact: public KPeople::ContactMonitor
 {
     Q_OBJECT
 public:
-    AkonadiContact(Akonadi::Monitor *monitor, const QString &contactId);
+    AkonadiContact(Akonadi::Monitor *monitor, const QString &contactUri);
     ~AkonadiContact();
 private Q_SLOTS:
     void onContactFetched(KJob *);
@@ -197,15 +197,15 @@ private:
     Akonadi::Item m_item;
 };
 
-AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contactId):
-    ContactMonitor(contactId),
+AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contactUri):
+    ContactMonitor(contactUri),
     m_monitor(monitor)
 {
     //TODO: optimiZation, base class could copy across from the model if the model exists
     //then we should check if contact is already set to something and avoid the initial fetch
 
     //load the contact initially
-    m_item = Item::fromUrl(QUrl(contactId));
+    m_item = Item::fromUrl(QUrl(contactUri));
     ItemFetchJob *itemFetchJob = new ItemFetchJob(m_item);
     itemFetchJob->fetchScope().fetchFullPayload();
     connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
@@ -261,9 +261,9 @@ KPeople::AllContactsMonitor *AkonadiDataSource::createAllContactsMonitor()
     return new AkonadiAllContacts();
 }
 
-KPeople::ContactMonitor *AkonadiDataSource::createContactMonitor(const QString &contactId)
+KPeople::ContactMonitor *AkonadiDataSource::createContactMonitor(const QString &contactUri)
 {
-    return new AkonadiContact(m_monitor, contactId);
+    return new AkonadiContact(m_monitor, contactUri);
 }
 
 K_PLUGIN_FACTORY(AkonadiDataSourceFactory, registerPlugin<AkonadiDataSource>();)

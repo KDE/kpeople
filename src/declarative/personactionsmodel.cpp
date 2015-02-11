@@ -57,7 +57,7 @@ QHash<int, QByteArray> PersonActionsModel::roleNames() const
     return roles;
 }
 
-void PersonActionsModel::setPersonId(const QString &id)
+void PersonActionsModel::setPersonUri(const QString &id)
 {
     Q_D(PersonActions);
 
@@ -76,11 +76,11 @@ void PersonActionsModel::resetActions()
     Q_D(PersonActions);
 
     beginResetModel();
-    d->actions = KPeople::actionsForPerson(d->person->personId(), this);
+    d->actions = KPeople::actionsForPerson(d->person->personUri(), this);
     endResetModel();
 }
 
-QString PersonActionsModel::personId() const
+QString PersonActionsModel::personUri() const
 {
     Q_D(const PersonActions);
     return d->id;

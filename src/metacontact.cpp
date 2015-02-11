@@ -27,8 +27,8 @@ namespace KPeople
 class MetaContactData : public QSharedData
 {
 public:
-    QString personId;
-    QStringList contactIds;
+    QString personUri;
+    QStringList contactUris;
     AbstractContact::List contacts;
     AbstractContact::Ptr personAddressee;
 };
@@ -78,10 +78,10 @@ MetaContact::MetaContact():
 {
 }
 
-MetaContact::MetaContact(const QString &personId, const QMap<QString, AbstractContact::Ptr> &contacts):
+MetaContact::MetaContact(const QString &personUri, const QMap<QString, AbstractContact::Ptr> &contacts):
     d(new MetaContactData)
 {
-    d->personId = personId;
+    d->personUri = personUri;
 
     QMap<QString, AbstractContact::Ptr>::const_iterator it = contacts.constBegin();
     while (it != contacts.constEnd()) {
@@ -91,11 +91,11 @@ MetaContact::MetaContact(const QString &personId, const QMap<QString, AbstractCo
     reload();
 }
 
-MetaContact::MetaContact(const QString &contactId, const AbstractContact::Ptr &contact):
+MetaContact::MetaContact(const QString &contactUri, const AbstractContact::Ptr &contact):
     d(new MetaContactData)
 {
-    d->personId = contactId;
-    insertContactInternal(contactId, contact);
+    d->personUri = contactUri;
+    insertContactInternal(contactUri, contact);
     reload();
 }
 
@@ -121,7 +121,7 @@ MetaContact::~MetaContact()
 
 QString MetaContact::id() const
 {
-    return d->personId;
+    return d->personUri;
 }
 
 bool MetaContact::isValid() const
@@ -129,14 +129,14 @@ bool MetaContact::isValid() const
     return !d->contacts.isEmpty();
 }
 
-QStringList MetaContact::contactIds() const
+QStringList MetaContact::contactUris() const
 {
-    return d->contactIds;
+    return d->contactUris;
 }
 
-AbstractContact::Ptr MetaContact::contact(const QString &contactId)
+AbstractContact::Ptr MetaContact::contact(const QString &contactUri)
 {
-    int index = d->contactIds.indexOf(contactId);
+    int index = d->contactUris.indexOf(contactUri);
     if (index >= 0) {
         return d->contacts[index];
     } else {
@@ -154,34 +154,34 @@ const AbstractContact::Ptr &MetaContact::personAddressee() const
     return d->personAddressee;
 }
 
-int MetaContact::insertContact(const QString &contactId, const AbstractContact::Ptr &contact)
+int MetaContact::insertContact(const QString &contactUri, const AbstractContact::Ptr &contact)
 {
-    int index = insertContactInternal(contactId, contact);
+    int index = insertContactInternal(contactUri, contact);
     if (index >= 0) {
         reload();
     } else {
-        qWarning() << "Inserting an already-present contact" << contactId;
+        qWarning() << "Inserting an already-present contact" << contactUri;
     }
     return index;
 }
 
-int MetaContact::insertContactInternal(const QString &contactId, const AbstractContact::Ptr &contact)
+int MetaContact::insertContactInternal(const QString &contactUri, const AbstractContact::Ptr &contact)
 {
-    if (d->contactIds.contains(contactId)) {
+    if (d->contactUris.contains(contactUri)) {
         //if item is already listed, do nothing.
         return -1;
     } else {
         //TODO if from the local address book - prepend to give higher priority.
         int index = d->contacts.size();
         d->contacts.append(contact);
-        d->contactIds.append(contactId);
+        d->contactUris.append(contactUri);
         return index;
     }
 }
 
-int MetaContact::updateContact(const QString &contactId, const AbstractContact::Ptr &contact)
+int MetaContact::updateContact(const QString &contactUri, const AbstractContact::Ptr &contact)
 {
-    const int index = d->contactIds.indexOf(contactId);
+    const int index = d->contactUris.indexOf(contactUri);
     Q_ASSERT(index < 0 || d->contacts[index] == contact);
     if (index < 0) {
         qWarning() << "contact not part of the metacontact";
@@ -189,12 +189,12 @@ int MetaContact::updateContact(const QString &contactId, const AbstractContact::
     return index;
 }
 
-int MetaContact::removeContact(const QString &contactId)
+int MetaContact::removeContact(const QString &contactUri)
 {
-    const int index = d->contactIds.indexOf(contactId);
+    const int index = d->contactUris.indexOf(contactUri);
     if (index >= 0) {
         d->contacts.removeAt(index);
-        d->contactIds.removeAt(index);
+        d->contactUris.removeAt(index);
         reload();
     }
     return index;

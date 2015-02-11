@@ -45,8 +45,8 @@ void MatchesSolver::startMatching()
     // has a relation of each person, to know where it is
     QHash<QString, QString> destinationResolver;
     Q_FOREACH (const Match &m, m_matches) {
-        QString urlA = m.indexA.data(PersonsModel::PersonIdRole).toString();
-        QString urlB = m.indexB.data(PersonsModel::PersonIdRole).toString();
+        QString urlA = m.indexA.data(PersonsModel::PersonUriRole).toString();
+        QString urlB = m.indexB.data(PersonsModel::PersonUriRole).toString();
         Q_ASSERT(urlA != urlB);
 
         const bool inA = destinationResolver.contains(urlA);

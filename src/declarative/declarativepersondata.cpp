@@ -27,7 +27,7 @@ DeclarativePersonData::DeclarativePersonData(QObject *parent)
 {
 }
 
-void DeclarativePersonData::setPersonId(const QString &id)
+void DeclarativePersonData::setPersonUri(const QString &id)
 {
     m_id = id;
     delete m_person;
@@ -46,7 +46,7 @@ KPeople::PersonData *DeclarativePersonData::person() const
     return m_person;
 }
 
-QString DeclarativePersonData::personId() const
+QString DeclarativePersonData::personUri() const
 {
     return m_id;
 }

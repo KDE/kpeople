@@ -49,7 +49,7 @@ public:
     /**
      * Return a ref counted watcher for a single contact
      */
-    ContactMonitorPtr      contactMonitor(const QString &contactId);
+    ContactMonitorPtr      contactMonitor(const QString &contactUri);
 
     /**
      * Returns the ID used by this datasource.
@@ -64,7 +64,7 @@ protected:
      * Base classes can implement this in order to not load every contact
      * otherwise the AllContactWatcher will be used and filtered.
      */
-    virtual ContactMonitor *createContactMonitor(const QString &contactId);
+    virtual ContactMonitor *createContactMonitor(const QString &contactUri);
 private:
     Q_DISABLE_COPY(BasePersonsDataSource)
     Q_DECLARE_PRIVATE(BasePersonsDataSource)

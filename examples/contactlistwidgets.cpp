@@ -83,7 +83,7 @@ void PersonsDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
     QRect idRect = optV4.rect;
     idRect.adjust(SPACING + PHOTO_SIZE + SPACING, SPACING + 15, 0, 0);
-    painter->drawText(idRect, index.data(PersonsModel::PersonIdRole).toString());
+    painter->drawText(idRect, index.data(PersonsModel::PersonUriRole).toString());
 
     painter->restore();
 }
@@ -138,7 +138,7 @@ void ContactListApp::onMergeClicked()
     QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
     QStringList ids;
     Q_FOREACH (const QModelIndex &index, indexes) {
-        ids << index.data(PersonsModel::PersonIdRole).toString();
+        ids << index.data(PersonsModel::PersonUriRole).toString();
     }
 
     if (!ids.isEmpty()) {
@@ -150,7 +150,7 @@ void ContactListApp::onUnmergeClicked()
 {
     QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
     if (indexes.size()) {
-        QString id = indexes.first().data(PersonsModel::PersonIdRole).toString();
+        QString id = indexes.first().data(PersonsModel::PersonUriRole).toString();
         KPeople::unmergeContact(id);
     }
 }

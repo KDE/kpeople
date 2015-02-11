@@ -48,9 +48,9 @@ static QList<AbstractPersonAction *> actionsPlugins()
     return actionPlugins;
 }
 
-QList<QAction *> actionsForPerson(const QString &contactId, QObject *parent)
+QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent)
 {
-    PersonData person(contactId);
+    PersonData person(contactUri);
 
     QList<QAction *> actions;
     Q_FOREACH (KPeople::AbstractPersonAction *plugin, actionsPlugins()) {

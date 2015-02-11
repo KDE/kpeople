@@ -19,8 +19,8 @@
 
 #include "defaultcontactmonitor_p.h"
 
-DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const AllContactsMonitorPtr &allContactsWatcher):
-    ContactMonitor(contactId),
+DefaultContactMonitor::DefaultContactMonitor(const QString &contactUri, const AllContactsMonitorPtr &allContactsWatcher):
+    ContactMonitor(contactUri),
     m_allContactsMonitor(allContactsWatcher)
 {
     connect(allContactsWatcher.data(), SIGNAL(contactAdded(QString,AbstractContact::Ptr)), SLOT(onContactAdded(QString,AbstractContact::Ptr)));
@@ -28,7 +28,7 @@ DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const All
     connect(allContactsWatcher.data(), SIGNAL(contactChanged(QString,AbstractContact::Ptr)), SLOT(onContactChanged(QString,AbstractContact::Ptr)));
 
     const QMap<QString, AbstractContact::Ptr> &contacts = m_allContactsMonitor->contacts();
-    QMap<QString, AbstractContact::Ptr>::const_iterator it = contacts.constFind(contactId);
+    QMap<QString, AbstractContact::Ptr>::const_iterator it = contacts.constFind(contactUri);
     if (it != contacts.constEnd()) {
         setContact(it.value());
     }
@@ -36,21 +36,21 @@ DefaultContactMonitor::DefaultContactMonitor(const QString &contactId, const All
 
 void DefaultContactMonitor::onContactAdded(const QString &id, const AbstractContact::Ptr &contact)
 {
-    if (id == contactId()) {
+    if (id == contactUri()) {
         setContact(contact);
     }
 }
 
 void DefaultContactMonitor::onContactChanged(const QString &id, const AbstractContact::Ptr &contact)
 {
-    if (id == contactId()) {
+    if (id == contactUri()) {
         setContact(contact);
     }
 }
 
 void DefaultContactMonitor::onContactRemoved(const QString &id)
 {
-    if (id == contactId()) {
+    if (id == contactUri()) {
         setContact(AbstractContact::Ptr());
     }
 }

@@ -192,7 +192,7 @@ void PersonDetailsView::reload()
 
     Q_FOREACH (AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
         const QString label = widgetFactory->label() + QLatin1Char(':');
-        QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->personId(), this);
+        QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->personUri(), this);
 
         if (widget) {
             QFont font = widget->font();

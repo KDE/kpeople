@@ -50,7 +50,7 @@ public:
     PersonsModel *const q;
 
     //NOTE This is the opposite way round to the return value from contactMapping() for easier lookups
-    QHash<QString /*contactId*/, QString /*PersonId*/> contactToPersons;
+    QHash<QString /*contactUri*/, QString /*PersonUri*/> contactToPersons;
 
     //hash of person objects indexed by ID
     QHash<QString /*Person ID*/, QPersistentModelIndex /*Row*/> personIndex;
@@ -69,20 +69,20 @@ public:
     //methods that manipulate the model
     void addPerson(const MetaContact &mc);
     void removePerson(const QString &id);
-    void personChanged(const QString &personId);
-    QString personIdForContact(const QString &contactId) const;
-    QVariant dataForContact(const QString &personId, const AbstractContact::Ptr &contact, int role) const;
+    void personChanged(const QString &personUri);
+    QString personUriForContact(const QString &contactUri) const;
+    QVariant dataForContact(const QString &personUri, const AbstractContact::Ptr &contact, int role) const;
 
 //     SLOTS
     void onContactsFetched();
     //update when a resource signals a contact has changed
-    void onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact);
-    void onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact);
-    void onContactRemoved(const QString &contactId);
+    void onContactAdded(const QString &contactUri, const AbstractContact::Ptr &contact);
+    void onContactChanged(const QString &contactUri, const AbstractContact::Ptr &contact);
+    void onContactRemoved(const QString &contactUri);
 
     //update on metadata changes
-    void onAddContactToPerson(const QString &contactId, const QString &newPersonId);
-    void onRemoveContactsFromPerson(const QString &contactId);
+    void onAddContactToPerson(const QString &contactUri, const QString &newPersonUri);
+    void onRemoveContactsFromPerson(const QString &contactUri);
 
 public Q_SLOTS:
     void onMonitorInitialFetchComplete(bool success = true);
@@ -120,7 +120,7 @@ PersonsModel::~PersonsModel()
 QHash<int, QByteArray> PersonsModel::roleNames() const
 {
     QHash<int, QByteArray> roles = QAbstractItemModel::roleNames();
-    roles.insert(PersonIdRole, "personId");
+    roles.insert(PersonUriRole, "personUri");
     roles.insert(PersonVCardRole, "personVCard");
     roles.insert(ContactsVCardRole, "contactsVCard");
     return roles;
@@ -152,7 +152,7 @@ QVariant PersonsModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QVariant PersonsModelPrivate::dataForContact(const QString &personId, const AbstractContact::Ptr &person, int role) const
+QVariant PersonsModelPrivate::dataForContact(const QString &personUri, const AbstractContact::Ptr &person, int role) const
 {
     switch (role) {
     case PersonsModel::FormattedNameRole:
@@ -180,12 +180,12 @@ QVariant PersonsModelPrivate::dataForContact(const QString &personId, const Abst
         // return the generic one
         return QPixmap(genericAvatarImagePath);
     }
-    case PersonsModel::PersonIdRole:
-        return personId;
+    case PersonsModel::PersonUriRole:
+        return personUri;
     case PersonsModel::PersonVCardRole:
         return QVariant::fromValue<AbstractContact::Ptr>(person);
     case PersonsModel::ContactsVCardRole:
-        return QVariant::fromValue<AbstractContact::List>(metacontacts[personIndex[personId].row()].contacts());
+        return QVariant::fromValue<AbstractContact::List>(metacontacts[personIndex[personUri].row()].contacts());
     case PersonsModel::GroupsRole:
         return person->customProperty(QStringLiteral("all-groups"));
     }
@@ -294,37 +294,37 @@ void PersonsModelPrivate::onContactsFetched()
     }
 }
 
-void PersonsModelPrivate::onContactAdded(const QString &contactId, const AbstractContact::Ptr &contact)
+void PersonsModelPrivate::onContactAdded(const QString &contactUri, const AbstractContact::Ptr &contact)
 {
-    const QString &personId = personIdForContact(contactId);
+    const QString &personUri = personUriForContact(contactUri);
 
-    if (personIndex.contains(personId)) {
-        int personRow = personIndex[personId].row();
+    if (personIndex.contains(personUri)) {
+        int personRow = personIndex[personUri].row();
         MetaContact &mc = metacontacts[personRow];
 
         //if the MC object already contains this object, we want to update the row, not do an insert
-        if (mc.contactIds().contains(contactId)) {
-            qWarning() << "Source emitted contactAdded for a contact we already know about " << contactId;
-            onContactChanged(contactId, contact);
+        if (mc.contactUris().contains(contactUri)) {
+            qWarning() << "Source emitted contactAdded for a contact we already know about " << contactUri;
+            onContactChanged(contactUri, contact);
         } else {
             int newContactPos = mc.contacts().size();
             q->beginInsertRows(q->index(personRow), newContactPos, newContactPos);
-            mc.insertContact(contactId, contact);
+            mc.insertContact(contactUri, contact);
             q->endInsertRows();
-            personChanged(personId);
+            personChanged(personUri);
         }
     } else { //new contact -> new person
         QMap<QString, AbstractContact::Ptr> map;
-        map[contactId] = contact;
-        addPerson(MetaContact(personId, map));
+        map[contactUri] = contact;
+        addPerson(MetaContact(personUri, map));
     }
 }
 
-void PersonsModelPrivate::onContactChanged(const QString &contactId, const AbstractContact::Ptr &contact)
+void PersonsModelPrivate::onContactChanged(const QString &contactUri, const AbstractContact::Ptr &contact)
 {
-    const QString &personId = personIdForContact(contactId);
-    int personRow = personIndex[personId].row();
-    int contactRow = metacontacts[personRow].updateContact(contactId, contact);
+    const QString &personUri = personUriForContact(contactUri);
+    int personRow = personIndex[personUri].row();
+    int contactRow = metacontacts[personRow].updateContact(contactUri, contact);
 
     const QModelIndex contactIndex = q->index(contactRow,
                                      0,
@@ -332,35 +332,35 @@ void PersonsModelPrivate::onContactChanged(const QString &contactId, const Abstr
 
     Q_EMIT q->dataChanged(contactIndex, contactIndex);
 
-    personChanged(personId);
+    personChanged(personUri);
 }
 
-void PersonsModelPrivate::onContactRemoved(const QString &contactId)
+void PersonsModelPrivate::onContactRemoved(const QString &contactUri)
 {
-    const QString &personId = personIdForContact(contactId);
+    const QString &personUri = personUriForContact(contactUri);
 
-    int personRow = personIndex[personId].row();
+    int personRow = personIndex[personUri].row();
 
     MetaContact &mc = metacontacts[personRow];
-    int contactPosition = mc.contactIds().indexOf(contactId);
+    int contactPosition = mc.contactUris().indexOf(contactUri);
     q->beginRemoveRows(q->index(personRow, 0), contactPosition, contactPosition);
-    mc.removeContact(contactId);
+    mc.removeContact(contactUri);
     q->endRemoveRows();
 
     //if MC object is now invalid remove the person from the list
     if (!mc.isValid()) {
-        removePerson(personId);
+        removePerson(personUri);
     }
-    personChanged(personId);
+    personChanged(personUri);
 }
 
-void PersonsModelPrivate::onAddContactToPerson(const QString &contactId, const QString &newPersonId)
+void PersonsModelPrivate::onAddContactToPerson(const QString &contactUri, const QString &newPersonUri)
 {
-    const QString oldPersonId = personIdForContact(contactId);
+    const QString oldPersonUri = personUriForContact(contactUri);
 
-    contactToPersons.insert(contactId, newPersonId);
+    contactToPersons.insert(contactUri, newPersonUri);
 
-    int oldPersonRow = personIndex[oldPersonId].row();
+    int oldPersonRow = personIndex[oldPersonUri].row();
 
     if (oldPersonRow < 0) {
         return;
@@ -369,55 +369,55 @@ void PersonsModelPrivate::onAddContactToPerson(const QString &contactId, const Q
     MetaContact &oldMc = metacontacts[oldPersonRow];
 
     //get contact already in the model, remove it from the previous contact
-    int contactPosition = oldMc.contactIds().indexOf(contactId);
+    int contactPosition = oldMc.contactUris().indexOf(contactUri);
     const AbstractContact::Ptr contact = oldMc.contacts().at(contactPosition);
 
     q->beginRemoveRows(q->index(oldPersonRow), contactPosition, contactPosition);
-    oldMc.removeContact(contactId);
+    oldMc.removeContact(contactUri);
     q->endRemoveRows();
 
     if (!oldMc.isValid()) {
-        removePerson(oldPersonId);
+        removePerson(oldPersonUri);
     } else {
-        personChanged(oldPersonId);
+        personChanged(oldPersonUri);
     }
 
     //if the new person is already in the model, add the contact to it
-    if (personIndex.contains(newPersonId)) {
-        int newPersonRow = personIndex[newPersonId].row();
+    if (personIndex.contains(newPersonUri)) {
+        int newPersonRow = personIndex[newPersonUri].row();
         MetaContact &newMc = metacontacts[newPersonRow];
         int newContactPos = newMc.contacts().size();
         q->beginInsertRows(q->index(newPersonRow), newContactPos, newContactPos);
-        newMc.insertContact(contactId, contact);
+        newMc.insertContact(contactUri, contact);
         q->endInsertRows();
-        personChanged(newPersonId);
+        personChanged(newPersonUri);
     } else { //if the person is not in the model, create a new person and insert it
         QMap<QString, AbstractContact::Ptr> contacts;
-        contacts[contactId] = contact;
-        addPerson(MetaContact(newPersonId, contacts));
+        contacts[contactUri] = contact;
+        addPerson(MetaContact(newPersonUri, contacts));
     }
 }
 
-void PersonsModelPrivate::onRemoveContactsFromPerson(const QString &contactId)
+void PersonsModelPrivate::onRemoveContactsFromPerson(const QString &contactUri)
 {
-    const QString personId = personIdForContact(contactId);
-    int personRow = personIndex[personId].row();
+    const QString personUri = personUriForContact(contactUri);
+    int personRow = personIndex[personUri].row();
     MetaContact &mc = metacontacts[personRow];
 
-    const AbstractContact::Ptr &contact = mc.contact(contactId);
-    mc.removeContact(contactId);
-    contactToPersons.remove(contactId);
+    const AbstractContact::Ptr &contact = mc.contact(contactUri);
+    mc.removeContact(contactUri);
+    contactToPersons.remove(contactUri);
 
     //if we don't want the person object anymore
     if (!mc.isValid()) {
-        removePerson(personId);
+        removePerson(personUri);
     } else {
-        personChanged(personId);
+        personChanged(personUri);
     }
 
     //now re-insert as a new contact
     //we know it's not part of a metacontact anymore so reinsert as a contact
-    addPerson(MetaContact(contactId, contact));
+    addPerson(MetaContact(contactUri, contact));
 }
 
 void PersonsModelPrivate::addPerson(const KPeople::MetaContact &mc)
@@ -444,29 +444,29 @@ void PersonsModelPrivate::removePerson(const QString &id)
     q->endRemoveRows();
 }
 
-void PersonsModelPrivate::personChanged(const QString &personId)
+void PersonsModelPrivate::personChanged(const QString &personUri)
 {
-    int row = personIndex[personId].row();
+    int row = personIndex[personUri].row();
     if (row >= 0) {
         const QModelIndex personIndex = q->index(row);
         Q_EMIT q->dataChanged(personIndex, personIndex);
     }
 }
 
-QString PersonsModelPrivate::personIdForContact(const QString &contactId) const
+QString PersonsModelPrivate::personUriForContact(const QString &contactUri) const
 {
-    QHash<QString, QString>::const_iterator it = contactToPersons.constFind(contactId);
+    QHash<QString, QString>::const_iterator it = contactToPersons.constFind(contactUri);
     if (it != contactToPersons.constEnd()) {
         return *it;
     } else {
-        return contactId;
+        return contactUri;
     }
 }
 
-QModelIndex PersonsModel::indexForPersonId(const QString &personId) const
+QModelIndex PersonsModel::indexForPersonUri(const QString &personUri) const
 {
     Q_D(const PersonsModel);
-    return d->personIndex.value(personId);
+    return d->personIndex.value(personUri);
 }
 
 QVariant PersonsModel::get(int row, int role)

@@ -34,9 +34,9 @@ KPeople::AllContactsMonitor *FakeContactSource::createAllContactsMonitor()
     return new FakeAllContactsMonitor();
 }
 
-void FakeContactSource::changeContact1Email()
+void FakeContactSource::changeProperty(const QString& key, const QVariant& value)
 {
-    qobject_cast<FakeAllContactsMonitor *>(allContactsMonitor().data())->changeContact1Email();
+    qobject_cast<FakeAllContactsMonitor *>(allContactsMonitor().data())->changeProperty(key, value);
 }
 
 //----------------------------------------------------------------------------
@@ -97,12 +97,11 @@ QMap<QString, KPeople::AbstractContact::Ptr> FakeAllContactsMonitor::contacts()
     return contacts;
 }
 
-void FakeAllContactsMonitor::changeContact1Email()
+void FakeAllContactsMonitor::changeProperty(const QString& key, const QVariant& value)
 {
     KPeople::AbstractContact::Ptr contact1 = contacts()[QStringLiteral("fakesource://contact1")];
-    const QString newEmail = QStringLiteral("newaddress@yahoo.com");
-    static_cast<FakeContact *>(contact1.data())->m_properties[KPeople::AbstractContact::EmailProperty] = newEmail;
-    Q_ASSERT(contact1->customProperty(KPeople::AbstractContact::EmailProperty) == newEmail);
+    static_cast<FakeContact *>(contact1.data())->m_properties[key] = value;
+    Q_ASSERT(contact1->customProperty(key) == value);
 
     Q_EMIT contactChanged(QStringLiteral("fakesource://contact1"), contact1);
 }

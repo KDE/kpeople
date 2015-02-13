@@ -29,7 +29,7 @@ public:
     FakeContactSource(QObject *parent, const QVariantList &args = QVariantList());
     virtual QString sourcePluginId() const;
 
-    void changeContact1Email();
+    void changeProperty(const QString& key, const QVariant& value);
 protected:
     virtual KPeople::AllContactsMonitor *createAllContactsMonitor();
 };
@@ -41,7 +41,7 @@ class FakeAllContactsMonitor : public KPeople::AllContactsMonitor
     Q_OBJECT
 public:
     explicit FakeAllContactsMonitor();
-    void changeContact1Email();
+    void changeProperty(const QString& key, const QVariant& value);
     virtual QMap<QString, KPeople::AbstractContact::Ptr> contacts();
 };
 

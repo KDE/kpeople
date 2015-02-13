@@ -67,4 +67,10 @@ void PersonsModelTest::loadModel()
     QCOMPARE(m_model->rowCount(), 2);
     QCOMPARE(m_model->data(m_model->index(0)).toString(), QStringLiteral("Person A"));
     QCOMPARE(m_model->data(m_model->index(1)).toString(), QStringLiteral("Contact 1"));
+
+    m_source->changeProperty(AbstractContact::NameProperty, QStringLiteral("Contact 2"));
+
+    QCOMPARE(m_model->rowCount(), 2);
+    QCOMPARE(m_model->data(m_model->index(0)).toString(), QStringLiteral("Person A"));
+    QCOMPARE(m_model->data(m_model->index(1)).toString(), QStringLiteral("Contact 2"));
 }

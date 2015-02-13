@@ -78,7 +78,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
             }
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
         } else
-            qWarning() << "error: creating PersonData for unknown contact" << contactUri;
+            qWarning() << "error: creating PersonData for unknown contact" << contactUri << id;
     }
 
     d->metaContact = MetaContact(personUri, contacts);

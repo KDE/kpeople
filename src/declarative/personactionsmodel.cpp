@@ -76,7 +76,7 @@ void PersonActionsModel::resetActions()
     Q_D(PersonActions);
 
     beginResetModel();
-    d->actions = KPeople::actionsForPerson(d->person->personUri(), this);
+    d->actions = KPeople::actionsForPerson(d->id, this);
     endResetModel();
 }
 

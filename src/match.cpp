@@ -49,10 +49,10 @@ QStringList Match::matchReasons() const
     for (MatchReason r : reasons) {
         switch (r) {
         case NameMatch:
-            ret += i18n("Name");
+            ret += i18nc("@title:column", "Name");
             break;
         case EmailMatch:
-            ret += i18n("E-mail");
+            ret += i18nc("@title:column", "E-mail");
             break;
         }
     }

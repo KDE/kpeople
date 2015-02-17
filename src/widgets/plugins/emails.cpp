@@ -122,7 +122,7 @@ void Emails::jobFinished(KJob *job)
 
 QString Emails::label() const
 {
-    return i18n("Mails");
+    return i18nc("Emails field label", "Mails");
 }
 
 int Emails::sortWeight() const

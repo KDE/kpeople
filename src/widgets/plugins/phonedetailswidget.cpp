@@ -35,7 +35,7 @@ PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent, const QVariantList &args
     AbstractPersonDetailsWidget(parent)
 {
     Q_UNUSED(args);
-    setTitle(i18n("Phone"));
+    setTitle(i18nc("Phone details title", "Phone"));
     setIcon(QIcon::fromTheme("phone"));
 
     setLayout(new QVBoxLayout(this));

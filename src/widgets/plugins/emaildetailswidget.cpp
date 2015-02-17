@@ -47,7 +47,7 @@ QWidget *EmailFieldsPlugin::createDetailsWidget(const PersonData &person, QWidge
 
 QString EmailFieldsPlugin::label() const
 {
-    return i18n("Email");
+    return i18nc("E-mail field label", "E-mail");
 }
 
 int EmailFieldsPlugin::sortWeight() const

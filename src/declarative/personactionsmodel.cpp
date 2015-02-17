@@ -61,12 +61,21 @@ void PersonActionsModel::setPersonUri(const QString &id)
 {
     Q_D(PersonActions);
 
+    if (id == d->id) {
+        return;
+    }
+
     delete d->person;
-    d->person = new PersonData(id, this);
-    connect(d->person, &PersonData::dataChanged, this, &PersonActionsModel::resetActions);
     d->id = id;
 
-    resetActions();
+    if (!id.isEmpty()) {
+        d->person = new PersonData(id, this);
+        connect(d->person, &PersonData::dataChanged, this, &PersonActionsModel::resetActions);
+
+        resetActions();
+    } else {
+        d->actions.clear();
+    }
 
     emit personChanged();
 }

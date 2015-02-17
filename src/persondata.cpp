@@ -48,6 +48,10 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
 {
     Q_D(PersonData);
 
+    if (id.isEmpty()) {
+        return;
+    }
+
     QString personUri;
     //query DB
     if (id.startsWith(QLatin1String("kpeople://"))) {

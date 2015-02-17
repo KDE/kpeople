@@ -29,6 +29,10 @@ DeclarativePersonData::DeclarativePersonData(QObject *parent)
 
 void DeclarativePersonData::setPersonUri(const QString &id)
 {
+    if (id == m_id) {
+        return;
+    }
+
     m_id = id;
     delete m_person;
     if (m_id.isEmpty()) {

@@ -1,14 +1,16 @@
 import QtQuick 2.1
+import QtQuick.Controls 1.1
 import org.kde.people 1.0
 import org.kde.plasma.components 2.0
 import org.kde.plasma.core 2.0 as Core
 import org.kde.plasma.extras 2.0
 import org.kde.kquickcontrolsaddons 2.0
 
-Rectangle {
+ApplicationWindow {
     width: 300
     height: 300
     color: "red"
+    visible: true
 
     Core.SortFilterModel {
         id: filteredPeople

@@ -16,29 +16,14 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <KApplication>
-#include <KCmdLineArgs>
-#include <KDebug>
-#include <QDeclarativeView>
-#include <qdeclarativeerror.h>
-
-#include <kdeclarative.h>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
 
 int main(int argc, char **argv)
 {
-    KCmdLineArgs::init(argc, argv, QByteArray("sweetpeople"), "", ki18n("SweetPeople - KPeople Example"), "0.1");
+    QGuiApplication app(argc, argv);
 
-    KApplication app;
-
-    QDeclarativeView view;
-    KDeclarative decl;
-    decl.setDeclarativeEngine(view.engine());
-    decl.initialize();
-    decl.setupBindings();
-    view.setSource(QUrl("qrc:/qml/Main.qml"));
-    view.setResizeMode(QDeclarativeView::SizeRootObjectToView);
-    kDebug() << view.errors();
-    view.show();
+    QQmlApplicationEngine engine(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
 
     app.exec();
 }

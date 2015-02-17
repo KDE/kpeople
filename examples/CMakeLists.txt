@@ -1,6 +1,13 @@
 add_executable(contactlistwidgets contactlistwidgets.cpp)
 target_link_libraries(contactlistwidgets Qt5::Core Qt5::Widgets KF5::People)
 
+find_package(Qt5Quick)
+if (Qt5Quick_FOUND)
+    qt5_add_resources(contactlistqml_SRCS contactlistqml.qrc)
+    add_executable(contactlistqml contactlistqml.cpp ${contactlistqml_SRCS})
+    target_link_libraries(contactlistqml Qt5::Quick)
+endif()
+
 add_executable(personwidget personwidget.cpp)
 target_link_libraries(personwidget Qt5::Core Qt5::Widgets KF5::People KF5::PeopleWidgets)
 

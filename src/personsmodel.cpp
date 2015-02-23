@@ -272,8 +272,9 @@ void PersonsModelPrivate::onContactsFetched()
         QMap<QString, AbstractContact::Ptr> contacts;
         Q_FOREACH (const QString &contact, contactMapping.values(key)) {
             contactToPersons[contact] = key;
-            if (addresseeMap.contains(contact)) {
-                contacts[contact] = addresseeMap.take(contact);
+            AbstractContact::Ptr ptr = addresseeMap.take(contact);
+            if (ptr) {
+                contacts[contact] = ptr;
             }
         }
         if (!contacts.isEmpty()) {
@@ -298,8 +299,9 @@ void PersonsModelPrivate::onContactAdded(const QString &contactUri, const Abstra
 {
     const QString &personUri = personUriForContact(contactUri);
 
-    if (personIndex.contains(personUri)) {
-        int personRow = personIndex[personUri].row();
+    QHash<QString, QPersistentModelIndex>::const_iterator pidx = personIndex.constFind(personUri);
+    if (pidx != personIndex.constEnd()) {
+        int personRow = pidx->row();
         MetaContact &mc = metacontacts[personRow];
 
         //if the MC object already contains this object, we want to update the row, not do an insert
@@ -383,8 +385,9 @@ void PersonsModelPrivate::onAddContactToPerson(const QString &contactUri, const 
     }
 
     //if the new person is already in the model, add the contact to it
-    if (personIndex.contains(newPersonUri)) {
-        int newPersonRow = personIndex[newPersonUri].row();
+    QHash<QString, QPersistentModelIndex>::const_iterator pidx = personIndex.constFind(newPersonUri);
+    if (pidx != personIndex.constEnd()) {
+        int newPersonRow = pidx->row();
         MetaContact &newMc = metacontacts[newPersonRow];
         int newContactPos = newMc.contacts().size();
         q->beginInsertRows(q->index(newPersonRow), newContactPos, newContactPos);

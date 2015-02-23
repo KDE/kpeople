@@ -31,7 +31,7 @@
 
 #include "fakecontactsource.h"
 
-QTEST_MAIN(PersonDataTests);
+QTEST_GUILESS_MAIN(PersonDataTests);
 
 //the fake datasource is configured with
 

@@ -11,15 +11,6 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     mergedelegate.cpp
 )
 
-if (Baloo_FOUND)
-    set(kpeople_widgets_SRCS
-        ${kpeople_widgets_SRCS}
-        personemailview.cpp
-        plugins/emails.cpp
-        plugins/emaillistviewdelegate.cpp
-        plugins/emaillistmodel.cpp)
-endif()
-
 qt5_wrap_ui (kpeople_widgets_SRCS person-details-presentation.ui)
 
 add_library (KPeopleWidgets SHARED ${kpeople_widgets_SRCS} )
@@ -36,10 +27,6 @@ target_link_libraries (KPeopleWidgets
                         KF5::WidgetsAddons
                         KPeopleBackend
 )
-
-if (Baloo_FOUND)
-    target_link_libraries(KPeopleWidgets KF5::Baloo)
-endif()
 
 set_target_properties (KPeopleWidgets PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME PeopleWidgets)
 
@@ -67,7 +54,6 @@ ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
             PersonDetailsView
             MergeDialog
             PersonDetailsDialog
-            PersonEmailView
             Actions
     REQUIRED_HEADERS KPeopleWidgets_HEADERS
     PREFIX KPeople

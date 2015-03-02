@@ -94,7 +94,7 @@ QWidget *CoreFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget
         return 0;
     }
 
-    const QString &text = person.contactCustomProperty(m_field).toString();
+    QString text = person.contactCustomProperty(m_field).toString();
     if (text.isEmpty()) {
         return 0;
     }

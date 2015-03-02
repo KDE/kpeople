@@ -111,3 +111,9 @@ void PersonDataTests::contactChanged()
 
     QCOMPARE(person.allEmails().first(), QStringLiteral("newaddress@yahoo.com"));
 }
+
+void PersonDataTests::nullPerson()
+{
+    PersonData person(QStringLiteral("fakesource://unexisting"));
+    QCOMPARE(QString(), person.name());
+}

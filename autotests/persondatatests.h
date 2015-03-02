@@ -37,6 +37,9 @@ private Q_SLOTS:
     void loadContact();
     void loadPerson();
     void contactChanged();
+
+    void nullPerson();
+
 private:
     FakeContactSource *m_source;
 };

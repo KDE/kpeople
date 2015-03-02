@@ -76,6 +76,7 @@ using namespace KPeople;
 MetaContact::MetaContact():
     d(new MetaContactData)
 {
+    reload();
 }
 
 MetaContact::MetaContact(const QString &personUri, const QMap<QString, AbstractContact::Ptr> &contacts):
@@ -151,6 +152,7 @@ AbstractContact::List MetaContact::contacts() const
 
 const AbstractContact::Ptr &MetaContact::personAddressee() const
 {
+    Q_ASSERT(d->personAddressee);
     return d->personAddressee;
 }
 

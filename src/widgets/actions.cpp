@@ -38,13 +38,6 @@ static QList<AbstractPersonAction *> actionsPlugins()
         }
     }
 
-    Q_FOREACH (const KService::Ptr &service, personPluginList) {
-        AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
-        if (plugin) {
-//             qDebug() << "found plugin" << service->name();
-            actionPlugins << plugin;
-        }
-    }
     return actionPlugins;
 }
 

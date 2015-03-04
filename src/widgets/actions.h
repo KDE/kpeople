@@ -19,11 +19,11 @@
 #ifndef KPEOPLEWIDGETS_GLOBAL_H
 #define KPEOPLEWIDGETS_GLOBAL_H
 
-#include <QString>
-#include <QStringList>
-
+#include <QList>
 #include <kpeople/kpeople_export.h>
 
+class QString;
+class QObject;
 class QAction;
 namespace KPeople
 {

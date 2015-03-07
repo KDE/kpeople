@@ -41,7 +41,7 @@ class PersonsModelPrivate : public QObject
 public:
     PersonsModelPrivate(PersonsModel *q)
         : q(q)
-        , genericAvatarImagePath(QStandardPaths::locate(QStandardPaths::QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png")))
+        , genericAvatarImagePath(QStandardPaths::locate(QStandardPaths::QStandardPaths::GenericDataLocation, QStringLiteral("kf5/kpeople/dummy_avatar.png")))
         , initialFetchesDoneCount(0)
         , isInitialized(false)
         , hasError(false)

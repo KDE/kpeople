@@ -132,7 +132,7 @@ QPixmap PersonData::photo() const
     }
 
     if (avatar.isNull()) {
-        static QString defaultAvatar = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kpeople/dummy_avatar.png"));
+        static QString defaultAvatar = QStandardPaths::locate(QStandardPaths::GenericDataLocation, QStringLiteral("kf5/kpeople/dummy_avatar.png"));
         avatar = QPixmap(defaultAvatar);
     }
     return avatar;

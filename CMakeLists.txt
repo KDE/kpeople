@@ -2,11 +2,21 @@ cmake_minimum_required(VERSION 2.8.12)
 
 project (KPeople)
 
-find_package(ECM 1.3.0 REQUIRED NO_MODULE)
+find_package(ECM 1.8.0 REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 
-find_package(Qt5 5.3 REQUIRED Gui Sql DBus Widgets Qml)
-find_package(KF5 5.3 REQUIRED CoreAddons Service WidgetsAddons I18n ItemViews)
+set(KF5_VERSION "5.8.0") # handled by release scripts
+set(KF5_DEP_VERSION "5.8.0") # handled by release scripts
+
+set(REQUIRED_QT_VERSION 5.2.0)
+
+find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql DBus Widgets Qml)
+
+find_package(KF5CoreAddons ${KF5_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF5Service ${KF5_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF5WidgetsAddons ${KF5_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF5I18n ${KF5_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF5ItemViews ${KF5_DEP_VERSION} CONFIG REQUIRED)
 
 include(ECMSetupVersion)
 include(ECMGenerateHeaders)
@@ -24,7 +34,7 @@ add_definitions(-DTRANSLATION_DOMAIN=\"libkpeople\")
 
 set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KF5People")
 
-ecm_setup_version(0.5.0 VARIABLE_PREFIX KPEOPLE
+ecm_setup_version(${KF5_VERSION} VARIABLE_PREFIX KPEOPLE
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h"
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
                         SOVERSION 5)
@@ -49,6 +59,5 @@ install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
                "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         COMPONENT Devel )
-
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

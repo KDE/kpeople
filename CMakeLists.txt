@@ -47,6 +47,9 @@ ecm_configure_package_config_file(
 
 option(ENABLE_EXAMPLES "Build the examples" "ON")
 
+if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
+    ki18n_install(po)
+endif ()
 add_subdirectory (src)
 add_subdirectory (pixmaps)
 if (ENABLE_EXAMPLES)

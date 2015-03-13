@@ -13,31 +13,31 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
 
 qt5_wrap_ui (kpeople_widgets_SRCS person-details-presentation.ui)
 
-add_library (KPeopleWidgets SHARED ${kpeople_widgets_SRCS} )
-add_library (KF5::PeopleWidgets ALIAS KPeopleWidgets)
+add_library (KF5PeopleWidgets SHARED ${kpeople_widgets_SRCS} )
+add_library (KF5::PeopleWidgets ALIAS KF5PeopleWidgets)
 
-target_link_libraries (KPeopleWidgets
+target_link_libraries (KF5PeopleWidgets
                     PUBLIC
-                        KPeople
+                        KF5::People
                         Qt5::Widgets
                     PRIVATE
                         KF5::I18n
                         KF5::Service
                         KF5::ItemViews
                         KF5::WidgetsAddons
-                        KPeopleBackend
+                        KF5::PeopleBackend
 )
 
-set_target_properties (KPeopleWidgets PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME PeopleWidgets)
+set_target_properties (KF5PeopleWidgets PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME PeopleWidgets)
 
 if (MSVC)
-    set_target_properties (KPeopleWidgets PROPERTIES
+    set_target_properties (KF5PeopleWidgets PROPERTIES
                            OUTPUT_NAME libKPeopleWidgets
     )
 endif (MSVC)
 
 # Install:
-install (TARGETS KPeopleWidgets
+install (TARGETS KF5PeopleWidgets
          EXPORT KPeopleTargets
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )

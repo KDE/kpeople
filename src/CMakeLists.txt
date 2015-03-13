@@ -7,7 +7,7 @@ add_subdirectory(plugins)
 add_subdirectory(widgets)
 add_subdirectory(backends)
 
-add_library (KPeople
+add_library (KF5People
     global.cpp
     metacontact.cpp
     persondata.cpp
@@ -18,9 +18,9 @@ add_library (KPeople
     personpluginmanager.cpp
     personmanager.cpp
 )
-add_library(KF5::People ALIAS KPeople)
+add_library(KF5::People ALIAS KF5People)
 
-target_link_libraries (KPeople
+target_link_libraries (KF5People
                     PUBLIC
                         Qt5::Gui
                     PRIVATE
@@ -32,19 +32,19 @@ target_link_libraries (KPeople
                         KF5::PeopleBackend
 )
 
-set_target_properties (KPeople PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
-target_include_directories (KPeople PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
+set_target_properties (KF5People PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
+target_include_directories (KF5People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
                                     INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KPeople>"
 )
 
 if (MSVC)
-    set_target_properties (KPeople PROPERTIES
+    set_target_properties (KF5People PROPERTIES
                            OUTPUT_NAME libkpeople
     )
 endif (MSVC)
 
 # Install:
-install (TARGETS KPeople
+install (TARGETS KF5People
          EXPORT KPeopleTargets
          ${KF5_INSTALL_TARGETS_DEFAULT_ARGS}
 )
@@ -67,7 +67,7 @@ install(FILES
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/kpeople COMPONENT Devel
 )
 
-generate_export_header(KPeople EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
+generate_export_header(KF5People EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
 
 install (FILES
          kpeople_data_source.desktop

@@ -1,12 +1,12 @@
-add_library(KPeopleDeclarative SHARED
+add_library(KF5PeopleDeclarative SHARED
                     declarativepersondata.cpp
                     personactionsmodel.cpp
                     peopleqmlplugin.cpp)
 
-target_link_libraries(KPeopleDeclarative
+target_link_libraries(KF5PeopleDeclarative
     Qt5::Qml
-    KPeopleWidgets # QAction
+    KF5::PeopleWidgets # QAction
 )
 
-install(TARGETS KPeopleDeclarative DESTINATION ${QML_INSTALL_DIR}/org/kde/people)
+install(TARGETS KF5PeopleDeclarative DESTINATION ${QML_INSTALL_DIR}/org/kde/people)
 install(FILES qmldir DESTINATION ${QML_INSTALL_DIR}/org/kde/people)

@@ -30,6 +30,20 @@ namespace KPeople
 class PersonData;
 
 /**
+ * Each action returned in the list can be one of these
+ * types, however the Type is not mandatory with the action
+ *
+ * The type should be set as QObject property "actionType"
+ */
+enum ActionType {
+    TextChatAction,
+    AudioCallAction,
+    VideoCallAction,
+    SendEmailAction,
+    SendFileAction,
+    OtherAction = 100
+};
+
 /**
  * Returns a list of actions relevant to the specified @p contactUri where
  * each QAction will have @p parent passed as its parent QObject

@@ -30,7 +30,9 @@ namespace KPeople
 class PersonData;
 
 /**
- * Returns a list of actions relevant to the specified @p contactUri
+/**
+ * Returns a list of actions relevant to the specified @p contactUri where
+ * each QAction will have @p parent passed as its parent QObject
  */
 KPEOPLE_EXPORT QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent);
 };

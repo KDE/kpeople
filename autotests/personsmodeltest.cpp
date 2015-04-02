@@ -46,7 +46,6 @@ void PersonsModelTest::initTestCase()
 {
     // Called before the first testfunction is executed
     PersonManager::instance(QStringLiteral("/tmp/kpeople_test_db"));
-    PersonManager::instance()->mergeContacts(QStringList() << QStringLiteral("fakesource://contact2") << QStringLiteral("fakesource://contact3"));
 
     m_source = new FakeContactSource(0); //don't own. PersonPluginManager removes it on destruction
     QHash<QString, BasePersonsDataSource *> sources;
@@ -64,13 +63,46 @@ void PersonsModelTest::cleanupTestCase()
 
 void PersonsModelTest::loadModel()
 {
-    QCOMPARE(m_model->rowCount(), 2);
-    QCOMPARE(m_model->data(m_model->index(0)).toString(), QStringLiteral("Person A"));
-    QCOMPARE(m_model->data(m_model->index(1)).toString(), QStringLiteral("Contact 1"));
-
-    m_source->changeProperty(AbstractContact::NameProperty, QStringLiteral("Contact 2"));
-
-    QCOMPARE(m_model->rowCount(), 2);
-    QCOMPARE(m_model->data(m_model->index(0)).toString(), QStringLiteral("Person A"));
+    QCOMPARE(m_model->rowCount(), 4);
+    QCOMPARE(m_model->data(m_model->index(0)).toString(), QStringLiteral("Contact 1"));
     QCOMPARE(m_model->data(m_model->index(1)).toString(), QStringLiteral("Contact 2"));
+    QCOMPARE(m_model->data(m_model->index(2)).toString(), QStringLiteral("Contact 3"));
+    QCOMPARE(m_model->data(m_model->index(3)).toString(), QStringLiteral("Contact 4"));
+
+    m_source->changeProperty(AbstractContact::NameProperty, QStringLiteral("Contact A"));
+
+    QCOMPARE(m_model->rowCount(), 4);
+    QCOMPARE(m_model->data(m_model->index(0)).toString(), QStringLiteral("Contact A"));
+    QCOMPARE(m_model->data(m_model->index(1)).toString(), QStringLiteral("Contact 2"));
+    QCOMPARE(m_model->data(m_model->index(2)).toString(), QStringLiteral("Contact 3"));
+    QCOMPARE(m_model->data(m_model->index(3)).toString(), QStringLiteral("Contact 4"));
+}
+
+void PersonsModelTest::mergeContacts()
+{
+    QStringList uris{QStringLiteral("fakesource://contact1"), QStringLiteral("fakesource://contact2")};
+
+    QCOMPARE(m_model->rowCount(), 4);
+    QString newUri = KPeople::mergeContacts(uris);
+    QCOMPARE(newUri, QStringLiteral("kpeople://1"));
+    // TODO: replace with actual model signals spying
+    QTest::qWait(2000); //give it a bit of time to update the model
+    QCOMPARE(m_model->rowCount(), 3);
+
+    QStringList uris2{QStringLiteral("fakesource://contact3"), newUri};
+    QString newUri2 = KPeople::mergeContacts(uris2);
+    QCOMPARE(newUri2, QStringLiteral("kpeople://1"));
+    QTest::qWait(2000);
+    QCOMPARE(m_model->rowCount(), 2);
+}
+
+void PersonsModelTest::unmergeContacts()
+{
+    QCOMPARE(m_model->rowCount(), 2);
+    KPeople::unmergeContact(QStringLiteral("fakesource://contact3"));
+    QTest::qWait(3000);
+    QCOMPARE(m_model->rowCount(), 3);
+    KPeople::unmergeContact(QStringLiteral("kpeople://1"));
+    QTest::qWait(3000);
+    QCOMPARE(m_model->rowCount(), 4);
 }

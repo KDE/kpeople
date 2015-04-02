@@ -33,6 +33,8 @@ private Q_SLOTS:
     void cleanupTestCase();
 
     void loadModel();
+    void mergeContacts();
+    void unmergeContacts();
 
 private:
     FakeContactSource *m_source;

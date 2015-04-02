@@ -79,7 +79,7 @@ QMap<QString, KPeople::AbstractContact::Ptr> FakeAllContactsMonitor::contacts()
 
         {
             KPeople::AbstractContact::Ptr contact2(new FakeContact(QVariantMap {
-                { KPeople::AbstractContact::NameProperty, QStringLiteral("Person A") },
+                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 2") },
                 { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact2@example.com") }
             }));
             contacts[QStringLiteral("fakesource://contact2")] = contact2;
@@ -87,10 +87,18 @@ QMap<QString, KPeople::AbstractContact::Ptr> FakeAllContactsMonitor::contacts()
 
         {
             KPeople::AbstractContact::Ptr contact3(new FakeContact(QVariantMap {
-                { KPeople::AbstractContact::NameProperty, QStringLiteral("Person A") },
+                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 3") },
                 { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact3@example.com") }
             }));
             contacts[QStringLiteral("fakesource://contact3")] = contact3;
+        }
+
+        {
+            KPeople::AbstractContact::Ptr contact4(new FakeContact(QVariantMap {
+                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 4") },
+                                                                   { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact4@example.com") }
+            }));
+            contacts[QStringLiteral("fakesource://contact4")] = contact4;
         }
     }
 

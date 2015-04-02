@@ -92,7 +92,7 @@ void PersonDataTests::loadPerson()
     PersonData person(QStringLiteral("fakesource://contact2"));
 
     QCOMPARE(person.contactUris().size(), 2);
-    QCOMPARE(person.name(), QStringLiteral("Person A"));
+    QCOMPARE(person.name(), QStringLiteral("Contact 2"));
     QCOMPARE(person.allEmails().size(), 2);
 
     //convert to set as order is not important

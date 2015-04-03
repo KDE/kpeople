@@ -408,7 +408,11 @@ void PersonsModelPrivate::onRemoveContactsFromPerson(const QString &contactUri)
     MetaContact &mc = metacontacts[personRow];
 
     const AbstractContact::Ptr &contact = mc.contact(contactUri);
+    const int index = mc.contactUris().indexOf(contactUri);
+
+    q->beginRemoveRows(personIndex[personUri], index, index);
     mc.removeContact(contactUri);
+    q->endRemoveRows();
     contactToPersons.remove(contactUri);
 
     //if we don't want the person object anymore

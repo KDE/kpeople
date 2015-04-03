@@ -62,6 +62,7 @@ public:
 
 FakeAllContactsMonitor::FakeAllContactsMonitor()
 {
+    emitInitialFetchComplete(true);
 }
 
 QMap<QString, KPeople::AbstractContact::Ptr> FakeAllContactsMonitor::contacts()

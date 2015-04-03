@@ -34,6 +34,7 @@ private Q_SLOTS:
 
     void loadModel();
     void mergeContacts();
+    void gettersTests();
     void unmergeContacts();
 
 private:

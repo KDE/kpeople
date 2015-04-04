@@ -168,7 +168,7 @@ void PersonsModelTest::unmergeContacts()
     QTest::qWait(2000);
     QCOMPARE(m_model->rowCount(), 4);
     // Check that the person is gone from the model
-    QCOMPARE(personIndex, QModelIndex());
+    QCOMPARE(m_model->indexForPersonUri(QStringLiteral("kpeople://1")), QModelIndex());
 
     QCOMPARE(modelRowsInsert.count(), 2);
     QCOMPARE(modelRowsInsert.first().at(0).value<QModelIndex>(), QModelIndex());

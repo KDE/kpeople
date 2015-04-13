@@ -30,7 +30,7 @@ include(KDEInstallDirs)
 include(KDEFrameworkCompilerSettings)
 include(KDECMakeSettings)
 
-add_definitions(-DTRANSLATION_DOMAIN=\"libkpeople\")
+add_definitions(-DTRANSLATION_DOMAIN=\"kpeople5\")
 
 set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KF5People")
 

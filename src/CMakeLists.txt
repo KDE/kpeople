@@ -26,7 +26,6 @@ target_link_libraries (KF5People
                     PRIVATE
                         Qt5::Sql
                         Qt5::DBus
-                        KF5::Service
                         KF5::I18n
                         KF5::CoreAddons
                         KF5::PeopleBackend

@@ -18,8 +18,9 @@
 
 #include "actions.h"
 #include <QAction>
-#include <KService>
-#include <KServiceTypeTrader>
+#include <KPluginLoader>
+#include <KPluginFactory>
+#include <KPluginMetaData>
 #include <KPeople/PersonData>
 #include "../backends/abstractpersonaction.h"
 
@@ -29,9 +30,11 @@ namespace KPeople
 static QList<AbstractPersonAction *> actionsPlugins()
 {
     QList<AbstractPersonAction *> actionPlugins;
-    KService::List personPluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
-    Q_FOREACH (const KService::Ptr &service, personPluginList) {
-        AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
+    QVector<KPluginMetaData> personPluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/actions"));
+    Q_FOREACH (const KPluginMetaData &service, personPluginList) {
+        KPluginLoader loader(service.fileName());
+        KPluginFactory *factory = loader.factory();
+        AbstractPersonAction *plugin = qobject_cast<AbstractPersonAction*>(factory->create());
         if (plugin) {
 //             qDebug() << "found plugin" << service->name();
             actionPlugins << plugin;

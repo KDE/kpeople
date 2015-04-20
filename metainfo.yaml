@@ -1,6 +1,6 @@
 maintainer: apol
 description: Provides access to all contacts and the people who hold them
-tier: 3
+tier: 2
 type: functional
 platforms:
     - name: All

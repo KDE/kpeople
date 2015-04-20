@@ -27,9 +27,7 @@
 #include <QStandardPaths>
 
 #include <KLocalizedString>
-#include <KService>
-#include <KServiceTypeTrader>
-#include <KPluginInfo>
+#include <KPluginMetaData>
 #include <KPluginLoader>
 #include <KPluginFactory>
 
@@ -127,13 +125,14 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     d->m_plugins << new EmailFieldsPlugin();
 
     // load every KPeopleWidgets Plugin
-    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeopleWidgets/Plugin"));
+    QVector<KPluginMetaData> personPluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/widgets"));
 
-    QList<KPluginInfo> plugins = KPluginInfo::fromServices(pluginList);
+    Q_FOREACH (const KPluginMetaData &service, personPluginList) {
+        KPluginLoader loader(service.fileName());
+        KPluginFactory *factory = loader.factory();
+        AbstractFieldWidgetFactory *f = qobject_cast<AbstractFieldWidgetFactory*>(factory->create());
 
-    Q_FOREACH (const KPluginInfo &p, plugins) {
-        QString error;
-        AbstractFieldWidgetFactory *f = p.service()->createInstance<AbstractFieldWidgetFactory>(this, QVariantList(), &error);
+        Q_ASSERT(f);
         if (f) {
             d->m_plugins << f;
         }

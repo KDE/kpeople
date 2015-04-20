@@ -19,9 +19,9 @@
 #include "personpluginmanager_p.h"
 #include "backends/basepersonsdatasource.h"
 
-#include <KService>
-#include <KServiceTypeTrader>
-#include <KPluginInfo>
+#include <KPluginMetaData>
+#include <KPluginLoader>
+#include <KPluginFactory>
 
 #include <QMutex>
 #include <QDebug>
@@ -55,13 +55,15 @@ PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 
 void PersonPluginManagerPrivate::loadDataSourcePlugins()
 {
-    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
-    Q_FOREACH (const KService::Ptr &service, pluginList) {
-        BasePersonsDataSource *dataSource = service->createInstance<BasePersonsDataSource>(0);
+    QVector<KPluginMetaData> pluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/datasource"));
+    Q_FOREACH (const KPluginMetaData &service, pluginList) {
+        KPluginLoader loader(service.fileName());
+        KPluginFactory *factory = loader.factory();
+        BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(factory->create());
         if (dataSource) {
             dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
         } else {
-            qWarning() << "Failed to create data source " << service->name() << service->path();
+            qWarning() << "Failed to create data source " << service.name() << service.fileName();
         }
     }
     m_loadedDataSourcePlugins = true;

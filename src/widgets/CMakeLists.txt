@@ -22,10 +22,10 @@ target_link_libraries (KF5PeopleWidgets
                         Qt5::Widgets
                     PRIVATE
                         KF5::I18n
-                        KF5::Service
                         KF5::ItemViews
                         KF5::WidgetsAddons
                         KF5::PeopleBackend
+                        KF5::CoreAddons
 )
 
 set_target_properties (KF5PeopleWidgets PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME PeopleWidgets)

@@ -16,6 +16,7 @@ find_package(KF5CoreAddons ${KF5_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5WidgetsAddons ${KF5_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5I18n ${KF5_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5ItemViews ${KF5_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF5Service ${KF5_DEP_VERSION} CONFIG REQUIRED)
 
 include(ECMSetupVersion)
 include(ECMGenerateHeaders)

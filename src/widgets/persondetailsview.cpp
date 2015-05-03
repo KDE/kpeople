@@ -30,7 +30,8 @@
 #include <KPluginMetaData>
 #include <KPluginLoader>
 #include <KPluginFactory>
-
+#include <KPluginInfo>
+#include <KServiceTypeTrader>
 #include "abstractfieldwidgetfactory.h"
 #include "plugins/emaildetailswidget.h"
 #include "global.h"
@@ -133,6 +134,18 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
         AbstractFieldWidgetFactory *f = qobject_cast<AbstractFieldWidgetFactory*>(factory->create());
 
         Q_ASSERT(f);
+        if (f) {
+            d->m_plugins << f;
+        }
+    }
+
+    //TODO: Remove as soon as KTp sources are released with the new plugin system
+    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeopleWidgets/Plugin"));
+    QList<KPluginInfo> plugins = KPluginInfo::fromServices(pluginList);
+
+    Q_FOREACH (const KPluginInfo &p, plugins) {
+        QString error;
+        AbstractFieldWidgetFactory *f = p.service()->createInstance<AbstractFieldWidgetFactory>(this, QVariantList(), &error);
         if (f) {
             d->m_plugins << f;
         }

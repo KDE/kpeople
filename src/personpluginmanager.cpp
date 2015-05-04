@@ -22,9 +22,12 @@
 #include <KPluginMetaData>
 #include <KPluginLoader>
 #include <KPluginFactory>
+#include <KServiceTypeTrader>
+#include <KService>
 
 #include <QMutex>
 #include <QDebug>
+
 
 using namespace KPeople;
 
@@ -66,6 +69,20 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
             qWarning() << "Failed to create data source " << service.name() << service.fileName();
         }
     }
+
+    //TODO: Remove as soon as KTp sources are released with the new plugin system
+    KService::List servicesList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
+    Q_FOREACH (const KService::Ptr &service, servicesList) {
+        BasePersonsDataSource *dataSource = service->createInstance<BasePersonsDataSource>(0);
+
+
+        if (dataSource) {
+            dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
+        } else {
+            qWarning() << "Failed to create data source " << service->name() << service->path();
+        }
+    }
+
     m_loadedDataSourcePlugins = true;
 }
 

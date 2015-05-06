@@ -67,6 +67,10 @@ public:
     /** QVariantList property that lists the emails the contact has */
     static const QString AllEmailsProperty;
 
+    static const QString PhoneNumberProperty;
+
+    static const QString AllPhoneNumbersProperty;
+
     /**
      * Generic method to access a random contact property
      *

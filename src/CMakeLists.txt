@@ -36,6 +36,16 @@ target_include_directories (KF5People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_
                                     INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KPeople>"
 )
 
+add_executable(kpeoplelookupservice
+    service.cpp
+)
+
+target_link_libraries(kpeoplelookupservice
+    KF5::People
+    KF5::PeopleBackend
+    Qt5::DBus
+)
+
 if (MSVC)
     set_target_properties (KF5People PROPERTIES
                            OUTPUT_NAME libkpeople

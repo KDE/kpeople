@@ -6,6 +6,7 @@ add_subdirectory(declarative)
 add_subdirectory(plugins)
 add_subdirectory(widgets)
 add_subdirectory(backends)
+add_subdirectory(service)
 
 add_library (KF5People
     global.cpp
@@ -34,16 +35,6 @@ target_link_libraries (KF5People
 set_target_properties (KF5People PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
 target_include_directories (KF5People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
                                     INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KPeople>"
-)
-
-add_executable(kpeoplelookupservice
-    service.cpp
-)
-
-target_link_libraries(kpeoplelookupservice
-    KF5::People
-    KF5::PeopleBackend
-    Qt5::DBus
 )
 
 if (MSVC)

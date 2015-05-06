@@ -48,12 +48,17 @@ QString LookupService::contactIdForContactProperty(const QString &contact, const
     for (int i = 0; i < d->model->rowCount(); i++) {
         KPeople::AbstractContact::Ptr person = d->model->data(d->model->index(i), PersonsModel::PersonVCardRole).value<KPeople::AbstractContact::Ptr>();
 
+        //TODO: Add empty hints handling...or make the hint arg mandatory?
+        QVariantList dataList;
         if (hint == QLatin1String("phone")) {
-            QVariantList dataList = person->customProperty(AbstractContact::AllPhoneNumbersProperty).toList();
-            Q_FOREACH (const QVariant &data, dataList) {
-                if (data.toString().contains(contact)) {
-                    return d->model->data(d->model->index(i), PersonsModel::PersonUriRole).toString();
-                }
+            dataList = person->customProperty(AbstractContact::AllPhoneNumbersProperty).toList();
+        } else if (hint == QLatin1String("email")) {
+            dataList = person->customProperty(AbstractContact::AllEmailsProperty).toList();
+        }
+
+        Q_FOREACH (const QVariant &data, dataList) {
+            if (data.toString().contains(contact)) {
+                return d->model->data(d->model->index(i), PersonsModel::PersonUriRole).toString();
             }
         }
     }

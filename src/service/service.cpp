@@ -21,9 +21,6 @@
 #include "personsmodel.h"
 #include "backends/abstractcontact.h"
 
-#include <QCoreApplication>
-#include <QDBusConnection>
-
 using namespace KPeople;
 
 class KPeople::LookupServicePrivate
@@ -65,16 +62,3 @@ QString LookupService::contactIdForContactProperty(const QString &contact, const
 
     return QString();
 }
-
-int main(int argc, char *argv[])
-{
-    QCoreApplication app(argc, argv);
-
-    QDBusConnection::sessionBus().registerService(QStringLiteral("org.kde.KPeople"));
-     //QDBusAbstractAdaptor crashes with 0 parent, so pass the &app
-    QDBusConnection::sessionBus().registerObject(QStringLiteral("/LookupService"), new LookupService(&app), QDBusConnection::ExportAllSlots);
-
-
-    return app.exec();
-}
-

@@ -1,5 +1,6 @@
 add_executable(kpeoplelookupservice
     service.cpp
+    main.cpp
 )
 
 target_link_libraries(kpeoplelookupservice

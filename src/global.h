@@ -24,6 +24,8 @@
 
 #include <kpeople/kpeople_export.h>
 
+class QDBusPendingCallWatcher;
+
 namespace KPeople
 {
 class PersonData;
@@ -59,6 +61,17 @@ KPEOPLE_EXPORT QString iconNameForPresenceString(const QString &presenceName);
  * @return sort priority of the given presence
  */
 KPEOPLE_EXPORT int presenceSortPriority(const QString &presenceName);
+
+/**
+ * Returns PersonData for given contact property, such as phone number or email
+ *
+ * @param data The contact detail that will identify the person
+ * @param hint An optional parameter which can speed up the lookup by providing
+ *             a hint about what the data is, like "phone" or "email"
+ * @return A pending call watcher that will signal when the reply arrived
+ *         the user is responsible for deleting the watcher
+ */
+KPEOPLE_EXPORT QDBusPendingCallWatcher* personForContactProperty(const QString &data, const QString &hint = QString());
 
 };
 

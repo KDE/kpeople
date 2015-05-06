@@ -22,6 +22,11 @@
 #include "personpluginmanager_p.h"
 #include "backends/abstractcontact.h"
 
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusPendingCallWatcher>
+#include <QVariant>
+
 //these namespace members expose the useful bits of PersonManager
 //global.h should be included from every exported header file so namespace members are always visible
 
@@ -91,4 +96,17 @@ int KPeople::presenceSortPriority(const QString &presenceName)
     }
 
     return 7;
+}
+
+QDBusPendingCallWatcher* KPeople::personForContactProperty(const QString &data, const QString &hint)
+{
+    QDBusMessage message = QDBusMessage::createMethodCall(QStringLiteral("org.kde.KPeople"),
+                                                          QStringLiteral("/LookupService"),
+                                                          QStringLiteral("org.kde.KPeople"),
+                                                          QStringLiteral("contactIdForContactProperty"));
+    message.setArguments(QVariantList{data, hint});
+
+    QDBusPendingCall pendingCall = QDBusConnection::sessionBus().asyncCall(message);
+
+    return new QDBusPendingCallWatcher(pendingCall, 0);
 }

@@ -81,3 +81,5 @@ QList<Match::MatchReason> Match::matchAt(const AbstractContact::Ptr &value, cons
 
     return ret;
 }
+
+#include "moc_match_p.cpp"

@@ -1,3 +1,3 @@
 REVIEWBOARD_URL = "https://git.reviewboard.kde.org"
 REPOSITORY = "kpeople"
-TARGET_GROUPS = "kdeframeworks, kdepim
+TARGET_GROUPS = "kdeframeworks, kdepim"

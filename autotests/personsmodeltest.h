@@ -21,6 +21,7 @@
 #define PERSONSMODELTEST_H
 
 #include <QObject>
+#include <QTemporaryFile>
 
 class FakeContactSource;
 namespace KPeople { class PersonsModel; }
@@ -40,6 +41,7 @@ private Q_SLOTS:
 private:
     FakeContactSource *m_source;
     KPeople::PersonsModel* m_model;
+    QTemporaryFile m_database;
 };
 
 #endif // PERSONSMODELTEST_H

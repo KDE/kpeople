@@ -21,6 +21,7 @@
 #define PERSONDATATESTS_H
 
 #include <QObject>
+#include <QTemporaryFile>
 
 class FakeContactSource;
 
@@ -42,6 +43,7 @@ private Q_SLOTS:
 
 private:
     FakeContactSource *m_source;
+    QTemporaryFile m_database;
 };
 
 #endif // PERSONDATATESTS_H

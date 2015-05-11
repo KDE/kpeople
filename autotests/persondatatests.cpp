@@ -21,6 +21,7 @@
 
 #include <QtTest>
 #include <QFile>
+#include <QTemporaryFile>
 
 //private includes
 #include "personmanager_p.h"
@@ -49,8 +50,10 @@ using namespace KPeople;
 
 void PersonDataTests::initTestCase()
 {
+    QVERIFY(m_database.open());
+
     // Called before the first testfunction is executed
-    PersonManager::instance(QStringLiteral("/tmp/kpeople_test_db"));
+    PersonManager::instance(m_database.fileName());
     PersonManager::instance()->mergeContacts(QStringList() << QStringLiteral("fakesource://contact2") << QStringLiteral("fakesource://contact3"));
 
     m_source = new FakeContactSource(0); //don't own. PersonPluginManager removes it on destruction
@@ -62,7 +65,7 @@ void PersonDataTests::initTestCase()
 void PersonDataTests::cleanupTestCase()
 {
     // Called after the last testfunction was executed
-    QFile::remove(QStringLiteral("/tmp/kpeople_test_db"));
+    m_database.close();
 }
 
 void PersonDataTests::init()

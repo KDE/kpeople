@@ -21,6 +21,7 @@
 
 #include <QtTest>
 #include <QFile>
+#include <QTemporaryFile>
 #include <QVariant>
 
 //private includes
@@ -45,9 +46,10 @@ using namespace KPeople;
 
 void PersonsModelTest::initTestCase()
 {
-    // Called before the first testfunction is executed
-    PersonManager::instance(QStringLiteral("/tmp/kpeople_test_db"));
+    QVERIFY(m_database.open());
 
+    // Called before the first testfunction is executed
+    PersonManager::instance(m_database.fileName());
     m_source = new FakeContactSource(0); //don't own. PersonPluginManager removes it on destruction
     QHash<QString, BasePersonsDataSource *> sources;
     sources[QStringLiteral("fakesource")] = m_source;
@@ -63,7 +65,7 @@ void PersonsModelTest::initTestCase()
 void PersonsModelTest::cleanupTestCase()
 {
     // Called after the last testfunction was executed
-    QFile::remove(QStringLiteral("/tmp/kpeople_test_db"));
+    m_database.close();
 }
 
 void PersonsModelTest::loadModel()

@@ -50,6 +50,9 @@ public:
     /** String property representing the preferred name of the contact */
     static const QString EmailProperty;
 
+    /** String property representing the preferred phone number of the contact */
+    static const QString PhoneNumberProperty;
+
     /**
      * String property representing the IM presence of the contact.
      * @sa KPeople::iconNameForPresenceString()

@@ -34,13 +34,6 @@
 
 QTEST_GUILESS_MAIN(PersonDataTests);
 
-//the fake datasource is configured with
-
-//ID       - NAME        - email
-//contact1 - Contact1    - contact1@example.com
-//contact2 - PersonA     - contact2@example.com
-//contact3 - PersonA     - contact3@example.com
-
 using namespace KPeople;
 
 //this tests PersonData but also implicitly tests the private classes

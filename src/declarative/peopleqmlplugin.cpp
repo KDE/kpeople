@@ -22,6 +22,7 @@
 #include <personsmodel.h>
 #include <personactionsmodel_p.h>
 #include <persondata.h>
+#include <personssortfilterproxymodel.h>
 
 #include "declarativepersondata.h"
 #include <QtQml/qqml.h>
@@ -29,6 +30,7 @@
 void PeopleQMLPlugin::registerTypes(const char *uri)
 {
     qmlRegisterType<KPeople::PersonsModel>(uri, 1, 0, "PersonsModel");
+    qmlRegisterType<KPeople::PersonsSortFilterProxyModel>(uri, 1, 0, "PersonsSortFilterProxyModel");
     qmlRegisterType<KPeople::PersonActionsModel>(uri, 1, 0, "PersonActions");
     qmlRegisterType<DeclarativePersonData>(uri, 1, 0, "PersonData");
     qmlRegisterType<KPeople::PersonData>();

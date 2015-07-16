@@ -53,6 +53,9 @@ public:
     /** String property representing the preferred phone number of the contact */
     static const QString PhoneNumberProperty;
 
+    /** QVariantList property that lists all phone numbers the contact has */
+    static const QString AllPhoneNumbersProperty;
+
     /**
      * String property representing the IM presence of the contact.
      * @sa KPeople::iconNameForPresenceString()

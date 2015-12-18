@@ -36,7 +36,6 @@ void DeclarativePersonData::setPersonUri(const QString &id)
     m_id = id;
     delete m_person;
     if (m_id.isEmpty()) {
-        delete m_person;
         m_person = 0;
     } else {
         m_person = new KPeople::PersonData(id, this);

@@ -98,9 +98,9 @@ void PersonsModelTest::mergeContacts()
     // contacts from one person and adds them to the other)
     QCOMPARE(modelRowsInsert.count(), 2);
     // The first inserted Person must have invalid parent index
-    QCOMPARE(modelRowsInsert.first().at(0).value<QModelIndex>(), QModelIndex());
+    QCOMPARE(modelRowsInsert.first().at(0).toModelIndex(), QModelIndex());
     // Second inserted row, the Contact, must have the Person index as parent
-    QCOMPARE(modelRowsInsert.at(1).at(0).value<QModelIndex>(), m_model->indexForPersonUri(newUri));
+    QCOMPARE(modelRowsInsert.at(1).at(0).toModelIndex(), m_model->indexForPersonUri(newUri));
 
     modelRowsInsert.clear();
 
@@ -113,7 +113,7 @@ void PersonsModelTest::mergeContacts()
     QCOMPARE(m_model->rowCount(), 2);
     QCOMPARE(m_model->rowCount(m_model->indexForPersonUri(newUri2)), 3);
     QCOMPARE(modelRowsInsert.count(), 1);
-    QCOMPARE(modelRowsInsert.first().at(0).value<QModelIndex>(), m_model->indexForPersonUri(newUri));
+    QCOMPARE(modelRowsInsert.first().at(0).toModelIndex(), m_model->indexForPersonUri(newUri));
 }
 
 void PersonsModelTest::gettersTests()
@@ -149,12 +149,12 @@ void PersonsModelTest::unmergeContacts()
     // The unmerged Contact is turned into new Person (the fake Person where Person == Contact)
     // There must be 1 insertion and the parent must be invalid index
     QCOMPARE(modelRowsInsert.count(), 1);
-    QCOMPARE(modelRowsInsert.first().at(0).value<QModelIndex>(), QModelIndex());
+    QCOMPARE(modelRowsInsert.first().at(0).toModelIndex(), QModelIndex());
 
     // Similarily, there must be one row removed and the parent must be
     // the old Person index
     QCOMPARE(modelRowsRemove.count(), 1);
-    QCOMPARE(modelRowsRemove.first().at(0).value<QModelIndex>(), personIndex);
+    QCOMPARE(modelRowsRemove.first().at(0).toModelIndex(), personIndex);
 
     modelRowsInsert.clear();
     modelRowsRemove.clear();
@@ -166,8 +166,8 @@ void PersonsModelTest::unmergeContacts()
     QCOMPARE(m_model->indexForPersonUri(QStringLiteral("kpeople://1")), QModelIndex());
 
     QCOMPARE(modelRowsInsert.count(), 2);
-    QCOMPARE(modelRowsInsert.first().at(0).value<QModelIndex>(), QModelIndex());
-    QCOMPARE(modelRowsInsert.at(1).at(0).value<QModelIndex>(), QModelIndex());
+    QCOMPARE(modelRowsInsert.first().at(0).toModelIndex(), QModelIndex());
+    QCOMPARE(modelRowsInsert.at(1).at(0).toModelIndex(), QModelIndex());
 
     // There must be exactly 3 rows removed when unmerging a Person
     // with 2 contacts - first the subcontacts are removed and then
@@ -175,15 +175,15 @@ void PersonsModelTest::unmergeContacts()
     QCOMPARE(modelRowsRemove.count(), 3);
     // The first two Contacts must have parent the Person index
     // and both should have 0 0 as the "first last" args of removeRows
-    QCOMPARE(modelRowsRemove.first().at(0).value<QModelIndex>(), personIndex);
+    QCOMPARE(modelRowsRemove.first().at(0).toModelIndex(), personIndex);
     QCOMPARE(modelRowsRemove.first().at(1).toInt(), 0);
     QCOMPARE(modelRowsRemove.first().at(2).toInt(), 0);
 
-    QCOMPARE(modelRowsRemove.at(1).at(0).value<QModelIndex>(), personIndex);
+    QCOMPARE(modelRowsRemove.at(1).at(0).toModelIndex(), personIndex);
     QCOMPARE(modelRowsRemove.at(1).at(1).toInt(), 0);
     QCOMPARE(modelRowsRemove.at(1).at(2).toInt(), 0);
 
     // The parent Person should have just invalid index as parent
     // (and we don't care about the position)
-    QCOMPARE(modelRowsRemove.at(2).at(0).value<QModelIndex>(), QModelIndex());
+    QCOMPARE(modelRowsRemove.at(2).at(0).toModelIndex(), QModelIndex());
 }

@@ -140,7 +140,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     }
 
     //TODO: Remove as soon as KTp sources are released with the new plugin system
-    KService::List pluginList = KServiceTypeTrader::self()->query(QLatin1String("KPeopleWidgets/Plugin"));
+    KService::List pluginList = KServiceTypeTrader::self()->query(QStringLiteral("KPeopleWidgets/Plugin"));
     QList<KPluginInfo> plugins = KPluginInfo::fromServices(pluginList);
 
     Q_FOREACH (const KPluginInfo &p, plugins) {

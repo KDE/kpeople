@@ -43,7 +43,7 @@ static QList<AbstractPersonAction *> actionsPlugins()
     }
 
     //TODO: Remove as soon as KTp sources are released with the new plugin system
-    KService::List personServicesList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/Plugin"));
+    KService::List personServicesList = KServiceTypeTrader::self()->query(QStringLiteral("KPeople/Plugin"));
     Q_FOREACH (const KService::Ptr &service, personServicesList) {
         AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(0);
 

@@ -99,13 +99,13 @@ void PersonDataTests::contactChanged()
 {
     PersonData person(QStringLiteral("fakesource://contact1"));
 
-    QCOMPARE(person.allEmails().first(), QStringLiteral("contact1@example.com"));
+    QCOMPARE(person.allEmails().at(0), QStringLiteral("contact1@example.com"));
 
     QSignalSpy spy(&person, SIGNAL(dataChanged()));
     m_source->changeProperty(AbstractContact::EmailProperty, QStringLiteral("newaddress@yahoo.com"));
     QCOMPARE(spy.count(), 1);
 
-    QCOMPARE(person.allEmails().first(), QStringLiteral("newaddress@yahoo.com"));
+    QCOMPARE(person.allEmails().at(0), QStringLiteral("newaddress@yahoo.com"));
 }
 
 void PersonDataTests::nullPerson()

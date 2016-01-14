@@ -71,7 +71,7 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
     }
 
     //TODO: Remove as soon as KTp sources are released with the new plugin system
-    KService::List servicesList = KServiceTypeTrader::self()->query(QLatin1String("KPeople/DataSource"));
+    KService::List servicesList = KServiceTypeTrader::self()->query(QStringLiteral("KPeople/DataSource"));
     Q_FOREACH (const KService::Ptr &service, servicesList) {
         BasePersonsDataSource *dataSource = service->createInstance<BasePersonsDataSource>(0);
 

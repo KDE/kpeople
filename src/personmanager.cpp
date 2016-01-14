@@ -190,16 +190,16 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                 rc = false;
             }
 
-            QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                   QLatin1String("org.kde.KPeople"),
-                                   QLatin1String("ContactRemovedFromPerson"));
+            QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
+                                   QStringLiteral("org.kde.KPeople"),
+                                   QStringLiteral("ContactRemovedFromPerson"));
 
             message.setArguments(QVariantList() << id);
             pendingMessages << message;
 
-            message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                                 QLatin1String("org.kde.KPeople"),
-                                                 QLatin1String("ContactAddedToPerson"));
+            message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
+                                                 QStringLiteral("org.kde.KPeople"),
+                                                 QStringLiteral("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personUriString);
 
@@ -219,9 +219,9 @@ QString PersonManager::mergeContacts(const QStringList &ids)
             }
 
             //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
-            QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                   QLatin1String("org.kde.KPeople"),
-                                   QLatin1String("ContactAddedToPerson"));
+            QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
+                                   QStringLiteral("org.kde.KPeople"),
+                                   QStringLiteral("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personUriString);
             pendingMessages << message;
@@ -255,9 +255,9 @@ bool PersonManager::unmergeContact(const QString &id)
 
         Q_FOREACH (const QString &contactUri, contactUris) {
             //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
-            QDBusMessage message = QDBusMessage::createSignal(QLatin1String("/KPeople"),
-                                   QLatin1String("org.kde.KPeople"),
-                                   QLatin1String("ContactRemovedFromPerson"));
+            QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
+                                   QStringLiteral("org.kde.KPeople"),
+                                   QStringLiteral("ContactRemovedFromPerson"));
 
             message.setArguments(QVariantList() << contactUri);
             QDBusConnection::sessionBus().send(message);

@@ -74,14 +74,14 @@ void MergeDelegate::onClickContactParent(const QModelIndex &parent)
 
 void MergeDelegate::onSelectedContactsChanged(const QItemSelection &now , const QItemSelection &old)
 {
-    if (old.indexes().size()) {
+    if (!old.indexes().isEmpty()) {
         QModelIndex oldIdx = old.indexes().first();
 
         if (isExtended(oldIdx)) {
             contractItem(oldIdx);
         }
     }
-    if (now.indexes().size()) {
+    if (!now.indexes().isEmpty()) {
         QModelIndex idx = now.indexes().first();
         extendItem(buildMultipleLineLabel(idx), idx);
     }

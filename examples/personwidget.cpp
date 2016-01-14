@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 {
     QApplication app(argc, argv);
     if (app.arguments().count() < 2) {
-        qWarning() << "Missing argument: \"" << qPrintable(app.arguments().first()) << " <contact id>\"";
+        qWarning() << "Missing argument: \"" << qPrintable(app.arguments().at(0)) << " <contact id>\"";
         return 1;
     }
 

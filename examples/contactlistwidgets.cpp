@@ -149,7 +149,7 @@ void ContactListApp::onMergeClicked()
 void ContactListApp::onUnmergeClicked()
 {
     QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
-    if (indexes.size()) {
+    if (!indexes.isEmpty()) {
         QString id = indexes.first().data(PersonsModel::PersonUriRole).toString();
         KPeople::unmergeContact(id);
     }

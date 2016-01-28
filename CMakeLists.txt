@@ -31,7 +31,7 @@ include(ECMGeneratePriFile)
 include(GenerateExportHeader)
 
 include(KDEInstallDirs)
-include(KDEFrameworkCompilerSettings)
+include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(KDECMakeSettings)
 
 add_definitions(-DTRANSLATION_DOMAIN=\"kpeople5\")

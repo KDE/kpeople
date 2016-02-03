@@ -43,7 +43,7 @@ public:
         NameMatch,
         EmailMatch
     };
-    Q_ENUMS(MatchReason);
+    Q_ENUMS(MatchReason)
 
     Match() {}
     Match(const QList<MatchReason> &roles, const QPersistentModelIndex &a, const QPersistentModelIndex &b);
@@ -59,6 +59,6 @@ public:
 
 }
 
-Q_DECLARE_METATYPE(KPeople::Match);
+Q_DECLARE_METATYPE(KPeople::Match)
 
 #endif // MATCH_H

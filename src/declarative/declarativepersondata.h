@@ -27,8 +27,8 @@ class DeclarativePersonData : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString personUri READ personUri WRITE setPersonUri NOTIFY personChanged);
-    Q_PROPERTY(KPeople::PersonData *person READ person NOTIFY personChanged);
+    Q_PROPERTY(QString personUri READ personUri WRITE setPersonUri NOTIFY personChanged)
+    Q_PROPERTY(KPeople::PersonData *person READ person NOTIFY personChanged)
 
 public:
     DeclarativePersonData(QObject *parent = 0);

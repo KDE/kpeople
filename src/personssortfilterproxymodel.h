@@ -54,7 +54,7 @@ private:
     Q_DISABLE_COPY(PersonsSortFilterProxyModel)
 
     QScopedPointer<PersonsSortFilterProxyModelPrivate> const d_ptr;
-    Q_DECLARE_PRIVATE(PersonsSortFilterProxyModel);
+    Q_DECLARE_PRIVATE(PersonsSortFilterProxyModel)
 };
 
 }

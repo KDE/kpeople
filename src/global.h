@@ -60,6 +60,6 @@ KPEOPLE_EXPORT QString iconNameForPresenceString(const QString &presenceName);
  */
 KPEOPLE_EXPORT int presenceSortPriority(const QString &presenceName);
 
-};
+}
 
 #endif // GLOBAL_H

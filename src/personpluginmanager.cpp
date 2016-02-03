@@ -44,7 +44,7 @@ public:
 
 };
 
-Q_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance);
+Q_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance)
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate():
     m_loadedDataSourcePlugins(false)

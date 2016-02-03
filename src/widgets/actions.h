@@ -49,6 +49,6 @@ enum ActionType {
  * each QAction will have @p parent passed as its parent QObject
  */
 KPEOPLE_EXPORT QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent);
-};
+}
 
 #endif // KPEOPLEWIDGETS_GLOBAL_H

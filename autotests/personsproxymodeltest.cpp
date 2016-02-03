@@ -34,7 +34,7 @@
 
 #include "fakecontactsource.h"
 
-QTEST_GUILESS_MAIN(PersonsProxyModelTest);
+QTEST_GUILESS_MAIN(PersonsProxyModelTest)
 
 using namespace KPeople;
 

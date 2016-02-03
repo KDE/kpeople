@@ -93,7 +93,7 @@ private:
     Q_DISABLE_COPY(PersonsModel)
 
     QScopedPointer<PersonsModelPrivate> const d_ptr;
-    Q_DECLARE_PRIVATE(PersonsModel);
+    Q_DECLARE_PRIVATE(PersonsModel)
 };
 }
 

@@ -32,7 +32,7 @@
 
 #include "fakecontactsource.h"
 
-QTEST_GUILESS_MAIN(PersonDataTests);
+QTEST_GUILESS_MAIN(PersonDataTests)
 
 using namespace KPeople;
 

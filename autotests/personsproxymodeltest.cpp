@@ -72,4 +72,8 @@ void PersonsProxyModelTest::testFiltering()
     proxy.setRequiredProperties(QStringList() << AbstractContact::PhoneNumberProperty);
 
     QCOMPARE(proxy.rowCount(), 2);
+
+    proxy.setRequiredProperties(QStringList() << AbstractContact::PhoneNumberProperty << KPeople::AbstractContact::PresenceProperty);
+
+    QCOMPARE(proxy.rowCount(), 3);
 }

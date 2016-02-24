@@ -99,7 +99,8 @@ QMap<QString, KPeople::AbstractContact::Ptr> FakeAllContactsMonitor::contacts()
         {
             KPeople::AbstractContact::Ptr contact4(new FakeContact(QVariantMap {
                 { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 4") },
-                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact4@example.com") }
+                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact4@example.com") },
+                { KPeople::AbstractContact::PresenceProperty, QStringLiteral("online") }
             }));
             contacts[QStringLiteral("fakesource://contact4")] = contact4;
         }

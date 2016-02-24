@@ -58,12 +58,19 @@ bool PersonsSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelI
 
     const AbstractContact::Ptr contact = idx.data(KPeople::PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
     Q_ASSERT(contact);
-    foreach(const QString &key, d->m_keys) {
-        if (contact->customProperty(key).isNull())
-            return false;
+
+    // Don't filter if no keys are set
+    if (d->m_keys.isEmpty()) {
+        return true;
     }
 
-    return true;
+    foreach(const QString &key, d->m_keys) {
+        if (!contact->customProperty(key).isNull()) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 }

@@ -23,9 +23,25 @@
 #include <personactionsmodel_p.h>
 #include <persondata.h>
 #include <personssortfilterproxymodel.h>
+#include <actions.h>
 
 #include "declarativepersondata.h"
 #include <QtQml/qqml.h>
+
+class ActionTypeWrapper : public QObject {
+    Q_OBJECT
+
+public:
+    enum ActionType {
+        TextChatAction = KPeople::TextChatAction,
+        AudioCallAction = KPeople::AudioCallAction,
+        VideoCallAction = KPeople::VideoCallAction,
+        SendEmailAction = KPeople::SendEmailAction,
+        SendFileAction = KPeople::SendFileAction,
+        OtherAction = KPeople::OtherAction
+    };
+    Q_ENUM(ActionType)
+};
 
 void PeopleQMLPlugin::registerTypes(const char *uri)
 {
@@ -34,4 +50,7 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
     qmlRegisterType<KPeople::PersonActionsModel>(uri, 1, 0, "PersonActions");
     qmlRegisterType<DeclarativePersonData>(uri, 1, 0, "PersonData");
     qmlRegisterType<KPeople::PersonData>();
+    qmlRegisterUncreatableType<ActionTypeWrapper>(uri, 1, 0, "ActionType", QStringLiteral("You cannot create ActionType"));
 }
+
+#include "peopleqmlplugin.moc"

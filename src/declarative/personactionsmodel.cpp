@@ -54,6 +54,7 @@ QHash<int, QByteArray> PersonActionsModel::roleNames() const
     QHash<int, QByteArray> roles = QAbstractListModel::roleNames();
     roles[IconNameRole] = "iconName";
     roles[ActionRole] = "action";
+    roles[ActionTypeRole] = "actionType";
     return roles;
 }
 
@@ -114,6 +115,8 @@ QVariant PersonActionsModel::data(const QModelIndex &index, int role) const
         return d->actions[index.row()]->icon().name();
     case ActionRole:
         return QVariant::fromValue<QObject *>(d->actions[index.row()]);
+    case ActionTypeRole:
+        return d->actions[index.row()]->property("actionType");
     }
 
     return QVariant();

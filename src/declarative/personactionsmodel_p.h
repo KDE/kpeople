@@ -38,7 +38,8 @@ class KPEOPLE_EXPORT PersonActionsModel : public QAbstractListModel
 public:
     enum Roles {
         IconNameRole = Qt::UserRole + 1,
-        ActionRole
+        ActionRole,
+        ActionTypeRole
     };
 
     PersonActionsModel(QObject *parent = 0);

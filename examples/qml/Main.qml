@@ -1,5 +1,6 @@
 import QtQuick 2.1
 import QtQuick.Controls 1.1
+import QtQuick.Layouts 1.1
 import org.kde.people 1.0
 import org.kde.plasma.components 2.0
 import org.kde.plasma.core 2.0 as Core
@@ -7,9 +8,8 @@ import org.kde.plasma.extras 2.0
 import org.kde.kquickcontrolsaddons 2.0
 
 ApplicationWindow {
-    width: 300
-    height: 300
-    color: "red"
+    width: 640
+    height: 480
     visible: true
 
     Core.SortFilterModel {
@@ -47,20 +47,21 @@ ApplicationWindow {
             top: parent.top
             right: view.right
         }
+
         ListModel {
             id: toMergeItems
 
             function uriIndex(uri) {
                 var ret = -1
-                for(var i=0; i<count && ret<0; ++i) {
-                    if(get(i).uri==uri)
-                        ret=i
+                for (var i = 0; i < count && ret < 0; ++i) {
+                    if (get(i).uri == uri)
+                        ret = i;
                 }
                 return ret
             }
 
             function addUri(uri, name) {
-                if(uriIndex(uri)<0)
+                if (uriIndex(uri) < 0)
                     toMergeItems.append({ "uri": uri, "name": name })
             }
 
@@ -91,30 +92,41 @@ ApplicationWindow {
         cellWidth: 100
         cellHeight: 100
         model: filteredPeople
-        delegate:   ListItem {
-                        clip: true
-                        height: view.cellHeight
-                        width: view.cellWidth-5
-                        Core.IconItem {
-                            id: avatar
-                            source: decoration
-                            anchors.fill: parent
-                        }
-                        Label {
-                            width: parent.width
-                            height: parent.height
-                            text: display
-                            wrapMode: Text.WrapAnywhere
-                            visible: avatar.status!=Image.Ready
-                        }
-                        enabled: true
-                        onClicked: {
-                            contactItem.contactData = model
-                            personActions.personUri = model.personUri
-                            if(areWeMerging.checked)
-                                toMergeItems.addUri(model.personUri, model.display)
-                        }
-                    }
+        delegate: ListItem {
+            height: view.cellHeight
+            width: view.cellWidth - 5
+
+            clip: true
+            enabled: true
+
+            ColumnLayout {
+                anchors.fill: parent
+
+                Core.IconItem {
+                    id: avatar
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    source: decoration
+                }
+                Label {
+                    width: parent.width
+                    text: display
+                    wrapMode: Text.WrapAnywhere
+                    elide: Text.ElideMiddle
+                    visible: avatar.status!=Image.Ready
+                }
+            }
+
+            onClicked: {
+                contactItem.contactData = model
+                personActions.personUri = model.personUri
+
+                if (areWeMerging.checked) {
+                    toMergeItems.addUri(model.personUri, model.display)
+                }
+            }
+        }
     }
 
     Flickable {
@@ -127,22 +139,52 @@ ApplicationWindow {
         width: parent.width/2
         property variant contactData
 
-        Column {
+        ColumnLayout {
             width: parent.width
             spacing: 5
+
             Column {
-                visible: toMergeItems.count>0
-                Label { text: "To Merge:" }
-                Repeater {
-                    model:toMergeItems
-                    delegate: Label { text: name + " - " + uri }
+                Layout.fillWidth: true
+                visible: toMergeItems.count > 0
+
+                Label {
+                    text: "Contacts To Merge:"
                 }
+
+                Repeater {
+                    model: toMergeItems
+                    delegate: Label {
+                        width: parent.width
+                        text: name + " - " + uri
+                    }
+                }
+
                 Button {
                     text: "Merge!"
                     onClicked: {
                         people.createPersonFromIndexes(toMergeItems.indexes())
                         toMergeItems.clear()
                     }
+                }
+
+                Rectangle {
+                    width: parent.width
+                    height: 1
+                    color: "#888"
+                }
+            }
+
+
+            RowLayout {
+                Core.IconItem {
+                    id: avatar
+                    height: 64
+                    width: height
+                    source: contactItem.contactData ? contactItem.contactData.decoration : null
+                }
+
+                Label {
+                    text: contactItem.contactData ? contactItem.contactData.display : ""
                 }
             }
 
@@ -153,47 +195,36 @@ ApplicationWindow {
 
                 function dataToString(data) {
                     var text = ""
-                    if(data==null)
-                        return "<null>";
-                    else for(var a in data) {
-                        text += a + ": ";
-                        var curr = data[a]
-                        if(curr==null)
-                            text += "null"
-                        else
-                            text += curr
-                        text += '\n'
+                    if (data != null) {
+                        for (var prop in data) {
+                            text += prop + ": ";
+                            var currentData = data[prop]
+                            text += currentData == null ? "null" : currentData
+                            text += '\n'
+                        }
                     }
+
                     return text
                 }
             }
-            ToolBar {
-                width: parent.width
-                height: 30
-                Flow {
-                    anchors.fill: parent
-                    Repeater {
-                        model: PersonActions {
-                            id: personActions
-                        }
-                        delegate: Button {
-                            text: model.display
-                            iconSource: model.decoration
-                            onClicked: personActions.triggerAction(model.index)
-                        }
-                    }
-                }
-            }
-            Rectangle { color: "green"; width: parent.width; height: 5 }
-            Row {
+
+            Flow {
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
                 Repeater {
-                    model: contactItem.contactData ? contactItem.contactData.photo : null
-                    delegate: Image {
-                        source: modelData
+                    width: parent.width
+                    model: PersonActions {
+                        id: personActions
+                    }
+                    delegate: Button {
+                        text: model.display
+                        iconSource: model.iconName
+                        onClicked: personActions.triggerAction(model.index)
                     }
                 }
             }
-            Rectangle { color: "blue"; width: parent.width; height: 5}
+
             Button {
                 text: "Unmerge"
                 visible: contactItem.contactData!=null && contactItem.contactData.contactsCount>1

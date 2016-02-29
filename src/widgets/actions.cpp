@@ -18,6 +18,7 @@
 
 #include "actions.h"
 #include <QAction>
+#include <QDebug>
 #include <KPluginLoader>
 #include <KPluginFactory>
 #include <KPluginMetaData>
@@ -35,7 +36,11 @@ static QList<AbstractPersonAction *> actionsPlugins()
     Q_FOREACH (const KPluginMetaData &service, personPluginList) {
         KPluginLoader loader(service.fileName());
         KPluginFactory *factory = loader.factory();
-        AbstractPersonAction *plugin = qobject_cast<AbstractPersonAction*>(factory->create());
+        if (!factory) {
+            qWarning() << "Couldn't create the factory for" << service.name() << "at" << service.fileName();
+            continue;
+        }
+        AbstractPersonAction *plugin = factory->create<AbstractPersonAction>();
         if (plugin) {
 //             qDebug() << "found plugin" << service->name();
             actionPlugins << plugin;

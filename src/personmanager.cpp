@@ -61,7 +61,7 @@ Transaction::~Transaction()
 
 PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     QObject(parent),
-    m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE")))
+    m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("kpeoplePersonsManager")))
 {
     m_db.setDatabaseName(databasePath);
     if (!m_db.open()) {

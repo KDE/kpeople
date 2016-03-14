@@ -73,12 +73,14 @@ void PersonDataTests::cleanup()
 
 void PersonDataTests::loadContact()
 {
-    PersonData person(QStringLiteral("fakesource://contact1"));
+    QString personUri = QStringLiteral("fakesource://contact1");
+    PersonData person(personUri);
     //in this case we know the datasource is synchronous, but we should extend the test to cope with it not being async.
 
     QCOMPARE(person.contactUris().size(), 1);
     QCOMPARE(person.name(), QStringLiteral("Contact 1"));
     QCOMPARE(person.allEmails(), QStringList(QStringLiteral("contact1@example.com")));
+    QCOMPARE(person.personUri(), personUri);
 }
 
 void PersonDataTests::loadPerson()
@@ -90,6 +92,7 @@ void PersonDataTests::loadPerson()
     QCOMPARE(person.contactUris().size(), 2);
     QCOMPARE(person.name(), QStringLiteral("Contact 2"));
     QCOMPARE(person.allEmails().size(), 2);
+    QCOMPARE(person.personUri(), QStringLiteral("kpeople://1"));
 
     //convert to set as order is not important
     QCOMPARE(person.allEmails().toSet(), QSet<QString>() << QStringLiteral("contact2@example.com") << QStringLiteral("contact3@example.com"));

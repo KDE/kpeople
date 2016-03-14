@@ -85,7 +85,11 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
             qWarning() << "error: creating PersonData for unknown contact" << contactUri << id;
     }
 
-    d->metaContact = MetaContact(personUri, contacts);
+    if (personUri.isEmpty() && contacts.size() == 1) {
+        d->metaContact = MetaContact(id, contacts.first());
+    } else {
+        d->metaContact = MetaContact(personUri, contacts);
+    }
 }
 
 PersonData::~PersonData()

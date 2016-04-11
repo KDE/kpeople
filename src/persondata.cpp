@@ -97,6 +97,12 @@ PersonData::~PersonData()
     delete d_ptr;
 }
 
+bool PersonData::isValid() const
+{
+    Q_D(const PersonData);
+    return !d->metaContact.id().isEmpty();
+}
+
 QString PersonData::personUri() const
 {
     Q_D(const PersonData);

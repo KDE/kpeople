@@ -115,4 +115,8 @@ void PersonDataTests::nullPerson()
 {
     PersonData person(QStringLiteral("fakesource://unexisting"));
     QCOMPARE(QString(), person.name());
+    QVERIFY(!person.isValid());
+
+    PersonData invalidPerson(QStringLiteral());
+    QVERIFY(!invalidPerson.isValid());
 }

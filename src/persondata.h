@@ -57,6 +57,9 @@ public:
 
     virtual ~PersonData();
 
+    /** Returns true if this PersonData is mapped to some existing contact */
+    bool isValid() const;
+
     /** Returns the person's id */
     QString personUri() const;
 

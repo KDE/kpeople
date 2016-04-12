@@ -57,7 +57,10 @@ public:
 
     virtual ~PersonData();
 
-    /** Returns true if this PersonData is mapped to some existing contact */
+    /**
+     * Returns true if this PersonData is mapped to some existing contact
+     * @since 5.22
+     */
     bool isValid() const;
 
     /** Returns the person's id */

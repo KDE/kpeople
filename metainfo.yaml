@@ -11,3 +11,7 @@ libraries:
  - qmake: KPeople
    cmake: "KF5::People"
 cmakename: KF5People
+
+public_lib: true
+group: Frameworks
+subgroup: Tier 3

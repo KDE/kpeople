@@ -3,7 +3,9 @@ description: Provides access to all contacts and the people who hold them
 tier: 3
 type: functional
 platforms:
-    - name: All
+    - name: Linux
+    - name: Windows
+    - name: MacOSX
 portingAid: false
 deprecated: false
 release: true

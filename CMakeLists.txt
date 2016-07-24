@@ -12,7 +12,7 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
 set(KF5_VERSION "5.25.0") # handled by release scripts
 set(KF5_DEP_VERSION "5.24.0") # handled by release scripts
 
-set(REQUIRED_QT_VERSION 5.4.0)
+set(REQUIRED_QT_VERSION 5.5.0)
 
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql DBus Widgets Qml)
 

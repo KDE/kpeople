@@ -1,0 +1,85 @@
+# Copyright (C) YEAR This_file_is_part_of_KDE
+# This file is distributed under the same license as the PACKAGE package.
+#
+# Sergiu Bivol <sergiu@ase.md>, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: http://bugs.kde.org\n"
+"POT-Creation-Date: 2015-02-27 09:45+0000\n"
+"PO-Revision-Date: 2014-03-25 16:18+0200\n"
+"Last-Translator: Sergiu Bivol <sergiu@ase.md>\n"
+"Language-Team: Romanian <kde-i18n-ro@kde.org>\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2;\n"
+"X-Generator: Lokalize 1.5\n"
+
+#: match.cpp:52
+msgctxt "@title:column"
+msgid "Name"
+msgstr ""
+
+#: match.cpp:55
+#, fuzzy
+#| msgid "Email"
+msgctxt "@title:column"
+msgid "E-mail"
+msgstr "Email"
+
+#: widgets/mergedelegate.cpp:99
+msgctxt "reasons join"
+msgid ", "
+msgstr ""
+
+#: widgets/mergedelegate.cpp:99
+#, kde-format
+msgctxt "name: merge reasons"
+msgid "%1: %2"
+msgstr ""
+
+#: widgets/mergedialog.cpp:64
+msgid "Duplicates Manager"
+msgstr "Gestionar de duplicate"
+
+#: widgets/mergedialog.cpp:73
+msgid "Select contacts to be merged"
+msgstr "Alegeți contactele de îmbinat"
+
+#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
+#: widgets/person-details-presentation.ui:43
+msgid "Avatar"
+msgstr "Avatar"
+
+#: widgets/plugins/emaildetailswidget.cpp:50
+#, fuzzy
+#| msgid "Email"
+msgctxt "E-mail field label"
+msgid "E-mail"
+msgstr "Email"
+
+#: widgets/plugins/mergecontactswidget.cpp:50
+msgid "Show Merge Suggestions..."
+msgstr "Arată sugestii de îmbinare..."
+
+#: widgets/plugins/mergecontactswidget.cpp:88
+msgid "Merge with Selected Contacts"
+msgstr "Îmbină cu contactele alese"
+
+#: widgets/plugins/phonedetailswidget.cpp:38
+#, fuzzy
+#| msgid "Phone"
+msgctxt "Phone details title"
+msgid "Phone"
+msgstr "Telefon"
+
+#, fuzzy
+#~| msgid "Email"
+#~ msgid "No Emails"
+#~ msgstr "Email"
+
+#~ msgid "Email"
+#~ msgstr "Email"

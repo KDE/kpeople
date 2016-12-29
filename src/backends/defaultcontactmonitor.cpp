@@ -55,4 +55,3 @@ void DefaultContactMonitor::onContactRemoved(const QString &id)
     }
 }
 
-#include "defaultcontactmonitor.moc"

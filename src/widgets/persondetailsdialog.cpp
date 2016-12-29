@@ -66,4 +66,3 @@ void PersonDetailsDialog::setPerson(PersonData *person)
     setWindowTitle(person->name());
 }
 
-#include "persondetailsdialog.moc"

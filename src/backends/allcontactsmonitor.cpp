@@ -67,4 +67,3 @@ void AllContactsMonitor::emitInitialFetchComplete(bool success)
     Q_EMIT initialFetchComplete(success);
 }
 
-#include "allcontactsmonitor.moc"

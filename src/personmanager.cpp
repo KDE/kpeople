@@ -19,7 +19,6 @@
 
 #include "personmanager_p.h"
 
-// #include "personmanager.moc"
 #include <QVariant>
 #include <QDebug>
 #include <QStandardPaths>

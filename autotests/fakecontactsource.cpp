@@ -48,7 +48,7 @@ public:
         : m_properties(props)
     {}
 
-    virtual QVariant customProperty(const QString &key) const
+    QVariant customProperty(const QString &key) const Q_DECL_OVERRIDE
     {
         if (key.startsWith(QLatin1Literal("all-"))) {
             return QStringList(m_properties[key.mid(4)].toString());

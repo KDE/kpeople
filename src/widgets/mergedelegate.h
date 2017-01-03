@@ -45,7 +45,7 @@ public Q_SLOTS:
 
 private:
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index)const;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index)const Q_DECL_OVERRIDE;
     QWidget *buildExtensionWidget(const QModelIndex &idx);
     QWidget *buildMultipleLineLabel(const QModelIndex &idx);
 

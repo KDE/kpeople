@@ -44,7 +44,7 @@ public:
         : m_contacts(contacts)
     {}
 
-    virtual QVariant customProperty(const QString &key) const
+    QVariant customProperty(const QString &key) const Q_DECL_OVERRIDE
     {
         if (key.startsWith(QLatin1String("all-"))) {
             QVariantList ret;

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.0)
 
-project (KPeople)
+set(KF5_VERSION "5.30.0") # handled by release scripts
+set(KF5_DEP_VERSION "5.29.0") # handled by release scripts
+project (KPeople VERSION ${KF5_VERSION})
 
 include(FeatureSummary)
 find_package(ECM 5.29.0  NO_MODULE)
@@ -8,9 +10,6 @@ set_package_properties(ECM PROPERTIES TYPE REQUIRED DESCRIPTION "Extra CMake Mod
 feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR})
-
-set(KF5_VERSION "5.30.0") # handled by release scripts
-set(KF5_DEP_VERSION "5.29.0") # handled by release scripts
 
 set(REQUIRED_QT_VERSION 5.5.0)
 
@@ -38,7 +37,7 @@ add_definitions(-DTRANSLATION_DOMAIN=\"kpeople5\")
 
 set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KF5People")
 
-ecm_setup_version(${KF5_VERSION} VARIABLE_PREFIX KPEOPLE
+ecm_setup_version(PROJECT VARIABLE_PREFIX KPEOPLE
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h"
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
                         SOVERSION 5)

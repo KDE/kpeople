@@ -26,7 +26,7 @@ include(ECMGenerateHeaders)
 include(ECMSetupVersion)
 include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
-include(ECMPackageConfigHelpers)
+include(CMakePackageConfigHelpers)
 include(ECMGeneratePriFile)
 include(GenerateExportHeader)
 
@@ -42,7 +42,7 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KPEOPLE
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
                         SOVERSION 5)
 
-ecm_configure_package_config_file(
+configure_package_config_file(
   "${CMAKE_CURRENT_SOURCE_DIR}/KF5PeopleConfig.cmake.in"
   "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
   INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}

@@ -40,7 +40,7 @@ public:
         SendFileAction = KPeople::SendFileAction,
         OtherAction = KPeople::OtherAction
     };
-    Q_ENUMS(ActionType)
+    Q_ENUM(ActionType)
 };
 
 void PeopleQMLPlugin::registerTypes(const char *uri)

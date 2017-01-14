@@ -56,7 +56,7 @@ public:
 
         UserRole = Qt::UserRole + 0x1000 ///< in case it's needed to extend, use this one to start from
     };
-    Q_ENUMS(Role)
+    Q_ENUM(Role)
 
     PersonsModel(QObject *parent = 0);
 

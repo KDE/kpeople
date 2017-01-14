@@ -43,7 +43,7 @@ public:
         NameMatch,
         EmailMatch
     };
-    Q_ENUMS(MatchReason)
+    Q_ENUM(MatchReason)
 
     Match() {}
     Match(const QList<MatchReason> &roles, const QPersistentModelIndex &a, const QPersistentModelIndex &b);

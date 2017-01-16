@@ -41,7 +41,7 @@ class KPEOPLE_EXPORT PersonDetailsView : public QWidget
 {
     Q_OBJECT
 public:
-    PersonDetailsView(QWidget *parent = 0);
+    PersonDetailsView(QWidget *parent = nullptr);
     virtual ~PersonDetailsView();
 
 public Q_SLOTS:

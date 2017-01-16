@@ -90,12 +90,12 @@ QWidget *CoreFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget
 {
 //  we have a plugin specific for e-mails.
     if (m_field == QLatin1String("email")) {
-        return 0;
+        return nullptr;
     }
 
     QString text = person.contactCustomProperty(m_field).toString();
     if (text.isEmpty()) {
-        return 0;
+        return nullptr;
     }
     return new QLabel(text, parent);
 }
@@ -107,7 +107,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     Q_D(PersonDetailsView);
     setLayout(new QVBoxLayout(this));
     d->m_mainWidget = new QWidget(this);
-    d->m_person = 0;
+    d->m_person = nullptr;
 
     QWidget *details = new QWidget();
     d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();

@@ -37,7 +37,7 @@ const int PHOTO_SIZE = 32;
 class PersonsDelegate : public QStyledItemDelegate
 {
 public:
-    PersonsDelegate(QObject *parent = 0);
+    PersonsDelegate(QObject *parent = nullptr);
     ~PersonsDelegate();
 
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const Q_DECL_OVERRIDE;

@@ -276,7 +276,7 @@ bool PersonManager::unmergeContact(const QString &id)
 
 PersonManager *PersonManager::instance(const QString &databasePath)
 {
-    static PersonManager *s_instance = 0;
+    static PersonManager *s_instance = nullptr;
     if (!s_instance) {
         QString path = databasePath;
         if (path.isEmpty()) {

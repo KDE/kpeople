@@ -58,7 +58,7 @@ public:
     };
     Q_ENUM(Role)
 
-    PersonsModel(QObject *parent = 0);
+    PersonsModel(QObject *parent = nullptr);
 
     virtual ~PersonsModel();
 

@@ -29,7 +29,7 @@ public:
 };
 
 ContactMonitor::ContactMonitor(const QString &contactUri)
-    : QObject(0),
+    : QObject(nullptr),
       d_ptr(new ContactMonitorPrivate)
 {
     Q_D(ContactMonitor);

@@ -33,7 +33,7 @@ using namespace KPeople;
 QWidget *EmailFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const
 {
     if (person.allEmails().isEmpty()) {
-        return 0;
+        return nullptr;
     }
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(widget);

@@ -43,7 +43,7 @@ void PersonsModelTest::initTestCase()
 
     // Called before the first testfunction is executed
     PersonManager::instance(m_database.fileName());
-    m_source = new FakeContactSource(0); //don't own. PersonPluginManager removes it on destruction
+    m_source = new FakeContactSource(nullptr); //don't own. PersonPluginManager removes it on destruction
     QHash<QString, BasePersonsDataSource *> sources;
     sources[QStringLiteral("fakesource")] = m_source;
     PersonPluginManager::setDataSourcePlugins(sources);

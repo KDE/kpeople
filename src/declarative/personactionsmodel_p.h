@@ -42,7 +42,7 @@ public:
         ActionTypeRole
     };
 
-    PersonActionsModel(QObject *parent = 0);
+    PersonActionsModel(QObject *parent = nullptr);
     virtual ~PersonActionsModel();
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;

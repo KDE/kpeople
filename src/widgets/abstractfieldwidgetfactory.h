@@ -33,7 +33,7 @@ class KPEOPLE_EXPORT AbstractFieldWidgetFactory : public QObject
 {
     Q_OBJECT
 public:
-    explicit AbstractFieldWidgetFactory(QObject *parent = 0);
+    explicit AbstractFieldWidgetFactory(QObject *parent = nullptr);
     virtual ~AbstractFieldWidgetFactory();
 
     virtual QString label() const = 0;

@@ -82,7 +82,7 @@ Q_SIGNALS:
     void contactAddedToPerson(const QString &contactUri, const QString &newPersonUri);
 
 protected:
-    explicit PersonManager(const QString &databasePath, QObject *parent = 0);
+    explicit PersonManager(const QString &databasePath, QObject *parent = nullptr);
     virtual ~PersonManager();
 
 private:

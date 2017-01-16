@@ -27,7 +27,7 @@ namespace KPeople
 {
 struct PersonActionsPrivate {
     PersonActionsPrivate()
-        : person(0)
+        : person(nullptr)
     {}
 
     QList<QAction *> actions;

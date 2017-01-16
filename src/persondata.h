@@ -53,7 +53,7 @@ public:
      * The ID can be either a local application specific ID (such as akonadi://?item=15)
      * or a kpeople ID in the form kpeople://15
      */
-    PersonData(const QString &id, QObject *parent = 0);
+    PersonData(const QString &id, QObject *parent = nullptr);
 
     virtual ~PersonData();
 

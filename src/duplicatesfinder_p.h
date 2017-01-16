@@ -39,7 +39,7 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
 {
     Q_OBJECT
 public:
-    explicit DuplicatesFinder(PersonsModel *model, QObject *parent = 0);
+    explicit DuplicatesFinder(PersonsModel *model, QObject *parent = nullptr);
 
     /** Specifies a @p personUri id to look contacts for, in contrast to the whole contact list. */
     void setSpecificPerson(const QString &personUri);

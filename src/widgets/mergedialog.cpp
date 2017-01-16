@@ -57,9 +57,9 @@ MergeDialog::MergeDialog(QWidget *parent)
 {
     Q_D(MergeDialog);
 
-    d_ptr->personsModel = 0;
-    d_ptr->delegate = 0;
-    d_ptr->duplicatesFinder = 0;
+    d_ptr->personsModel = nullptr;
+    d_ptr->delegate = nullptr;
+    d_ptr->duplicatesFinder = nullptr;
 
     setWindowTitle(i18n("Duplicates Manager"));
     setLayout(new QVBoxLayout());

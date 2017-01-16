@@ -51,7 +51,7 @@ public:
      *
      * Note: Obviously, the @p model should be the same @p matches refers to.
      */
-    explicit MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent = 0);
+    explicit MatchesSolver(const QList<Match> &matches, PersonsModel *model, QObject *parent = nullptr);
 
     /**
      * Start doing some crazy matching!

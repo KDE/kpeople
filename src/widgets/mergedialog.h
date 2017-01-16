@@ -53,7 +53,7 @@ public:
         MergeReasonRole
     };
 
-    explicit MergeDialog(QWidget *parent = 0);
+    explicit MergeDialog(QWidget *parent = nullptr);
     ~MergeDialog();
 
     /**

@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QSharedPointer>
 
-#include <kpeople/kpeople_export.h>
+#include <kpeoplebackend/kpeoplebackend_export.h>
 #include <kpeoplebackend/abstractcontact.h>
 
 namespace KPeople
@@ -38,7 +38,7 @@ class AllContactsMonitorPrivate;
  * Subclasses are expected to be asynchronous
  *
  */
-class KPEOPLE_EXPORT AllContactsMonitor : public QObject
+class KPEOPLEBACKEND_EXPORT AllContactsMonitor : public QObject
 {
     Q_OBJECT
 public:

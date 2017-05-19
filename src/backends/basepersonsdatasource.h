@@ -23,7 +23,7 @@
 #include <QObject>
 #include <QVariant>
 
-#include <kpeople/kpeople_export.h>
+#include <kpeoplebackend/kpeoplebackend_export.h>
 
 #include "allcontactsmonitor.h"
 #include "contactmonitor.h"
@@ -34,7 +34,7 @@ namespace KPeople
 class BasePersonsDataSourcePrivate;
 
 //This is a QObject for KPluginFactory
-class KPEOPLE_EXPORT BasePersonsDataSource : public QObject
+class KPEOPLEBACKEND_EXPORT BasePersonsDataSource : public QObject
 {
     Q_OBJECT
 public:

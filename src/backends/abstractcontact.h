@@ -21,7 +21,7 @@
 
 #include <QSharedData>
 #include <QVariant>
-#include <kpeople/kpeople_export.h>
+#include <kpeoplebackend/kpeoplebackend_export.h>
 
 namespace KPeople
 {
@@ -35,7 +35,7 @@ namespace KPeople
  * @internal
  */
 
-class KPEOPLE_EXPORT AbstractContact : public QSharedData
+class KPEOPLEBACKEND_EXPORT AbstractContact : public QSharedData
 {
 public:
     typedef QExplicitlySharedDataPointer<AbstractContact> Ptr;

@@ -22,14 +22,14 @@
 #include <QObject>
 #include <QAction>
 
-#include <kpeople/kpeople_export.h>
+#include <kpeoplebackend/kpeoplebackend_export.h>
 #include <KPeople/PersonData>
 
 namespace KPeople
 {
 class PersonData;
 
-class KPEOPLE_EXPORT AbstractPersonAction : public QObject
+class KPEOPLEBACKEND_EXPORT AbstractPersonAction : public QObject
 {
     Q_OBJECT
 public:

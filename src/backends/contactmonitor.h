@@ -22,7 +22,7 @@
 
 #include <QObject>
 
-#include <kpeople/kpeople_export.h>
+#include <kpeoplebackend/kpeoplebackend_export.h>
 
 #include "abstractcontact.h"
 
@@ -39,7 +39,7 @@ class ContactMonitorPrivate;
  * Subclasses are expected to be asynchronous in loading data.
  *
  */
-class KPEOPLE_EXPORT ContactMonitor: public QObject
+class KPEOPLEBACKEND_EXPORT ContactMonitor: public QObject
 {
     Q_OBJECT
 public:

@@ -21,15 +21,13 @@
 
 #include <QAbstractListModel>
 
-#include <kpeople/kpeople_export.h>
-
 class QAction;
 
 namespace KPeople
 {
 class PersonActionsPrivate;
 
-class KPEOPLE_EXPORT PersonActionsModel : public QAbstractListModel
+class PersonActionsModel : public QAbstractListModel
 {
     Q_OBJECT
     Q_PROPERTY(int count READ rowCount NOTIFY personChanged)

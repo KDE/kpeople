@@ -65,9 +65,12 @@ install (FILES ${KPeopleWidgets_CamelCase_HEADERS}
          COMPONENT Devel
 )
 install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h
   ${KPeopleWidgets_HEADERS}
   DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/kpeople/widgets COMPONENT Devel
 )
+
+generate_export_header(KF5PeopleWidgets EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h BASE_NAME KPeopleWidgets)
 
 install (FILES persondetailsplugin.desktop
          DESTINATION

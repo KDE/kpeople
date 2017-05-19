@@ -20,7 +20,7 @@
 #ifndef MERGEDELEGATE_H
 #define MERGEDELEGATE_H
 
-#include <kpeople/kpeople_export.h>
+#include <kpeople/widgets/kpeoplewidgets_export.h>
 
 #include <QItemSelection>
 #include <QItemDelegate>
@@ -29,7 +29,7 @@
 class QAbstractItemView;
 class QItemSelection;
 
-class KPEOPLE_EXPORT MergeDelegate: public KExtendableItemDelegate
+class KPEOPLEWIDGETS_EXPORT MergeDelegate: public KExtendableItemDelegate
 {
     Q_OBJECT
 

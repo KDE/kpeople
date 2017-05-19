@@ -22,14 +22,14 @@
 
 #include <QDialog>
 
-#include <kpeople/kpeople_export.h>
+#include <kpeople/widgets/kpeoplewidgets_export.h>
 #include "../persondata.h"
 
 namespace KPeople
 {
 class PersonDetailsDialogPrivate;
 
-class KPEOPLE_EXPORT PersonDetailsDialog : public QDialog
+class KPEOPLEWIDGETS_EXPORT PersonDetailsDialog : public QDialog
 {
     Q_OBJECT
 

@@ -22,14 +22,14 @@
 #include <QWidget>
 #include <QIcon>
 
-#include <kpeople/kpeople_export.h>
+#include <kpeople/widgets/kpeoplewidgets_export.h>
 
 namespace KPeople
 {
 class AbstractFieldWidgetFactoryPrivate;
 class PersonData;
 
-class KPEOPLE_EXPORT AbstractFieldWidgetFactory : public QObject
+class KPEOPLEWIDGETS_EXPORT AbstractFieldWidgetFactory : public QObject
 {
     Q_OBJECT
 public:

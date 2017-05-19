@@ -20,7 +20,7 @@
 #ifndef MERGEDIALOG_H
 #define MERGEDIALOG_H
 
-#include <kpeople/kpeople_export.h>
+#include <kpeople/widgets/kpeoplewidgets_export.h>
 
 #include <QDialog>
 #include <QModelIndex>
@@ -41,7 +41,7 @@ class Match;
  * By properly mergeing contacts, the user will end up with having more
  * information on each person.
  */
-class KPEOPLE_EXPORT MergeDialog : public QDialog
+class KPEOPLEWIDGETS_EXPORT MergeDialog : public QDialog
 {
     Q_OBJECT
 

@@ -20,7 +20,7 @@
 #define KPEOPLEWIDGETS_GLOBAL_H
 
 #include <QList>
-#include <kpeople/kpeople_export.h>
+#include <kpeople/widgets/kpeoplewidgets_export.h>
 
 class QString;
 class QObject;
@@ -48,7 +48,7 @@ enum ActionType {
  * Returns a list of actions relevant to the specified @p contactUri where
  * each QAction will have @p parent passed as its parent QObject
  */
-KPEOPLE_EXPORT QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent);
+KPEOPLEWIDGETS_EXPORT QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent);
 }
 
 #endif // KPEOPLEWIDGETS_GLOBAL_H

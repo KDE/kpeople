@@ -22,7 +22,7 @@
 #include <QWidget>
 #include <QVariantList>
 
-#include <kpeople/kpeople_export.h>
+#include <kpeople/widgets/kpeoplewidgets_export.h>
 
 #include "../persondata.h"
 
@@ -37,7 +37,7 @@ class PersonDetailsViewPrivate;
  * Use PersonDetailsView to integrate a person's information
  * in the GUI.
  */
-class KPEOPLE_EXPORT PersonDetailsView : public QWidget
+class KPEOPLEWIDGETS_EXPORT PersonDetailsView : public QWidget
 {
     Q_OBJECT
 public:

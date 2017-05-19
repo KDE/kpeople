@@ -119,7 +119,9 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     //create plugins
+#ifdef __GNUC__
 #warning figure out a way to list properties
+#endif
     QStringList fields { QStringLiteral("name"), QStringLiteral("all-email") };
     Q_FOREACH (const QString &field, fields) {
         d->m_plugins << new CoreFieldsPlugin(field);

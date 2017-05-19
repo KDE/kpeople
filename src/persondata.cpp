@@ -121,7 +121,9 @@ void PersonData::onContactChanged()
 
     ContactMonitor *watcher = qobject_cast<ContactMonitor *>(sender());
     if (d->metaContact.contactUris().contains(watcher->contactUri())) {
+#ifdef __GNUC__
 #warning probably not needed anymore
+#endif
         d->metaContact.updateContact(watcher->contactUri(), watcher->contact());
     } else {
         d->metaContact.insertContact(watcher->contactUri(), watcher->contact());

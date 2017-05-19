@@ -77,7 +77,9 @@ CoreFieldsPlugin::~CoreFieldsPlugin()
 
 QString CoreFieldsPlugin::label() const
 {
+#ifdef __GNUC__
 #warning fixme, should be made user-visible somehow
+#endif
     return m_field;
 }
 

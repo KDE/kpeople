@@ -34,7 +34,7 @@ class KPEOPLEWIDGETS_EXPORT PersonDetailsDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit PersonDetailsDialog(QWidget *parent = nullptr, Qt::WindowFlags f = nullptr);
+    explicit PersonDetailsDialog(QWidget *parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
     virtual ~PersonDetailsDialog();
 
     void setPerson(PersonData *person);

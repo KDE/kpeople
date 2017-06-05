@@ -44,3 +44,6 @@ install(FILES
 )
 
 generate_export_header(KF5PeopleBackend EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeoplebackend/kpeoplebackend_export.h BASE_NAME KPeopleBackend)
+
+# make available to ecm_add_qch in parent folder
+set(KPeopleBackend_QCH_SOURCES ${KPeopleBackend_HEADERS} PARENT_SCOPE)

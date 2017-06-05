@@ -26,12 +26,16 @@ include(ECMGenerateHeaders)
 include(ECMSetupVersion)
 include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
+include(ECMAddQch)
 include(CMakePackageConfigHelpers)
 include(ECMGeneratePriFile)
 include(GenerateExportHeader)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
+
+option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
+add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")
 
 add_definitions(-DTRANSLATION_DOMAIN=\"kpeople5\")
 
@@ -41,12 +45,6 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KPEOPLE
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h"
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
                         SOVERSION 5)
-
-configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/KF5PeopleConfig.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
-  INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
-)
 
 option(ENABLE_EXAMPLES "Build the examples" "ON")
 
@@ -59,6 +57,22 @@ if (ENABLE_EXAMPLES)
   add_subdirectory(examples)
 endif()
 add_subdirectory(autotests)
+
+if (BUILD_QCH)
+    ecm_install_qch_export(
+        TARGETS KF5People_QCH
+        FILE KF5PeopleQchTargets.cmake
+        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
+        COMPONENT Devel
+    )
+    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF5PeopleQchTargets.cmake\")")
+endif()
+
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/KF5PeopleConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
+  INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
+)
 
 install(EXPORT KPeopleTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KPeopleTargets.cmake NAMESPACE KF5::)
 install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"

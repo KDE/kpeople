@@ -70,6 +70,38 @@ install(FILES
 
 generate_export_header(KF5People EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
 
+
+if(BUILD_QCH)
+    ecm_add_qch(
+        KF5People_QCH
+        NAME KPeople
+        BASE_NAME KF5People
+        VERSION ${KF5_VERSION}
+        ORG_DOMAIN org.kde
+        SOURCES # using only public headers, to cover only public API
+            ${KPeople_HEADERS}
+            ${KPeopleWidgets_QCH_SOURCES}
+            ${KPeopleBackend_QCH_SOURCES}
+        MD_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md"
+        LINK_QCHS
+            Qt5Gui_QCH
+            Qt5Widgets_QCH
+        BLANK_MACROS
+            KPEOPLE_EXPORT
+            KPEOPLE_DEPRECATED
+            KPEOPLE_DEPRECATED_EXPORT
+            KPEOPLEWIDGETS_EXPORT
+            KPEOPLEWIDGETS_DEPRECATED
+            KPEOPLEWIDGETS_DEPRECATED_EXPORT
+            KPEOPLEBACKEND_EXPORT
+            KPEOPLEBACKEND_DEPRECATED
+            KPEOPLEBACKEND_DEPRECATED_EXPORT
+        TAGFILE_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
+        QCH_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
+        COMPONENT Devel
+    )
+endif()
+
 install (FILES
          kpeople_data_source.desktop
          kpeople_plugin.desktop

@@ -32,6 +32,7 @@ namespace KPeople
  * To obtain it from a front-end application PersonData and PersonsModel
  * should be used.
  *
+ * @since 5.8
  * @internal
  */
 

@@ -35,6 +35,7 @@ class PersonsSortFilterProxyModelPrivate;
  * than the complete set as a whole.
  *
  * @sa PersonsModel
+ * @since 5.12
  */
 class KPEOPLE_EXPORT PersonsSortFilterProxyModel : public QSortFilterProxyModel
 {

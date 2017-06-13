@@ -40,6 +40,8 @@ class Match;
  *
  * By properly mergeing contacts, the user will end up with having more
  * information on each person.
+ *
+ * @since 5.8
  */
 class KPEOPLEWIDGETS_EXPORT MergeDialog : public QDialog
 {

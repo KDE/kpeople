@@ -38,6 +38,8 @@ class PersonsModelPrivate;
  * This class creates a model of all known contacts from all sources
  * Contacts are represented as a tree where the top level represents a "person" which is an
  * amalgamation of all the sub-contacts
+ *
+ * @since 5.8
  */
 class KPEOPLE_EXPORT PersonsModel : public QAbstractItemModel
 {

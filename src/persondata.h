@@ -40,6 +40,8 @@ class PersonData;
  * available, which is done by PersonsModel).
  * This class will provide comfortable interfaces so it can be easily adopted
  * in any application.
+ *
+ * @since 5.8
  */
 class KPEOPLE_EXPORT PersonData : public QObject
 {

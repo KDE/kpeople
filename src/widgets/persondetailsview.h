@@ -36,6 +36,8 @@ class PersonDetailsViewPrivate;
 /**
  * Use PersonDetailsView to integrate a person's information
  * in the GUI.
+ *
+ * @since 5.8
  */
 class KPEOPLEWIDGETS_EXPORT PersonDetailsView : public QWidget
 {

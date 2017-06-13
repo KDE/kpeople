@@ -38,6 +38,7 @@ class ContactMonitorPrivate;
  * It is used for optimising performance over loading all contacts and filtering the results.
  * Subclasses are expected to be asynchronous in loading data.
  *
+ * @since 5.8
  */
 class KPEOPLEBACKEND_EXPORT ContactMonitor: public QObject
 {

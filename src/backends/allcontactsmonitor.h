@@ -37,6 +37,7 @@ class AllContactsMonitorPrivate;
  *
  * Subclasses are expected to be asynchronous
  *
+ * @since 5.8
  */
 class KPEOPLEBACKEND_EXPORT AllContactsMonitor : public QObject
 {

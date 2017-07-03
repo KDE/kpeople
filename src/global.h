@@ -32,7 +32,7 @@ class PersonData;
  * Merge all uris into a single person.
  * Ids can be a mix of person Ids and contact IDs.
  *
- * @arg uris a list of all identifiers to be merged
+ * @param uris a list of all identifiers to be merged
  *
  * @return the identifier of the new person or an empty string upon failure
  */

@@ -88,8 +88,7 @@ void PersonsModelTest::mergeContacts()
     QCOMPARE(newUri, QStringLiteral("kpeople://1"));
 
     // TODO: replace with actual model signals spying
-    QTest::qWait(2000); //give it a bit of time to update the model
-    QCOMPARE(m_model->rowCount(), 3);
+    QTRY_COMPARE(m_model->rowCount(), 3);
     QCOMPARE(m_model->rowCount(m_model->indexForPersonUri(newUri)), 2);
 
     // There needs to be 2 rows inserted - one for the new Person

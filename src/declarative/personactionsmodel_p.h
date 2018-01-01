@@ -51,7 +51,7 @@ public:
 
     QList<QAction *> actions() const;
 
-    virtual QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
 
     Q_INVOKABLE void triggerAction(int row) const;
 

@@ -48,7 +48,7 @@ public:
     QList<Match> results() const;
 
 public Q_SLOTS:
-    virtual void start() Q_DECL_OVERRIDE;
+    void start() Q_DECL_OVERRIDE;
 
 private Q_SLOTS:
     void doSearch();

@@ -1,5 +1,4 @@
 [Desktop Entry]
-Encoding=UTF-8
 Type=Service
 ServiceTypes=KPeople/DataSource
 X-KDE-Library=akonadi_kpeople_plugin

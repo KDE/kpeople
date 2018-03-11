@@ -26,7 +26,7 @@
 #include <actions.h>
 
 #include "declarativepersondata.h"
-#include <QtQml/qqml.h>
+#include <qqml.h>
 
 class ActionTypeWrapper : public QObject {
     Q_OBJECT

@@ -22,7 +22,7 @@
 
 #include <QList>
 #include <QPersistentModelIndex>
-#include <QtCore/qnamespace.h>
+#include <qnamespace.h>
 
 #include "backends/abstractcontact.h"
 #include "kpeople/kpeople_export.h"

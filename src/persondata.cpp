@@ -70,6 +70,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
     Q_FOREACH (const QString &contactUri, d->contactUris) {
         //load the correct data source for this contact ID
         const QString sourceId = contactUri.left(contactUri.indexOf(QStringLiteral("://")));
+        Q_ASSERT(!sourceId.isEmpty());
         BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
         if (dataSource) {
             ContactMonitorPtr cw = dataSource->contactMonitor(contactUri);
@@ -133,7 +134,6 @@ void PersonData::onContactChanged()
 
 QPixmap PersonData::photo() const
 {
-    Q_D(const PersonData);
     QPixmap avatar;
 
     QVariant pic = contactCustomProperty(AbstractContact::PictureProperty);
@@ -157,7 +157,6 @@ QVariant PersonData::contactCustomProperty(const QString &key) const
 
 QString PersonData::presenceIconName() const
 {
-    Q_D(const PersonData);
     QString contactPresence = contactCustomProperty(QStringLiteral("telepathy-presence")).toString();
     return KPeople::iconNameForPresenceString(contactPresence);
 }

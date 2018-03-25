@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Service
-ServiceTypes=KPeople/DataSource
+X-KDE-ServiceTypes=KPeople/DataSource
 X-KDE-Library=akonadi_kpeople_plugin
 X-KDE-PluginInfo-Author=David Edmundson
 X-KDE-PluginInfo-Email=davidedmundson@kde.org

@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Service
-ServiceTypes=KPeopleWidgets/Plugin
+X-KDE-ServiceTypes=KPeopleWidgets/Plugin
 
 X-KDE-Library=phonedetailswidgetplugin
 X-KDE-PluginInfo-Name=phonedetailswidgetplugin

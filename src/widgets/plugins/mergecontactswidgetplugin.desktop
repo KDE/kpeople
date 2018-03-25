@@ -1,6 +1,6 @@
 [Desktop Entry]
 Type=Service
-ServiceTypes=KPeopleWidgets/Plugin
+X-KDE-ServiceTypes=KPeopleWidgets/Plugin
 
 X-KDE-Library=mergecontactswidgetplugin
 X-KDE-PluginInfo-Name=mergecontactswidgetplugin

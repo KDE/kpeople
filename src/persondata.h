@@ -91,7 +91,7 @@ public:
     /**
      * @returns the property for a said @p key.
      */
-    QVariant contactCustomProperty(const QString &key) const;
+    Q_SCRIPTABLE QVariant contactCustomProperty(const QString &key) const;
 
     /**
     * Returns the contact's online presence.

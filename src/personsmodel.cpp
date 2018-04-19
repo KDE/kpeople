@@ -56,10 +56,10 @@ public:
     QHash<QString /*Person ID*/, QPersistentModelIndex /*Row*/> personIndex;
 
     //a list so we have an order in the model
-    QList<MetaContact> metacontacts; //TODO: Make QVector
+    QVector<MetaContact> metacontacts;
 
     QString genericAvatarImagePath;
-    QList<AllContactsMonitorPtr> m_sourceMonitors;
+    QVector<AllContactsMonitorPtr> m_sourceMonitors;
 
     int initialFetchesDoneCount;
 

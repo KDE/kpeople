@@ -28,7 +28,7 @@ class PersonPresentationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    PersonPresentationWidget(const QString &name, const QIcon &avatar, QWidget *parent = 0);
+    PersonPresentationWidget(const QString &name, const QIcon &avatar, QWidget *parent = nullptr);
     ~PersonPresentationWidget();
 
     bool isContactSelected() const

@@ -33,7 +33,7 @@ class KPEOPLEBACKEND_EXPORT AbstractPersonAction : public QObject
 {
     Q_OBJECT
 public:
-    AbstractPersonAction(QObject *parent);
+    explicit AbstractPersonAction(QObject *parent);
     /** A list of actions that can be executed for a contact
      * Disabled actions should not be added
      *

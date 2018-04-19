@@ -31,7 +31,7 @@ class DeclarativePersonData : public QObject
     Q_PROPERTY(KPeople::PersonData *person READ person NOTIFY personChanged)
 
 public:
-    DeclarativePersonData(QObject *parent = nullptr);
+    explicit DeclarativePersonData(QObject *parent = nullptr);
 
     void setPersonUri(const QString &id);
     QString personUri() const;
@@ -43,7 +43,7 @@ Q_SIGNALS:
 
 private:
     QString m_id;
-    KPeople::PersonData *m_person;
+    KPeople::PersonData *m_person = nullptr;
 };
 
 #endif // DECLARATIVEPERSONDATA_H

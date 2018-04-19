@@ -43,8 +43,8 @@ Q_OBJECT
 /** Specifies the properties that should be provided by the contact for the contact to be shown. */
 Q_PROPERTY(QStringList requiredProperties READ requiredProperties WRITE setRequiredProperties)
 public:
-    PersonsSortFilterProxyModel(QObject *parent = nullptr);
-    ~PersonsSortFilterProxyModel();
+    explicit PersonsSortFilterProxyModel(QObject *parent = nullptr);
+    ~PersonsSortFilterProxyModel() Q_DECL_OVERRIDE;
 
     QStringList requiredProperties() const;
     void setRequiredProperties(const QStringList &props);

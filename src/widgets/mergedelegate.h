@@ -35,7 +35,7 @@ class KPEOPLEWIDGETS_EXPORT MergeDelegate: public KExtendableItemDelegate
 
 public:
     explicit MergeDelegate(QAbstractItemView *parent);
-    ~MergeDelegate();
+    ~MergeDelegate() Q_DECL_OVERRIDE;
 
     static QSize pictureSize();
 

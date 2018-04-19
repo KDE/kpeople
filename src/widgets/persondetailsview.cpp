@@ -57,7 +57,7 @@ class CoreFieldsPlugin : public AbstractFieldWidgetFactory
 {
 public:
     CoreFieldsPlugin(const QString &field);
-    virtual ~CoreFieldsPlugin();
+    ~CoreFieldsPlugin() Q_DECL_OVERRIDE;
     QString label() const Q_DECL_OVERRIDE;
     int sortWeight() const Q_DECL_OVERRIDE;
     QWidget *createDetailsWidget(const PersonData &person, QWidget *parent) const Q_DECL_OVERRIDE;

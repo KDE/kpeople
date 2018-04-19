@@ -24,14 +24,12 @@ using namespace KPeople;
 class KPeople::AllContactsMonitorPrivate
 {
 public:
-    AllContactsMonitorPrivate():
-        m_initialFetchDone(false),
-        m_initialFetchSucccess(false)
+    AllContactsMonitorPrivate()
     {
     }
 
-    bool m_initialFetchDone;
-    bool m_initialFetchSucccess;
+    bool m_initialFetchDone = false;
+    bool m_initialFetchSucccess = false;
 };
 
 AllContactsMonitor::AllContactsMonitor():

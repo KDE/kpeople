@@ -39,10 +39,10 @@ using namespace KPeople;
 
 MergeContactsWidget::MergeContactsWidget(QWidget *parent, const QVariantList &args)
     : AbstractPersonDetailsWidget(parent)
-    , m_person(0)
-    , m_model(0)
-    , m_containerListDetails(0)
-    , m_duplicatesBuster(0)
+    , m_person(nullptr)
+    , m_model(nullptr)
+    , m_containerListDetails(nullptr)
+    , m_duplicatesBuster(nullptr)
 {
     Q_UNUSED(args);
     setLayout(new QVBoxLayout());

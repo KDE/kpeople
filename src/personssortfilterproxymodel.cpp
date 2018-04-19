@@ -56,6 +56,9 @@ bool PersonsSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelI
     const QModelIndex idx = sourceModel()->index(source_row, 0, source_parent);
     Q_ASSERT(idx.isValid());
 
+    if (!QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent))
+        return false;
+
     const AbstractContact::Ptr contact = idx.data(KPeople::PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
     Q_ASSERT(contact);
 

@@ -26,9 +26,9 @@ using namespace KPeople;
 class EmailFieldsPlugin : public AbstractFieldWidgetFactory
 {
 public:
-    QString label() const Q_DECL_OVERRIDE;
-    int sortWeight() const Q_DECL_OVERRIDE;
-    QWidget *createDetailsWidget(const PersonData &person, QWidget *parent) const Q_DECL_OVERRIDE;
+    QString label() const override;
+    int sortWeight() const override;
+    QWidget *createDetailsWidget(const PersonData &person, QWidget *parent) const override;
 };
 
 #endif // EMAIL_DETAILS_WIDGET_H

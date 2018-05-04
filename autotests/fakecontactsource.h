@@ -37,11 +37,11 @@ class FakeContactSource : public KPeople::BasePersonsDataSource
 {
 public:
     FakeContactSource(QObject *parent, const QVariantList &args = QVariantList());
-    QString sourcePluginId() const Q_DECL_OVERRIDE;
+    QString sourcePluginId() const override;
 
     void changeProperty(const QString& key, const QVariant& value);
 protected:
-    KPeople::AllContactsMonitor *createAllContactsMonitor() Q_DECL_OVERRIDE;
+    KPeople::AllContactsMonitor *createAllContactsMonitor() override;
 };
 
 //----------------------------------------------------------------------------
@@ -52,7 +52,7 @@ class FakeAllContactsMonitor : public KPeople::AllContactsMonitor
 public:
     explicit FakeAllContactsMonitor();
     void changeProperty(const QString& key, const QVariant& value);
-    QMap<QString, KPeople::AbstractContact::Ptr> contacts() Q_DECL_OVERRIDE;
+    QMap<QString, KPeople::AbstractContact::Ptr> contacts() override;
 };
 
 #endif // FAKECONTACTSOURCE_H

@@ -44,12 +44,12 @@ Q_OBJECT
 Q_PROPERTY(QStringList requiredProperties READ requiredProperties WRITE setRequiredProperties)
 public:
     explicit PersonsSortFilterProxyModel(QObject *parent = nullptr);
-    ~PersonsSortFilterProxyModel() Q_DECL_OVERRIDE;
+    ~PersonsSortFilterProxyModel() override;
 
     QStringList requiredProperties() const;
     void setRequiredProperties(const QStringList &props);
 
-    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const Q_DECL_OVERRIDE;
+    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
 private:
     Q_DISABLE_COPY(PersonsSortFilterProxyModel)

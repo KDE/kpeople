@@ -57,10 +57,10 @@ class CoreFieldsPlugin : public AbstractFieldWidgetFactory
 {
 public:
     CoreFieldsPlugin(const QString &field);
-    ~CoreFieldsPlugin() Q_DECL_OVERRIDE;
-    QString label() const Q_DECL_OVERRIDE;
-    int sortWeight() const Q_DECL_OVERRIDE;
-    QWidget *createDetailsWidget(const PersonData &person, QWidget *parent) const Q_DECL_OVERRIDE;
+    ~CoreFieldsPlugin() override;
+    QString label() const override;
+    int sortWeight() const override;
+    QWidget *createDetailsWidget(const PersonData &person, QWidget *parent) const override;
 private:
     QString m_field;
 };

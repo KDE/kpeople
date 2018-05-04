@@ -41,17 +41,17 @@ public:
     };
 
     explicit PersonActionsModel(QObject *parent = nullptr);
-    ~PersonActionsModel() Q_DECL_OVERRIDE;
+    ~PersonActionsModel() override;
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const Q_DECL_OVERRIDE;
-    int rowCount(const QModelIndex &parent = QModelIndex()) const Q_DECL_OVERRIDE;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     QString personUri() const;
     void setPersonUri(const QString &personUri);
 
     QList<QAction *> actions() const;
 
-    QHash<int, QByteArray> roleNames() const Q_DECL_OVERRIDE;
+    QHash<int, QByteArray> roleNames() const override;
 
     Q_INVOKABLE void triggerAction(int row) const;
 

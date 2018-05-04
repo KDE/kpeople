@@ -35,7 +35,7 @@ class KPEOPLEWIDGETS_EXPORT MergeDelegate: public KExtendableItemDelegate
 
 public:
     explicit MergeDelegate(QAbstractItemView *parent);
-    ~MergeDelegate() Q_DECL_OVERRIDE;
+    ~MergeDelegate() override;
 
     static QSize pictureSize();
 
@@ -45,7 +45,7 @@ public Q_SLOTS:
 
 private:
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index)const Q_DECL_OVERRIDE;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index)const override;
     QWidget *buildExtensionWidget(const QModelIndex &idx);
     QWidget *buildMultipleLineLabel(const QModelIndex &idx);
 

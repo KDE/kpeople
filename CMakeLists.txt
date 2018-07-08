@@ -56,7 +56,9 @@ add_subdirectory (pixmaps)
 if (ENABLE_EXAMPLES)
   add_subdirectory(examples)
 endif()
-add_subdirectory(autotests)
+if (BUILD_TESTING)
+    add_subdirectory(autotests)
+endif()
 
 if (BUILD_QCH)
     ecm_install_qch_export(

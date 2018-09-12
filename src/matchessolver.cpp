@@ -22,7 +22,7 @@
 #include "personsmodel.h"
 #include "personmanager_p.h"
 #include <QString>
-#include <QDebug>
+#include "kpeople_debug.h"
 
 using namespace KPeople;
 
@@ -86,7 +86,7 @@ void MatchesSolver::startMatching()
 
     Q_FOREACH (const QSet<QString> &uris, jobsData) {
         if (PersonManager::instance()->mergeContacts(uris.toList()).isEmpty()) {
-            qWarning() << "error: failing to merge contacts: " << uris;
+            qCWarning(KPEOPLE_LOG) << "error: failing to merge contacts: " << uris;
         }
     }
     emitResult();

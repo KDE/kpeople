@@ -22,7 +22,7 @@
 #include <QFormLayout>
 #include <QLabel>
 #include <QVBoxLayout>
-#include <QDebug>
+#include "kpeople_widgets_debug.h"
 #include <QList>
 #include <QStandardPaths>
 

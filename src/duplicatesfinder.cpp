@@ -20,7 +20,7 @@
 #include "personsmodel.h"
 
 #include <QUrl>
-#include <QDebug>
+#include "kpeople_debug.h"
 
 using namespace KPeople;
 
@@ -54,7 +54,7 @@ void DuplicatesFinder::doSearch()
     m_matches.clear();
 
     if (m_model->rowCount() == 0) {
-        qWarning() << "finding duplicates on empty model!";
+        qCWarning(KPEOPLE_LOG) << "finding duplicates on empty model!";
     }
 
     for (int i = 0, rows = m_model->rowCount(); i < rows; i++) {

@@ -31,7 +31,7 @@
 #include <QLabel>
 #include <QCheckBox>
 #include <QItemSelection>
-#include <QDebug>
+#include "kpeople_widgets_debug.h"
 #include <QIcon>
 #include <KLocalizedString>
 

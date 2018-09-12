@@ -20,7 +20,7 @@
 #include "personmanager_p.h"
 
 #include <QVariant>
-#include <QDebug>
+#include "kpeople_debug.h"
 #include <QStandardPaths>
 #include <QDir>
 #include <QSqlError>
@@ -64,7 +64,7 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent):
 {
     m_db.setDatabaseName(databasePath);
     if (!m_db.open()) {
-        qWarning() << "Couldn't open the database at" << databasePath;
+        qCWarning(KPEOPLE_LOG) << "Couldn't open the database at" << databasePath;
     }
     m_db.exec(QStringLiteral("CREATE TABLE IF NOT EXISTS persons (contactID VARCHAR UNIQUE NOT NULL, personID INT NOT NULL)"));
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)"));

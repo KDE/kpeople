@@ -19,7 +19,7 @@
 #include "metacontact_p.h"
 #include "global.h"
 #include <QSharedData>
-#include <QDebug>
+#include "kpeople_debug.h"
 #include <QSet>
 
 namespace KPeople
@@ -162,7 +162,7 @@ int MetaContact::insertContact(const QString &contactUri, const AbstractContact:
     if (index >= 0) {
         reload();
     } else {
-        qWarning() << "Inserting an already-present contact" << contactUri;
+        qCWarning(KPEOPLE_LOG) << "Inserting an already-present contact" << contactUri;
     }
     return index;
 }
@@ -186,7 +186,7 @@ int MetaContact::updateContact(const QString &contactUri, const AbstractContact:
     const int index = d->contactUris.indexOf(contactUri);
     Q_ASSERT(index < 0 || d->contacts[index] == contact);
     if (index < 0) {
-        qWarning() << "contact not part of the metacontact";
+        qCWarning(KPEOPLE_LOG) << "contact not part of the metacontact";
     }
     return index;
 }

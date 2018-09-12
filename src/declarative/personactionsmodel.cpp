@@ -20,7 +20,7 @@
 #include <kpeople/persondata.h>
 #include <kpeople/actions.h>
 #include <QAction>
-#include <QDebug>
+#include "kpeople_debug.h"
 #include <QPointer>
 
 namespace KPeople

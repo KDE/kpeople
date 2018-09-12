@@ -30,7 +30,7 @@
 #include <QPushButton>
 #include <QDialogButtonBox>
 #include <QListView>
-#include <QDebug>
+#include "kpeople_widgets_debug.h"
 #include <QStandardItemModel>
 
 #include <KLocalizedString>
@@ -108,7 +108,7 @@ void MergeDialog::searchForDuplicates()
 {
     Q_D(MergeDialog);
     if (!d->personsModel || !d->personsModel->rowCount() || d->duplicatesFinder) {
-        qWarning() << "MergeDialog failed to launch the duplicates research";
+        qCWarning(KPEOPLE_WIDGETS_LOG) << "MergeDialog failed to launch the duplicates research";
         return;
     }
     d->duplicatesFinder = new DuplicatesFinder(d->personsModel);
@@ -221,7 +221,7 @@ QStandardItem *MergeDialog::itemMergeContactFromMatch(bool isParent, const Match
     } else if (deco.type() == (QVariant::Image)) {
         icon = QIcon(QPixmap::fromImage(deco.value<QImage>()));
     } else {
-        qWarning() << "unknown decoration type" << deco.typeName();
+        qCWarning(KPEOPLE_WIDGETS_LOG) << "unknown decoration type" << deco.typeName();
     }
     item->setIcon(icon);
     return item;

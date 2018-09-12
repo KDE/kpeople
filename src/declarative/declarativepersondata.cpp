@@ -18,7 +18,7 @@
 
 #include "declarativepersondata.h"
 
-#include <QDebug>
+#include "kpeople_debug.h"
 #include "../persondata.h"
 
 DeclarativePersonData::DeclarativePersonData(QObject *parent)

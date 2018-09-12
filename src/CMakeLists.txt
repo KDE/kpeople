@@ -7,7 +7,10 @@ add_subdirectory(plugins)
 add_subdirectory(widgets)
 add_subdirectory(backends)
 
+ecm_qt_declare_logging_category(KF5People_debug_SRCS HEADER kpeople_debug.h IDENTIFIER KPEOPLE_LOG CATEGORY_NAME kf5.kpeople)
+
 add_library (KF5People
+    ${KF5People_debug_SRCS}
     global.cpp
     metacontact.cpp
     persondata.cpp
@@ -19,6 +22,7 @@ add_library (KF5People
     personmanager.cpp
     personssortfilterproxymodel.cpp
 )
+
 add_library(KF5::People ALIAS KF5People)
 
 target_link_libraries (KF5People

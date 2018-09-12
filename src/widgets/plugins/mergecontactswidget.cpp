@@ -29,7 +29,7 @@
 
 #include <KLocalizedString>
 #include <KJob>
-#include <KDebug>
+#include "kpeople_debug.h"
 #include <KPluginFactory>
 
 K_PLUGIN_FACTORY(MergeContactsWidgetFactory, registerPlugin<MergeContactsWidget>();)
@@ -92,7 +92,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     // building personPresentationWidget to fill up the list
     Q_FOREACH (const QPersistentModelIndex &duplicate, duplicates) {
         // displaying contact in a user friendly way
-        kDebug() << "Name retireved form the duplicate :" << duplicate.data(Qt::DisplayRole).toString();
+        qCDebug(KPEOPLE_LOG) << "Name retireved form the duplicate :" << duplicate.data(Qt::DisplayRole).toString();
 
         QIcon avatar ;
         QString name = duplicate.data(Qt::DisplayRole).toString();
@@ -131,7 +131,7 @@ QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(cons
             duplicateMatching.append(match.indexA);
         }
     }
-    kDebug() << "Result of the duplicates Buster :" << duplicateMatching.size();
+    qCDebug(KPEOPLE_LOG) << "Result of the duplicates Buster :" << duplicateMatching.size();
     return duplicateMatching;
 }
 
@@ -139,7 +139,7 @@ void MergeContactsWidget::searchForDuplicates()
 {
     m_mergeButton->setVisible(false);
     if (m_duplicatesBuster || !m_person || !m_person->isValid() || !m_model) {
-        kDebug() << "Merge Widget failed to launch the duplicates search";
+        qCDebug(KPEOPLE_LOG) << "Merge Widget failed to launch the duplicates search";
         return;
     }
     m_duplicatesBuster = new DuplicatesFinder(m_model , this);
@@ -187,6 +187,6 @@ QList<QPersistentModelIndex> MergeContactsWidget::getContactsCheckedToMerge() co
             indexesToMerge.append(mergeContact.first);
         }
     }
-    kDebug() << "Amount of checked box enable :" << indexesToMerge.size();
+    qCDebug(KPEOPLE_LOG) << "Amount of checked box enable :" << indexesToMerge.size();
     return indexesToMerge;
 }

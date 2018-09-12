@@ -29,7 +29,7 @@
 #include <KPluginFactory>
 #include <KPluginLoader>
 
-#include <QDebug>
+#include "kpeople_akonadi_plugin_debug.h"
 
 using namespace Akonadi;
 
@@ -128,7 +128,7 @@ void AkonadiAllContacts::onItemRemoved(const Item &item)
 void AkonadiAllContacts::onItemsFetched(KJob *job)
 {
     if (job->error()) {
-        kWarning() << job->errorString();
+        qCWarning(KPEOPLE_AKONADI_PLUGIN_LOG) << job->errorString();
         m_fetchError = true;
     } else {
         ItemFetchJob *itemFetchJob = qobject_cast<ItemFetchJob *>(job);
@@ -145,7 +145,7 @@ void AkonadiAllContacts::onItemsFetched(KJob *job)
 void AkonadiAllContacts::onCollectionsFetched(KJob *job)
 {
     if (job->error()) {
-        kWarning() << job->errorString();
+        qCWarning(KPEOPLE_AKONADI_PLUGIN_LOG) << job->errorString();
         emitInitialFetchComplete(false);
     } else {
         CollectionFetchJob *fetchJob = qobject_cast<CollectionFetchJob *>(job);
@@ -178,8 +178,8 @@ void AkonadiAllContacts::onServerStateChanged(ServerManager::State state)
     //if we're broken tell kpeople we've loaded so kpeople doesn't block
     if (state == Akonadi::ServerManager::Broken && !isInitialFetchComplete()) {
         emitInitialFetchComplete(false);
-        qWarning() << "Akonadi failed to load, some metacontact features may not be available";
-        qWarning() << "For more information please load akonadi_console" ;
+        qCWarning(KPEOPLE_AKONADI_PLUGIN_LOG) << "Akonadi failed to load, some metacontact features may not be available";
+        qCWarning(KPEOPLE_AKONADI_PLUGIN_LOG) << "For more information please load akonadi_console" ;
     }
 }
 

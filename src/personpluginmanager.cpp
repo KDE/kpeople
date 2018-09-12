@@ -26,7 +26,7 @@
 #include <KService>
 
 #include <QMutex>
-#include <QDebug>
+#include "kpeople_debug.h"
 
 
 using namespace KPeople;
@@ -66,7 +66,7 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
         if (dataSource) {
             dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
         } else {
-            qWarning() << "Failed to create data source " << service.name() << service.fileName();
+            qCWarning(KPEOPLE_LOG) << "Failed to create data source " << service.name() << service.fileName();
         }
     }
 
@@ -79,7 +79,7 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
         if (dataSource) {
             dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
         } else {
-            qWarning() << "Failed to create data source " << service->name() << service->path();
+            qCWarning(KPEOPLE_LOG) << "Failed to create data source " << service->name() << service->path();
         }
     }
 

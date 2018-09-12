@@ -26,7 +26,7 @@
 #include "backends/abstractcontact.h"
 
 #include <QUrl>
-#include <QDebug>
+#include "kpeople_debug.h"
 #include <QStandardPaths>
 
 namespace KPeople
@@ -83,7 +83,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
             }
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
         } else
-            qWarning() << "error: creating PersonData for unknown contact" << contactUri << id;
+            qCWarning(KPEOPLE_LOG) << "error: creating PersonData for unknown contact" << contactUri << id;
     }
 
     if (personUri.isEmpty() && contacts.size() == 1) {

@@ -18,7 +18,7 @@
 
 #include "actions.h"
 #include <QAction>
-#include <QDebug>
+#include "kpeople_widgets_debug.h"
 #include <KPluginLoader>
 #include <KPluginFactory>
 #include <KPluginMetaData>
@@ -37,12 +37,12 @@ static QList<AbstractPersonAction *> actionsPlugins()
         KPluginLoader loader(service.fileName());
         KPluginFactory *factory = loader.factory();
         if (!factory) {
-            qWarning() << "Couldn't create the factory for" << service.name() << "at" << service.fileName();
+            qCWarning(KPEOPLE_WIDGETS_LOG) << "Couldn't create the factory for" << service.name() << "at" << service.fileName();
             continue;
         }
         AbstractPersonAction *plugin = factory->create<AbstractPersonAction>();
         if (plugin) {
-//             qDebug() << "found plugin" << service->name();
+//             qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << service->name();
             actionPlugins << plugin;
         }
     }
@@ -54,7 +54,7 @@ static QList<AbstractPersonAction *> actionsPlugins()
 
 
         if (plugin) {
-//             qDebug() << "found plugin" << service->name();
+//             qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << service->name();
             actionPlugins << plugin;
         }
     }

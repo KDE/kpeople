@@ -30,6 +30,7 @@ include(ECMAddQch)
 include(CMakePackageConfigHelpers)
 include(ECMGeneratePriFile)
 include(GenerateExportHeader)
+include(ECMQtDeclareLoggingCategory)
 
 include(KDEInstallDirs)
 include(KDECMakeSettings)
@@ -82,4 +83,5 @@ install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         COMPONENT Devel )
 
+install( FILES kpeople.categories DESTINATION ${KDE_INSTALL_CONFDIR} )
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)

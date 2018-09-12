@@ -31,7 +31,7 @@
 #include <QPixmap>
 #include <QTimer>
 #include <QUrl>
-#include <QDebug>
+#include "kpeople_debug.h"
 
 namespace KPeople
 {
@@ -306,7 +306,7 @@ void PersonsModelPrivate::onContactAdded(const QString &contactUri, const Abstra
 
         //if the MC object already contains this object, we want to update the row, not do an insert
         if (mc.contactUris().contains(contactUri)) {
-            qWarning() << "Source emitted contactAdded for a contact we already know about " << contactUri;
+            qCWarning(KPEOPLE_LOG) << "Source emitted contactAdded for a contact we already know about " << contactUri;
             onContactChanged(contactUri, contact);
         } else {
             int newContactPos = mc.contacts().size();

@@ -16,8 +16,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef KPEOPLEWIDGETS_GLOBAL_H
-#define KPEOPLEWIDGETS_GLOBAL_H
+#ifndef KPEOPLEWIDGETS_ACTIONS_H
+#define KPEOPLEWIDGETS_ACTIONS_H
 
 #include <QList>
 #include <kpeople/widgets/kpeoplewidgets_export.h>
@@ -51,4 +51,4 @@ enum ActionType {
 KPEOPLEWIDGETS_EXPORT QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent);
 }
 
-#endif // KPEOPLEWIDGETS_GLOBAL_H
+#endif // KPEOPLEWIDGETS_ACTIONS_H

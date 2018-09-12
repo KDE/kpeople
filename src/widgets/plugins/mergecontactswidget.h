@@ -16,8 +16,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef MERGE_CONTACT_WIDGET_H
-#define MERGE_CONTACT_WIDGET_H
+#ifndef MERGE_CONTACTS_WIDGET_H
+#define MERGE_CONTACTS_WIDGET_H
 
 #include "abstractpersondetailswidget.h"
 
@@ -59,4 +59,4 @@ private:
     QList< QPair<QPersistentModelIndex, PersonPresentationWidget *> > m_listMergeContacts;
 };
 
-#endif // MERGE_CONTACT_WIDGET_H
+#endif // MERGE_CONTACTS_WIDGET_H

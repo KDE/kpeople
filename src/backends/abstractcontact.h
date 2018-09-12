@@ -16,8 +16,8 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef KPEOPLE_CONTACT
-#define KPEOPLE_CONTACT
+#ifndef KPEOPLE_ABSTRACT_CONTACT_H
+#define KPEOPLE_ABSTRACT_CONTACT_H
 
 #include <QSharedData>
 #include <QVariant>

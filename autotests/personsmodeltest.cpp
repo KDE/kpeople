@@ -150,7 +150,7 @@ void PersonsModelTest::unmergeContacts()
     QCOMPARE(modelRowsInsert.count(), 1);
     QCOMPARE(modelRowsInsert.first().at(0).toModelIndex(), QModelIndex());
 
-    // Similarily, there must be one row removed and the parent must be
+    // Similarly, there must be one row removed and the parent must be
     // the old Person index
     QCOMPARE(modelRowsRemove.count(), 1);
     QCOMPARE(modelRowsRemove.first().at(0).toModelIndex(), personIndex);

@@ -25,7 +25,9 @@
 
 namespace KPeople
 {
-struct PersonActionsPrivate {
+class PersonActionsPrivate
+{
+public:
     PersonActionsPrivate()
         : person(nullptr)
     {}

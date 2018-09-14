@@ -57,6 +57,7 @@ install (TARGETS KF5People
 ecm_generate_headers(KPeople_CamelCase_HEADERS
     HEADER_NAMES
         PersonData
+        PersonPluginManager
         PersonsModel
         Global
     REQUIRED_HEADERS KPeople_HEADERS

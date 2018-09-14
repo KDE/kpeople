@@ -16,7 +16,7 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "personpluginmanager_p.h"
+#include "personpluginmanager.h"
 #include "backends/basepersonsdatasource.h"
 
 #include <KPluginMetaData>
@@ -26,6 +26,7 @@
 #include <KService>
 
 #include <QMutex>
+#include <QMutexLocker>
 #include "kpeople_debug.h"
 
 
@@ -39,6 +40,7 @@ public:
     QHash<QString /* SourceName*/, BasePersonsDataSource *> dataSourcePlugins;
 
     void loadDataSourcePlugins();
+    bool m_autoloadDataSourcePlugins;
     bool m_loadedDataSourcePlugins;
     QMutex m_mutex;
 
@@ -46,8 +48,9 @@ public:
 
 Q_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance)
 
-PersonPluginManagerPrivate::PersonPluginManagerPrivate():
-    m_loadedDataSourcePlugins(false)
+PersonPluginManagerPrivate::PersonPluginManagerPrivate()
+    : m_autoloadDataSourcePlugins(true)
+    , m_loadedDataSourcePlugins(false)
 {
 }
 
@@ -62,9 +65,15 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
     Q_FOREACH (const KPluginMetaData &service, pluginList) {
         KPluginLoader loader(service.fileName());
         KPluginFactory *factory = loader.factory();
-        BasePersonsDataSource *dataSource = qobject_cast<BasePersonsDataSource*>(factory->create());
+        BasePersonsDataSource *dataSource = factory->create<BasePersonsDataSource>();
         if (dataSource) {
-            dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
+            const QString pluginId = dataSource->sourcePluginId();
+            if (!dataSourcePlugins.contains(pluginId)) {
+                dataSourcePlugins[pluginId] = dataSource;
+            } else {
+                dataSource->deleteLater();
+                qCDebug(KPEOPLE_LOG) << "Plugin" << pluginId << "was already loaded manually, ignoring...";
+            }
         } else {
             qCWarning(KPEOPLE_LOG) << "Failed to create data source " << service.name() << service.fileName();
         }
@@ -86,32 +95,43 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
     m_loadedDataSourcePlugins = true;
 }
 
+void PersonPluginManager::setAutoloadDataSourcePlugins(bool autoloadDataSourcePlugins)
+{
+    s_instance->m_autoloadDataSourcePlugins = autoloadDataSourcePlugins;
+}
+
+void PersonPluginManager::addDataSource(const QString &sourceId, BasePersonsDataSource *source)
+{
+    QMutexLocker(&s_instance->m_mutex);
+    if (s_instance->dataSourcePlugins.contains(sourceId)) {
+        qCWarning(KPEOPLE_LOG) << "Attempting to load data source that is already loaded, overriding!";
+        s_instance->dataSourcePlugins[sourceId]->deleteLater();
+    }
+    s_instance->dataSourcePlugins.insert(sourceId, source);
+}
+
 void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource * > &dataSources)
 {
-    s_instance->m_mutex.lock();
+    QMutexLocker(&s_instance->m_mutex);
     qDeleteAll(s_instance->dataSourcePlugins);
     s_instance->dataSourcePlugins = dataSources;
     s_instance->m_loadedDataSourcePlugins = true;
-    s_instance->m_mutex.unlock();
 }
 
 QList<BasePersonsDataSource *> PersonPluginManager::dataSourcePlugins()
 {
-    s_instance->m_mutex.lock();
-    if (!s_instance->m_loadedDataSourcePlugins) {
+    QMutexLocker(&s_instance->m_mutex);
+    if (!s_instance->m_loadedDataSourcePlugins && s_instance->m_autoloadDataSourcePlugins) {
         s_instance->loadDataSourcePlugins();
     }
-    s_instance->m_mutex.unlock();
     return s_instance->dataSourcePlugins.values();
 }
 
 BasePersonsDataSource *PersonPluginManager::dataSource(const QString &sourceId)
 {
-    s_instance->m_mutex.lock();
-    if (!s_instance->m_loadedDataSourcePlugins) {
+    QMutexLocker(&s_instance->m_mutex);
+    if (!s_instance->m_loadedDataSourcePlugins && s_instance->m_autoloadDataSourcePlugins) {
         s_instance->loadDataSourcePlugins();
     }
-    s_instance->m_mutex.unlock();
-
     return s_instance->dataSourcePlugins.value(sourceId);
 }

@@ -26,10 +26,10 @@
 
 //private includes
 #include "personmanager_p.h"
-#include "personpluginmanager_p.h"
 
 //public kpeople includes
 #include <personsmodel.h>
+#include <personpluginmanager.h>
 #include <personssortfilterproxymodel.h>
 
 #include "fakecontactsource.h"

@@ -25,10 +25,10 @@
 
 //private includes
 #include "personmanager_p.h"
-#include "personpluginmanager_p.h"
 
 //public kpeople includes
 #include <persondata.h>
+#include <personpluginmanager.h>
 
 #include "fakecontactsource.h"
 

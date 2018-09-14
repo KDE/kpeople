@@ -19,7 +19,7 @@
 #include "global.h"
 
 #include "personmanager_p.h"
-#include "personpluginmanager_p.h"
+#include "personpluginmanager.h"
 #include "backends/abstractcontact.h"
 
 //these namespace members expose the useful bits of PersonManager

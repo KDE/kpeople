@@ -45,12 +45,6 @@ install (TARGETS KF5PeopleWidgets
          ${INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
-install (FILES
-
-         DESTINATION ${INCLUDE_INSTALL_DIR}/kpeople/widgets
-         COMPONENT Devel
-)
-
 ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
     HEADER_NAMES
             AbstractFieldWidgetFactory
@@ -59,7 +53,7 @@ ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
             PersonDetailsDialog
             Actions
     REQUIRED_HEADERS KPeopleWidgets_HEADERS
-    PREFIX KPeople
+    PREFIX KPeople/Widgets
 )
 
 install (FILES ${KPeopleWidgets_CamelCase_HEADERS}

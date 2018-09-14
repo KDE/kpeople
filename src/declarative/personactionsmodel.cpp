@@ -17,8 +17,8 @@
 */
 
 #include "personactionsmodel_p.h"
-#include <kpeople/persondata.h>
-#include <kpeople/actions.h>
+#include "persondata.h"
+#include "widgets/actions.h"
 #include <QAction>
 #include "kpeople_debug.h"
 #include <QPointer>

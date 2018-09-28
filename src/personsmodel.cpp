@@ -352,8 +352,9 @@ void PersonsModelPrivate::onContactRemoved(const QString &contactUri)
     //if MC object is now invalid remove the person from the list
     if (!mc.isValid()) {
         removePerson(personUri);
+    } else {
+        personChanged(personUri);
     }
-    personChanged(personUri);
 }
 
 void PersonsModelPrivate::onAddContactToPerson(const QString &contactUri, const QString &newPersonUri)

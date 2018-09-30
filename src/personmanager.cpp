@@ -201,7 +201,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                                                  QStringLiteral("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personUriString);
-
+            pendingMessages << message;
         }
     }
 

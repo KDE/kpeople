@@ -206,7 +206,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     }
 
     // process passed contacts
-    if (contacts.size() > 0) {
+    if (!contacts.isEmpty()) {
 
         Q_FOREACH (const QString &id, contacts) {
             QSqlQuery insertQuery(m_db);

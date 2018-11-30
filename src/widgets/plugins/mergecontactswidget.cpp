@@ -79,7 +79,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     layout()->addWidget(m_containerListDetails);
     m_containerListDetails->setVisible(false);
 
-    if (!duplicates.size()) {
+    if (duplicates.isEmpty()) {
         return ;
     }
 

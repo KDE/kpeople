@@ -33,6 +33,8 @@ public:
     Transaction(const QSqlDatabase &db);
     void cancel();
     ~Transaction();
+    Transaction(const Transaction &) = delete;
+    Transaction& operator=(const Transaction &) = delete;
 private:
     QSqlDatabase m_db;
     bool m_cancelled = false;

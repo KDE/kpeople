@@ -55,7 +55,8 @@ void PhoneDetailsWidget::setPerson(PersonData *person)
         delete child;
     }
 
-    Q_FOREACH (const QString &phone, person->phones()) {
+    const auto lst = person->phones();
+    for (const QString &phone : lst) {
         QLabel *phoneLabel = new QLabel(phone, this);
         phoneLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
         layout()->addWidget(phoneLabel);

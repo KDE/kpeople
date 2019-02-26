@@ -47,7 +47,7 @@ public Q_SLOTS:
             AbstractContact::Ptr aB = it->indexB.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
 
             Q_ASSERT(!it->reasons.isEmpty());
-            Q_FOREACH (Match::MatchReason i, it->reasons) {
+            for (Match::MatchReason i : qAsConst(it->reasons)) {
                 rA += it->matchValue(i, aA);
                 rB += it->matchValue(i, aB);
             }

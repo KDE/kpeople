@@ -44,7 +44,7 @@ void MatchesSolver::startMatching()
     QHash<QString, QSet<QString> > jobsData;
     // has a relation of each person, to know where it is
     QHash<QString, QString> destinationResolver;
-    Q_FOREACH (const Match &m, m_matches) {
+    for (const Match &m : qAsConst(m_matches)) {
         QString urlA = m.indexA.data(PersonsModel::PersonUriRole).toString();
         QString urlB = m.indexB.data(PersonsModel::PersonUriRole).toString();
         Q_ASSERT(urlA != urlB);
@@ -59,9 +59,11 @@ void MatchesSolver::startMatching()
             //we've put all items pointed to by urlA, to the B set
             //now we re-assign anything pointing to B as pointing to A
             //because they are the same
-            QList<QString> keys = destinationResolver.keys(urlB);
-            foreach (const QString &key, keys) {
-                destinationResolver[key] = urlA;
+            const auto keys = destinationResolver.keys(urlB);
+            auto it = keys.constBegin();
+            const auto end = keys.constEnd();
+            for (; it != end; ++it) {
+                destinationResolver[*it] = urlA;
             }
         } else {
             //if A is in but not B, we want B wherever A is
@@ -84,7 +86,7 @@ void MatchesSolver::startMatching()
         }
     }
 
-    Q_FOREACH (const QSet<QString> &uris, jobsData) {
+    for (const QSet<QString> &uris : qAsConst(jobsData)) {
         if (PersonManager::instance()->mergeContacts(uris.toList()).isEmpty()) {
             qCWarning(KPEOPLE_LOG) << "error: failing to merge contacts: " << uris;
         }

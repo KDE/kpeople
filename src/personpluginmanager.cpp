@@ -61,8 +61,8 @@ PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 
 void PersonPluginManagerPrivate::loadDataSourcePlugins()
 {
-    QVector<KPluginMetaData> pluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/datasource"));
-    Q_FOREACH (const KPluginMetaData &service, pluginList) {
+    const QVector<KPluginMetaData> pluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/datasource"));
+    for (const KPluginMetaData &service : pluginList) {
         KPluginLoader loader(service.fileName());
         KPluginFactory *factory = loader.factory();
         BasePersonsDataSource *dataSource = factory->create<BasePersonsDataSource>();
@@ -80,8 +80,8 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
     }
 
     //TODO: Remove as soon as KTp sources are released with the new plugin system
-    KService::List servicesList = KServiceTypeTrader::self()->query(QStringLiteral("KPeople/DataSource"));
-    Q_FOREACH (const KService::Ptr &service, servicesList) {
+    const KService::List servicesList = KServiceTypeTrader::self()->query(QStringLiteral("KPeople/DataSource"));
+    for (const KService::Ptr &service : servicesList) {
         BasePersonsDataSource *dataSource = service->createInstance<BasePersonsDataSource>(nullptr);
 
 

@@ -135,9 +135,9 @@ ContactListApp::ContactListApp()
 
 void ContactListApp::onMergeClicked()
 {
-    QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
+    const QModelIndexList indexes = m_view->selectionModel()->selectedIndexes();
     QStringList ids;
-    Q_FOREACH (const QModelIndex &index, indexes) {
+    for (const QModelIndex &index : indexes) {
         ids << index.data(PersonsModel::PersonUriRole).toString();
     }
 

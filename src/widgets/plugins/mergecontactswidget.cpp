@@ -115,10 +115,10 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
 QList<QPersistentModelIndex> MergeContactsWidget::duplicateBusterFromPerson(const QUrl &uri) const
 {
     Q_ASSERT(m_duplicatesBuster);
-    QList<Match> wrongFormatResults = m_duplicatesBuster->results();
+    const QList<Match> wrongFormatResults = m_duplicatesBuster->results();
     QList<QPersistentModelIndex> duplicateMatching;
 
-    Q_FOREACH (const Match &match, wrongFormatResults) {
+    for (const Match &match : wrongFormatResults) {
         // pick up only the couple with match with our parameter index
         QUrl uriA = match.indexA.data(PersonsModel::UriRole).toUrl();
 
@@ -169,7 +169,8 @@ void MergeContactsWidget::onMergeButtonPressed()
     urisToMerge << m_person->uri();
 
     // do the merge
-    Q_FOREACH (const QPersistentModelIndex &pIndex, getContactsCheckedToMerge()) {
+    const auto lst = getContactsCheckedToMerge();
+    for (const QPersistentModelIndex &pIndex : lst) {
         urisToMerge << pIndex.data(PersonsModel::UriRole).toUrl();
     }
     m_model->createPersonFromUris(urisToMerge);
@@ -181,8 +182,7 @@ QList<QPersistentModelIndex> MergeContactsWidget::getContactsCheckedToMerge() co
     QList<QPersistentModelIndex> indexesToMerge;
 
     // retrieve all the widget where the box is checked
-    QPair<QPersistentModelIndex, PersonPresentationWidget *> mergeContact ;
-    Q_FOREACH (mergeContact, m_listMergeContacts) {
+    for (const QPair<QPersistentModelIndex, PersonPresentationWidget *> &mergeContact : qAsConst(m_listMergeContacts)) {
         if (mergeContact.second->isContactSelected()) {
             indexesToMerge.append(mergeContact.first);
         }

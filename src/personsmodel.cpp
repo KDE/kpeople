@@ -96,8 +96,8 @@ PersonsModel::PersonsModel(QObject *parent):
     d_ptr(new PersonsModelPrivate(this))
 {
     Q_D(PersonsModel);
-
-    Q_FOREACH (BasePersonsDataSource *dataSource, PersonPluginManager::dataSourcePlugins()) {
+    const auto listPlugins = PersonPluginManager::dataSourcePlugins();
+    for (BasePersonsDataSource *dataSource : listPlugins) {
         const AllContactsMonitorPtr monitor = dataSource->allContactsMonitor();
         if (monitor->isInitialFetchComplete()) {
             QMetaObject::invokeMethod(d, "onMonitorInitialFetchComplete", Qt::QueuedConnection, Q_ARG(bool, monitor->initialFetchSuccess()));
@@ -261,16 +261,16 @@ void PersonsModelPrivate::onContactsFetched()
     QMap<QString, AbstractContact::Ptr> addresseeMap;
 
     //fetch all already loaded contacts from plugins
-    Q_FOREACH (const AllContactsMonitorPtr &contactWatcher, m_sourceMonitors) {
+    for (const AllContactsMonitorPtr &contactWatcher : qAsConst(m_sourceMonitors)) {
         addresseeMap.unite(contactWatcher->contacts());
     }
 
     //add metacontacts
     const QMultiHash<QString, QString> contactMapping = PersonManager::instance()->allPersons();
 
-    Q_FOREACH (const QString &key, contactMapping.uniqueKeys()) {
+    for (const QString &key : contactMapping.uniqueKeys()) {
         QMap<QString, AbstractContact::Ptr> contacts;
-        Q_FOREACH (const QString &contact, contactMapping.values(key)) {
+        for (const QString &contact : contactMapping.values(key)) {
             contactToPersons[contact] = key;
             AbstractContact::Ptr ptr = addresseeMap.take(contact);
             if (ptr) {
@@ -288,7 +288,7 @@ void PersonsModelPrivate::onContactsFetched()
         addPerson(MetaContact(i.key(), i.value()));
     }
 
-    Q_FOREACH (const AllContactsMonitorPtr monitor, m_sourceMonitors) {
+    for (const AllContactsMonitorPtr monitor : qAsConst(m_sourceMonitors)) {
         connect(monitor.data(), &AllContactsMonitor::contactAdded, this, &PersonsModelPrivate::onContactAdded);
         connect(monitor.data(), &AllContactsMonitor::contactChanged, this, &PersonsModelPrivate::onContactChanged);
         connect(monitor.data(), &AllContactsMonitor::contactRemoved, this, &PersonsModelPrivate::onContactRemoved);

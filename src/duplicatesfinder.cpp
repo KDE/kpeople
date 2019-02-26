@@ -65,7 +65,7 @@ void DuplicatesFinder::doSearch()
 
         //we check if it matches
         int j = 0;
-        Q_FOREACH (const AbstractContact::Ptr &valueToCompare, collectedValues) {
+        for (const AbstractContact::Ptr &valueToCompare : qAsConst(collectedValues)) {
             QList<Match::MatchReason> matchedRoles = Match::matchAt(values, valueToCompare);
 
             if (!matchedRoles.isEmpty()) {

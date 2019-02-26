@@ -159,7 +159,7 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
     QHash<QPersistentModelIndex, QList<Match> > compareTable;
     QHash<QPersistentModelIndex, QPersistentModelIndex> doneIndexes;
 
-    Q_FOREACH (const Match &match, matches) {
+    for (const Match &match : matches) {
         QPersistentModelIndex destination = doneIndexes.value(match.indexA, match.indexA);
         QHash<QPersistentModelIndex, QList< Match > >::iterator currentValue = compareTable.find(destination);
 
@@ -179,7 +179,7 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
         QStandardItem *parent = itemMergeContactFromMatch(true, i->first());
         rootItem->appendRow(parent);
 
-        Q_FOREACH (const Match &matchChild, *i) {
+        for (const Match &matchChild : qAsConst(*i)) {
             parent->appendRow(itemMergeContactFromMatch(false, matchChild));
         }
     }

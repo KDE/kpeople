@@ -32,8 +32,8 @@ namespace KPeople
 static QList<AbstractPersonAction *> actionsPlugins()
 {
     QList<AbstractPersonAction *> actionPlugins;
-    QVector<KPluginMetaData> personPluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/actions"));
-    Q_FOREACH (const KPluginMetaData &service, personPluginList) {
+    const QVector<KPluginMetaData> personPluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/actions"));
+    for (const KPluginMetaData &service : personPluginList) {
         KPluginLoader loader(service.fileName());
         KPluginFactory *factory = loader.factory();
         if (!factory) {
@@ -48,8 +48,8 @@ static QList<AbstractPersonAction *> actionsPlugins()
     }
 
     //TODO: Remove as soon as KTp sources are released with the new plugin system
-    KService::List personServicesList = KServiceTypeTrader::self()->query(QStringLiteral("KPeople/Plugin"));
-    Q_FOREACH (const KService::Ptr &service, personServicesList) {
+    const KService::List personServicesList = KServiceTypeTrader::self()->query(QStringLiteral("KPeople/Plugin"));
+    for (const KService::Ptr &service : personServicesList) {
         AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(nullptr);
 
 
@@ -67,7 +67,8 @@ QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent)
     PersonData person(contactUri);
 
     QList<QAction *> actions;
-    Q_FOREACH (KPeople::AbstractPersonAction *plugin, actionsPlugins()) {
+    const auto lst = actionsPlugins();
+    for (KPeople::AbstractPersonAction *plugin : lst) {
         actions << plugin->actionsForPerson(person, parent);
     }
 

@@ -67,7 +67,7 @@ bool PersonsSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelI
         return true;
     }
 
-    foreach(const QString &key, d->m_keys) {
+    for(const QString &key : qAsConst(d->m_keys)) {
         if (!contact->customProperty(key).isNull()) {
             return true;
         }

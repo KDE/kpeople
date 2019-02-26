@@ -67,7 +67,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
     }
 
     QMap<QString, AbstractContact::Ptr> contacts;
-    Q_FOREACH (const QString &contactUri, d->contactUris) {
+    for (const QString &contactUri : qAsConst(d->contactUris)) {
         //load the correct data source for this contact ID
         const QString sourceId = contactUri.left(contactUri.indexOf(QStringLiteral("://")));
         Q_ASSERT(!sourceId.isEmpty());
@@ -185,9 +185,9 @@ QStringList PersonData::groups() const
 {
 //     We might want to cache it eventually?
 
-    QVariantList groups = contactCustomProperty(AbstractContact::GroupsProperty).toList();
+    const QVariantList groups = contactCustomProperty(AbstractContact::GroupsProperty).toList();
     QStringList ret;
-    Q_FOREACH (const QVariant &g, groups) {
+    for (const QVariant &g : groups) {
         Q_ASSERT(g.canConvert<QString>());
         ret += g.toString();
     }
@@ -197,9 +197,9 @@ QStringList PersonData::groups() const
 
 QStringList PersonData::allEmails() const
 {
-    QVariantList emails = contactCustomProperty(AbstractContact::AllEmailsProperty).toList();
+    const QVariantList emails = contactCustomProperty(AbstractContact::AllEmailsProperty).toList();
     QStringList ret;
-    Q_FOREACH (const QVariant &e, emails) {
+    for (const QVariant &e : emails) {
         Q_ASSERT(e.canConvert<QString>());
         ret += e.toString();
     }

@@ -38,7 +38,8 @@ QWidget *EmailFieldsPlugin::createDetailsWidget(const PersonData &person, QWidge
     QWidget *widget = new QWidget(parent);
     QVBoxLayout *layout = new QVBoxLayout(widget);
     layout->setContentsMargins(0, 0, 0, 0);
-    Q_FOREACH (const QString &email, person.allEmails()) {
+    const auto lstEmails = person.allEmails();
+    for (const QString &email : lstEmails) {
         layout->addWidget(new QLabel(email));
     }
     widget->setLayout(layout);

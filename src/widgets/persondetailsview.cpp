@@ -122,17 +122,17 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 #ifdef __GNUC__
 #warning figure out a way to list properties
 #endif
-    QStringList fields { QStringLiteral("name"), QStringLiteral("all-email") };
-    Q_FOREACH (const QString &field, fields) {
+    const QStringList fields { QStringLiteral("name"), QStringLiteral("all-email") };
+    for (const QString &field : fields) {
         d->m_plugins << new CoreFieldsPlugin(field);
     }
 
     d->m_plugins << new EmailFieldsPlugin();
 
     // load every KPeopleWidgets Plugin
-    QVector<KPluginMetaData> personPluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/widgets"));
+    const QVector<KPluginMetaData> personPluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/widgets"));
 
-    Q_FOREACH (const KPluginMetaData &service, personPluginList) {
+    for (const KPluginMetaData &service : personPluginList) {
         KPluginLoader loader(service.fileName());
         KPluginFactory *factory = loader.factory();
         AbstractFieldWidgetFactory *f = qobject_cast<AbstractFieldWidgetFactory*>(factory->create());
@@ -145,9 +145,9 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
 
     //TODO: Remove as soon as KTp sources are released with the new plugin system
     KService::List pluginList = KServiceTypeTrader::self()->query(QStringLiteral("KPeopleWidgets/Plugin"));
-    QList<KPluginInfo> plugins = KPluginInfo::fromServices(pluginList);
+    const QList<KPluginInfo> plugins = KPluginInfo::fromServices(pluginList);
 
-    Q_FOREACH (const KPluginInfo &p, plugins) {
+    for (const KPluginInfo &p : plugins) {
         QString error;
         AbstractFieldWidgetFactory *f = p.service()->createInstance<AbstractFieldWidgetFactory>(this, QVariantList(), &error);
         if (f) {
@@ -206,7 +206,7 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(QIcon::fromTheme(d->m_person->presenceIconName()).pixmap(32, 32)); //FIXME
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->name());
 
-    Q_FOREACH (AbstractFieldWidgetFactory *widgetFactory, d->m_plugins) {
+    for (AbstractFieldWidgetFactory *widgetFactory : qAsConst(d->m_plugins)) {
         const QString label = widgetFactory->label() + QLatin1Char(':');
         QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->personUri(), this);
 

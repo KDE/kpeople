@@ -126,7 +126,7 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
     }
     // draw a vertical line to separate the original person and the merging contacts
     int midWidth = option.rect.width() / 2;
-    painter->setPen(opt.palette.color(QPalette::Background));
+    painter->setPen(opt.palette.color(QPalette::Window));
     painter->drawLine(option.rect.left() + midWidth - SIZE_STANDARD_PIXMAP, option.rect.bottom() - 5,
                       option.rect.left() + midWidth - SIZE_STANDARD_PIXMAP, option.rect.top() + 5);
 }

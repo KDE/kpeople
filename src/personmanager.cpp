@@ -142,7 +142,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     QList<QDBusMessage> pendingMessages;
 
     // separate the passed ids to metacontacts and simple contacts
-    Q_FOREACH (const QString &id, ids) {
+    for (const QString &id : ids) {
         if (id.startsWith(QLatin1String("kpeople://"))) {
             metacontacts << id;
         } else {
@@ -175,14 +175,14 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     if (metacontacts.count() > 1) {
         // collect all the contacts from other persons
         QStringList personContacts;
-        Q_FOREACH (const QString &id, metacontacts) {
+        for (const QString &id : qAsConst(metacontacts)) {
             if (id != personUriString) {
                 personContacts << contactsForPersonUri(id);
             }
         }
 
         // iterate over all of the contacts and change their personID to the new personUriString
-        Q_FOREACH (const QString &id, personContacts) {
+        for (const QString &id : qAsConst(personContacts)) {
             QSqlQuery updateQuery(m_db);
             updateQuery.prepare(QStringLiteral("UPDATE persons SET personID = ? WHERE contactID = ?"));
             updateQuery.bindValue(0, personUriString.mid(strlen("kpeople://")));
@@ -210,7 +210,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     // process passed contacts
     if (!contacts.isEmpty()) {
 
-        Q_FOREACH (const QString &id, contacts) {
+        for (const QString &id : qAsConst(contacts)) {
             QSqlQuery insertQuery(m_db);
             insertQuery.prepare(QStringLiteral("INSERT INTO persons VALUES (?, ?)"));
             insertQuery.bindValue(0, id);
@@ -232,7 +232,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     //if success send all messages to other clients
     //otherwise roll back our database changes and return an empty string
     if (rc) {
-        Q_FOREACH (const QDBusMessage &message, pendingMessages) {
+        for (const QDBusMessage &message : qAsConst(pendingMessages)) {
             QDBusConnection::sessionBus().send(message);
         }
     } else {
@@ -254,7 +254,7 @@ bool PersonManager::unmergeContact(const QString &id)
         query.bindValue(0, id.mid(strlen("kpeople://")));
         query.exec();
 
-        Q_FOREACH (const QString &contactUri, contactUris) {
+        for (const QString &contactUri : contactUris) {
             //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
                                    QStringLiteral("org.kde.KPeople"),

@@ -55,7 +55,7 @@ PersonsDelegate::~PersonsDelegate()
 
 void PersonsDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV4 optV4 = option;
+    QStyleOptionViewItem optV4 = option;
     initStyleOption(&optV4, index);
 
     painter->save();

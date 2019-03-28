@@ -108,7 +108,7 @@ QWidget *MergeDelegate::buildMultipleLineLabel(const QModelIndex &idx)
 void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionOld, const QModelIndex &index) const
 {
     QStyleOptionViewItem option(optionOld);
-    QStyleOptionViewItemV4 opt(option);
+    QStyleOptionViewItem opt(option);
     KExtendableItemDelegate::paint(painter, option, index);
 
     const int separation = 5;

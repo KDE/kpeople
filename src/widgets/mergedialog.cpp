@@ -201,7 +201,7 @@ QStandardItem *MergeDialog::itemMergeContactFromMatch(bool isParent, const Match
         QString uri = match.indexB.data(PersonsModel::PersonUriRole).toString();
         item->setData(uri, UriRole);
 
-        item->setData(qVariantFromValue<Match>(match), MergeReasonRole);
+        item->setData(QVariant::fromValue<Match>(match), MergeReasonRole);
         item->setText(match.indexB.data(Qt::DisplayRole).toString());
         deco = match.indexB.data(Qt::DecorationRole);
 

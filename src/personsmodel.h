@@ -55,6 +55,7 @@ public:
         ContactsVCardRole, //AbstractContact::List (FIXME or map?)
 
         GroupsRole, ///groups QStringList
+        PhoneNumberRole,
 
         UserRole = Qt::UserRole + 0x1000 ///< in case it's needed to extend, use this one to start from
     };

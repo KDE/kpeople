@@ -123,6 +123,7 @@ QHash<int, QByteArray> PersonsModel::roleNames() const
     roles.insert(PersonUriRole, "personUri");
     roles.insert(PersonVCardRole, "personVCard");
     roles.insert(ContactsVCardRole, "contactsVCard");
+    roles.insert(PhoneNumberRole, "phoneNumber");
     return roles;
 }
 
@@ -188,6 +189,8 @@ QVariant PersonsModelPrivate::dataForContact(const QString &personUri, const Abs
         return QVariant::fromValue<AbstractContact::List>(metacontacts[personIndex[personUri].row()].contacts());
     case PersonsModel::GroupsRole:
         return person->customProperty(QStringLiteral("all-groups"));
+    case PersonsModel::PhoneNumberRole:
+        return person->customProperty(AbstractContact::PhoneNumberProperty);
     }
     return QVariant();
 }

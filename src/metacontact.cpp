@@ -20,7 +20,6 @@
 #include "global.h"
 #include <QSharedData>
 #include "kpeople_debug.h"
-#include <QSet>
 
 namespace KPeople
 {

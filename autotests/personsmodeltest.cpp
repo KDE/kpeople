@@ -20,8 +20,6 @@
 #include "personsmodeltest.h"
 
 #include <QtTest>
-#include <QFile>
-#include <QTemporaryFile>
 #include <QVariant>
 
 //private includes

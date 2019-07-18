@@ -25,8 +25,8 @@
 #include "kpeople_widgets_debug.h"
 #include <QList>
 #include <QStandardPaths>
+#include <QIcon>
 
-#include <KLocalizedString>
 #include <KPluginMetaData>
 #include <KPluginLoader>
 #include <KPluginFactory>

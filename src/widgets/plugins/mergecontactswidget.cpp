@@ -22,10 +22,8 @@
 #include "personsmodel.h"
 #include "duplicatesfinder_p.h"
 
-#include <QObject>
 #include <QVBoxLayout>
 #include <QPushButton>
-#include <QLabel>
 
 #include <KLocalizedString>
 #include <KJob>

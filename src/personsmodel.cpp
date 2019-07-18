@@ -29,7 +29,6 @@
 
 #include <QStandardPaths>
 #include <QPixmap>
-#include <QTimer>
 #include <QUrl>
 #include "kpeople_debug.h"
 

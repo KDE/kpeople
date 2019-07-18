@@ -21,7 +21,6 @@
 #include "widgets/actions.h"
 #include <QAction>
 #include "kpeople_debug.h"
-#include <QPointer>
 
 namespace KPeople
 {

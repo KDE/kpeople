@@ -20,8 +20,6 @@
 #include "persondatatests.h"
 
 #include <QtTest>
-#include <QFile>
-#include <QTemporaryFile>
 
 //private includes
 #include "personmanager_p.h"

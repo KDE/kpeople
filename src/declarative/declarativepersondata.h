@@ -21,7 +21,6 @@
 
 #include "persondata.h"
 
-#include <QQmlParserStatus>
 
 class DeclarativePersonData : public QObject
 {

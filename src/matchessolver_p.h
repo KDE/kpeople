@@ -20,7 +20,6 @@
 #define MATCHESSOLVER_H
 
 #include <KJob>
-#include <QSet>
 
 #include <kpeople/kpeople_export.h>
 #include "match_p.h"

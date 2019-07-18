@@ -23,7 +23,6 @@
 #include <kpeople/widgets/kpeoplewidgets_export.h>
 
 #include <QDialog>
-#include <QModelIndex>
 
 class QStandardItem;
 class KJob;

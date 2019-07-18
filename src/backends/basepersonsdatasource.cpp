@@ -19,7 +19,6 @@
 
 #include "basepersonsdatasource.h"
 
-#include <QDebug>
 
 #include "backends/abstractcontact.h"
 #include "defaultcontactmonitor_p.h"

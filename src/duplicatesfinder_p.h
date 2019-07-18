@@ -20,9 +20,6 @@
 #define DUPLICATESFINDER_H
 
 #include <KJob>
-#include <QVariantList>
-#include <QVector>
-#include <QUrl>
 #include <kpeople/kpeople_export.h>
 #include "match_p.h"
 

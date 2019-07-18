@@ -20,7 +20,6 @@
 #ifndef PERSON_PLUGIN_MANAGER_H
 #define PERSON_PLUGIN_MANAGER_H
 
-#include <QObject>
 
 #include <kpeople/kpeople_export.h>
 

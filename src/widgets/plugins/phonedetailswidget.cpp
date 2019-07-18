@@ -19,7 +19,6 @@
 #include "phonedetailswidget.h"
 #include "persondata.h"
 
-#include <QGridLayout>
 #include <QVBoxLayout>
 #include <QLabel>
 

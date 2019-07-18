@@ -18,8 +18,6 @@
 
 #include "abstractpersonaction.h"
 
-#include <QList>
-#include <QAction>
 
 using namespace KPeople;
 

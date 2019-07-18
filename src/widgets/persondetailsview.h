@@ -20,7 +20,6 @@
 #define PERSON_DETAILS_VIEW_H
 
 #include <QWidget>
-#include <QVariantList>
 
 #include <kpeople/widgets/kpeoplewidgets_export.h>
 

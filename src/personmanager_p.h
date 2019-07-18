@@ -25,7 +25,6 @@
 #include <QMultiHash>
 
 #include <QSqlDatabase>
-#include <QSqlQuery>
 
 #include <kpeople/kpeople_export.h>
 

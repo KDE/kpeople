@@ -23,9 +23,9 @@
 #include "kpeople_debug.h"
 #include <QStandardPaths>
 #include <QDir>
-#include <QSqlError>
 #include <QDBusConnection>
 #include <QDBusMessage>
+#include <QSqlQuery>
 
 class Transaction
 {

@@ -23,11 +23,9 @@
 #include <match_p.h>
 
 #include <QPainter>
-#include <QPixmap>
 #include <QStyleOptionViewItem>
 #include <QAbstractItemView>
 #include <QModelIndex>
-#include <QApplication>
 #include <QLabel>
 #include <QCheckBox>
 #include <QItemSelection>

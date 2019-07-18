@@ -24,7 +24,6 @@
 #include "personsmodel.h"
 #include "matchessolver_p.h"
 
-#include <QObject>
 #include <QLabel>
 #include <QLayout>
 #include <QPushButton>

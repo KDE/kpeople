@@ -19,7 +19,6 @@
 #ifndef DEFAULTCONTACTMONITOR_H
 #define DEFAULTCONTACTMONITOR_H
 
-#include <QObject>
 #include <QSharedPointer>
 
 #include "backends/contactmonitor.h"

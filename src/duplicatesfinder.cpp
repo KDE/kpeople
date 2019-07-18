@@ -19,7 +19,6 @@
 #include "duplicatesfinder_p.h"
 #include "personsmodel.h"
 
-#include <QUrl>
 #include "kpeople_debug.h"
 
 using namespace KPeople;

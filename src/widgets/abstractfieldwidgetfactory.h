@@ -20,7 +20,6 @@
 #define ABSTRACTFIELDWIDGETFACTORY_H
 
 #include <QWidget>
-#include <QIcon>
 
 #include <kpeople/widgets/kpeoplewidgets_export.h>
 

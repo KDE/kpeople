@@ -23,7 +23,6 @@
 #include <kpeople/widgets/kpeoplewidgets_export.h>
 
 #include <QItemSelection>
-#include <QItemDelegate>
 #include <KExtendableItemDelegate>
 
 class QAbstractItemView;

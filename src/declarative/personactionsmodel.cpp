@@ -133,6 +133,10 @@ int PersonActionsModel::rowCount(const QModelIndex &parent) const
 void PersonActionsModel::triggerAction(int row) const
 {
     Q_D(const PersonActions);
+    if (d->actions.count() >= row) {
+        qWarning() << "no action in row" << row << ". Actions available:" << d->actions.count();
+        return;
+    }
     d->actions[row]->trigger();
 }
 

@@ -76,7 +76,9 @@ void PersonActionsModel::setPersonUri(const QString &id)
 
         resetActions();
     } else {
+        beginResetModel();
         d->actions.clear();
+        endResetModel();
     }
 
     emit personChanged();

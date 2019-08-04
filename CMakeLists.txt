@@ -21,19 +21,19 @@ find_package(KF5I18n ${KF5_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5ItemViews ${KF5_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5Service ${KF5_DEP_VERSION} CONFIG REQUIRED)
 
+include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
+
 include(ECMSetupVersion)
 include(ECMGenerateHeaders)
 include(ECMSetupVersion)
-include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 include(ECMAddTests)
 include(ECMAddQch)
 include(CMakePackageConfigHelpers)
 include(ECMGeneratePriFile)
 include(GenerateExportHeader)
 include(ECMQtDeclareLoggingCategory)
-
-include(KDEInstallDirs)
-include(KDECMakeSettings)
 
 option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
 add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")

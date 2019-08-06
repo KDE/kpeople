@@ -5,6 +5,7 @@ add_library (KF5PeopleBackend
     allcontactsmonitor.cpp
     defaultcontactmonitor.cpp
     abstractpersonaction.cpp
+    abstracteditablecontact.cpp
 )
 add_library (KF5::PeopleBackend ALIAS KF5PeopleBackend)
 
@@ -26,6 +27,7 @@ install (TARGETS KF5PeopleBackend
 ecm_generate_headers(KPeopleBackend_CamelCase_HEADERS
     HEADER_NAMES
         AbstractContact
+        AbstractEditableContact
         AbstractPersonAction
         AllContactsMonitor
         BasePersonsDataSource

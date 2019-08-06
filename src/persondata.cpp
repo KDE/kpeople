@@ -24,6 +24,7 @@
 #include "backends/basepersonsdatasource.h"
 #include "backends/contactmonitor.h"
 #include "backends/abstractcontact.h"
+#include "backends/abstracteditablecontact.h"
 
 #include <QUrl>
 #include "kpeople_debug.h"
@@ -155,6 +156,14 @@ QVariant PersonData::contactCustomProperty(const QString &key) const
     return d->metaContact.personAddressee()->customProperty(key);
 }
 
+bool KPeople::PersonData::setContactCustomProperty(const QString& key, const QVariant& value)
+{
+    Q_D(PersonData);
+    auto contact = dynamic_cast<AbstractEditableContact*>(d->metaContact.personAddressee().data());
+
+    return contact && contact->setCustomProperty(key, value);
+}
+
 QString PersonData::presenceIconName() const
 {
     QString contactPresence = contactCustomProperty(QStringLiteral("telepathy-presence")).toString();
@@ -207,3 +216,8 @@ QStringList PersonData::allEmails() const
     return ret;
 }
 
+bool KPeople::PersonData::isEditable() const
+{
+    Q_D(const PersonData);
+    return dynamic_cast<const AbstractEditableContact*>(d->metaContact.personAddressee().constData());
+}

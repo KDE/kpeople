@@ -50,6 +50,13 @@ class KPEOPLE_EXPORT PersonData : public QObject
     Q_PROPERTY(QPixmap photo READ photo NOTIFY dataChanged)
     Q_PROPERTY(QString presenceIconName READ presenceIconName NOTIFY dataChanged)
 
+    /**
+     * @returns whether setContactCustomProperty can be called on this contact
+     *
+     * @since 5.62
+     */
+    Q_PROPERTY(bool isEditable READ isEditable CONSTANT)
+
 public:
     /** Creates a Person object from a given ID.
      * The ID can be either a local application specific ID (such as akonadi://?item=15)
@@ -94,6 +101,17 @@ public:
     Q_SCRIPTABLE QVariant contactCustomProperty(const QString &key) const;
 
     /**
+     * Sends a desired @p value for the contact according to the @p key.
+     * It's not necessarily implemented. The back-end gets to decide whether a property
+     * can be set or not.
+     *
+     * @returns whether the property value was changed
+     *
+     * @since 5.62
+     */
+    Q_SCRIPTABLE bool setContactCustomProperty(const QString &key, const QVariant &value);
+
+    /**
     * Returns the contact's online presence.
     */
     QString presence() const;
@@ -113,6 +131,13 @@ public:
 
     /** Returns all e-mail addresses from the person. */
     QStringList allEmails() const;
+
+    /**
+     * @returns whether the contact can be edited.
+     *
+     * @since 5.62
+     */
+    bool isEditable() const;
 
     //     struct PhoneNumber {
     //         QString name;

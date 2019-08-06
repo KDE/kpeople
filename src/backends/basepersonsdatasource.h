@@ -71,5 +71,14 @@ private:
     BasePersonsDataSourcePrivate *d_ptr;
 };
 
+class KPEOPLEBACKEND_EXPORT BasePersonsDataSourceV2 : public BasePersonsDataSource
+{
+    Q_OBJECT
+public:
+    BasePersonsDataSourceV2(QObject *parent, const QVariantList &args = QVariantList());
+
+    virtual bool addContact(const QVariantMap &properties) = 0;
+};
+
 }
 #endif // BASE_PERSONS_DATA_SOURCE_H

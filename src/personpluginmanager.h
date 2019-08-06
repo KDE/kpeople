@@ -23,6 +23,7 @@
 
 #include <kpeople/kpeople_export.h>
 
+#include <QVariant>
 #include <QHash>
 
 namespace KPeople
@@ -68,6 +69,14 @@ public:
      * This is for unit tests only
      */
     static void setDataSourcePlugins(const QHash<QString, BasePersonsDataSource *> &dataSources);
+
+    /**
+     * Creates a contact with the specified @p properties
+     * @returns if it could be done successfully
+     *
+     * @since 5.62
+     */
+    static bool addContact(const QVariantMap &properties);
 };
 }
 

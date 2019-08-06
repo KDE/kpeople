@@ -135,3 +135,16 @@ BasePersonsDataSource *PersonPluginManager::dataSource(const QString &sourceId)
     }
     return s_instance->dataSourcePlugins.value(sourceId);
 }
+
+bool KPeople::PersonPluginManager::addContact(const QVariantMap& properties)
+{
+    bool ret = false;
+    for (auto p : qAsConst(s_instance->dataSourcePlugins)) {
+        auto v2 = dynamic_cast<BasePersonsDataSourceV2*>(p);
+        if (!v2)
+            continue;
+        const bool added = v2->addContact(properties);
+        ret |= added;
+    }
+    return ret;
+}

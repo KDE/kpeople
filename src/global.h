@@ -21,6 +21,7 @@
 
 #include <QString>
 #include <QStringList>
+#include <QVariantMap>
 
 #include <kpeople/kpeople_export.h>
 

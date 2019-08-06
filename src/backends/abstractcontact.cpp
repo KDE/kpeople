@@ -27,6 +27,7 @@ const QString AbstractContact::AllPhoneNumbersProperty = QStringLiteral("all-pho
 const QString AbstractContact::PresenceProperty = QStringLiteral("presence");
 const QString AbstractContact::AllEmailsProperty = QStringLiteral("all-email");
 const QString AbstractContact::PictureProperty = QStringLiteral("picture");
+const QString AbstractContact::VCardProperty = QStringLiteral("vcard");
 const QString AbstractContact::GroupsProperty = QStringLiteral("all-groups");
 
 AbstractContact::AbstractContact()

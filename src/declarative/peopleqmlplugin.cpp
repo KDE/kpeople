@@ -23,6 +23,7 @@
 #include <personactionsmodel_p.h>
 #include <persondata.h>
 #include <personssortfilterproxymodel.h>
+#include <personpluginmanager.h>
 #include <actions.h>
 
 #include "declarativepersondata.h"
@@ -43,6 +44,15 @@ public:
     Q_ENUM(ActionType)
 };
 
+class DeclarativePersonPluginManager : public QObject
+{
+    Q_OBJECT
+public:
+    Q_SCRIPTABLE bool addContact(const QVariantMap &properties) {
+        return KPeople::PersonPluginManager::addContact(properties);
+    }
+};
+
 void PeopleQMLPlugin::registerTypes(const char *uri)
 {
     qmlRegisterType<KPeople::PersonsModel>(uri, 1, 0, "PersonsModel");
@@ -51,6 +61,7 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
     qmlRegisterType<DeclarativePersonData>(uri, 1, 0, "PersonData");
     qmlRegisterType<KPeople::PersonData>();
     qmlRegisterUncreatableType<ActionTypeWrapper>(uri, 1, 0, "ActionType", QStringLiteral("You cannot create ActionType"));
+    qmlRegisterSingletonType<DeclarativePersonPluginManager>(uri, 1, 0, "PersonPluginManager", [] (QQmlEngine*, QJSEngine*) -> QObject* { return new DeclarativePersonPluginManager; });
 }
 
 #include "peopleqmlplugin.moc"

@@ -74,6 +74,9 @@ public:
     /** QVariantList property that lists the emails the contact has */
     static const QString AllEmailsProperty;
 
+    /** QByteArray with the raw vcard information */
+    static const QString VCardProperty;
+
     /**
      * Generic method to access a random contact property
      *

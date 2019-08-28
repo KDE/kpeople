@@ -154,7 +154,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     //   - if we're merging two simple contacts, create completely new id
     //   - if we're merging an existing metacontact, take the first id and use it
     QString personUriString;
-    if (metacontacts.count() == 0) {
+    if (metacontacts.isEmpty()) {
         // query for the highest existing ID in the database and +1 it
         int personUri = 0;
         QSqlQuery query = m_db.exec(QStringLiteral("SELECT MAX(personID) FROM persons"));

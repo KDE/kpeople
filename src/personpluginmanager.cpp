@@ -148,3 +148,16 @@ bool KPeople::PersonPluginManager::addContact(const QVariantMap& properties)
     }
     return ret;
 }
+
+bool KPeople::PersonPluginManager::deleteContact(const QString &uri)
+{
+    bool ret = false;
+    for (auto p : qAsConst(s_instance->dataSourcePlugins)) {
+        auto v2 = dynamic_cast<BasePersonsDataSourceV2*>(p);
+        if (!v2)
+            continue;
+        const bool deleted = v2->deleteContact(uri);
+        ret |= deleted;
+    }
+    return ret;
+}

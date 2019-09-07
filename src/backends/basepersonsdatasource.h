@@ -78,6 +78,7 @@ public:
     BasePersonsDataSourceV2(QObject *parent, const QVariantList &args = QVariantList());
 
     virtual bool addContact(const QVariantMap &properties) = 0;
+    virtual bool deleteContact(const QString &uri) = 0;
 };
 
 }

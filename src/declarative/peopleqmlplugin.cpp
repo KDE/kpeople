@@ -51,6 +51,9 @@ public:
     Q_SCRIPTABLE bool addContact(const QVariantMap &properties) {
         return KPeople::PersonPluginManager::addContact(properties);
     }
+    Q_SCRIPTABLE bool deleteContact(const QString &uri) {
+        return KPeople::PersonPluginManager::deleteContact(uri);
+    }
 };
 
 void PeopleQMLPlugin::registerTypes(const char *uri)

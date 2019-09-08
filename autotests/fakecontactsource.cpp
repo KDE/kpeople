@@ -50,7 +50,7 @@ public:
 
     QVariant customProperty(const QString &key) const override
     {
-        if (key.startsWith(QLatin1Literal("all-"))) {
+        if (key.startsWith(QLatin1String("all-"))) {
             return QStringList(m_properties[key.mid(4)].toString());
         } else {
             return m_properties[key];

@@ -60,12 +60,12 @@ Q_SIGNALS:
     /**
      * DataSources should emit this whenever a known contact changes
      */
-    void contactChanged(const QString &contactUri, const AbstractContact::Ptr &contact);
+    void contactChanged(const QString &contactUri, const KPeople::AbstractContact::Ptr &contact);
 
     /**
      * DataSources should emit this whenever a contact is added
      */
-    void contactAdded(const QString &contactUri, const AbstractContact::Ptr &contact);
+    void contactAdded(const QString &contactUri, const KPeople::AbstractContact::Ptr &contact);
 
     /**
      * DataSources should emit this whenever a contact is removed and they are no longer able to supply up-to-date data on a contact

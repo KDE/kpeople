@@ -23,9 +23,9 @@ DefaultContactMonitor::DefaultContactMonitor(const QString &contactUri, const Al
     ContactMonitor(contactUri),
     m_allContactsMonitor(allContactsWatcher)
 {
-    connect(allContactsWatcher.data(), SIGNAL(contactAdded(QString,AbstractContact::Ptr)), SLOT(onContactAdded(QString,AbstractContact::Ptr)));
-    connect(allContactsWatcher.data(), SIGNAL(contactRemoved(QString)), SLOT(onContactRemoved(QString)));
-    connect(allContactsWatcher.data(), SIGNAL(contactChanged(QString,AbstractContact::Ptr)), SLOT(onContactChanged(QString,AbstractContact::Ptr)));
+    connect(allContactsWatcher.data(), &AllContactsMonitor::contactAdded, this, &DefaultContactMonitor::onContactAdded);
+    connect(allContactsWatcher.data(), &AllContactsMonitor::contactRemoved, this, &DefaultContactMonitor::onContactRemoved);
+    connect(allContactsWatcher.data(), &AllContactsMonitor::contactChanged, this, &DefaultContactMonitor::onContactChanged);
 
     const QMap<QString, AbstractContact::Ptr> &contacts = m_allContactsMonitor->contacts();
     QMap<QString, AbstractContact::Ptr>::const_iterator it = contacts.constFind(contactUri);

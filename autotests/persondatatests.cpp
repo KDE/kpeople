@@ -118,3 +118,16 @@ void PersonDataTests::nullPerson()
     PersonData invalidPerson(QStringLiteral());
     QVERIFY(!invalidPerson.isValid());
 }
+
+void PersonDataTests::removeContact()
+{
+    PersonData person(QStringLiteral("fakesource://contact1"));
+
+    QCOMPARE(person.allEmails().at(0), QStringLiteral("contact1@example.com"));
+
+    QSignalSpy spy(&person, &PersonData::dataChanged);
+    m_source->remove(person.personUri());
+    QCOMPARE(spy.count(), 1);
+
+    QCOMPARE(person.name(), QString());
+}

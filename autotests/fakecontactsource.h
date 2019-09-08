@@ -39,6 +39,7 @@ public:
     FakeContactSource(QObject *parent, const QVariantList &args = QVariantList());
     QString sourcePluginId() const override;
 
+    void remove(const QString& uri);
     void changeProperty(const QString& key, const QVariant& value);
 protected:
     KPeople::AllContactsMonitor *createAllContactsMonitor() override;
@@ -53,6 +54,11 @@ public:
     explicit FakeAllContactsMonitor();
     void changeProperty(const QString& key, const QVariant& value);
     QMap<QString, KPeople::AbstractContact::Ptr> contacts() override;
+
+    void remove(const QString &uri);
+
+private:
+    QMap<QString, KPeople::AbstractContact::Ptr> m_contacts;
 };
 
 #endif // FAKECONTACTSOURCE_H

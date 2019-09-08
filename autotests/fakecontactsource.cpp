@@ -39,6 +39,12 @@ void FakeContactSource::changeProperty(const QString& key, const QVariant& value
     qobject_cast<FakeAllContactsMonitor *>(allContactsMonitor().data())->changeProperty(key, value);
 }
 
+void FakeContactSource::remove(const QString& uri)
+{
+    qobject_cast<FakeAllContactsMonitor *>(allContactsMonitor().data())->remove(uri);
+}
+
+
 //----------------------------------------------------------------------------
 
 class FakeContact : public KPeople::AbstractContact
@@ -61,52 +67,51 @@ public:
 };
 
 FakeAllContactsMonitor::FakeAllContactsMonitor()
+    : m_contacts({
+        { QStringLiteral("fakesource://contact1"),
+            KPeople::AbstractContact::Ptr(new FakeContact(QVariantMap {
+                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 1") },
+                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact1@example.com") }
+            }))
+        },
+
+        { QStringLiteral("fakesource://contact2"),
+            KPeople::AbstractContact::Ptr(new FakeContact(QVariantMap {
+                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 2") },
+                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact2@example.com") },
+                { KPeople::AbstractContact::PhoneNumberProperty, QStringLiteral("+1 234 567 890") }
+            }))
+        },
+
+        { QStringLiteral("fakesource://contact3"),
+            KPeople::AbstractContact::Ptr(new FakeContact(QVariantMap {
+                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 3") },
+                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact3@example.com") },
+                { KPeople::AbstractContact::PhoneNumberProperty, QStringLiteral("+34 666 777 999") }
+            }))
+        },
+
+        { QStringLiteral("fakesource://contact4"),
+            KPeople::AbstractContact::Ptr(new FakeContact(QVariantMap {
+                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 4") },
+                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact4@example.com") },
+                { KPeople::AbstractContact::PresenceProperty, QStringLiteral("online") }
+            }))
+        }
+    })
 {
     emitInitialFetchComplete(true);
 }
 
+void FakeAllContactsMonitor::remove(const QString& uri)
+{
+    m_contacts.remove(uri);
+    Q_EMIT contactRemoved(uri);
+}
+
 QMap<QString, KPeople::AbstractContact::Ptr> FakeAllContactsMonitor::contacts()
 {
-    static QMap<QString, KPeople::AbstractContact::Ptr> contacts;
-
-    if (contacts.isEmpty()) {
-        {
-            KPeople::AbstractContact::Ptr contact1(new FakeContact(QVariantMap {
-                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 1") },
-                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact1@example.com") }
-            }));
-            contacts[QStringLiteral("fakesource://contact1")] = contact1;
-        }
-
-        {
-            KPeople::AbstractContact::Ptr contact2(new FakeContact(QVariantMap {
-                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 2") },
-                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact2@example.com") },
-                { KPeople::AbstractContact::PhoneNumberProperty, QStringLiteral("+1 234 567 890") }
-            }));
-            contacts[QStringLiteral("fakesource://contact2")] = contact2;
-        }
-
-        {
-            KPeople::AbstractContact::Ptr contact3(new FakeContact(QVariantMap {
-                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 3") },
-                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact3@example.com") },
-                { KPeople::AbstractContact::PhoneNumberProperty, QStringLiteral("+34 666 777 999") }
-            }));
-            contacts[QStringLiteral("fakesource://contact3")] = contact3;
-        }
-
-        {
-            KPeople::AbstractContact::Ptr contact4(new FakeContact(QVariantMap {
-                { KPeople::AbstractContact::NameProperty, QStringLiteral("Contact 4") },
-                { KPeople::AbstractContact::EmailProperty, QStringLiteral("contact4@example.com") },
-                { KPeople::AbstractContact::PresenceProperty, QStringLiteral("online") }
-            }));
-            contacts[QStringLiteral("fakesource://contact4")] = contact4;
-        }
-    }
-
-    return contacts;
+    return m_contacts;
 }
 
 void FakeAllContactsMonitor::changeProperty(const QString& key, const QVariant& value)

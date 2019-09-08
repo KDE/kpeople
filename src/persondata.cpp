@@ -122,7 +122,9 @@ void PersonData::onContactChanged()
     Q_D(PersonData);
 
     ContactMonitor *watcher = qobject_cast<ContactMonitor *>(sender());
-    if (d->metaContact.contactUris().contains(watcher->contactUri())) {
+    if (!watcher->contact()) {
+        d->metaContact.removeContact(watcher->contactUri());
+    } else if (d->metaContact.contactUris().contains(watcher->contactUri())) {
 #ifdef __GNUC__
 #warning probably not needed anymore
 #endif

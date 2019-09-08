@@ -40,6 +40,7 @@ private Q_SLOTS:
     void contactChanged();
 
     void nullPerson();
+    void removeContact();
 
 private:
     FakeContactSource *m_source;

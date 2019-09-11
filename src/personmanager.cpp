@@ -23,9 +23,12 @@
 #include "kpeople_debug.h"
 #include <QStandardPaths>
 #include <QDir>
+#include <QSqlQuery>
+
+#ifndef Q_OS_ANDROID
 #include <QDBusConnection>
 #include <QDBusMessage>
-#include <QSqlQuery>
+#endif
 
 class Transaction
 {
@@ -72,10 +75,12 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)"));
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS personIdIndex ON persons (personId)"));
 
+#ifndef Q_OS_ANDROID
     QDBusConnection::sessionBus().connect(QString(), QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"),
                                           QStringLiteral("ContactAddedToPerson"), this, SIGNAL(contactAddedToPerson(QString,QString)));
     QDBusConnection::sessionBus().connect(QString(), QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"),
                                           QStringLiteral("ContactRemovedFromPerson"), this, SIGNAL(contactRemovedFromPerson(QString)));
+#endif
 }
 
 PersonManager::~PersonManager()
@@ -139,7 +144,9 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 
     bool rc = true;
 
+#ifndef Q_OS_ANDROID
     QList<QDBusMessage> pendingMessages;
+#endif
 
     // separate the passed ids to metacontacts and simple contacts
     for (const QString &id : ids) {
@@ -191,6 +198,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                 rc = false;
             }
 
+#ifndef Q_OS_ANDROID
             QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
                                    QStringLiteral("org.kde.KPeople"),
                                    QStringLiteral("ContactRemovedFromPerson"));
@@ -204,6 +212,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 
             message.setArguments(QVariantList() << id << personUriString);
             pendingMessages << message;
+#endif
         }
     }
 
@@ -219,6 +228,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                 rc = false;
             }
 
+#ifndef Q_OS_ANDROID
             //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
                                    QStringLiteral("org.kde.KPeople"),
@@ -226,15 +236,18 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 
             message.setArguments(QVariantList() << id << personUriString);
             pendingMessages << message;
+#endif
         }
     }
 
     //if success send all messages to other clients
     //otherwise roll back our database changes and return an empty string
     if (rc) {
+#ifndef Q_OS_ANDROID
         for (const QDBusMessage &message : qAsConst(pendingMessages)) {
             QDBusConnection::sessionBus().send(message);
         }
+#endif
     } else {
         t.cancel();
         personUriString.clear();
@@ -254,6 +267,7 @@ bool PersonManager::unmergeContact(const QString &id)
         query.bindValue(0, id.mid(strlen("kpeople://")));
         query.exec();
 
+#ifndef Q_OS_ANDROID
         for (const QString &contactUri : contactUris) {
             //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
@@ -263,6 +277,7 @@ bool PersonManager::unmergeContact(const QString &id)
             message.setArguments(QVariantList() << contactUri);
             QDBusConnection::sessionBus().send(message);
         }
+#endif
     } else {
         QSqlQuery query(m_db);
         query.prepare(QStringLiteral("DELETE FROM persons WHERE contactId = ?"));

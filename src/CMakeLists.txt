@@ -30,12 +30,15 @@ target_link_libraries (KF5People
                         Qt5::Gui
                     PRIVATE
                         Qt5::Sql
-                        Qt5::DBus
                         KF5::I18n
                         KF5::CoreAddons
                         KF5::PeopleBackend
                         KF5::Service
 )
+
+if(NOT ANDROID)
+    target_link_libraries(KF5People PRIVATE Qt5::DBus)
+endif()
 
 set_target_properties (KF5People PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
 target_include_directories (KF5People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"

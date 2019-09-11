@@ -13,7 +13,11 @@ set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 set(REQUIRED_QT_VERSION 5.11.0)
 
-find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql DBus Widgets Qml)
+find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml)
+
+if(NOT ANDROID)
+    find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED DBus)
+endif()
 
 find_package(KF5CoreAddons ${KF5_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5WidgetsAddons ${KF5_DEP_VERSION} CONFIG REQUIRED)

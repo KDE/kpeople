@@ -29,7 +29,7 @@ namespace KPeople
 class PersonsSortFilterProxyModelPrivate;
 
 /**
- * Helps filtering and sorting PresonsModel
+ * Helps filtering and sorting PersonsModel
  *
  * Especially useful for creating interfaces around specific properties rather
  * than the complete set as a whole.

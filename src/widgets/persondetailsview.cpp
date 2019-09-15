@@ -24,7 +24,6 @@
 #include <QVBoxLayout>
 #include "kpeople_widgets_debug.h"
 #include <QList>
-#include <QStandardPaths>
 #include <QIcon>
 
 #include <KPluginMetaData>

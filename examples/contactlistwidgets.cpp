@@ -60,7 +60,7 @@ void PersonsDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 
     painter->save();
 
-    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform | QPainter::HighQualityAntialiasing);
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
     painter->setClipRect(optV4.rect);
 
     QStyle *style = QApplication::style();

@@ -88,9 +88,10 @@ void MergeDelegate::onSelectedContactsChanged(const QItemSelection &now , const 
 QWidget *MergeDelegate::buildMultipleLineLabel(const QModelIndex &idx)
 {
     QString contents;
-    int rows = idx.model()->rowCount(idx);
+    const QAbstractItemModel *model = idx.model();
+    const int rows = model->rowCount(idx);
     for (int i = 0 ; i < rows; ++i) {
-        QModelIndex child = idx.child(i, 0);
+        const QModelIndex child = model->index(i, 0, idx);
         Match m = child.data(MergeDialog::MergeReasonRole).value<Match>();
 
         QString name = m.indexB.data(Qt::DisplayRole).toString();
@@ -111,9 +112,10 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
 
     const int separation = 5;
 
-    int facesRows = qMin(index.model()->rowCount(index), MAX_MATCHING_CONTACTS_ICON);
+    const QAbstractItemModel *model = index.model();
+    int facesRows = qMin(model->rowCount(index), MAX_MATCHING_CONTACTS_ICON);
     for (int i = 0; i < facesRows; i++) { // Children Icon Displaying Loop
-        const QModelIndex child = index.child(i, 0);
+        const QModelIndex child = model->index(i, 0, index);
 
         QVariant decoration = child.data(Qt::DecorationRole);
         Q_ASSERT(decoration.type() == (QVariant::Icon));

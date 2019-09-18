@@ -7,6 +7,7 @@ platforms:
     - name: FreeBSD
     - name: Windows
     - name: MacOSX
+    - name: Android
 portingAid: false
 deprecated: false
 release: true

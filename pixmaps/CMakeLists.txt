@@ -1,1 +1,0 @@
-INSTALL (FILES dummy_avatar.png DESTINATION ${KDE_INSTALL_DATADIR_KF5}/kpeople/)

@@ -92,3 +92,8 @@ int KPeople::presenceSortPriority(const QString &presenceName)
 
     return 7;
 }
+
+void initResources()
+{
+    Q_INIT_RESOURCE(resources);
+}

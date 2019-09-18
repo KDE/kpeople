@@ -40,7 +40,6 @@ class PersonsModelPrivate : public QObject
 public:
     PersonsModelPrivate(PersonsModel *q)
         : q(q)
-        , genericAvatarImagePath(QStandardPaths::locate(QStandardPaths::QStandardPaths::GenericDataLocation, QStringLiteral("kf5/kpeople/dummy_avatar.png")))
         , initialFetchesDoneCount(0)
         , isInitialized(false)
         , hasError(false)
@@ -57,7 +56,6 @@ public:
     //a list so we have an order in the model
     QVector<MetaContact> metacontacts;
 
-    QString genericAvatarImagePath;
     QVector<AllContactsMonitorPtr> m_sourceMonitors;
 
     int initialFetchesDoneCount;
@@ -110,6 +108,8 @@ PersonsModel::PersonsModel(QObject *parent):
 
     connect(PersonManager::instance(), &PersonManager::contactAddedToPerson, d, &PersonsModelPrivate::onAddContactToPerson);
     connect(PersonManager::instance(), &PersonManager::contactRemovedFromPerson, d, &PersonsModelPrivate::onRemoveContactsFromPerson);
+
+    initResources();
 }
 
 PersonsModel::~PersonsModel()
@@ -178,7 +178,7 @@ QVariant PersonsModelPrivate::dataForContact(const QString &personUri, const Abs
 
         // If none of the above were valid images,
         // return the generic one
-        return QPixmap(genericAvatarImagePath);
+        return QPixmap(QStringLiteral(":/org.kde.kpeople/pixmaps/dummy_avatar.png"));
     }
     case PersonsModel::PersonUriRole:
         return personUri;

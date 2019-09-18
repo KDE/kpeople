@@ -63,4 +63,6 @@ KPEOPLE_EXPORT int presenceSortPriority(const QString &presenceName);
 
 }
 
+void initResources();
+
 #endif // GLOBAL_H

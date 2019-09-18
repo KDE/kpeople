@@ -21,6 +21,7 @@ add_library (KF5People
     personpluginmanager.cpp
     personmanager.cpp
     personssortfilterproxymodel.cpp
+    resources.qrc
 )
 
 add_library(KF5::People ALIAS KF5People)

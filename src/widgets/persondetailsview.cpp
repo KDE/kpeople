@@ -134,7 +134,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     for (const KPluginMetaData &service : personPluginList) {
         KPluginLoader loader(service.fileName());
         KPluginFactory *factory = loader.factory();
-        AbstractFieldWidgetFactory *f = qobject_cast<AbstractFieldWidgetFactory*>(factory->create());
+        AbstractFieldWidgetFactory *f = factory->create<AbstractFieldWidgetFactory>();
 
         Q_ASSERT(f);
         if (f) {

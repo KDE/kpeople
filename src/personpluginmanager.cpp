@@ -88,7 +88,7 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
         if (dataSource) {
             dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
         } else {
-            qCWarning(KPEOPLE_LOG) << "Failed to create data source " << service->name() << service->path();
+            qCWarning(KPEOPLE_LOG) << "Failed to create data source " << service->name() << service->entryPath();
         }
     }
 

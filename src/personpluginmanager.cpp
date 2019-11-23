@@ -22,8 +22,6 @@
 #include <KPluginMetaData>
 #include <KPluginLoader>
 #include <KPluginFactory>
-#include <KServiceTypeTrader>
-#include <KService>
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -76,19 +74,6 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
             }
         } else {
             qCWarning(KPEOPLE_LOG) << "Failed to create data source " << service.name() << service.fileName();
-        }
-    }
-
-    //TODO: Remove as soon as KTp sources are released with the new plugin system
-    const KService::List servicesList = KServiceTypeTrader::self()->query(QStringLiteral("KPeople/DataSource"));
-    for (const KService::Ptr &service : servicesList) {
-        BasePersonsDataSource *dataSource = service->createInstance<BasePersonsDataSource>(nullptr);
-
-
-        if (dataSource) {
-            dataSourcePlugins[dataSource->sourcePluginId()] = dataSource;
-        } else {
-            qCWarning(KPEOPLE_LOG) << "Failed to create data source " << service->name() << service->entryPath();
         }
     }
 

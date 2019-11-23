@@ -23,7 +23,6 @@
 #include <KPluginFactory>
 #include <KPluginMetaData>
 #include <KPeople/PersonData>
-#include <KServiceTypeTrader>
 #include "../backends/abstractpersonaction.h"
 
 namespace KPeople
@@ -41,18 +40,6 @@ static QList<AbstractPersonAction *> actionsPlugins()
             continue;
         }
         AbstractPersonAction *plugin = factory->create<AbstractPersonAction>();
-        if (plugin) {
-//             qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << service->name();
-            actionPlugins << plugin;
-        }
-    }
-
-    //TODO: Remove as soon as KTp sources are released with the new plugin system
-    const KService::List personServicesList = KServiceTypeTrader::self()->query(QStringLiteral("KPeople/Plugin"));
-    for (const KService::Ptr &service : personServicesList) {
-        AbstractPersonAction *plugin = service->createInstance<AbstractPersonAction>(nullptr);
-
-
         if (plugin) {
 //             qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << service->name();
             actionPlugins << plugin;

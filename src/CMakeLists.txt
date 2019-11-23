@@ -34,7 +34,6 @@ target_link_libraries (KF5People
                         KF5::I18n
                         KF5::CoreAddons
                         KF5::PeopleBackend
-                        KF5::Service
 )
 
 if(NOT ANDROID)

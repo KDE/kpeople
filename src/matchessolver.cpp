@@ -87,7 +87,7 @@ void MatchesSolver::startMatching()
     }
 
     for (const QSet<QString> &uris : qAsConst(jobsData)) {
-        if (PersonManager::instance()->mergeContacts(uris.toList()).isEmpty()) {
+        if (PersonManager::instance()->mergeContacts(uris.values()).isEmpty()) {
             qCWarning(KPEOPLE_LOG) << "error: failing to merge contacts: " << uris;
         }
     }

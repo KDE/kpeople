@@ -51,6 +51,8 @@ public:
 
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override;
 
+    Q_INVOKABLE void sort(int column, Qt::SortOrder order = Qt::AscendingOrder) override;
+
 private:
     Q_DISABLE_COPY(PersonsSortFilterProxyModel)
 

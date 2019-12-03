@@ -76,4 +76,8 @@ bool PersonsSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelI
     return false;
 }
 
+void PersonsSortFilterProxyModel::sort(int column, Qt::SortOrder order)
+{
+    QSortFilterProxyModel::sort(column, order);
+}
 }

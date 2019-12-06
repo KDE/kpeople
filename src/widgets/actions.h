@@ -20,6 +20,7 @@
 #define KPEOPLEWIDGETS_ACTIONS_H
 
 #include <QList>
+#include <qobjectdefs.h>
 #include <kpeople/widgets/kpeoplewidgets_export.h>
 
 class QString;
@@ -27,6 +28,7 @@ class QObject;
 class QAction;
 namespace KPeople
 {
+Q_NAMESPACE
 class PersonData;
 
 /**
@@ -43,6 +45,7 @@ enum ActionType {
     SendFileAction,
     OtherAction = 100
 };
+Q_ENUM_NS(ActionType)
 
 /**
  * Returns a list of actions relevant to the specified @p contactUri where

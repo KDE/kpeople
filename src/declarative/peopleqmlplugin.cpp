@@ -69,6 +69,8 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
 #endif
     qmlRegisterUncreatableType<ActionTypeWrapper>(uri, 1, 0, "ActionType", QStringLiteral("You cannot create ActionType"));
     qmlRegisterSingletonType<DeclarativePersonPluginManager>(uri, 1, 0, "PersonPluginManager", [] (QQmlEngine*, QJSEngine*) -> QObject* { return new DeclarativePersonPluginManager; });
+
+    qmlRegisterUncreatableMetaObject(KPeople::staticMetaObject, uri, 1, 0, "KPeople", QStringLiteral("Access to enums & flags only"));
 }
 
 #include "peopleqmlplugin.moc"

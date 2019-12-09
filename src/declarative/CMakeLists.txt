@@ -1,4 +1,4 @@
-qt5_wrap_cpp(kpeopledeclarative_SRCS ../widgets/actions.cpp)
+qt5_wrap_cpp(kpeopledeclarative_SRCS ../widgets/actions.h)
 add_library(KF5PeopleDeclarative SHARED
                     declarativepersondata.cpp
                     personactionsmodel.cpp

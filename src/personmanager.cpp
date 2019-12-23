@@ -96,7 +96,7 @@ QMultiHash< QString, QString > PersonManager::allPersons() const
     while (query.next()) {
         const QString personUri = QLatin1String("kpeople://") + query.value(0).toString(); // we store as ints internally, convert it to a string here
         const QString contactID = query.value(1).toString();
-        contactMapping.insertMulti(personUri, contactID);
+        contactMapping.insert(personUri, contactID);
     }
     return contactMapping;
 }

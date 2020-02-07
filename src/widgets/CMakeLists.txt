@@ -72,7 +72,7 @@ install (FILES persondetailsplugin.desktop
             ${SERVICETYPES_INSTALL_DIR}
 )
 
-ecm_generate_pri_file(BASE_NAME KPeopleWidgets LIB_NAME KF5ConfigCore DEPS "widgets KPeople" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople)
+ecm_generate_pri_file(BASE_NAME KPeopleWidgets LIB_NAME KF5PeopleWidgets DEPS "widgets KPeople" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople)
 install(FILES ${PRI_FILENAME} DESTINATION ${ECM_MKSPECS_INSTALL_DIR})
 
 # make available to ecm_add_qch in parent folder

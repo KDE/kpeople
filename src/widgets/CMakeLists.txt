@@ -11,7 +11,13 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     mergedelegate.cpp
 )
 
-ecm_qt_declare_logging_category(kpeople_widgets_SRCS HEADER kpeople_widgets_debug.h IDENTIFIER KPEOPLE_WIDGETS_LOG CATEGORY_NAME kf5.kpeople.widgets)
+ecm_qt_declare_logging_category(kpeople_widgets_SRCS
+    HEADER kpeople_widgets_debug.h
+    IDENTIFIER KPEOPLE_WIDGETS_LOG
+    CATEGORY_NAME kf5.kpeople.widgets
+    DESCRIPTION "kpeople widgets"
+    EXPORT KPEOPLE
+)
 
 qt5_wrap_ui (kpeople_widgets_SRCS person-details-presentation.ui)
 

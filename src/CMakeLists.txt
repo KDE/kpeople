@@ -7,7 +7,13 @@ add_subdirectory(plugins)
 add_subdirectory(widgets)
 add_subdirectory(backends)
 
-ecm_qt_declare_logging_category(KF5People_debug_SRCS HEADER kpeople_debug.h IDENTIFIER KPEOPLE_LOG CATEGORY_NAME kf5.kpeople)
+ecm_qt_declare_logging_category(KF5People_debug_SRCS
+    HEADER kpeople_debug.h
+    IDENTIFIER KPEOPLE_LOG
+    CATEGORY_NAME kf5.kpeople
+    DESCRIPTION "kpeople lib"
+    EXPORT KPEOPLE
+)
 
 add_library (KF5People
     ${KF5People_debug_SRCS}
@@ -115,6 +121,12 @@ install (FILES
          kpeople_plugin.desktop
          DESTINATION
          ${SERVICETYPES_INSTALL_DIR}
+)
+
+ecm_qt_install_logging_categories(
+    EXPORT KPEOPLE
+    FILE kpeople.categories
+    DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR}
 )
 
 ecm_generate_pri_file(BASE_NAME KPeople LIB_NAME KF5People DEPS "gui" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople)

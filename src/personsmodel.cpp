@@ -183,7 +183,7 @@ QVariant PersonsModelPrivate::dataForContact(const QString &personUri, const Abs
     case PersonsModel::PersonUriRole:
         return personUri;
     case PersonsModel::PersonVCardRole:
-        return person->customProperty(AbstractContact::VCardProperty);
+        return QVariant::fromValue<AbstractContact::Ptr>(person);
     case PersonsModel::ContactsVCardRole:
         return QVariant::fromValue<AbstractContact::List>(metacontacts[personIndex[personUri].row()].contacts());
     case PersonsModel::GroupsRole:

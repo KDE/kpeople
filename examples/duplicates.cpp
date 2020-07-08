@@ -18,7 +18,7 @@
 */
 #include <QCoreApplication>
 #include <QTimer>
-#include <qcommandlineparser.h>
+#include <QCommandLineParser>
 
 #include <personsmodel.h>
 #include <duplicatesfinder_p.h>

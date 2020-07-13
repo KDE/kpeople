@@ -10,7 +10,8 @@ add_subdirectory(backends)
 ecm_qt_declare_logging_category(KF5People_debug_SRCS
     HEADER kpeople_debug.h
     IDENTIFIER KPEOPLE_LOG
-    CATEGORY_NAME kf5.kpeople
+    CATEGORY_NAME kf.people.core
+    OLD_CATEGORY_NAMES kf5.kpeople
     DESCRIPTION "kpeople lib"
     EXPORT KPEOPLE
 )

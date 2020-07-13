@@ -14,7 +14,8 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
 ecm_qt_declare_logging_category(kpeople_widgets_SRCS
     HEADER kpeople_widgets_debug.h
     IDENTIFIER KPEOPLE_WIDGETS_LOG
-    CATEGORY_NAME kf5.kpeople.widgets
+    CATEGORY_NAME kf.people.widgets
+    OLD_CATEGORY_NAMES kf5.kpeople.widgets
     DESCRIPTION "kpeople widgets"
     EXPORT KPEOPLE
 )

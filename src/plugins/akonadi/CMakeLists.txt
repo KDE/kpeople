@@ -1,7 +1,8 @@
 ecm_qt_declare_logging_category(KF5People_akonadi_debug_SRCS
     HEADER kpeople_akonadi_plugin_debug.h
     IDENTIFIER KPEOPLE_AKONADI_PLUGIN_LOG
-    CATEGORY_NAME kf5.kpeople.plugin.akonadi
+    CATEGORY_NAME org.kde.pim.akonadiserver.kf.people
+    OLD_CATEGORY_NAMES kf5.kpeople.plugin.akonadi
     DESCRIPTION "kpeople akonadi plugin"
     EXPORT KPEOPLE
 )

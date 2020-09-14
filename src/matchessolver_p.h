@@ -51,8 +51,8 @@ private Q_SLOTS:
     void startMatching();
 
 private:
-    QList<Match> m_matches;
-    PersonsModel *m_model;
+    const QList<Match> m_matches;
+    PersonsModel *const m_model;
 };
 }
 

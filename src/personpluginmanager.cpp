@@ -26,8 +26,8 @@ public:
     QHash<QString /* SourceName*/, BasePersonsDataSource *> dataSourcePlugins;
 
     void loadDataSourcePlugins();
-    bool m_autoloadDataSourcePlugins;
-    bool m_loadedDataSourcePlugins;
+    bool m_autoloadDataSourcePlugins = true;
+    bool m_loadedDataSourcePlugins = false;
     QMutex m_mutex;
 
 };
@@ -35,8 +35,6 @@ public:
 Q_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance)
 
 PersonPluginManagerPrivate::PersonPluginManagerPrivate()
-    : m_autoloadDataSourcePlugins(true)
-    , m_loadedDataSourcePlugins(false)
 {
 }
 

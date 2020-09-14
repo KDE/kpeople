@@ -28,9 +28,6 @@ class PersonsModelPrivate : public QObject
 public:
     PersonsModelPrivate(PersonsModel *q)
         : q(q)
-        , initialFetchesDoneCount(0)
-        , isInitialized(false)
-        , hasError(false)
     {
     }
     PersonsModel *const q;
@@ -46,10 +43,10 @@ public:
 
     QVector<AllContactsMonitorPtr> m_sourceMonitors;
 
-    int initialFetchesDoneCount;
+    int initialFetchesDoneCount = 0;
 
-    bool isInitialized;
-    bool hasError;
+    bool isInitialized = false;
+    bool hasError = false;
 
     //methods that manipulate the model
     void addPerson(const MetaContact &mc);

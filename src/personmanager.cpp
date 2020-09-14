@@ -32,8 +32,7 @@ private:
 };
 
 Transaction::Transaction(const QSqlDatabase &db) :
-    m_db(db),
-    m_cancelled(false)
+    m_db(db)
 {
     m_db.transaction();
 }

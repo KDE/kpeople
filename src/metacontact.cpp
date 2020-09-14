@@ -55,7 +55,7 @@ public:
         }
     }
 
-    AbstractContact::List m_contacts;
+    const AbstractContact::List m_contacts;
 };
 
 using namespace KPeople;

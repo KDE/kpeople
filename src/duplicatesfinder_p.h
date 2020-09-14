@@ -40,7 +40,7 @@ private Q_SLOTS:
     void doSpecificSearch();
 
 private:
-    PersonsModel *m_model;
+    PersonsModel *const m_model;
     QList<Match> m_matches;
     QString m_personUri;
 };

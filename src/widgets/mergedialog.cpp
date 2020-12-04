@@ -49,7 +49,9 @@ MergeDialog::MergeDialog(QWidget *parent)
     d_ptr->duplicatesFinder = nullptr;
 
     setWindowTitle(i18n("Duplicates Manager"));
-    setLayout(new QVBoxLayout());
+
+    auto *layout = new QVBoxLayout(this);
+
     setMinimumSize(450, 350);
 
     d->model = new QStandardItemModel(this);
@@ -70,10 +72,10 @@ MergeDialog::MergeDialog(QWidget *parent)
     d->sequence->setInterval(100);
     d->sequence->setVisible(false);
 
-    layout()->addWidget(topLabel);
-    layout()->addWidget(d->view);
-    layout()->addWidget(d->sequence);
-    layout()->addWidget(buttons);
+    layout->addWidget(topLabel);
+    layout->addWidget(d->view);
+    layout->addWidget(d->sequence);
+    layout->addWidget(buttons);
 }
 
 MergeDialog::~MergeDialog()

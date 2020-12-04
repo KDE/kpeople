@@ -30,7 +30,6 @@ QWidget *EmailFieldsPlugin::createDetailsWidget(const PersonData &person, QWidge
     for (const QString &email : lstEmails) {
         layout->addWidget(new QLabel(email));
     }
-    widget->setLayout(layout);
     return widget;
 }
 

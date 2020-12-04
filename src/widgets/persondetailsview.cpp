@@ -92,16 +92,17 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
       d_ptr(new PersonDetailsViewPrivate())
 {
     Q_D(PersonDetailsView);
-    setLayout(new QVBoxLayout(this));
+
+    auto *layout = new QVBoxLayout(this);
     d->m_mainWidget = new QWidget(this);
     d->m_person = nullptr;
 
     QWidget *details = new QWidget();
     d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
     d->m_personDetailsPresentation->setupUi(details);
-    layout()->addWidget(details);
-    layout()->addWidget(d->m_mainWidget);
-    layout()->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
+    layout->addWidget(details);
+    layout->addWidget(d->m_mainWidget);
+    layout->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
     //create plugins
 #ifdef __GNUC__

@@ -31,13 +31,14 @@ MergeContactsWidget::MergeContactsWidget(QWidget *parent, const QVariantList &ar
     , m_duplicatesBuster(nullptr)
 {
     Q_UNUSED(args);
-    setLayout(new QVBoxLayout());
+
+    auto *layout = new QVBoxLayout(this);
     m_mergeButton = new QPushButton(this);
     m_mergeButton->setText(i18n("Show Merge Suggestions..."));
     m_mergeButton->setVisible(false);
 
     connect(m_mergeButton, SIGNAL(clicked(bool)), this, SLOT(onMergePossibilitiesButtonPressed()));
-    layout()->addWidget(m_mergeButton);
+    layout->addWidget(m_mergeButton);
 }
 
 void MergeContactsWidget::setPerson(PersonData *person)
@@ -61,7 +62,8 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
 
     // 1- Vertical list of person-presentation-widget : one contact, one checkbox
     m_containerListDetails = new QWidget(this);
-    m_containerListDetails->setLayout(new QVBoxLayout());
+    auto *listDetailsLayout = new QVBoxLayout{m_containerListDetails};
+
     layout()->addWidget(m_containerListDetails);
     m_containerListDetails->setVisible(false);
 
@@ -73,7 +75,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     QPushButton *triggerButton = new QPushButton(m_containerListDetails);
     triggerButton->setText(i18n("Merge with Selected Contacts"));
     connect(triggerButton, SIGNAL(clicked(bool)), this, SLOT(onMergeButtonPressed()));
-    m_containerListDetails->layout()->addWidget(triggerButton);
+    listDetailsLayout->addWidget(triggerButton);
 
     // building personPresentationWidget to fill up the list
     Q_FOREACH (const QPersistentModelIndex &duplicate, duplicates) {
@@ -93,7 +95,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
 
         // memorise the link between checkbox widget and model index
         PersonPresentationWidget *myMergeContactWidget = new PersonPresentationWidget(name, avatar, m_containerListDetails);
-        m_containerListDetails->layout()->addWidget(myMergeContactWidget);
+        listDetailsLayout->addWidget(myMergeContactWidget);
         m_listMergeContacts.append(qMakePair(duplicate, myMergeContactWidget));
     }
 }

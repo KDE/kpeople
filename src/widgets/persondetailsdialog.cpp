@@ -37,8 +37,6 @@ PersonDetailsDialog::PersonDetailsDialog(QWidget *parent, Qt::WindowFlags f):
     layout->addWidget(buttons);
 
     connect(buttons, SIGNAL(accepted()), this, SLOT(accept()));
-
-    setLayout(layout);
 }
 
 PersonDetailsDialog::~PersonDetailsDialog()

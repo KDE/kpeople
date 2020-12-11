@@ -6,7 +6,7 @@
 
 #include "personsproxymodeltest.h"
 
-#include <QtTest>
+#include <QTest>
 
 //private includes
 #include "personmanager_p.h"
@@ -15,6 +15,7 @@
 #include <personsmodel.h>
 #include <personpluginmanager.h>
 #include <personssortfilterproxymodel.h>
+#include <QSignalSpy>
 
 #include "fakecontactsource.h"
 

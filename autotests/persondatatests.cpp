@@ -6,12 +6,13 @@
 
 #include "persondatatests.h"
 
-#include <QtTest>
+#include <QTest>
 
 //private includes
 #include "personmanager_p.h"
 
 //public kpeople includes
+#include <QSignalSpy>
 #include <persondata.h>
 #include <personpluginmanager.h>
 

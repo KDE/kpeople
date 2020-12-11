@@ -6,7 +6,7 @@
 
 #include "personsmodeltest.h"
 
-#include <QtTest>
+#include <QTest>
 #include <QVariant>
 
 //private includes
@@ -15,6 +15,7 @@
 //public kpeople includes
 #include <personsmodel.h>
 #include <personpluginmanager.h>
+#include <QSignalSpy>
 
 #include "fakecontactsource.h"
 

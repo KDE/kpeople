@@ -50,11 +50,7 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
     qmlRegisterType<KPeople::PersonsSortFilterProxyModel>(uri, 1, 0, "PersonsSortFilterProxyModel");
     qmlRegisterType<KPeople::PersonActionsModel>(uri, 1, 0, "PersonActions");
     qmlRegisterType<DeclarativePersonData>(uri, 1, 0, "PersonData");
-#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-    qmlRegisterType<KPeople::PersonData>();
-#else
     qmlRegisterAnonymousType<KPeople::PersonData>(uri, 1);
-#endif
     qmlRegisterUncreatableType<ActionTypeWrapper>(uri, 1, 0, "ActionType", QStringLiteral("You cannot create ActionType"));
     qmlRegisterSingletonType<DeclarativePersonPluginManager>(uri, 1, 0, "PersonPluginManager", [] (QQmlEngine*, QJSEngine*) -> QObject* { return new DeclarativePersonPluginManager; });
 

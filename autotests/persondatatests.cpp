@@ -81,7 +81,9 @@ void PersonDataTests::loadPerson()
     QCOMPARE(person.personUri(), QStringLiteral("kpeople://1"));
 
     //convert to set as order is not important
-    QCOMPARE(person.allEmails().toSet(), QSet<QString>() << QStringLiteral("contact2@example.com") << QStringLiteral("contact3@example.com"));
+    const QStringList allEmails = person.allEmails();
+    const QSet<QString> allEmailsSet(allEmails.begin(), allEmails.end());
+    QCOMPARE(allEmailsSet, QSet<QString>() << QStringLiteral("contact2@example.com") << QStringLiteral("contact3@example.com"));
 }
 
 void PersonDataTests::contactChanged()

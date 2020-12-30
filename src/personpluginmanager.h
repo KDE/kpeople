@@ -50,7 +50,6 @@ public:
      */
     static void addDataSource(const QString &sourceId, BasePersonsDataSource *source);
     static BasePersonsDataSource *dataSource(const QString &sourceId);
-    static QList<AbstractPersonAction *> actions();
 
     /**
      * Instead of loading datasources from plugins, set sources manually

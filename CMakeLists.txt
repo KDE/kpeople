@@ -43,7 +43,7 @@ add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt 
 
 add_definitions(-DTRANSLATION_DOMAIN=\"kpeople5\")
 
-set(CMAKECONFIG_INSTALL_DIR "${CMAKECONFIG_INSTALL_PREFIX}/KF5People")
+set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KF5People")
 
 ecm_setup_version(PROJECT VARIABLE_PREFIX KPEOPLE
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h"

@@ -29,7 +29,7 @@ void DeclarativePersonData::setPersonUri(const QString &id)
         m_person = new KPeople::PersonData(id, this);
     }
 
-    emit personChanged();
+    Q_EMIT personChanged();
 }
 
 KPeople::PersonData *DeclarativePersonData::person() const

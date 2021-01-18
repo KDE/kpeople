@@ -69,7 +69,7 @@ void PersonActionsModel::setPersonUri(const QString &id)
         endResetModel();
     }
 
-    emit personChanged();
+    Q_EMIT personChanged();
 }
 
 void PersonActionsModel::resetActions()

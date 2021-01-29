@@ -49,7 +49,7 @@ endif()
 
 set_target_properties (KF5People PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME People)
 target_include_directories (KF5People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
-                                    INTERFACE "$<INSTALL_INTERFACE:${KF5_INCLUDE_INSTALL_DIR}/KPeople>"
+                                    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople>"
 )
 
 if (MSVC)
@@ -74,13 +74,13 @@ ecm_generate_headers(KPeople_CamelCase_HEADERS
     PREFIX KPeople
 )
 install (FILES ${KPeople_CamelCase_HEADERS}
-         DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/KPeople
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/KPeople
          COMPONENT Devel
 )
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h
   ${KPeople_HEADERS}
-  DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/kpeople COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/kpeople COMPONENT Devel
 )
 
 generate_export_header(KF5People EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
@@ -121,7 +121,7 @@ install (FILES
          kpeople_data_source.desktop
          kpeople_plugin.desktop
          DESTINATION
-         ${SERVICETYPES_INSTALL_DIR}
+         ${KDE_INSTALL_KSERVICETYPES5DIR}
 )
 
 ecm_qt_install_logging_categories(

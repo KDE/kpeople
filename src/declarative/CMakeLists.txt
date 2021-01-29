@@ -9,5 +9,5 @@ target_link_libraries(KF5PeopleDeclarative
     KF5::PeopleWidgets # QAction
 )
 
-install(TARGETS KF5PeopleDeclarative DESTINATION ${QML_INSTALL_DIR}/org/kde/people)
-install(FILES qmldir DESTINATION ${QML_INSTALL_DIR}/org/kde/people)
+install(TARGETS KF5PeopleDeclarative DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)
+install(FILES qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)

@@ -48,7 +48,7 @@ endif (MSVC)
 # Install:
 install (TARGETS KF5PeopleWidgets
          EXPORT KPeopleTargets
-         ${INSTALL_TARGETS_DEFAULT_ARGS}
+         ${KDE_INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
@@ -63,20 +63,20 @@ ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
 )
 
 install (FILES ${KPeopleWidgets_CamelCase_HEADERS}
-         DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/KPeople/Widgets
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/KPeople/Widgets
          COMPONENT Devel
 )
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h
   ${KPeopleWidgets_HEADERS}
-  DESTINATION ${KF5_INCLUDE_INSTALL_DIR}/KPeople/kpeople/widgets COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/kpeople/widgets COMPONENT Devel
 )
 
 generate_export_header(KF5PeopleWidgets EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h BASE_NAME KPeopleWidgets)
 
 install (FILES persondetailsplugin.desktop
          DESTINATION
-            ${SERVICETYPES_INSTALL_DIR}
+            ${KDE_INSTALL_KSERVICETYPES5DIR}
 )
 
 ecm_generate_pri_file(BASE_NAME KPeopleWidgets LIB_NAME KF5PeopleWidgets DEPS "widgets KPeople" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople)

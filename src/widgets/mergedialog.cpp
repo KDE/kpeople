@@ -13,6 +13,7 @@
 #include "personsmodel.h"
 
 #include "kpeople_widgets_debug.h"
+
 #include <QDialogButtonBox>
 #include <QLabel>
 #include <QLayout>

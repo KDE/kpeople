@@ -7,11 +7,12 @@
 #include "personpluginmanager.h"
 #include "backends/basepersonsdatasource.h"
 
+#include "kpeople_debug.h"
+
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <KPluginMetaData>
 
-#include "kpeople_debug.h"
 #include <QMutex>
 #include <QMutexLocker>
 

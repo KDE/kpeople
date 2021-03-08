@@ -8,9 +8,11 @@
 #include "../backends/abstractpersonaction.h"
 #include "kpeople_widgets_debug.h"
 #include <KPeople/PersonData>
+
 #include <KPluginFactory>
 #include <KPluginLoader>
 #include <KPluginMetaData>
+
 #include <QAction>
 
 namespace KPeople

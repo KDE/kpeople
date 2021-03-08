@@ -7,9 +7,10 @@
 #ifndef KPEOPLEWIDGETS_ACTIONS_H
 #define KPEOPLEWIDGETS_ACTIONS_H
 
-#include <QList>
 #include <kpeople/widgets/kpeoplewidgets_export.h>
 #include <qobjectdefs.h>
+
+#include <QList>
 
 class QString;
 class QObject;

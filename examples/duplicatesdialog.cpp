@@ -6,9 +6,10 @@
 */
 
 #include "mergedialog.h"
+#include <personsmodel.h>
+
 #include <QApplication>
 #include <QTimer>
-#include <personsmodel.h>
 
 int main(int argc, char **argv)
 {

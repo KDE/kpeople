@@ -10,6 +10,7 @@
 #include "matchessolver_p.h"
 #include "personmanager_p.h"
 #include "personsmodel.h"
+
 #include <QString>
 
 using namespace KPeople;

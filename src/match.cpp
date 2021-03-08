@@ -22,12 +22,19 @@ Match::Match(const QList<MatchReason> &reasons, const QPersistentModelIndex &a, 
 
 bool Match::operator==(const Match &m) const
 {
-    return reasons == m.reasons && indexA == m.indexA && indexB == m.indexB;
+    /* clang-format off */
+    return reasons == m.reasons
+        && indexA == m.indexA
+        && indexB == m.indexB;
+    /* clang-format on */
 }
 
 bool Match::operator<(const Match &m) const
 {
-    return indexA < m.indexA || (indexA == m.indexA && indexB < m.indexB);
+    /* clang-format off */
+    return indexA < m.indexA
+        || (indexA == m.indexA && indexB < m.indexB);
+    /* clang-format on */
 }
 
 QStringList Match::matchReasons() const

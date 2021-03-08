@@ -16,6 +16,7 @@
 #include "personpluginmanager.h"
 
 #include "kpeople_debug.h"
+
 #include <QPixmap>
 #include <QStandardPaths>
 #include <QUrl>

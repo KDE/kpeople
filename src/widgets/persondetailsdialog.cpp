@@ -6,6 +6,7 @@
 */
 
 #include "persondetailsdialog.h"
+
 #include <QDialogButtonBox>
 #include <QVBoxLayout>
 

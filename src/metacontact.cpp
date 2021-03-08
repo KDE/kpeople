@@ -7,6 +7,7 @@
 #include "global.h"
 #include "kpeople_debug.h"
 #include "metacontact_p.h"
+
 #include <QSharedData>
 
 namespace KPeople

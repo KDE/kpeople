@@ -8,18 +8,20 @@
 #include "persondetailsview.h"
 
 #include "kpeople_widgets_debug.h"
+
+#include "abstractfieldwidgetfactory.h"
+#include "global.h"
+#include "plugins/emaildetailswidget.h"
+
+#include <KPluginFactory>
+#include <KPluginLoader>
+#include <KPluginMetaData>
+
 #include <QFormLayout>
 #include <QIcon>
 #include <QLabel>
 #include <QList>
 #include <QVBoxLayout>
-
-#include "abstractfieldwidgetfactory.h"
-#include "global.h"
-#include "plugins/emaildetailswidget.h"
-#include <KPluginFactory>
-#include <KPluginLoader>
-#include <KPluginMetaData>
 
 #include "ui_person-details-presentation.h"
 

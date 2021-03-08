@@ -8,6 +8,7 @@
 #include "personmanager_p.h"
 
 #include "kpeople_debug.h"
+
 #include <QDir>
 #include <QSqlQuery>
 #include <QStandardPaths>

@@ -10,10 +10,11 @@
 #ifndef PERSONS_MODEL_H
 #define PERSONS_MODEL_H
 
-#include <QAbstractItemModel>
 #include <kpeople/kpeople_export.h>
 
 #include "global.h"
+
+#include <QAbstractItemModel>
 
 namespace KPeople
 {

@@ -10,13 +10,14 @@
 #include "personpresentationwidget.h"
 #include "personsmodel.h"
 
-#include <QPushButton>
-#include <QVBoxLayout>
-
 #include "kpeople_debug.h"
+
 #include <KJob>
 #include <KLocalizedString>
 #include <KPluginFactory>
+
+#include <QPushButton>
+#include <QVBoxLayout>
 
 K_PLUGIN_FACTORY(MergeContactsWidgetFactory, registerPlugin<MergeContactsWidget>();)
 K_EXPORT_PLUGIN(MergeContactsWidgetFactory("mergecontactswidgetplugin"))

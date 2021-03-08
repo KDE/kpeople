@@ -6,18 +6,18 @@
 
 #include "personsmodeltest.h"
 
-#include <QTest>
-#include <QVariant>
+#include "fakecontactsource.h"
 
 // private includes
 #include "personmanager_p.h"
 
 // public kpeople includes
-#include <QSignalSpy>
 #include <personpluginmanager.h>
 #include <personsmodel.h>
 
-#include "fakecontactsource.h"
+#include <QSignalSpy>
+#include <QTest>
+#include <QVariant>
 
 QTEST_GUILESS_MAIN(PersonsModelTest)
 

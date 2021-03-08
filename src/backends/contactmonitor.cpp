@@ -17,8 +17,8 @@ public:
 };
 
 ContactMonitor::ContactMonitor(const QString &contactUri)
-    : QObject(nullptr),
-      d_ptr(new ContactMonitorPrivate)
+    : QObject(nullptr)
+    , d_ptr(new ContactMonitorPrivate)
 {
     Q_D(ContactMonitor);
     d->m_contactUri = contactUri;
@@ -50,4 +50,3 @@ QString ContactMonitor::contactUri() const
 
     return d->m_contactUri;
 }
-

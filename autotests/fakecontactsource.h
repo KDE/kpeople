@@ -7,8 +7,8 @@
 #ifndef FAKECONTACTSOURCE_H
 #define FAKECONTACTSOURCE_H
 
-#include <backends/basepersonsdatasource.h>
 #include <backends/allcontactsmonitor.h>
+#include <backends/basepersonsdatasource.h>
 
 /**
 the fake datasource is configured with
@@ -26,8 +26,9 @@ public:
     FakeContactSource(QObject *parent, const QVariantList &args = QVariantList());
     QString sourcePluginId() const override;
 
-    void remove(const QString& uri);
-    void changeProperty(const QString& key, const QVariant& value);
+    void remove(const QString &uri);
+    void changeProperty(const QString &key, const QVariant &value);
+
 protected:
     KPeople::AllContactsMonitor *createAllContactsMonitor() override;
 };
@@ -39,7 +40,7 @@ class FakeAllContactsMonitor : public KPeople::AllContactsMonitor
     Q_OBJECT
 public:
     explicit FakeAllContactsMonitor();
-    void changeProperty(const QString& key, const QVariant& value);
+    void changeProperty(const QString &key, const QVariant &value);
     QMap<QString, KPeople::AbstractContact::Ptr> contacts() override;
 
     void remove(const QString &uri);

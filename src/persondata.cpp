@@ -6,17 +6,17 @@
 
 #include "persondata.h"
 
+#include "backends/abstractcontact.h"
+#include "backends/abstracteditablecontact.h"
+#include "backends/basepersonsdatasource.h"
+#include "backends/contactmonitor.h"
 #include "metacontact_p.h"
 #include "personmanager_p.h"
 #include "personpluginmanager.h"
-#include "backends/basepersonsdatasource.h"
-#include "backends/contactmonitor.h"
-#include "backends/abstractcontact.h"
-#include "backends/abstracteditablecontact.h"
 
-#include <QUrl>
 #include "kpeople_debug.h"
 #include <QStandardPaths>
+#include <QUrl>
 
 namespace KPeople
 {
@@ -31,9 +31,9 @@ public:
 
 using namespace KPeople;
 
-KPeople::PersonData::PersonData(const QString &id, QObject *parent):
-    QObject(parent),
-    d_ptr(new PersonDataPrivate)
+KPeople::PersonData::PersonData(const QString &id, QObject *parent)
+    : QObject(parent)
+    , d_ptr(new PersonDataPrivate)
 {
     Q_D(PersonData);
 
@@ -42,7 +42,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
     }
 
     QString personUri;
-    //query DB
+    // query DB
     if (id.startsWith(QLatin1String("kpeople://"))) {
         personUri = id;
     } else {
@@ -57,7 +57,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
 
     QMap<QString, AbstractContact::Ptr> contacts;
     for (const QString &contactUri : qAsConst(d->contactUris)) {
-        //load the correct data source for this contact ID
+        // load the correct data source for this contact ID
         const QString sourceId = contactUri.left(contactUri.indexOf(QStringLiteral("://")));
         Q_ASSERT(!sourceId.isEmpty());
         BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
@@ -65,8 +65,8 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent):
             ContactMonitorPtr cw = dataSource->contactMonitor(contactUri);
             d->watchers << cw;
 
-            //if the data source already has the contact set it already
-            //if not it will be loaded when the contactChanged signal is emitted
+            // if the data source already has the contact set it already
+            // if not it will be loaded when the contactChanged signal is emitted
             if (cw->contact()) {
                 contacts[contactUri] = cw->contact();
             }
@@ -146,10 +146,10 @@ QVariant PersonData::contactCustomProperty(const QString &key) const
     return d->metaContact.personAddressee()->customProperty(key);
 }
 
-bool KPeople::PersonData::setContactCustomProperty(const QString& key, const QVariant& value)
+bool KPeople::PersonData::setContactCustomProperty(const QString &key, const QVariant &value)
 {
     Q_D(PersonData);
-    auto contact = dynamic_cast<AbstractEditableContact*>(d->metaContact.personAddressee().data());
+    auto contact = dynamic_cast<AbstractEditableContact *>(d->metaContact.personAddressee().data());
 
     return contact && contact->setCustomProperty(key, value);
 }
@@ -182,7 +182,7 @@ QString PersonData::email() const
 
 QStringList PersonData::groups() const
 {
-//     We might want to cache it eventually?
+    //     We might want to cache it eventually?
 
     const QVariantList groups = contactCustomProperty(AbstractContact::GroupsProperty).toList();
     QStringList ret;
@@ -209,5 +209,5 @@ QStringList PersonData::allEmails() const
 bool KPeople::PersonData::isEditable() const
 {
     Q_D(const PersonData);
-    return dynamic_cast<const AbstractEditableContact*>(d->metaContact.personAddressee().constData());
+    return dynamic_cast<const AbstractEditableContact *>(d->metaContact.personAddressee().constData());
 }

@@ -9,6 +9,7 @@
 using namespace KPeople;
 
 AbstractEditableContact::AbstractEditableContact()
-{}
+{
+}
 
 AbstractEditableContact::~AbstractEditableContact() = default;

@@ -19,6 +19,7 @@ public:
     virtual KPeople::AllContactsMonitor *createAllContactsMonitor();
     virtual KPeople::ContactMonitor *createContactMonitor(const QString &contactUri);
     virtual QString sourcePluginId() const;
+
 private:
     Akonadi::Monitor *m_monitor;
 };

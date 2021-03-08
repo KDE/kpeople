@@ -7,29 +7,28 @@
 
 #include "persondetailsview.h"
 
-#include <QFormLayout>
-#include <QLabel>
-#include <QVBoxLayout>
 #include "kpeople_widgets_debug.h"
-#include <QList>
+#include <QFormLayout>
 #include <QIcon>
+#include <QLabel>
+#include <QList>
+#include <QVBoxLayout>
 
-#include <KPluginMetaData>
-#include <KPluginLoader>
-#include <KPluginFactory>
 #include "abstractfieldwidgetfactory.h"
-#include "plugins/emaildetailswidget.h"
 #include "global.h"
+#include "plugins/emaildetailswidget.h"
+#include <KPluginFactory>
+#include <KPluginLoader>
+#include <KPluginMetaData>
 
 #include "ui_person-details-presentation.h"
 
 namespace KPeople
 {
-
 class PersonDetailsViewPrivate
 {
 public:
-    PersonData  *m_person;
+    PersonData *m_person;
     Ui::PersonDetailsPresentation *m_personDetailsPresentation;
     QWidget *m_mainWidget;
     QList<AbstractFieldWidgetFactory *> m_plugins;
@@ -46,18 +45,18 @@ public:
     QString label() const override;
     int sortWeight() const override;
     QWidget *createDetailsWidget(const PersonData &person, QWidget *parent) const override;
+
 private:
     QString m_field;
 };
 
-CoreFieldsPlugin::CoreFieldsPlugin(const QString &field):
-    m_field(field)
+CoreFieldsPlugin::CoreFieldsPlugin(const QString &field)
+    : m_field(field)
 {
 }
 
 CoreFieldsPlugin::~CoreFieldsPlugin()
 {
-
 }
 
 QString CoreFieldsPlugin::label() const
@@ -75,7 +74,7 @@ int CoreFieldsPlugin::sortWeight() const
 
 QWidget *CoreFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const
 {
-//  we have a plugin specific for e-mails.
+    //  we have a plugin specific for e-mails.
     if (m_field == QLatin1String("email")) {
         return nullptr;
     }
@@ -88,8 +87,8 @@ QWidget *CoreFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget
 }
 
 PersonDetailsView::PersonDetailsView(QWidget *parent)
-    : QWidget(parent),
-      d_ptr(new PersonDetailsViewPrivate())
+    : QWidget(parent)
+    , d_ptr(new PersonDetailsViewPrivate())
 {
     Q_D(PersonDetailsView);
 
@@ -104,11 +103,11 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     layout->addWidget(d->m_mainWidget);
     layout->addItem(new QSpacerItem(1, 1, QSizePolicy::Fixed, QSizePolicy::Expanding));
 
-    //create plugins
+    // create plugins
 #ifdef __GNUC__
 #warning figure out a way to list properties
 #endif
-    const QStringList fields { QStringLiteral("name"), QStringLiteral("all-email") };
+    const QStringList fields{QStringLiteral("name"), QStringLiteral("all-email")};
     for (const QString &field : fields) {
         d->m_plugins << new CoreFieldsPlugin(field);
     }
@@ -129,7 +128,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
         }
     }
 
-    //TODO Sort plugins
+    // TODO Sort plugins
 }
 
 PersonDetailsView::~PersonDetailsView()
@@ -161,7 +160,7 @@ void PersonDetailsView::reload()
 {
     Q_D(PersonDetailsView);
 
-    //replace the entire main widget
+    // replace the entire main widget
     int layoutIndex = layout()->indexOf(d->m_mainWidget);
     layout()->takeAt(layoutIndex);
     d->m_mainWidget->deleteLater();
@@ -171,13 +170,13 @@ void PersonDetailsView::reload()
     QFormLayout *layout = new QFormLayout(d->m_mainWidget);
     layout->setSpacing(4);
 
-    //update header information
-    //FIXME - possibly split this out into a new class with a nice setPerson method
+    // update header information
+    // FIXME - possibly split this out into a new class with a nice setPerson method
 
     QPixmap avatar = d->m_person->photo();
 
-    d->m_personDetailsPresentation->avatarPixmapLabel->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio)); //FIXME
-    d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(QIcon::fromTheme(d->m_person->presenceIconName()).pixmap(32, 32)); //FIXME
+    d->m_personDetailsPresentation->avatarPixmapLabel->setPixmap(avatar.scaled(96, 96, Qt::KeepAspectRatio)); // FIXME
+    d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(QIcon::fromTheme(d->m_person->presenceIconName()).pixmap(32, 32)); // FIXME
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->name());
 
     for (AbstractFieldWidgetFactory *widgetFactory : qAsConst(d->m_plugins)) {

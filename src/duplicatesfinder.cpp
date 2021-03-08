@@ -31,11 +31,11 @@ void DuplicatesFinder::start()
     }
 }
 
-//TODO: start providing partial results so that we can start processing matches while it's not done
+// TODO: start providing partial results so that we can start processing matches while it's not done
 void DuplicatesFinder::doSearch()
 {
-    //NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment
-    //maybe using nepomuk for the matching would help?
+    // NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment
+    // maybe using nepomuk for the matching would help?
 
     QVector<AbstractContact::Ptr> collectedValues;
     m_matches.clear();
@@ -47,10 +47,10 @@ void DuplicatesFinder::doSearch()
     for (int i = 0, rows = m_model->rowCount(); i < rows; i++) {
         QModelIndex idx = m_model->index(i, 0);
 
-        //we gather the values
+        // we gather the values
         AbstractContact::Ptr values = idx.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
 
-        //we check if it matches
+        // we check if it matches
         int j = 0;
         for (const AbstractContact::Ptr &valueToCompare : qAsConst(collectedValues)) {
             QList<Match::MatchReason> matchedRoles = Match::matchAt(values, valueToCompare);
@@ -63,7 +63,7 @@ void DuplicatesFinder::doSearch()
             j++;
         }
 
-        //we add our data for comparing later
+        // we add our data for comparing later
         collectedValues.append(values);
     }
     emitResult();

@@ -9,15 +9,15 @@
 
 #include <QSharedPointer>
 
-#include "backends/contactmonitor.h"
 #include "backends/allcontactsmonitor.h"
+#include "backends/contactmonitor.h"
 
 using namespace KPeople;
 
 /*
  * If plugins don't implement a ContactWatcher, we repurpose the whole model, and single out changes for one contact
  * ideally plugins (especially slow ones) will implement their own contact monitor.
-*/
+ */
 
 class KPEOPLEBACKEND_EXPORT DefaultContactMonitor : public ContactMonitor
 {
@@ -28,6 +28,7 @@ private Q_SLOTS:
     void onContactAdded(const QString &contactUri, const AbstractContact::Ptr &contact);
     void onContactChanged(const QString &contactUri, const AbstractContact::Ptr &contact);
     void onContactRemoved(const QString &contactUri);
+
 private:
     AllContactsMonitorPtr m_allContactsMonitor;
 };

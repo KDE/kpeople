@@ -6,12 +6,12 @@
 
 #include "emaildetailswidget.h"
 
-#include <QVBoxLayout>
 #include <QLabel>
+#include <QVBoxLayout>
 
-#include <KPluginFactory>
 #include <KLocalizedString>
 #include <KPeople/PersonData>
+#include <KPluginFactory>
 
 // K_PLUGIN_FACTORY( EmailDetailsWidgetFactory, registerPlugin<EmailDetailsWidget>(); )
 // K_EXPORT_PLUGIN( EmailDetailsWidgetFactory("emaildetailswidgetplugin") )
@@ -42,4 +42,3 @@ int EmailFieldsPlugin::sortWeight() const
 {
     return 50;
 }
-

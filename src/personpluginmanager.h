@@ -8,15 +8,13 @@
 #ifndef PERSON_PLUGIN_MANAGER_H
 #define PERSON_PLUGIN_MANAGER_H
 
-
 #include <kpeople/kpeople_export.h>
 
-#include <QVariant>
 #include <QHash>
+#include <QVariant>
 
 namespace KPeople
 {
-
 class AbstractPersonAction;
 class BasePersonsDataSource;
 
@@ -66,11 +64,11 @@ public:
     static bool addContact(const QVariantMap &properties);
 
     /**
-      * Deletes a contact with the specified &p uri
-      * @returns if it could be done successfully
-      *
-      * @since 5.62
-      */
+     * Deletes a contact with the specified &p uri
+     * @returns if it could be done successfully
+     *
+     * @since 5.62
+     */
     static bool deleteContact(const QString &uri);
 };
 }

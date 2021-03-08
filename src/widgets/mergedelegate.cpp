@@ -6,26 +6,26 @@
 */
 
 #include "mergedelegate.h"
-#include "personsmodel.h"
 #include "mergedialog.h"
+#include "personsmodel.h"
 #include <match_p.h>
 
+#include "kpeople_widgets_debug.h"
+#include <KLocalizedString>
+#include <QAbstractItemView>
+#include <QCheckBox>
+#include <QIcon>
+#include <QLabel>
+#include <QModelIndex>
 #include <QPainter>
 #include <QStyleOptionViewItem>
-#include <QAbstractItemView>
-#include <QModelIndex>
-#include <QLabel>
-#include <QCheckBox>
-#include "kpeople_widgets_debug.h"
-#include <QIcon>
-#include <KLocalizedString>
 
 #define MAX_MATCHING_CONTACTS_ICON 5
 #define SIZE_STANDARD_PIXMAP 35
 
 using namespace KPeople;
 
-//TODO: use proper, runtime values there
+// TODO: use proper, runtime values there
 QSize MergeDelegate::s_decorationSize(SIZE_STANDARD_PIXMAP, SIZE_STANDARD_PIXMAP);
 QSize MergeDelegate::s_arrowSize(15, 15);
 
@@ -45,7 +45,8 @@ MergeDelegate::MergeDelegate(QAbstractItemView *parent)
 }
 
 MergeDelegate::~MergeDelegate()
-{}
+{
+}
 
 void MergeDelegate::onClickContactParent(const QModelIndex &parent)
 {
@@ -57,7 +58,7 @@ void MergeDelegate::onClickContactParent(const QModelIndex &parent)
     }
 }
 
-void MergeDelegate::onSelectedContactsChanged(const QItemSelection &now , const QItemSelection &old)
+void MergeDelegate::onSelectedContactsChanged(const QItemSelection &now, const QItemSelection &old)
 {
     if (!old.indexes().isEmpty()) {
         QModelIndex oldIdx = old.indexes().first();
@@ -77,7 +78,7 @@ QWidget *MergeDelegate::buildMultipleLineLabel(const QModelIndex &idx)
     QString contents;
     const QAbstractItemModel *model = idx.model();
     const int rows = model->rowCount(idx);
-    for (int i = 0 ; i < rows; ++i) {
+    for (int i = 0; i < rows; ++i) {
         const QModelIndex child = model->index(i, 0, idx);
         Match m = child.data(MergeDialog::MergeReasonRole).value<Match>();
 
@@ -108,12 +109,14 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
         Q_ASSERT(decoration.type() == (QVariant::Icon));
 
         QIcon pix = decoration.value<QIcon>();
-        QPoint pixmapPoint = {option.rect.width() / 2 + i *(s_decorationSize.width() + separation), option.rect.top()};
+        QPoint pixmapPoint = {option.rect.width() / 2 + i * (s_decorationSize.width() + separation), option.rect.top()};
         painter->drawPixmap(pixmapPoint, pix.pixmap(s_decorationSize));
     }
     // draw a vertical line to separate the original person and the merging contacts
     int midWidth = option.rect.width() / 2;
     painter->setPen(opt.palette.color(QPalette::Window));
-    painter->drawLine(option.rect.left() + midWidth - SIZE_STANDARD_PIXMAP, option.rect.bottom() - 5,
-                      option.rect.left() + midWidth - SIZE_STANDARD_PIXMAP, option.rect.top() + 5);
+    painter->drawLine(option.rect.left() + midWidth - SIZE_STANDARD_PIXMAP,
+                      option.rect.bottom() - 5,
+                      option.rect.left() + midWidth - SIZE_STANDARD_PIXMAP,
+                      option.rect.top() + 5);
 }

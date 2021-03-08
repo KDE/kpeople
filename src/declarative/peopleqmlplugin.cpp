@@ -7,17 +7,18 @@
 
 #include "peopleqmlplugin.h"
 
-#include <personsmodel.h>
+#include <actions.h>
 #include <personactionsmodel_p.h>
 #include <persondata.h>
-#include <personssortfilterproxymodel.h>
 #include <personpluginmanager.h>
-#include <actions.h>
+#include <personsmodel.h>
+#include <personssortfilterproxymodel.h>
 
 #include "declarativepersondata.h"
 #include <qqml.h>
 
-class ActionTypeWrapper : public QObject {
+class ActionTypeWrapper : public QObject
+{
     Q_OBJECT
 
 public:
@@ -36,10 +37,12 @@ class DeclarativePersonPluginManager : public QObject
 {
     Q_OBJECT
 public:
-    Q_SCRIPTABLE bool addContact(const QVariantMap &properties) {
+    Q_SCRIPTABLE bool addContact(const QVariantMap &properties)
+    {
         return KPeople::PersonPluginManager::addContact(properties);
     }
-    Q_SCRIPTABLE bool deleteContact(const QString &uri) {
+    Q_SCRIPTABLE bool deleteContact(const QString &uri)
+    {
         return KPeople::PersonPluginManager::deleteContact(uri);
     }
 };
@@ -52,7 +55,9 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
     qmlRegisterType<DeclarativePersonData>(uri, 1, 0, "PersonData");
     qmlRegisterAnonymousType<KPeople::PersonData>(uri, 1);
     qmlRegisterUncreatableType<ActionTypeWrapper>(uri, 1, 0, "ActionType", QStringLiteral("You cannot create ActionType"));
-    qmlRegisterSingletonType<DeclarativePersonPluginManager>(uri, 1, 0, "PersonPluginManager", [] (QQmlEngine*, QJSEngine*) -> QObject* { return new DeclarativePersonPluginManager; });
+    qmlRegisterSingletonType<DeclarativePersonPluginManager>(uri, 1, 0, "PersonPluginManager", [](QQmlEngine *, QJSEngine *) -> QObject * {
+        return new DeclarativePersonPluginManager;
+    });
 
     qmlRegisterUncreatableMetaObject(KPeople::staticMetaObject, uri, 1, 0, "KPeople", QStringLiteral("Access to enums & flags only"));
 }

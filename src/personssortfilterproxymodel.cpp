@@ -10,7 +10,6 @@
 
 namespace KPeople
 {
-
 class PersonsSortFilterProxyModelPrivate
 {
 public:
@@ -20,10 +19,12 @@ public:
 PersonsSortFilterProxyModel::PersonsSortFilterProxyModel(QObject *parent)
     : QSortFilterProxyModel(parent)
     , d_ptr(new PersonsSortFilterProxyModelPrivate)
-{}
+{
+}
 
 PersonsSortFilterProxyModel::~PersonsSortFilterProxyModel()
-{}
+{
+}
 
 QStringList PersonsSortFilterProxyModel::requiredProperties() const
 {
@@ -55,7 +56,7 @@ bool PersonsSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelI
         return true;
     }
 
-    for(const QString &key : qAsConst(d->m_keys)) {
+    for (const QString &key : qAsConst(d->m_keys)) {
         if (!contact->customProperty(key).isNull()) {
             return true;
         }

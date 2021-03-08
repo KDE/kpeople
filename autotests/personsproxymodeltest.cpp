@@ -8,14 +8,14 @@
 
 #include <QTest>
 
-//private includes
+// private includes
 #include "personmanager_p.h"
 
-//public kpeople includes
-#include <personsmodel.h>
-#include <personpluginmanager.h>
-#include <personssortfilterproxymodel.h>
+// public kpeople includes
 #include <QSignalSpy>
+#include <personpluginmanager.h>
+#include <personsmodel.h>
+#include <personssortfilterproxymodel.h>
 
 #include "fakecontactsource.h"
 
@@ -29,7 +29,7 @@ void PersonsProxyModelTest::initTestCase()
 
     // Called before the first testfunction is executed
     PersonManager::instance(m_database.fileName());
-    m_source = new FakeContactSource(nullptr); //don't own. PersonPluginManager removes it on destruction
+    m_source = new FakeContactSource(nullptr); // don't own. PersonPluginManager removes it on destruction
     QHash<QString, BasePersonsDataSource *> sources;
     sources[QStringLiteral("fakesource")] = m_source;
     PersonPluginManager::setDataSourcePlugins(sources);

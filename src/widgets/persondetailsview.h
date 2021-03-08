@@ -36,7 +36,7 @@ public:
 public Q_SLOTS:
     /** Specifies the @p person for which the details will be displayed. */
     void setPerson(PersonData *person);
-//     void setPersonsModel(PersonsModel *model);
+    //     void setPersonsModel(PersonsModel *model);
 
 private Q_SLOTS:
     void reload();

@@ -11,7 +11,10 @@
 #include <QTemporaryFile>
 
 class FakeContactSource;
-namespace KPeople { class PersonsModel; }
+namespace KPeople
+{
+class PersonsModel;
+}
 
 class PersonsProxyModelTest : public QObject
 {
@@ -25,7 +28,7 @@ private Q_SLOTS:
 
 private:
     FakeContactSource *m_source;
-    KPeople::PersonsModel* m_model;
+    KPeople::PersonsModel *m_model;
     QTemporaryFile m_database;
 };
 

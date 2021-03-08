@@ -22,7 +22,6 @@ class Addressee;
 
 namespace KPeople
 {
-
 class KPEOPLE_EXPORT Match
 {
     Q_GADGET
@@ -33,7 +32,9 @@ public:
     };
     Q_ENUM(MatchReason)
 
-    Match() {}
+    Match()
+    {
+    }
     Match(const QList<MatchReason> &roles, const QPersistentModelIndex &a, const QPersistentModelIndex &b);
     bool operator==(const Match &m) const;
     bool operator<(const Match &m) const;

@@ -8,12 +8,11 @@
 
 using namespace KPeople;
 
-AbstractFieldWidgetFactory::AbstractFieldWidgetFactory(QObject *parent):
-    QObject(parent)
+AbstractFieldWidgetFactory::AbstractFieldWidgetFactory(QObject *parent)
+    : QObject(parent)
 {
 }
 
 AbstractFieldWidgetFactory::~AbstractFieldWidgetFactory()
 {
-
 }

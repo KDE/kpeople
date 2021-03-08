@@ -9,8 +9,8 @@
 
 #include <KJob>
 
-#include <kpeople/kpeople_export.h>
 #include "match_p.h"
+#include <kpeople/kpeople_export.h>
 
 class QUrl;
 class QModelIndex;

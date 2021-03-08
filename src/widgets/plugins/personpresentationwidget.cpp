@@ -29,9 +29,8 @@ PersonPresentationWidget::PersonPresentationWidget(const QString &name, const QI
     int pixmapHeight = m_name->fontMetrics().height() * 3;
     QSize pixSize(pixmapHeight, pixmapHeight);
 
-    m_pixmap->setPixmap(avatar.pixmap(pixSize)
-                        .scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    draw() ;
+    m_pixmap->setPixmap(avatar.pixmap(pixSize).scaled(pixSize, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    draw();
 }
 
 PersonPresentationWidget::~PersonPresentationWidget()

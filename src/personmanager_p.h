@@ -8,9 +8,9 @@
 #ifndef PERSONMANAGER_H
 #define PERSONMANAGER_H
 
+#include <QMultiHash>
 #include <QObject>
 #include <QStringList>
-#include <QMultiHash>
 
 #include <QSqlDatabase>
 
@@ -38,10 +38,10 @@ public:
      */
     static PersonManager *instance(const QString &databasePath = QString());
 
-//DATA RETRIEVAL------------
+    // DATA RETRIEVAL------------
 
     /** Retuns a list of all known personIDs in the database*/
-    QMultiHash< QString /*PersonUri*/, QString /*ContactUri*/> allPersons() const;
+    QMultiHash<QString /*PersonUri*/, QString /*ContactUri*/> allPersons() const;
 
     /**
      * Returns the ID of a person associated with a given contact
@@ -63,13 +63,13 @@ public:
     bool addContact(const QVariantMap &properties);
 
 public Q_SLOTS:
-    //merge all ids (person IDs and contactUris into a single person)
-    //returns the ID that will be created
-    //users should KPeople::mergeContacts from global.h
+    // merge all ids (person IDs and contactUris into a single person)
+    // returns the ID that will be created
+    // users should KPeople::mergeContacts from global.h
     QString mergeContacts(const QStringList &ids);
 
-    //unmerge a contact. Either remove a contact from a given person or remove a person
-    //users should KPeople::unmergeContact from global.h
+    // unmerge a contact. Either remove a contact from a given person or remove a person
+    // users should KPeople::unmergeContact from global.h
     bool unmergeContact(const QString &id);
 
 Q_SIGNALS:

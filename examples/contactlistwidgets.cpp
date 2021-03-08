@@ -6,14 +6,14 @@
 */
 
 #include <QApplication>
-#include <QTreeView>
 #include <QSortFilterProxyModel>
+#include <QTreeView>
 
-#include <QVBoxLayout>
 #include <QPushButton>
+#include <QVBoxLayout>
 
-#include <QStyledItemDelegate>
 #include <QPainter>
+#include <QStyledItemDelegate>
 
 #include <personsmodel.h>
 
@@ -91,6 +91,7 @@ public:
 private Q_SLOTS:
     void onMergeClicked();
     void onUnmergeClicked();
+
 private:
     PersonsModel *m_model;
     QTreeView *m_view;

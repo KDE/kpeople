@@ -5,17 +5,16 @@
 */
 
 #include "actions.h"
-#include <QAction>
-#include "kpeople_widgets_debug.h"
-#include <KPluginLoader>
-#include <KPluginFactory>
-#include <KPluginMetaData>
-#include <KPeople/PersonData>
 #include "../backends/abstractpersonaction.h"
+#include "kpeople_widgets_debug.h"
+#include <KPeople/PersonData>
+#include <KPluginFactory>
+#include <KPluginLoader>
+#include <KPluginMetaData>
+#include <QAction>
 
 namespace KPeople
 {
-
 static QList<AbstractPersonAction *> actionsPlugins()
 {
     QList<AbstractPersonAction *> actionPlugins;
@@ -29,7 +28,7 @@ static QList<AbstractPersonAction *> actionsPlugins()
         }
         AbstractPersonAction *plugin = factory->create<AbstractPersonAction>();
         if (plugin) {
-//             qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << service->name();
+            //             qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << service->name();
             actionPlugins << plugin;
         }
     }

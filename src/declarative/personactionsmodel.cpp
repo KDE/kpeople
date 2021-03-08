@@ -4,11 +4,11 @@
     SPDX-License-Identifier: LGPL-2.1-or-later
 */
 
+#include "kpeople_debug.h"
 #include "personactionsmodel_p.h"
 #include "persondata.h"
 #include "widgets/actions.h"
 #include <QAction>
-#include "kpeople_debug.h"
 
 namespace KPeople
 {
@@ -17,7 +17,8 @@ class PersonActionsPrivate
 public:
     PersonActionsPrivate()
         : person(nullptr)
-    {}
+    {
+    }
 
     QList<QAction *> actions;
     QString id;
@@ -28,8 +29,8 @@ public:
 using namespace KPeople;
 
 PersonActionsModel::PersonActionsModel(QObject *parent)
-    : QAbstractListModel(parent),
-      d_ptr(new PersonActionsPrivate)
+    : QAbstractListModel(parent)
+    , d_ptr(new PersonActionsPrivate)
 {
 }
 
@@ -130,7 +131,7 @@ void PersonActionsModel::triggerAction(int row) const
     d->actions[row]->trigger();
 }
 
-QList< QAction * > PersonActionsModel::actions() const
+QList<QAction *> PersonActionsModel::actions() const
 {
     Q_D(const PersonActions);
     return d->actions;

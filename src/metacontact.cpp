@@ -4,10 +4,10 @@
     SPDX-License-Identifier: LGPL-2.1-or-later
 */
 
-#include "metacontact_p.h"
 #include "global.h"
-#include <QSharedData>
 #include "kpeople_debug.h"
+#include "metacontact_p.h"
+#include <QSharedData>
 
 namespace KPeople
 {
@@ -29,7 +29,8 @@ class MetaContactProxy : public KPeople::AbstractContact
 public:
     MetaContactProxy(const AbstractContact::List &contacts)
         : m_contacts(contacts)
-    {}
+    {
+    }
 
     QVariant customProperty(const QString &key) const override
     {
@@ -60,14 +61,14 @@ public:
 
 using namespace KPeople;
 
-MetaContact::MetaContact():
-    d(new MetaContactData)
+MetaContact::MetaContact()
+    : d(new MetaContactData)
 {
     reload();
 }
 
-MetaContact::MetaContact(const QString &personUri, const QMap<QString, AbstractContact::Ptr> &contacts):
-    d(new MetaContactData)
+MetaContact::MetaContact(const QString &personUri, const QMap<QString, AbstractContact::Ptr> &contacts)
+    : d(new MetaContactData)
 {
     d->personUri = personUri;
 
@@ -79,8 +80,8 @@ MetaContact::MetaContact(const QString &personUri, const QMap<QString, AbstractC
     reload();
 }
 
-MetaContact::MetaContact(const QString &contactUri, const AbstractContact::Ptr &contact):
-    d(new MetaContactData)
+MetaContact::MetaContact(const QString &contactUri, const AbstractContact::Ptr &contact)
+    : d(new MetaContactData)
 {
     d->personUri = contactUri;
     insertContactInternal(contactUri, contact);
@@ -90,7 +91,6 @@ MetaContact::MetaContact(const QString &contactUri, const AbstractContact::Ptr &
 MetaContact::MetaContact(const MetaContact &other)
     : d(other.d)
 {
-
 }
 
 MetaContact &MetaContact::operator=(const MetaContact &other)
@@ -104,7 +104,6 @@ MetaContact &MetaContact::operator=(const MetaContact &other)
 
 MetaContact::~MetaContact()
 {
-
 }
 
 QString MetaContact::id() const
@@ -157,10 +156,10 @@ int MetaContact::insertContact(const QString &contactUri, const AbstractContact:
 int MetaContact::insertContactInternal(const QString &contactUri, const AbstractContact::Ptr &contact)
 {
     if (d->contactUris.contains(contactUri)) {
-        //if item is already listed, do nothing.
+        // if item is already listed, do nothing.
         return -1;
     } else {
-        //TODO if from the local address book - prepend to give higher priority.
+        // TODO if from the local address book - prepend to give higher priority.
         int index = d->contacts.size();
         d->contacts.append(contact);
         d->contactUris.append(contactUri);
@@ -191,9 +190,9 @@ int MetaContact::removeContact(const QString &contactUri)
 
 void MetaContact::reload()
 {
-    //always favour the first item
+    // always favour the first item
 
-    //Optimization, if only one contact re-use that one
+    // Optimization, if only one contact re-use that one
     d->personAddressee = (d->contacts.size() == 1) ? d->contacts.first() : AbstractContact::Ptr(new MetaContactProxy(d->contacts));
     Q_ASSERT(d->personAddressee);
 }

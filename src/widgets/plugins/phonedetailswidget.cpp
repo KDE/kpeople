@@ -7,8 +7,8 @@
 #include "phonedetailswidget.h"
 #include "persondata.h"
 
-#include <QVBoxLayout>
 #include <QLabel>
+#include <QVBoxLayout>
 
 #include <KLocalizedString>
 #include <KPluginFactory>
@@ -18,8 +18,8 @@ K_EXPORT_PLUGIN(PhoneDetailsWidgetFactory("phonedetailswidgetplugin"))
 
 using namespace KPeople;
 
-PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent, const QVariantList &args):
-    AbstractPersonDetailsWidget(parent)
+PhoneDetailsWidget::PhoneDetailsWidget(QWidget *parent, const QVariantList &args)
+    : AbstractPersonDetailsWidget(parent)
 {
     Q_UNUSED(args);
     setTitle(i18nc("Phone details title", "Phone"));

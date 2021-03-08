@@ -6,12 +6,12 @@
 
 #include "akonadidatasource.h"
 
-#include <Akonadi/Item>
-#include <Akonadi/ItemFetchJob>
-#include <Akonadi/ItemFetchScope>
 #include <Akonadi/Collection>
 #include <Akonadi/CollectionFetchJob>
 #include <Akonadi/CollectionFetchScope>
+#include <Akonadi/Item>
+#include <Akonadi/ItemFetchJob>
+#include <Akonadi/ItemFetchScope>
 #include <Akonadi/ServerManager>
 
 #include <KPluginFactory>
@@ -35,6 +35,7 @@ private Q_SLOTS:
     void onItemChanged(const Akonadi::Item &item);
     void onItemRemoved(const Akonadi::Item &item);
     void onServerStateChanged(Akonadi::ServerManager::State);
+
 private:
     Akonadi::Monitor *m_monitor;
     QMap<QString, AbstractContact::Ptr> m_contacts;
@@ -42,16 +43,16 @@ private:
     bool m_fetchError;
 };
 
-AkonadiAllContacts::AkonadiAllContacts():
-    m_monitor(new Akonadi::Monitor(this)),
-    m_activeFetchJobsCount(0),
-    m_fetchError(false)
+AkonadiAllContacts::AkonadiAllContacts()
+    : m_monitor(new Akonadi::Monitor(this))
+    , m_activeFetchJobsCount(0)
+    , m_fetchError(false)
 {
     connect(Akonadi::ServerManager::self(), SIGNAL(stateChanged(Akonadi::ServerManager::State)), SLOT(onServerStateChanged(Akonadi::ServerManager::State)));
     onServerStateChanged(Akonadi::ServerManager::state());
 
-    connect(m_monitor, SIGNAL(itemAdded(Akonadi::Item,Akonadi::Collection)), SLOT(onItemAdded(Akonadi::Item)));
-    connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onItemChanged(Akonadi::Item)));
+    connect(m_monitor, SIGNAL(itemAdded(Akonadi::Item, Akonadi::Collection)), SLOT(onItemAdded(Akonadi::Item)));
+    connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item, QSet<QByteArray>)), SLOT(onItemChanged(Akonadi::Item)));
     connect(m_monitor, SIGNAL(itemRemoved(Akonadi::Item)), SLOT(onItemRemoved(Akonadi::Item)));
 
     m_monitor->setMimeTypeMonitored("text/directory");
@@ -63,7 +64,7 @@ AkonadiAllContacts::AkonadiAllContacts():
 
     CollectionFetchJob *fetchJob = new CollectionFetchJob(Collection::root(), CollectionFetchJob::Recursive, this);
     fetchJob->fetchScope().setContentMimeTypes(QStringList() << "text/directory");
-    connect(fetchJob, SIGNAL(finished(KJob*)), SLOT(onCollectionsFetched(KJob*)));
+    connect(fetchJob, SIGNAL(finished(KJob *)), SLOT(onCollectionsFetched(KJob *)));
 }
 
 AkonadiAllContacts::~AkonadiAllContacts()
@@ -112,7 +113,7 @@ void AkonadiAllContacts::onItemRemoved(const Item &item)
     Q_EMIT contactRemoved(id);
 }
 
-//or we could add items as we go along...
+// or we could add items as we go along...
 void AkonadiAllContacts::onItemsFetched(KJob *job)
 {
     if (job->error()) {
@@ -147,7 +148,7 @@ void AkonadiAllContacts::onCollectionsFetched(KJob *job)
             if (collection.contentMimeTypes().contains(AbstractContact::Ptr::mimeType())) {
                 ItemFetchJob *itemFetchJob = new ItemFetchJob(collection);
                 itemFetchJob->fetchScope().fetchFullPayload();
-                connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onItemsFetched(KJob*)));
+                connect(itemFetchJob, SIGNAL(finished(KJob *)), SLOT(onItemsFetched(KJob *)));
                 ++m_activeFetchJobsCount;
             }
         }
@@ -157,21 +158,20 @@ void AkonadiAllContacts::onCollectionsFetched(KJob *job)
     }
     if (m_activeFetchJobsCount == 0 && !isInitialFetchComplete()) {
         emitInitialFetchComplete(true);
-
     }
 }
 
 void AkonadiAllContacts::onServerStateChanged(ServerManager::State state)
 {
-    //if we're broken tell kpeople we've loaded so kpeople doesn't block
+    // if we're broken tell kpeople we've loaded so kpeople doesn't block
     if (state == Akonadi::ServerManager::Broken && !isInitialFetchComplete()) {
         emitInitialFetchComplete(false);
         qCWarning(KPEOPLE_AKONADI_PLUGIN_LOG) << "Akonadi failed to load, some metacontact features may not be available";
-        qCWarning(KPEOPLE_AKONADI_PLUGIN_LOG) << "For more information please load akonadi_console" ;
+        qCWarning(KPEOPLE_AKONADI_PLUGIN_LOG) << "For more information please load akonadi_console";
     }
 }
 
-class AkonadiContact: public KPeople::ContactMonitor
+class AkonadiContact : public KPeople::ContactMonitor
 {
     Q_OBJECT
 public:
@@ -180,27 +180,28 @@ public:
 private Q_SLOTS:
     void onContactFetched(KJob *);
     void onContactChanged(const Akonadi::Item &);
+
 private:
     Akonadi::Monitor *m_monitor;
     Akonadi::Item m_item;
 };
 
-AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contactUri):
-    ContactMonitor(contactUri),
-    m_monitor(monitor)
+AkonadiContact::AkonadiContact(Akonadi::Monitor *monitor, const QString &contactUri)
+    : ContactMonitor(contactUri)
+    , m_monitor(monitor)
 {
-    //TODO: optimiZation, base class could copy across from the model if the model exists
-    //then we should check if contact is already set to something and avoid the initial fetch
+    // TODO: optimiZation, base class could copy across from the model if the model exists
+    // then we should check if contact is already set to something and avoid the initial fetch
 
-    //load the contact initially
+    // load the contact initially
     m_item = Item::fromUrl(QUrl(contactUri));
     ItemFetchJob *itemFetchJob = new ItemFetchJob(m_item);
     itemFetchJob->fetchScope().fetchFullPayload();
-    connect(itemFetchJob, SIGNAL(finished(KJob*)), SLOT(onContactFetched(KJob*)));
+    connect(itemFetchJob, SIGNAL(finished(KJob *)), SLOT(onContactFetched(KJob *)));
 
-    //then watch for that item changing
+    // then watch for that item changing
     m_monitor->setItemMonitored(m_item, true);
-    connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item,QSet<QByteArray>)), SLOT(onContactChanged(Akonadi::Item)));
+    connect(m_monitor, SIGNAL(itemChanged(Akonadi::Item, QSet<QByteArray>)), SLOT(onContactChanged(Akonadi::Item)));
 }
 
 AkonadiContact::~AkonadiContact()
@@ -227,9 +228,9 @@ void AkonadiContact::onContactChanged(const Item &item)
     setContact(item.payload<AbstractContact::Ptr>());
 }
 
-AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
-    BasePersonsDataSource(parent),
-    m_monitor(new Akonadi::Monitor(this))
+AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args)
+    : BasePersonsDataSource(parent)
+    , m_monitor(new Akonadi::Monitor(this))
 {
     Q_UNUSED(args);
     m_monitor->itemFetchScope().fetchFullPayload();
@@ -241,7 +242,6 @@ AkonadiDataSource::AkonadiDataSource(QObject *parent, const QVariantList &args):
 
 AkonadiDataSource::~AkonadiDataSource()
 {
-
 }
 
 KPeople::AllContactsMonitor *AkonadiDataSource::createAllContactsMonitor()

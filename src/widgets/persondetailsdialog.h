@@ -10,8 +10,8 @@
 
 #include <QDialog>
 
-#include <kpeople/widgets/kpeoplewidgets_export.h>
 #include "../persondata.h"
+#include <kpeople/widgets/kpeoplewidgets_export.h>
 
 namespace KPeople
 {

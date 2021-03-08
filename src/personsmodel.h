@@ -10,8 +10,8 @@
 #ifndef PERSONS_MODEL_H
 #define PERSONS_MODEL_H
 
-#include <kpeople/kpeople_export.h>
 #include <QAbstractItemModel>
+#include <kpeople/kpeople_export.h>
 
 #include "global.h"
 
@@ -36,13 +36,13 @@ class KPEOPLE_EXPORT PersonsModel : public QAbstractItemModel
     Q_PROPERTY(bool isInitialized READ isInitialized NOTIFY modelInitialized)
 public:
     enum Role {
-        FormattedNameRole = Qt::DisplayRole,//QString best name for this person
-        PhotoRole = Qt::DecorationRole, //QPixmap best photo for this person
-        PersonUriRole = Qt::UserRole, //QString ID of this person
-        PersonVCardRole, //AbstractContact::Ptr
-        ContactsVCardRole, //AbstractContact::List (FIXME or map?)
+        FormattedNameRole = Qt::DisplayRole, // QString best name for this person
+        PhotoRole = Qt::DecorationRole, // QPixmap best photo for this person
+        PersonUriRole = Qt::UserRole, // QString ID of this person
+        PersonVCardRole, // AbstractContact::Ptr
+        ContactsVCardRole, // AbstractContact::List (FIXME or map?)
 
-        GroupsRole, ///groups QStringList
+        GroupsRole, /// groups QStringList
         PhoneNumberRole,
 
         UserRole = Qt::UserRole + 0x1000, ///< in case it's needed to extend, use this one to start from

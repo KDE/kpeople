@@ -7,11 +7,11 @@
 
 #include "personmanager_p.h"
 
-#include <QVariant>
 #include "kpeople_debug.h"
-#include <QStandardPaths>
 #include <QDir>
 #include <QSqlQuery>
+#include <QStandardPaths>
+#include <QVariant>
 
 #ifndef Q_OS_ANDROID
 #include <QDBusConnection>
@@ -25,14 +25,15 @@ public:
     void cancel();
     ~Transaction();
     Transaction(const Transaction &) = delete;
-    Transaction& operator=(const Transaction &) = delete;
+    Transaction &operator=(const Transaction &) = delete;
+
 private:
     QSqlDatabase m_db;
     bool m_cancelled = false;
 };
 
-Transaction::Transaction(const QSqlDatabase &db) :
-    m_db(db)
+Transaction::Transaction(const QSqlDatabase &db)
+    : m_db(db)
 {
     m_db.transaction();
 }
@@ -50,9 +51,9 @@ Transaction::~Transaction()
     }
 }
 
-PersonManager::PersonManager(const QString &databasePath, QObject *parent):
-    QObject(parent),
-    m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("kpeoplePersonsManager")))
+PersonManager::PersonManager(const QString &databasePath, QObject *parent)
+    : QObject(parent)
+    , m_db(QSqlDatabase::addDatabase(QStringLiteral("QSQLITE"), QStringLiteral("kpeoplePersonsManager")))
 {
     m_db.setDatabaseName(databasePath);
     if (!m_db.open()) {
@@ -63,19 +64,26 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent):
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS personIdIndex ON persons (personId)"));
 
 #ifndef Q_OS_ANDROID
-    QDBusConnection::sessionBus().connect(QString(), QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"),
-                                          QStringLiteral("ContactAddedToPerson"), this, SIGNAL(contactAddedToPerson(QString,QString)));
-    QDBusConnection::sessionBus().connect(QString(), QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"),
-                                          QStringLiteral("ContactRemovedFromPerson"), this, SIGNAL(contactRemovedFromPerson(QString)));
+    QDBusConnection::sessionBus().connect(QString(),
+                                          QStringLiteral("/KPeople"),
+                                          QStringLiteral("org.kde.KPeople"),
+                                          QStringLiteral("ContactAddedToPerson"),
+                                          this,
+                                          SIGNAL(contactAddedToPerson(QString, QString)));
+    QDBusConnection::sessionBus().connect(QString(),
+                                          QStringLiteral("/KPeople"),
+                                          QStringLiteral("org.kde.KPeople"),
+                                          QStringLiteral("ContactRemovedFromPerson"),
+                                          this,
+                                          SIGNAL(contactRemovedFromPerson(QString)));
 #endif
 }
 
 PersonManager::~PersonManager()
 {
-
 }
 
-QMultiHash< QString, QString > PersonManager::allPersons() const
+QMultiHash<QString, QString> PersonManager::allPersons() const
 {
     QMultiHash<QString /*PersonID*/, QString /*ContactID*/> contactMapping;
 
@@ -95,7 +103,7 @@ QStringList PersonManager::contactsForPersonUri(const QString &personUri) const
     }
 
     QStringList contactUris;
-    //TODO port to the proper qsql method for args
+    // TODO port to the proper qsql method for args
     QSqlQuery query(m_db);
     query.prepare(QStringLiteral("SELECT contactID FROM persons WHERE personId = ?"));
     query.bindValue(0, personUri.mid(strlen("kpeople://")));
@@ -186,16 +194,13 @@ QString PersonManager::mergeContacts(const QStringList &ids)
             }
 
 #ifndef Q_OS_ANDROID
-            QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
-                                   QStringLiteral("org.kde.KPeople"),
-                                   QStringLiteral("ContactRemovedFromPerson"));
+            QDBusMessage message =
+                QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactRemovedFromPerson"));
 
             message.setArguments(QVariantList() << id);
             pendingMessages << message;
 
-            message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
-                                                 QStringLiteral("org.kde.KPeople"),
-                                                 QStringLiteral("ContactAddedToPerson"));
+            message = QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personUriString);
             pendingMessages << message;
@@ -205,21 +210,19 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 
     // process passed contacts
     if (!contacts.isEmpty()) {
-
         for (const QString &id : qAsConst(contacts)) {
             QSqlQuery insertQuery(m_db);
             insertQuery.prepare(QStringLiteral("INSERT INTO persons VALUES (?, ?)"));
             insertQuery.bindValue(0, id);
-            insertQuery.bindValue(1, personUriString.mid(strlen("kpeople://"))); //strip kpeople://
+            insertQuery.bindValue(1, personUriString.mid(strlen("kpeople://"))); // strip kpeople://
             if (!insertQuery.exec()) {
                 rc = false;
             }
 
 #ifndef Q_OS_ANDROID
-            //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
-            QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
-                                   QStringLiteral("org.kde.KPeople"),
-                                   QStringLiteral("ContactAddedToPerson"));
+            // FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
+            QDBusMessage message =
+                QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << id << personUriString);
             pendingMessages << message;
@@ -227,8 +230,8 @@ QString PersonManager::mergeContacts(const QStringList &ids)
         }
     }
 
-    //if success send all messages to other clients
-    //otherwise roll back our database changes and return an empty string
+    // if success send all messages to other clients
+    // otherwise roll back our database changes and return an empty string
     if (rc) {
 #ifndef Q_OS_ANDROID
         for (const QDBusMessage &message : qAsConst(pendingMessages)) {
@@ -245,7 +248,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 
 bool PersonManager::unmergeContact(const QString &id)
 {
-    //remove rows from DB
+    // remove rows from DB
     if (id.startsWith(QLatin1String("kpeople://"))) {
         QSqlQuery query(m_db);
 
@@ -256,10 +259,9 @@ bool PersonManager::unmergeContact(const QString &id)
 
 #ifndef Q_OS_ANDROID
         for (const QString &contactUri : contactUris) {
-            //FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
-            QDBusMessage message = QDBusMessage::createSignal(QStringLiteral("/KPeople"),
-                                   QStringLiteral("org.kde.KPeople"),
-                                   QStringLiteral("ContactRemovedFromPerson"));
+            // FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
+            QDBusMessage message =
+                QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactRemovedFromPerson"));
 
             message.setArguments(QVariantList() << contactUri);
             QDBusConnection::sessionBus().send(message);
@@ -270,11 +272,11 @@ bool PersonManager::unmergeContact(const QString &id)
         query.prepare(QStringLiteral("DELETE FROM persons WHERE contactId = ?"));
         query.bindValue(0, id);
         query.exec();
-        //emit signal(dbus)
+        // emit signal(dbus)
         Q_EMIT contactRemovedFromPerson(id);
     }
 
-    //TODO return if removing rows worked
+    // TODO return if removing rows worked
     return true;
 }
 

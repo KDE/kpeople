@@ -5,13 +5,13 @@
     SPDX-License-Identifier: LGPL-2.1-or-later
 */
 
+#include <QCommandLineParser>
 #include <QCoreApplication>
 #include <QTimer>
-#include <QCommandLineParser>
 
-#include <personsmodel.h>
 #include <duplicatesfinder_p.h>
 #include <matchessolver_p.h>
+#include <personsmodel.h>
 
 #include <cstdio>
 #include <iostream>
@@ -24,7 +24,7 @@ class ResultPrinter : public QObject
 public Q_SLOTS:
     void print(KJob *j)
     {
-        QList<Match> res = ((DuplicatesFinder *) j)->results();
+        QList<Match> res = ((DuplicatesFinder *)j)->results();
         std::cout << "Results: " << res.count() << std::endl;
         for (QList<Match>::iterator it = res.begin(); it != res.end();) {
             QStringList roles = it->matchReasons();
@@ -57,7 +57,7 @@ public Q_SLOTS:
 
         if ((m_action == Apply || m_action == Ask) && !res.isEmpty()) {
             MatchesSolver *s = new MatchesSolver(res, m_model, this);
-            connect(s, SIGNAL(finished(KJob*)), this, SLOT(matchesSolverDone(KJob*)));
+            connect(s, SIGNAL(finished(KJob *)), this, SLOT(matchesSolverDone(KJob *)));
             s->start();
         } else {
             QCoreApplication::instance()->quit();
@@ -75,7 +75,11 @@ public Q_SLOTS:
     }
 
 public:
-    enum MatchAction { Apply, NotApply, Ask, };
+    enum MatchAction {
+        Apply,
+        NotApply,
+        Ask,
+    };
     MatchAction m_action;
     PersonsModel *m_model;
 };
@@ -94,18 +98,18 @@ int main(int argc, char **argv)
         parser.addHelpOption();
         parser.process(app);
         r.m_action = parser.isSet(QStringLiteral("apply")) ? ResultPrinter::Apply
-                     : parser.isSet(QStringLiteral("ask"))   ? ResultPrinter::Ask
-                     : ResultPrinter::NotApply;
+            : parser.isSet(QStringLiteral("ask"))          ? ResultPrinter::Ask
+                                                           : ResultPrinter::NotApply;
     }
 
     DuplicatesFinder *f = new DuplicatesFinder(&model);
-    QObject::connect(f, SIGNAL(finished(KJob*)), &r, SLOT(print(KJob*)));
+    QObject::connect(f, SIGNAL(finished(KJob *)), &r, SLOT(print(KJob *)));
 
     QTimer *t = new QTimer(&app);
     t->setInterval(500);
     t->setSingleShot(true);
     QObject::connect(&model, SIGNAL(modelInitialized(bool)), t, SLOT(start()));
-    QObject::connect(&model, SIGNAL(rowsInserted(QModelIndex,int,int)), t, SLOT(start()));
+    QObject::connect(&model, SIGNAL(rowsInserted(QModelIndex, int, int)), t, SLOT(start()));
     QObject::connect(t, SIGNAL(timeout()), f, SLOT(start()));
 
     app.exec();

@@ -6,12 +6,12 @@
 
 #include "global.h"
 
+#include "backends/abstractcontact.h"
 #include "personmanager_p.h"
 #include "personpluginmanager.h"
-#include "backends/abstractcontact.h"
 
-//these namespace members expose the useful bits of PersonManager
-//global.h should be included from every exported header file so namespace members are always visible
+// these namespace members expose the useful bits of PersonManager
+// global.h should be included from every exported header file so namespace members are always visible
 
 QString KPeople::mergeContacts(const QStringList &uris)
 {

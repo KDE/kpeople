@@ -18,10 +18,9 @@
 
 namespace KPeople
 {
-
 class BasePersonsDataSourcePrivate;
 
-//This is a QObject for KPluginFactory
+// This is a QObject for KPluginFactory
 class KPEOPLEBACKEND_EXPORT BasePersonsDataSource : public QObject
 {
     Q_OBJECT
@@ -32,12 +31,12 @@ public:
     /**
      * Return a ref counted AllContactMonitor which lists and monitors all contacts from a source
      */
-    AllContactsMonitorPtr   allContactsMonitor();
+    AllContactsMonitorPtr allContactsMonitor();
 
     /**
      * Return a ref counted watcher for a single contact
      */
-    ContactMonitorPtr      contactMonitor(const QString &contactUri);
+    ContactMonitorPtr contactMonitor(const QString &contactUri);
 
     /**
      * Returns the ID used by this datasource.
@@ -53,6 +52,7 @@ protected:
      * otherwise the AllContactWatcher will be used and filtered.
      */
     virtual ContactMonitor *createContactMonitor(const QString &contactUri);
+
 private:
     Q_DISABLE_COPY(BasePersonsDataSource)
     Q_DECLARE_PRIVATE(BasePersonsDataSource)

@@ -6,18 +6,18 @@
 */
 
 #include "mergedialog.h"
-#include "mergedelegate.h"
 #include "duplicatesfinder_p.h"
+#include "matchessolver_p.h"
+#include "mergedelegate.h"
 #include "persondata.h"
 #include "personsmodel.h"
-#include "matchessolver_p.h"
 
+#include "kpeople_widgets_debug.h"
+#include <QDialogButtonBox>
 #include <QLabel>
 #include <QLayout>
-#include <QPushButton>
-#include <QDialogButtonBox>
 #include <QListView>
-#include "kpeople_widgets_debug.h"
+#include <QPushButton>
 #include <QStandardItemModel>
 
 #include <KLocalizedString>
@@ -101,7 +101,7 @@ void MergeDialog::searchForDuplicates()
         return;
     }
     d->duplicatesFinder = new DuplicatesFinder(d->personsModel);
-    connect(d->duplicatesFinder, SIGNAL(result(KJob*)), SLOT(searchForDuplicatesFinished(KJob*)));
+    connect(d->duplicatesFinder, SIGNAL(result(KJob *)), SLOT(searchForDuplicatesFinished(KJob *)));
     d->duplicatesFinder->start();
 }
 
@@ -123,7 +123,7 @@ void MergeDialog::onMergeButtonClicked()
     solverJob->start();
     d->sequence->setVisible(true);
     d->view->setEnabled(false);
-    connect(solverJob, SIGNAL(finished(KJob*)), this, SLOT(accept()));
+    connect(solverJob, SIGNAL(finished(KJob *)), this, SLOT(accept()));
 }
 
 void MergeDialog::searchForDuplicatesFinished(KJob *)
@@ -135,33 +135,34 @@ void MergeDialog::searchForDuplicatesFinished(KJob *)
     d->view->setItemDelegate(d->delegate);
 
     // To extend the selected item
-    connect(d->view->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)),
-            d->delegate, SLOT(onSelectedContactsChanged(QItemSelection,QItemSelection)));
+    connect(d->view->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+            d->delegate,
+            SLOT(onSelectedContactsChanged(QItemSelection, QItemSelection)));
     // To contract an already selected item
-    connect(d->view, SIGNAL(doubleClicked(QModelIndex)),
-            d->delegate, SLOT(onClickContactParent(QModelIndex)));
+    connect(d->view, SIGNAL(doubleClicked(QModelIndex)), d->delegate, SLOT(onClickContactParent(QModelIndex)));
 }
 
 void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
 {
     Q_D(MergeDialog);
-    QHash<QPersistentModelIndex, QList<Match> > compareTable;
+    QHash<QPersistentModelIndex, QList<Match>> compareTable;
     QHash<QPersistentModelIndex, QPersistentModelIndex> doneIndexes;
 
     for (const Match &match : matches) {
         QPersistentModelIndex destination = doneIndexes.value(match.indexA, match.indexA);
-        QHash<QPersistentModelIndex, QList< Match > >::iterator currentValue = compareTable.find(destination);
+        QHash<QPersistentModelIndex, QList<Match>>::iterator currentValue = compareTable.find(destination);
 
         if (currentValue == compareTable.end()) { // new parent, create it
             compareTable[match.indexA] = QList<Match>() << match;
-        } else { //know parent, add child
+        } else { // know parent, add child
             currentValue->append(match);
         }
         doneIndexes[match.indexB] = destination;
     }
     // now build the model : 1st dimension = person candidate, 2nd dimension = match
     QStandardItem *rootItem = d->model->invisibleRootItem();
-    QHash<QPersistentModelIndex, QList< Match > >::const_iterator i;
+    QHash<QPersistentModelIndex, QList<Match>>::const_iterator i;
 
     for (i = compareTable.constBegin(); i != compareTable.constEnd(); ++i) {
         // Build the merge Contact in the model

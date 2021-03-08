@@ -6,8 +6,8 @@
 */
 
 #include "persondetailsdialog.h"
-#include <QVBoxLayout>
 #include <QDialogButtonBox>
+#include <QVBoxLayout>
 
 #include "persondetailsview.h"
 
@@ -22,9 +22,9 @@ public:
 };
 }
 
-PersonDetailsDialog::PersonDetailsDialog(QWidget *parent, Qt::WindowFlags f):
-    QDialog(parent, f),
-    d_ptr(new PersonDetailsDialogPrivate)
+PersonDetailsDialog::PersonDetailsDialog(QWidget *parent, Qt::WindowFlags f)
+    : QDialog(parent, f)
+    , d_ptr(new PersonDetailsDialogPrivate)
 {
     Q_D(PersonDetailsDialog);
     QVBoxLayout *layout = new QVBoxLayout(this);
@@ -51,4 +51,3 @@ void PersonDetailsDialog::setPerson(PersonData *person)
 
     setWindowTitle(person->name());
 }
-

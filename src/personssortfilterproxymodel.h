@@ -13,7 +13,6 @@
 
 namespace KPeople
 {
-
 class PersonsSortFilterProxyModelPrivate;
 
 /**
@@ -27,9 +26,9 @@ class PersonsSortFilterProxyModelPrivate;
  */
 class KPEOPLE_EXPORT PersonsSortFilterProxyModel : public QSortFilterProxyModel
 {
-Q_OBJECT
-/** Specifies the properties that should be provided by the contact for the contact to be shown. */
-Q_PROPERTY(QStringList requiredProperties READ requiredProperties WRITE setRequiredProperties)
+    Q_OBJECT
+    /** Specifies the properties that should be provided by the contact for the contact to be shown. */
+    Q_PROPERTY(QStringList requiredProperties READ requiredProperties WRITE setRequiredProperties)
 public:
     explicit PersonsSortFilterProxyModel(QObject *parent = nullptr);
     ~PersonsSortFilterProxyModel() override;

@@ -10,13 +10,13 @@
 
 #include <kpeople/widgets/kpeoplewidgets_export.h>
 
-#include <QItemSelection>
 #include <KExtendableItemDelegate>
+#include <QItemSelection>
 
 class QAbstractItemView;
 class QItemSelection;
 
-class KPEOPLEWIDGETS_EXPORT MergeDelegate: public KExtendableItemDelegate
+class KPEOPLEWIDGETS_EXPORT MergeDelegate : public KExtendableItemDelegate
 {
     Q_OBJECT
 
@@ -31,8 +31,7 @@ public Q_SLOTS:
     void onSelectedContactsChanged(const QItemSelection &now, const QItemSelection &old);
 
 private:
-
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index)const override;
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
     QWidget *buildMultipleLineLabel(const QModelIndex &idx);
 
     static QSize s_arrowSize;

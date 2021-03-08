@@ -11,7 +11,9 @@
 using namespace KPeople;
 
 Match::Match(const QList<MatchReason> &reasons, const QPersistentModelIndex &a, const QPersistentModelIndex &b)
-    : reasons(reasons), indexA(a), indexB(b)
+    : reasons(reasons)
+    , indexA(a)
+    , indexB(b)
 {
     if (indexB < indexA) {
         qSwap(indexA, indexB);
@@ -20,15 +22,12 @@ Match::Match(const QList<MatchReason> &reasons, const QPersistentModelIndex &a, 
 
 bool Match::operator==(const Match &m) const
 {
-    return reasons == m.reasons
-           && indexA == m.indexA
-           && indexB == m.indexB;
+    return reasons == m.reasons && indexA == m.indexA && indexB == m.indexB;
 }
 
 bool Match::operator<(const Match &m) const
 {
-    return indexA < m.indexA
-           || (indexA == m.indexA && indexB < m.indexB);
+    return indexA < m.indexA || (indexA == m.indexA && indexB < m.indexB);
 }
 
 QStringList Match::matchReasons() const

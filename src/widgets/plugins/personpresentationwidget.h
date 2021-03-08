@@ -7,8 +7,8 @@
 #ifndef PERSONPRESENTATIONWIDGET_H
 #define PERSONPRESENTATIONWIDGET_H
 
-#include <QWidget>
 #include <QCheckBox>
+#include <QWidget>
 
 class QLabel;
 
@@ -21,8 +21,9 @@ public:
 
     bool isContactSelected() const
     {
-        return m_selected->isChecked() ;
+        return m_selected->isChecked();
     }
+
 private:
     void draw();
     QLabel *m_pixmap;

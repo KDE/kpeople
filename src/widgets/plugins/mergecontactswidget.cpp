@@ -5,17 +5,17 @@
 */
 
 #include "mergecontactswidget.h"
-#include "personpresentationwidget.h"
-#include "persondata.h"
-#include "personsmodel.h"
 #include "duplicatesfinder_p.h"
+#include "persondata.h"
+#include "personpresentationwidget.h"
+#include "personsmodel.h"
 
-#include <QVBoxLayout>
 #include <QPushButton>
+#include <QVBoxLayout>
 
-#include <KLocalizedString>
-#include <KJob>
 #include "kpeople_debug.h"
+#include <KJob>
+#include <KLocalizedString>
 #include <KPluginFactory>
 
 K_PLUGIN_FACTORY(MergeContactsWidgetFactory, registerPlugin<MergeContactsWidget>();)
@@ -68,7 +68,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
     m_containerListDetails->setVisible(false);
 
     if (duplicates.isEmpty()) {
-        return ;
+        return;
     }
 
     // building the new button
@@ -82,7 +82,7 @@ void MergeContactsWidget::fillDuplicatesWidget(const QList<QPersistentModelIndex
         // displaying contact in a user friendly way
         qCDebug(KPEOPLE_LOG) << "Name retireved form the duplicate :" << duplicate.data(Qt::DisplayRole).toString();
 
-        QIcon avatar ;
+        QIcon avatar;
         QString name = duplicate.data(Qt::DisplayRole).toString();
 
         QVariant decoration = duplicate.data(Qt::DecorationRole);
@@ -130,8 +130,8 @@ void MergeContactsWidget::searchForDuplicates()
         qCDebug(KPEOPLE_LOG) << "Merge Widget failed to launch the duplicates search";
         return;
     }
-    m_duplicatesBuster = new DuplicatesFinder(m_model , this);
-    connect(m_duplicatesBuster, SIGNAL(result(KJob*)), SLOT(searchForDuplicatesFinished()));
+    m_duplicatesBuster = new DuplicatesFinder(m_model, this);
+    connect(m_duplicatesBuster, SIGNAL(result(KJob *)), SLOT(searchForDuplicatesFinished()));
     m_duplicatesBuster->setSpecificPerson(m_person->uri());
     m_duplicatesBuster->start();
 }

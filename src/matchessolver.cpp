@@ -5,12 +5,12 @@
     SPDX-License-Identifier: LGPL-2.1-or-later
 */
 
-#include "matchessolver_p.h"
-#include "match_p.h"
-#include "personsmodel.h"
-#include "personmanager_p.h"
-#include <QString>
 #include "kpeople_debug.h"
+#include "match_p.h"
+#include "matchessolver_p.h"
+#include "personmanager_p.h"
+#include "personsmodel.h"
+#include <QString>
 
 using namespace KPeople;
 
@@ -28,8 +28,8 @@ void MatchesSolver::start()
 
 void MatchesSolver::startMatching()
 {
-    //Will contain all the sets to be merged
-    QHash<QString, QSet<QString> > jobsData;
+    // Will contain all the sets to be merged
+    QHash<QString, QSet<QString>> jobsData;
     // has a relation of each person, to know where it is
     QHash<QString, QString> destinationResolver;
     for (const Match &m : qAsConst(m_matches)) {
@@ -40,13 +40,13 @@ void MatchesSolver::startMatching()
         const bool inA = destinationResolver.contains(urlA);
         const bool inB = destinationResolver.contains(urlB);
         if (inA && inB) {
-            //Both are in already, so we have to merge both sets
+            // Both are in already, so we have to merge both sets
             destinationResolver[urlB] = urlA;
             jobsData[urlA] = jobsData.take(urlB);
 
-            //we've put all items pointed to by urlA, to the B set
-            //now we re-assign anything pointing to B as pointing to A
-            //because they are the same
+            // we've put all items pointed to by urlA, to the B set
+            // now we re-assign anything pointing to B as pointing to A
+            // because they are the same
             const auto keys = destinationResolver.keys(urlB);
             auto it = keys.constBegin();
             const auto end = keys.constEnd();
@@ -54,18 +54,18 @@ void MatchesSolver::startMatching()
                 destinationResolver[*it] = urlA;
             }
         } else {
-            //if A is in but not B, we want B wherever A is
+            // if A is in but not B, we want B wherever A is
             if (inA) {
                 qSwap(urlB, urlA);
             }
-            //in case B is anywhere, add A to that set, otherwise just insert B
+            // in case B is anywhere, add A to that set, otherwise just insert B
             const QString mergeUrl = destinationResolver.value(urlB, urlB);
 
             QSet<QString> &jobs = jobsData[mergeUrl];
             jobs.insert(urlB);
             jobs.insert(urlA);
 
-            //remember where urlA and urlB are
+            // remember where urlA and urlB are
             Q_ASSERT(urlA != mergeUrl);
             destinationResolver.insert(urlA, mergeUrl);
             if (urlB != mergeUrl) {

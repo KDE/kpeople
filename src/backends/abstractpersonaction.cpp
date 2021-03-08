@@ -6,9 +6,9 @@
 
 #include "abstractpersonaction.h"
 
-
 using namespace KPeople;
 
-AbstractPersonAction::AbstractPersonAction(QObject *parent) : QObject(parent)
+AbstractPersonAction::AbstractPersonAction(QObject *parent)
+    : QObject(parent)
 {
 }

@@ -100,18 +100,18 @@ public:
     Q_SCRIPTABLE bool setContactCustomProperty(const QString &key, const QVariant &value);
 
     /**
-    * Returns the contact's online presence.
-    */
+     * Returns the contact's online presence.
+     */
     QString presence() const;
 
     /**
-    * Returns the contact's preferred email address.
-    */
+     * Returns the contact's preferred email address.
+     */
     QString email() const;
 
     /**
-    * Returns a the url of the picture that represents the contact.
-    */
+     * Returns a the url of the picture that represents the contact.
+     */
     QUrl pictureUrl() const;
 
     /** Returns all groups the person is in. */

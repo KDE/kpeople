@@ -7,9 +7,9 @@
 #ifndef DUPLICATESFINDER_H
 #define DUPLICATESFINDER_H
 
+#include "match_p.h"
 #include <KJob>
 #include <kpeople/kpeople_export.h>
-#include "match_p.h"
 
 namespace KContacts
 {
@@ -18,7 +18,6 @@ class Addressee;
 
 namespace KPeople
 {
-
 class PersonsModel;
 class KPEOPLE_EXPORT DuplicatesFinder : public KJob
 {

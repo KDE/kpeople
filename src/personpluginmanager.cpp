@@ -7,14 +7,13 @@
 #include "personpluginmanager.h"
 #include "backends/basepersonsdatasource.h"
 
-#include <KPluginMetaData>
-#include <KPluginLoader>
 #include <KPluginFactory>
+#include <KPluginLoader>
+#include <KPluginMetaData>
 
+#include "kpeople_debug.h"
 #include <QMutex>
 #include <QMutexLocker>
-#include "kpeople_debug.h"
-
 
 using namespace KPeople;
 
@@ -29,7 +28,6 @@ public:
     bool m_autoloadDataSourcePlugins = true;
     bool m_loadedDataSourcePlugins = false;
     QMutex m_mutex;
-
 };
 
 Q_GLOBAL_STATIC(PersonPluginManagerPrivate, s_instance)
@@ -81,7 +79,7 @@ void PersonPluginManager::addDataSource(const QString &sourceId, BasePersonsData
     s_instance->dataSourcePlugins.insert(sourceId, source);
 }
 
-void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource * > &dataSources)
+void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource *> &dataSources)
 {
     QMutexLocker(&s_instance->m_mutex);
     qDeleteAll(s_instance->dataSourcePlugins);
@@ -107,11 +105,11 @@ BasePersonsDataSource *PersonPluginManager::dataSource(const QString &sourceId)
     return s_instance->dataSourcePlugins.value(sourceId);
 }
 
-bool KPeople::PersonPluginManager::addContact(const QVariantMap& properties)
+bool KPeople::PersonPluginManager::addContact(const QVariantMap &properties)
 {
     bool ret = false;
     for (auto p : qAsConst(s_instance->dataSourcePlugins)) {
-        auto v2 = dynamic_cast<BasePersonsDataSourceV2*>(p);
+        auto v2 = dynamic_cast<BasePersonsDataSourceV2 *>(p);
         if (!v2)
             continue;
         const bool added = v2->addContact(properties);
@@ -124,7 +122,7 @@ bool KPeople::PersonPluginManager::deleteContact(const QString &uri)
 {
     bool ret = false;
     for (auto p : qAsConst(s_instance->dataSourcePlugins)) {
-        auto v2 = dynamic_cast<BasePersonsDataSourceV2*>(p);
+        auto v2 = dynamic_cast<BasePersonsDataSourceV2 *>(p);
         if (!v2)
             continue;
         const bool deleted = v2->deleteContact(uri);

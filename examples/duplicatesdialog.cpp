@@ -5,9 +5,9 @@
     SPDX-License-Identifier: LGPL-2.1-or-later
 */
 
+#include "mergedialog.h"
 #include <QApplication>
 #include <QTimer>
-#include "mergedialog.h"
 #include <personsmodel.h>
 
 int main(int argc, char **argv)
@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     t->setInterval(500);
     t->setSingleShot(true);
     QObject::connect(model, SIGNAL(modelInitialized(bool)), t, SLOT(start()));
-    QObject::connect(model, SIGNAL(rowsInserted(QModelIndex,int,int)), t, SLOT(start()));
+    QObject::connect(model, SIGNAL(rowsInserted(QModelIndex, int, int)), t, SLOT(start()));
     QObject::connect(t, &QTimer::timeout, [dialog, model]() {
         dialog->setPersonsModel(model);
         dialog->show();

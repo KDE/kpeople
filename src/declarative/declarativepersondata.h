@@ -9,7 +9,6 @@
 
 #include "persondata.h"
 
-
 class DeclarativePersonData : public QObject
 {
     Q_OBJECT

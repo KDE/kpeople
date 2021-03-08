@@ -7,11 +7,11 @@
 #ifndef ABSTRACT_PERSON_ACTION_H
 #define ABSTRACT_PERSON_ACTION_H
 
-#include <QObject>
 #include <QAction>
+#include <QObject>
 
-#include <kpeoplebackend/kpeoplebackend_export.h>
 #include <KPeople/PersonData>
+#include <kpeoplebackend/kpeoplebackend_export.h>
 
 namespace KPeople
 {

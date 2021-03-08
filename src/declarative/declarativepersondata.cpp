@@ -6,8 +6,8 @@
 
 #include "declarativepersondata.h"
 
-#include "kpeople_debug.h"
 #include "../persondata.h"
+#include "kpeople_debug.h"
 
 DeclarativePersonData::DeclarativePersonData(QObject *parent)
     : QObject(parent)

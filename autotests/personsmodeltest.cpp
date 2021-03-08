@@ -9,13 +9,13 @@
 #include <QTest>
 #include <QVariant>
 
-//private includes
+// private includes
 #include "personmanager_p.h"
 
-//public kpeople includes
-#include <personsmodel.h>
-#include <personpluginmanager.h>
+// public kpeople includes
 #include <QSignalSpy>
+#include <personpluginmanager.h>
+#include <personsmodel.h>
 
 #include "fakecontactsource.h"
 
@@ -29,7 +29,7 @@ void PersonsModelTest::initTestCase()
 
     // Called before the first testfunction is executed
     PersonManager::instance(m_database.fileName());
-    m_source = new FakeContactSource(nullptr); //don't own. PersonPluginManager removes it on destruction
+    m_source = new FakeContactSource(nullptr); // don't own. PersonPluginManager removes it on destruction
     QHash<QString, BasePersonsDataSource *> sources;
     sources[QStringLiteral("fakesource")] = m_source;
     PersonPluginManager::setDataSourcePlugins(sources);
@@ -67,7 +67,7 @@ void PersonsModelTest::loadModel()
 void PersonsModelTest::mergeContacts()
 {
     QStringList uris{QStringLiteral("fakesource://contact1"), QStringLiteral("fakesource://contact2")};
-    QSignalSpy modelRowsInsert(m_model, SIGNAL(rowsInserted(QModelIndex,int,int)));
+    QSignalSpy modelRowsInsert(m_model, SIGNAL(rowsInserted(QModelIndex, int, int)));
 
     QCOMPARE(m_model->rowCount(), 4);
     QString newUri = KPeople::mergeContacts(uris);
@@ -104,7 +104,8 @@ void PersonsModelTest::mergeContacts()
 void PersonsModelTest::gettersTests()
 {
     // Find the index for "kpeople://1" using the QAIModel method
-    QModelIndexList indexList = m_model->match(m_model->index(0,0,QModelIndex()), KPeople::PersonsModel::PersonUriRole, QVariant(QStringLiteral("kpeople://1")), 1);
+    QModelIndexList indexList =
+        m_model->match(m_model->index(0, 0, QModelIndex()), KPeople::PersonsModel::PersonUriRole, QVariant(QStringLiteral("kpeople://1")), 1);
     QModelIndex personIndex = indexList.first();
 
     // Now get the index using our method
@@ -119,8 +120,8 @@ void PersonsModelTest::gettersTests()
 void PersonsModelTest::unmergeContacts()
 {
     QModelIndex personIndex = m_model->indexForPersonUri(QStringLiteral("kpeople://1"));
-    QSignalSpy modelRowsInsert(m_model, SIGNAL(rowsInserted(QModelIndex,int,int)));
-    QSignalSpy modelRowsRemove(m_model, SIGNAL(rowsRemoved(QModelIndex,int,int)));
+    QSignalSpy modelRowsInsert(m_model, SIGNAL(rowsInserted(QModelIndex, int, int)));
+    QSignalSpy modelRowsRemove(m_model, SIGNAL(rowsRemoved(QModelIndex, int, int)));
 
     QCOMPARE(m_model->rowCount(), 2);
     QCOMPARE(m_model->rowCount(personIndex), 3);

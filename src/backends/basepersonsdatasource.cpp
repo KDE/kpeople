@@ -7,7 +7,6 @@
 
 #include "basepersonsdatasource.h"
 
-
 #include "backends/abstractcontact.h"
 #include "defaultcontactmonitor_p.h"
 
@@ -17,12 +16,12 @@ class KPeople::BasePersonsDataSourcePrivate
 {
 public:
     QWeakPointer<AllContactsMonitor> m_allContactsMonitor;
-    QHash<QString, QWeakPointer<ContactMonitor> > m_contactMonitors;
+    QHash<QString, QWeakPointer<ContactMonitor>> m_contactMonitors;
 };
 
 BasePersonsDataSource::BasePersonsDataSource(QObject *parent, const QVariantList &args)
-    : QObject(parent),
-      d_ptr(new BasePersonsDataSourcePrivate)
+    : QObject(parent)
+    , d_ptr(new BasePersonsDataSourcePrivate)
 {
     Q_UNUSED(args)
 }
@@ -36,7 +35,7 @@ AllContactsMonitorPtr BasePersonsDataSource::allContactsMonitor()
 {
     Q_D(BasePersonsDataSource);
 
-    //if there is currently no watcher, create one
+    // if there is currently no watcher, create one
     AllContactsMonitorPtr c = d->m_allContactsMonitor.toStrongRef();
     if (!c) {
         c = AllContactsMonitorPtr(createAllContactsMonitor());
@@ -63,7 +62,7 @@ ContactMonitor *BasePersonsDataSource::createContactMonitor(const QString &conta
     return new DefaultContactMonitor(contactUri, allContactsMonitor());
 }
 
-BasePersonsDataSourceV2::BasePersonsDataSourceV2(QObject* parent, const QVariantList& args)
+BasePersonsDataSourceV2::BasePersonsDataSourceV2(QObject *parent, const QVariantList &args)
     : BasePersonsDataSource(parent, args)
 {
 }

@@ -10,12 +10,11 @@
 #include <QObject>
 #include <QSharedPointer>
 
-#include <kpeoplebackend/kpeoplebackend_export.h>
 #include <kpeoplebackend/abstractcontact.h>
+#include <kpeoplebackend/kpeoplebackend_export.h>
 
 namespace KPeople
 {
-
 class AllContactsMonitorPrivate;
 
 /**
@@ -30,7 +29,7 @@ class KPEOPLEBACKEND_EXPORT AllContactsMonitor : public QObject
 {
     Q_OBJECT
 public:
-    explicit AllContactsMonitor(); //TODO make protected? this isn't useful unless subclassed
+    explicit AllContactsMonitor(); // TODO make protected? this isn't useful unless subclassed
     virtual ~AllContactsMonitor();
 
     /**
@@ -38,7 +37,7 @@ public:
      */
     virtual QMap<QString, AbstractContact::Ptr> contacts();
 
-    //TODO redo as a state enum - InitialLoad, Fail, Loaded
+    // TODO redo as a state enum - InitialLoad, Fail, Loaded
     bool isInitialFetchComplete() const;
 
     bool initialFetchSuccess() const;

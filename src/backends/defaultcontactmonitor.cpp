@@ -7,9 +7,9 @@
 
 #include "defaultcontactmonitor_p.h"
 
-DefaultContactMonitor::DefaultContactMonitor(const QString &contactUri, const AllContactsMonitorPtr &allContactsWatcher):
-    ContactMonitor(contactUri),
-    m_allContactsMonitor(allContactsWatcher)
+DefaultContactMonitor::DefaultContactMonitor(const QString &contactUri, const AllContactsMonitorPtr &allContactsWatcher)
+    : ContactMonitor(contactUri)
+    , m_allContactsMonitor(allContactsWatcher)
 {
     connect(allContactsWatcher.data(), &AllContactsMonitor::contactAdded, this, &DefaultContactMonitor::onContactAdded);
     connect(allContactsWatcher.data(), &AllContactsMonitor::contactRemoved, this, &DefaultContactMonitor::onContactRemoved);
@@ -42,4 +42,3 @@ void DefaultContactMonitor::onContactRemoved(const QString &id)
         setContact(AbstractContact::Ptr());
     }
 }
-

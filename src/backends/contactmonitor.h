@@ -16,7 +16,6 @@
 
 namespace KPeople
 {
-
 class ContactMonitorPrivate;
 
 /**
@@ -28,7 +27,7 @@ class ContactMonitorPrivate;
  *
  * @since 5.8
  */
-class KPEOPLEBACKEND_EXPORT ContactMonitor: public QObject
+class KPEOPLEBACKEND_EXPORT ContactMonitor : public QObject
 {
     Q_OBJECT
 public:
@@ -49,12 +48,14 @@ Q_SIGNALS:
      * Emitted whenever the contact changes
      */
     void contactChanged();
+
 protected:
     /**
      * Sets or updates the contact and emits contactChanged
      * Subclasses should call this when data is loaded or changes
      */
     void setContact(const AbstractContact::Ptr &contact);
+
 private:
     Q_DISABLE_COPY(ContactMonitor)
     Q_DECLARE_PRIVATE(ContactMonitor)

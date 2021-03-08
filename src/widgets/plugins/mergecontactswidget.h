@@ -37,6 +37,7 @@ private Q_SLOTS:
     void onMergeButtonPressed();
     void onMergePossibilitiesButtonPressed();
     void searchForDuplicatesFinished();
+
 private:
     KPeople::PersonData *m_person;
     KPeople::PersonsModel *m_model;
@@ -44,7 +45,7 @@ private:
 
     QWidget *m_containerListDetails;
     KPeople::DuplicatesFinder *m_duplicatesBuster;
-    QList< QPair<QPersistentModelIndex, PersonPresentationWidget *> > m_listMergeContacts;
+    QList<QPair<QPersistentModelIndex, PersonPresentationWidget *>> m_listMergeContacts;
 };
 
 #endif // MERGE_CONTACTS_WIDGET_H

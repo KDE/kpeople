@@ -8,8 +8,8 @@
 #define KPEOPLEWIDGETS_ACTIONS_H
 
 #include <QList>
-#include <qobjectdefs.h>
 #include <kpeople/widgets/kpeoplewidgets_export.h>
+#include <qobjectdefs.h>
 
 class QString;
 class QObject;

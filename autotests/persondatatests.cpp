@@ -8,10 +8,10 @@
 
 #include <QTest>
 
-//private includes
+// private includes
 #include "personmanager_p.h"
 
-//public kpeople includes
+// public kpeople includes
 #include <QSignalSpy>
 #include <persondata.h>
 #include <personpluginmanager.h>
@@ -22,7 +22,7 @@ QTEST_GUILESS_MAIN(PersonDataTests)
 
 using namespace KPeople;
 
-//this tests PersonData but also implicitly tests the private classes
+// this tests PersonData but also implicitly tests the private classes
 // - BasePersonsDataSource
 // - DefaultContactMonitor
 // - MetaContact
@@ -35,7 +35,7 @@ void PersonDataTests::initTestCase()
     PersonManager::instance(m_database.fileName());
     PersonManager::instance()->mergeContacts(QStringList() << QStringLiteral("fakesource://contact2") << QStringLiteral("fakesource://contact3"));
 
-    m_source = new FakeContactSource(nullptr); //don't own. PersonPluginManager removes it on destruction
+    m_source = new FakeContactSource(nullptr); // don't own. PersonPluginManager removes it on destruction
     QHash<QString, BasePersonsDataSource *> sources;
     sources[QStringLiteral("fakesource")] = m_source;
     PersonPluginManager::setDataSourcePlugins(sources);
@@ -61,7 +61,7 @@ void PersonDataTests::loadContact()
 {
     QString personUri = QStringLiteral("fakesource://contact1");
     PersonData person(personUri);
-    //in this case we know the datasource is synchronous, but we should extend the test to cope with it not being async.
+    // in this case we know the datasource is synchronous, but we should extend the test to cope with it not being async.
 
     QCOMPARE(person.contactUris().size(), 1);
     QCOMPARE(person.name(), QStringLiteral("Contact 1"));
@@ -71,8 +71,8 @@ void PersonDataTests::loadContact()
 
 void PersonDataTests::loadPerson()
 {
-    //loading contact 2 which is already merged should return person1
-    //which is both contact 2 and 3
+    // loading contact 2 which is already merged should return person1
+    // which is both contact 2 and 3
     PersonData person(QStringLiteral("fakesource://contact2"));
 
     QCOMPARE(person.contactUris().size(), 2);
@@ -80,7 +80,7 @@ void PersonDataTests::loadPerson()
     QCOMPARE(person.allEmails().size(), 2);
     QCOMPARE(person.personUri(), QStringLiteral("kpeople://1"));
 
-    //convert to set as order is not important
+    // convert to set as order is not important
     const QStringList allEmails = person.allEmails();
     const QSet<QString> allEmailsSet(allEmails.begin(), allEmails.end());
     QCOMPARE(allEmailsSet, QSet<QString>() << QStringLiteral("contact2@example.com") << QStringLiteral("contact3@example.com"));

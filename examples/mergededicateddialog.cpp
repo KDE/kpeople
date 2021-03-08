@@ -19,10 +19,8 @@ int main(int argc, char **argv)
     MergeDialog dialog;
     PersonsModel *persons = new PersonsModel(&dialog);
     QList<KPeople::PersonsModelFeature> features;
-    features << KPeople::PersonsModelFeature::emailModelFeature()
-             << KPeople::PersonsModelFeature::avatarModelFeature()
-             << KPeople::PersonsModelFeature::imModelFeature()
-             << KPeople::PersonsModelFeature::fullNameModelFeature();
+    features << KPeople::PersonsModelFeature::emailModelFeature() << KPeople::PersonsModelFeature::avatarModelFeature()
+             << KPeople::PersonsModelFeature::imModelFeature() << KPeople::PersonsModelFeature::fullNameModelFeature();
     persons->startQuery(features);
 
     dialog.setPersonsModel(persons);

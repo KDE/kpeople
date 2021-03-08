@@ -19,11 +19,10 @@ public:
     bool m_initialFetchSucccess = false;
 };
 
-AllContactsMonitor::AllContactsMonitor():
-    QObject(),
-    d_ptr(new AllContactsMonitorPrivate)
+AllContactsMonitor::AllContactsMonitor()
+    : QObject()
+    , d_ptr(new AllContactsMonitorPrivate)
 {
-
 }
 AllContactsMonitor::~AllContactsMonitor()
 {
@@ -51,4 +50,3 @@ void AllContactsMonitor::emitInitialFetchComplete(bool success)
     d_ptr->m_initialFetchSucccess = success;
     Q_EMIT initialFetchComplete(success);
 }
-

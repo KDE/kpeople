@@ -32,7 +32,7 @@ public:
     AbstractContact();
     virtual ~AbstractContact();
 
-//     well-known properties
+    //     well-known properties
     /** String property representing the display name of the contact */
     static const QString NameProperty;
 

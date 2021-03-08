@@ -7,8 +7,8 @@
 #ifndef METACONTACT_H
 #define METACONTACT_H
 
-#include <QSharedDataPointer>
 #include "backends/abstractcontact.h"
+#include <QSharedDataPointer>
 
 #include <kpeople/kpeople_export.h>
 
@@ -40,7 +40,7 @@ public:
     AbstractContact::Ptr contact(const QString &contactUri);
     const AbstractContact::Ptr &personAddressee() const;
 
-    //update one of the stored contacts in this metacontact object
+    // update one of the stored contacts in this metacontact object
     //@return the index of the contact which was inserted
 
     int insertContact(const QString &contactUri, const AbstractContact::Ptr &contact);
@@ -50,8 +50,8 @@ public:
     int removeContact(const QString &contactUri);
 
 private:
-    //does the real inserting contacts. Split so that we don't call the expensive "reload" function
-    //multiple times at startup
+    // does the real inserting contacts. Split so that we don't call the expensive "reload" function
+    // multiple times at startup
     int insertContactInternal(const QString &contactUri, const AbstractContact::Ptr &contact);
 
     void reload();

@@ -31,7 +31,7 @@ enum ActionType {
     VideoCallAction,
     SendEmailAction,
     SendFileAction,
-    OtherAction = 100
+    OtherAction = 100,
 };
 Q_ENUM_NS(ActionType)
 

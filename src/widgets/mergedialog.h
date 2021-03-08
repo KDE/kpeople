@@ -39,7 +39,7 @@ public:
         NameRole = Qt::DisplayRole,
         UriRole = Qt::UserRole + 1,
         PixmapRole,
-        MergeReasonRole
+        MergeReasonRole,
     };
 
     explicit MergeDialog(QWidget *parent = nullptr);

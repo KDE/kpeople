@@ -29,7 +29,7 @@ class KPEOPLE_EXPORT Match
 public:
     enum MatchReason {
         NameMatch,
-        EmailMatch
+        EmailMatch,
     };
     Q_ENUM(MatchReason)
 

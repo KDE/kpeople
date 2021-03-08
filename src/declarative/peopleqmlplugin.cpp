@@ -27,7 +27,7 @@ public:
         VideoCallAction = KPeople::VideoCallAction,
         SendEmailAction = KPeople::SendEmailAction,
         SendFileAction = KPeople::SendFileAction,
-        OtherAction = KPeople::OtherAction
+        OtherAction = KPeople::OtherAction,
     };
     Q_ENUM(ActionType)
 };

@@ -75,7 +75,7 @@ public Q_SLOTS:
     }
 
 public:
-    enum MatchAction { Apply, NotApply, Ask };
+    enum MatchAction { Apply, NotApply, Ask, };
     MatchAction m_action;
     PersonsModel *m_model;
 };

@@ -25,7 +25,7 @@ public:
     enum Roles {
         IconNameRole = Qt::UserRole + 1,
         ActionRole,
-        ActionTypeRole
+        ActionTypeRole,
     };
 
     explicit PersonActionsModel(QObject *parent = nullptr);

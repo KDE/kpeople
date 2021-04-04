@@ -223,7 +223,7 @@ QModelIndex PersonsModel::index(int row, int column, const QModelIndex &parent) 
 
 QModelIndex PersonsModel::parent(const QModelIndex &childIndex) const
 {
-    if (childIndex.internalId() == -1 || !childIndex.isValid()) {
+    if (!childIndex.isValid()) {
         return QModelIndex();
     }
 

@@ -249,7 +249,7 @@ void PersonsModelPrivate::onContactsFetched()
 
     // fetch all already loaded contacts from plugins
     for (const AllContactsMonitorPtr &contactWatcher : qAsConst(m_sourceMonitors)) {
-        addresseeMap.unite(contactWatcher->contacts());
+        addresseeMap.insert(contactWatcher->contacts());
     }
 
     // add metacontacts

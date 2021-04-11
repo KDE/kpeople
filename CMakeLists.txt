@@ -58,7 +58,7 @@ if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
 endif ()
 add_definitions(-DQT_NO_FOREACH)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f00)
-add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055000)
+add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055100)
 add_definitions(-DKSERVICE_DISABLE_DEPRECATED_BEFORE_AND_AT=0x04ff00)
 # TODO: PersonDetailsView(QWidget *) constructor still calls KPluginInfo::fromServices() (deprecated at 5.0)
 # investigate if needed

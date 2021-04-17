@@ -43,7 +43,7 @@ target_link_libraries (KF5People
                         KF5::PeopleBackend
 )
 
-if(NOT ANDROID)
+if(Qt5DBus_FOUND)
     target_link_libraries(KF5People PRIVATE Qt5::DBus)
 endif()
 

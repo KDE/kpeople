@@ -37,7 +37,11 @@ target_link_libraries (KF5PeopleWidgets
                         KF5::CoreAddons
 )
 
-set_target_properties (KF5PeopleWidgets PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME PeopleWidgets)
+set_target_properties (KF5PeopleWidgets PROPERTIES
+    VERSION     ${KPEOPLE_VERSION}
+    SOVERSION   ${KPEOPLE_SOVERSION}
+    EXPORT_NAME PeopleWidgets
+)
 
 if (MSVC)
     set_target_properties (KF5PeopleWidgets PROPERTIES

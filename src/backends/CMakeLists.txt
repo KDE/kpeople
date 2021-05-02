@@ -17,7 +17,11 @@ target_link_libraries (KF5PeopleBackend
 target_include_directories (KF5PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
                                     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople>"
 )
-set_target_properties (KF5PeopleBackend PROPERTIES VERSION ${KPEOPLE_VERSION_STRING} SOVERSION ${KPEOPLE_SOVERSION} EXPORT_NAME PeopleBackend)
+set_target_properties (KF5PeopleBackend PROPERTIES
+    VERSION     ${KPEOPLE_VERSION}
+    SOVERSION   ${KPEOPLE_SOVERSION}
+    EXPORT_NAME PeopleBackend
+)
 
 install (TARGETS KF5PeopleBackend
          EXPORT KPeopleTargets

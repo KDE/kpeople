@@ -56,9 +56,7 @@ ecm_setup_version(PROJECT VARIABLE_PREFIX KPEOPLE
 
 option(ENABLE_EXAMPLES "Build the examples" "ON")
 
-if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/po")
-    ki18n_install(po)
-endif ()
+ki18n_install(po)
 add_definitions(-DQT_NO_FOREACH)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f00)
 add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055100)

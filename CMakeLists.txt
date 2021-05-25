@@ -15,10 +15,12 @@ set(REQUIRED_QT_VERSION 5.15.0)
 
 find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml)
 
-# On UNIX DBus integration is required, on Android it does not exist and on other platforms it is optional
-if(UNIX)
-    find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED DBus)
-elseif(NOT ANDROID)
+# On non-Apple UNIX DBus integration is required, on Android it does not exist and on other platforms it is optional
+if(UNIX AND NOT APPLE)
+    if(NOT ANDROID)
+        find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED DBus)
+    endif()
+else()
     find_package(Qt5 ${REQUIRED_QT_VERSION} OPTIONAL_COMPONENTS DBus)
 endif()
 

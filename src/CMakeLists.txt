@@ -73,6 +73,7 @@ ecm_generate_headers(KPeople_CamelCase_HEADERS
         PersonData
         PersonPluginManager
         PersonsModel
+        PersonsSortFilterProxyModel
         Global
     REQUIRED_HEADERS KPeople_HEADERS
     PREFIX KPeople

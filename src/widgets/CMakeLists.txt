@@ -1,5 +1,3 @@
-# add_subdirectory(plugins)
-
 set (kpeople_widgets_SRCS persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp

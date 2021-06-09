@@ -1,7 +1,7 @@
 set (kpeople_widgets_SRCS persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp
-    plugins/emaildetailswidget.cpp
+    emaildetailswidget.cpp
     abstractfieldwidgetfactory.cpp
     actions.cpp
 

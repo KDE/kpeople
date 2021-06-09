@@ -10,8 +10,8 @@
 #include "kpeople_widgets_debug.h"
 
 #include "abstractfieldwidgetfactory.h"
+#include "emaildetailswidget.h"
 #include "global.h"
-#include "plugins/emaildetailswidget.h"
 
 #include <KPluginFactory>
 #include <KPluginLoader>

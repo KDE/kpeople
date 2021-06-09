@@ -13,9 +13,6 @@
 #include <KPeople/PersonData>
 #include <KPluginFactory>
 
-// K_PLUGIN_FACTORY( EmailDetailsWidgetFactory, registerPlugin<EmailDetailsWidget>(); )
-// K_EXPORT_PLUGIN( EmailDetailsWidgetFactory("emaildetailswidgetplugin") )
-
 using namespace KPeople;
 
 QWidget *EmailFieldsPlugin::createDetailsWidget(const PersonData &person, QWidget *parent) const

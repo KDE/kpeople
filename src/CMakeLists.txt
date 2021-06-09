@@ -3,7 +3,6 @@ include_directories (${CMAKE_CURRENT_BINARY_DIR}
 )
 
 add_subdirectory(declarative)
-add_subdirectory(plugins)
 add_subdirectory(widgets)
 add_subdirectory(backends)
 

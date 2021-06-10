@@ -59,7 +59,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent)
     QMap<QString, AbstractContact::Ptr> contacts;
     for (const QString &contactUri : qAsConst(d->contactUris)) {
         // load the correct data source for this contact ID
-        const QString sourceId = contactUri.left(contactUri.indexOf(QStringLiteral("://")));
+        const QString sourceId = QUrl(contactUri).scheme();
         Q_ASSERT(!sourceId.isEmpty());
         BasePersonsDataSource *dataSource = PersonPluginManager::dataSource(sourceId);
         if (dataSource) {

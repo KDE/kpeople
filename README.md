@@ -1,11 +1,5 @@
 # KPeople
 
-<!--
-SPDX-FileCopyrightText: 2015 Aleix Pol <aleixpol@kde.org>
-SPDX-FileCopyrightText: 2020 Jonah Brüchert <jbb.prv@gmx.de>
-SPDX-FileCopyrightText: LGPL-2.1-or-later
--->
-
 Provides access to all contacts and aggregates them by person.
 
 ### Introduction

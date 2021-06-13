@@ -2,7 +2,7 @@
 
 Provides access to all contacts and aggregates them by person.
 
-### Introduction
+## Introduction
 
 KPeople offers unified access to our contacts from different sources, grouping
 them by person while still exposing all the data.
@@ -12,9 +12,9 @@ in user interfaces by providing QML and Qt Widgets components.
 
 The sources are plugin-based, allowing to easily extend the contacts collection.
 
-### Usage
+## Usage
 
-#### Components
+### Components
 
 To use KPeople, you'll want to look for it using
 
@@ -47,13 +47,13 @@ import org.kde.people 1.0
 
 This will allow access to the KPeople data from QML code-bases.
 
-#### Models
+### Models
 
 KPeople provides Qt models for accessing different person related data.
 KPeople::PersonsModel lists all available contacts. Actions for each contact can be
 accessed by providing KPeople::PersonActions with a KPeople::PersonsModel::personUri.
 
-#### Person Data
+### Person Data
 
 KPeople::PersonsModel and KPeople::PersonData also provide raw access to the VCard of a contact.
 
@@ -61,13 +61,13 @@ VCard is a standard that is supported on many platforms and supports storing all
 of information about a person, including instant messenger contacts, phone number, names etc.
 It can be processed using a KContacts::VCardConverter.
 
-#### Editing contacts
+### Editing contacts
 
 To make changes to a contact, its vcard can be edited by setting the custom property vcard of
 KPeople::PersonData to the new raw vcard data. New vcard data can be created using the
 KPeople::Addressee class, from which the KPeople::VCardConverter can create a vcard.
 
-#### Adding / Removing
+### Adding / Removing
 
 KPeople::PersonPluginManager provides static functions for adding and removing contacts.
 

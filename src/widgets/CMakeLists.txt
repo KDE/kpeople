@@ -18,7 +18,7 @@ ecm_qt_declare_logging_category(kpeople_widgets_SRCS
     EXPORT KPEOPLE
 )
 
-qt_wrap_ui (kpeople_widgets_SRCS person-details-presentation.ui)
+ki18n_wrap_ui (kpeople_widgets_SRCS person-details-presentation.ui)
 
 add_library (KF5PeopleWidgets SHARED ${kpeople_widgets_SRCS} )
 add_library (KF5::PeopleWidgets ALIAS KF5PeopleWidgets)

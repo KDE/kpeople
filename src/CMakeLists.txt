@@ -6,7 +6,16 @@ add_subdirectory(declarative)
 add_subdirectory(widgets)
 add_subdirectory(backends)
 
-ecm_qt_declare_logging_category(KF5People_debug_SRCS
+add_library(KF5People)
+add_library(KF5::People ALIAS KF5People)
+
+set_target_properties (KF5People PROPERTIES
+    VERSION     ${KPEOPLE_VERSION}
+    SOVERSION   ${KPEOPLE_SOVERSION}
+    EXPORT_NAME People
+)
+
+ecm_qt_declare_logging_category(KF5People
     HEADER kpeople_debug.h
     IDENTIFIER KPEOPLE_LOG
     CATEGORY_NAME kf.people.core
@@ -15,8 +24,7 @@ ecm_qt_declare_logging_category(KF5People_debug_SRCS
     EXPORT KPEOPLE
 )
 
-add_library (KF5People
-    ${KF5People_debug_SRCS}
+target_sources(KF5People PRIVATE
     global.cpp
     metacontact.cpp
     persondata.cpp
@@ -29,8 +37,6 @@ add_library (KF5People
     personssortfilterproxymodel.cpp
     resources.qrc
 )
-
-add_library(KF5::People ALIAS KF5People)
 
 target_link_libraries (KF5People
                     PUBLIC
@@ -46,11 +52,6 @@ if(Qt5DBus_FOUND)
     target_link_libraries(KF5People PRIVATE Qt5::DBus)
 endif()
 
-set_target_properties (KF5People PROPERTIES
-    VERSION     ${KPEOPLE_VERSION}
-    SOVERSION   ${KPEOPLE_SOVERSION}
-    EXPORT_NAME People
-)
 target_include_directories (KF5People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
                                     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople>"
 )

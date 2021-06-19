@@ -1,8 +1,13 @@
-qt_wrap_cpp(kpeopledeclarative_SRCS ../widgets/actions.h)
-add_library(KF5PeopleDeclarative SHARED
-                    declarativepersondata.cpp
-                    personactionsmodel.cpp
-                    peopleqmlplugin.cpp ${kpeopledeclarative_SRCS})
+add_library(KF5PeopleDeclarative SHARED)
+
+target_sources(KF5PeopleDeclarative PRIVATE
+    declarativepersondata.cpp
+    personactionsmodel.cpp
+    peopleqmlplugin.cpp
+
+    # automoc the ActionType enum
+    ../widgets/actions.h
+)
 
 target_link_libraries(KF5PeopleDeclarative
     Qt5::Qml

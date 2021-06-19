@@ -1,4 +1,14 @@
-set (kpeople_widgets_SRCS persondetailsdialog.cpp
+add_library(KF5PeopleWidgets)
+add_library(KF5::PeopleWidgets ALIAS KF5PeopleWidgets)
+
+set_target_properties(KF5PeopleWidgets PROPERTIES
+    VERSION     ${KPEOPLE_VERSION}
+    SOVERSION   ${KPEOPLE_SOVERSION}
+    EXPORT_NAME PeopleWidgets
+)
+
+target_sources(KF5PeopleWidgets PRIVATE
+    persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp
     emaildetailswidget.cpp
@@ -9,7 +19,7 @@ set (kpeople_widgets_SRCS persondetailsdialog.cpp
     mergedelegate.cpp
 )
 
-ecm_qt_declare_logging_category(kpeople_widgets_SRCS
+ecm_qt_declare_logging_category(KF5PeopleWidgets
     HEADER kpeople_widgets_debug.h
     IDENTIFIER KPEOPLE_WIDGETS_LOG
     CATEGORY_NAME kf.people.widgets
@@ -18,10 +28,7 @@ ecm_qt_declare_logging_category(kpeople_widgets_SRCS
     EXPORT KPEOPLE
 )
 
-ki18n_wrap_ui (kpeople_widgets_SRCS person-details-presentation.ui)
-
-add_library (KF5PeopleWidgets SHARED ${kpeople_widgets_SRCS} )
-add_library (KF5::PeopleWidgets ALIAS KF5PeopleWidgets)
+ki18n_wrap_ui(KF5PeopleWidgets person-details-presentation.ui)
 
 target_link_libraries (KF5PeopleWidgets
                     PUBLIC
@@ -33,12 +40,6 @@ target_link_libraries (KF5PeopleWidgets
                         KF5::WidgetsAddons
                         KF5::PeopleBackend
                         KF5::CoreAddons
-)
-
-set_target_properties (KF5PeopleWidgets PROPERTIES
-    VERSION     ${KPEOPLE_VERSION}
-    SOVERSION   ${KPEOPLE_SOVERSION}
-    EXPORT_NAME PeopleWidgets
 )
 
 if (MSVC)

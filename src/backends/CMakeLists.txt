@@ -1,4 +1,13 @@
-add_library (KF5PeopleBackend
+add_library(KF5PeopleBackend)
+add_library(KF5::PeopleBackend ALIAS KF5PeopleBackend)
+
+set_target_properties(KF5PeopleBackend PROPERTIES
+    VERSION     ${KPEOPLE_VERSION}
+    SOVERSION   ${KPEOPLE_SOVERSION}
+    EXPORT_NAME PeopleBackend
+)
+
+target_sources(KF5PeopleBackend PRIVATE
     contactmonitor.cpp
     abstractcontact.cpp
     basepersonsdatasource.cpp
@@ -7,7 +16,6 @@ add_library (KF5PeopleBackend
     abstractpersonaction.cpp
     abstracteditablecontact.cpp
 )
-add_library (KF5::PeopleBackend ALIAS KF5PeopleBackend)
 
 target_link_libraries (KF5PeopleBackend
                     PUBLIC
@@ -16,11 +24,6 @@ target_link_libraries (KF5PeopleBackend
 
 target_include_directories (KF5PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
                                     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople>"
-)
-set_target_properties (KF5PeopleBackend PROPERTIES
-    VERSION     ${KPEOPLE_VERSION}
-    SOVERSION   ${KPEOPLE_SOVERSION}
-    EXPORT_NAME PeopleBackend
 )
 
 install (TARGETS KF5PeopleBackend

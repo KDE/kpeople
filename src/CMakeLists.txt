@@ -88,6 +88,8 @@ install(FILES
   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/kpeople COMPONENT Devel
 )
 
+install(FILES personmanager_p.h DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/kpeopleprivate)
+
 generate_export_header(KF5People EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
 
 

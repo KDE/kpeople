@@ -40,7 +40,7 @@ public:
 
     // DATA RETRIEVAL------------
 
-    /** Retuns a list of all known personIDs in the database*/
+    /** Returns a list of all known personIDs in the database*/
     QMultiHash<QString /*PersonUri*/, QString /*ContactUri*/> allPersons() const;
 
     /**

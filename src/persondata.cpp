@@ -72,8 +72,9 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent)
                 contacts[contactUri] = cw->contact();
             }
             connect(cw.data(), SIGNAL(contactChanged()), SLOT(onContactChanged()));
-        } else
+        } else {
             qCWarning(KPEOPLE_LOG) << "error: creating PersonData for unknown contact" << contactUri << id;
+        }
     }
 
     if (personUri.isEmpty() && contacts.size() == 1) {

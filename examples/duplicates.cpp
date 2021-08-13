@@ -28,7 +28,8 @@ public Q_SLOTS:
         std::cout << "Results: " << res.count() << std::endl;
         for (QList<Match>::iterator it = res.begin(); it != res.end();) {
             QStringList roles = it->matchReasons();
-            QStringList rA, rB;
+            QStringList rA;
+            QStringList rB;
 
             AbstractContact::Ptr aA = it->indexA.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
             AbstractContact::Ptr aB = it->indexB.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();

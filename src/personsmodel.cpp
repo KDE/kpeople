@@ -27,8 +27,8 @@ class PersonsModelPrivate : public QObject
 {
     Q_OBJECT
 public:
-    PersonsModelPrivate(PersonsModel *q)
-        : q(q)
+    PersonsModelPrivate(PersonsModel *qq)
+        : q(qq)
     {
     }
     PersonsModel *const q;

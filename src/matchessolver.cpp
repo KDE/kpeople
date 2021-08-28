@@ -33,7 +33,7 @@ void MatchesSolver::startMatching()
     QHash<QString, QSet<QString>> jobsData;
     // has a relation of each person, to know where it is
     QHash<QString, QString> destinationResolver;
-    for (const Match &m : qAsConst(m_matches)) {
+    for (const Match &m : std::as_const(m_matches)) {
         QString urlA = m.indexA.data(PersonsModel::PersonUriRole).toString();
         QString urlB = m.indexB.data(PersonsModel::PersonUriRole).toString();
         Q_ASSERT(urlA != urlB);
@@ -75,7 +75,7 @@ void MatchesSolver::startMatching()
         }
     }
 
-    for (const QSet<QString> &uris : qAsConst(jobsData)) {
+    for (const QSet<QString> &uris : std::as_const(jobsData)) {
         if (PersonManager::instance()->mergeContacts(uris.values()).isEmpty()) {
             qCWarning(KPEOPLE_LOG) << "error: failing to merge contacts: " << uris;
         }

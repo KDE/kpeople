@@ -181,7 +181,7 @@ void PersonDetailsView::reload()
     d->m_personDetailsPresentation->presencePixmapLabel->setPixmap(QIcon::fromTheme(d->m_person->presenceIconName()).pixmap(32, 32)); // FIXME
     d->m_personDetailsPresentation->nameLabel->setText(d->m_person->name());
 
-    for (AbstractFieldWidgetFactory *widgetFactory : qAsConst(d->m_plugins)) {
+    for (AbstractFieldWidgetFactory *widgetFactory : std::as_const(d->m_plugins)) {
         const QString label = widgetFactory->label() + QLatin1Char(':');
         QWidget *widget = widgetFactory->createDetailsWidget(d->m_person->personUri(), this);
 

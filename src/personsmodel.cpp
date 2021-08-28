@@ -248,7 +248,7 @@ void PersonsModelPrivate::onContactsFetched()
     QMap<QString, AbstractContact::Ptr> addresseeMap;
 
     // fetch all already loaded contacts from plugins
-    for (const AllContactsMonitorPtr &contactWatcher : qAsConst(m_sourceMonitors)) {
+    for (const AllContactsMonitorPtr &contactWatcher : std::as_const(m_sourceMonitors)) {
         addresseeMap.insert(contactWatcher->contacts());
     }
 
@@ -275,7 +275,7 @@ void PersonsModelPrivate::onContactsFetched()
         addPerson(MetaContact(i.key(), i.value()));
     }
 
-    for (const AllContactsMonitorPtr monitor : qAsConst(m_sourceMonitors)) {
+    for (const AllContactsMonitorPtr monitor : std::as_const(m_sourceMonitors)) {
         connect(monitor.data(), &AllContactsMonitor::contactAdded, this, &PersonsModelPrivate::onContactAdded);
         connect(monitor.data(), &AllContactsMonitor::contactChanged, this, &PersonsModelPrivate::onContactChanged);
         connect(monitor.data(), &AllContactsMonitor::contactRemoved, this, &PersonsModelPrivate::onContactRemoved);

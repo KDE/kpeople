@@ -57,7 +57,7 @@ KPeople::PersonData::PersonData(const QString &id, QObject *parent)
     }
 
     QMap<QString, AbstractContact::Ptr> contacts;
-    for (const QString &contactUri : qAsConst(d->contactUris)) {
+    for (const QString &contactUri : std::as_const(d->contactUris)) {
         // load the correct data source for this contact ID
         const QString sourceId = QUrl(contactUri).scheme();
         Q_ASSERT(!sourceId.isEmpty());

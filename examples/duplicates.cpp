@@ -35,7 +35,7 @@ public Q_SLOTS:
             AbstractContact::Ptr aB = it->indexB.data(PersonsModel::PersonVCardRole).value<AbstractContact::Ptr>();
 
             Q_ASSERT(!it->reasons.isEmpty());
-            for (Match::MatchReason i : qAsConst(it->reasons)) {
+            for (Match::MatchReason i : std::as_const(it->reasons)) {
                 rA += it->matchValue(i, aA);
                 rB += it->matchValue(i, aB);
             }

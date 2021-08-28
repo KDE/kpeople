@@ -37,7 +37,7 @@ public:
     {
         if (key.startsWith(QLatin1String("all-"))) {
             QVariantList ret;
-            for (const AbstractContact::Ptr &contact : qAsConst(m_contacts)) {
+            for (const AbstractContact::Ptr &contact : std::as_const(m_contacts)) {
                 QVariant val = contact->customProperty(key);
                 Q_ASSERT(val.canConvert<QVariantList>() || val.isNull());
 
@@ -47,7 +47,7 @@ public:
             }
             return ret;
         } else {
-            for (const AbstractContact::Ptr &contact : qAsConst(m_contacts)) {
+            for (const AbstractContact::Ptr &contact : std::as_const(m_contacts)) {
                 QVariant val = contact->customProperty(key);
                 if (val.isValid()) {
                     return val;

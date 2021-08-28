@@ -109,7 +109,7 @@ BasePersonsDataSource *PersonPluginManager::dataSource(const QString &sourceId)
 bool KPeople::PersonPluginManager::addContact(const QVariantMap &properties)
 {
     bool ret = false;
-    for (auto p : qAsConst(s_instance->dataSourcePlugins)) {
+    for (auto p : std::as_const(s_instance->dataSourcePlugins)) {
         auto v2 = dynamic_cast<BasePersonsDataSourceV2 *>(p);
         if (!v2) {
             continue;
@@ -123,7 +123,7 @@ bool KPeople::PersonPluginManager::addContact(const QVariantMap &properties)
 bool KPeople::PersonPluginManager::deleteContact(const QString &uri)
 {
     bool ret = false;
-    for (auto p : qAsConst(s_instance->dataSourcePlugins)) {
+    for (auto p : std::as_const(s_instance->dataSourcePlugins)) {
         auto v2 = dynamic_cast<BasePersonsDataSourceV2 *>(p);
         if (!v2) {
             continue;

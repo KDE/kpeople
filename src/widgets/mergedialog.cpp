@@ -170,7 +170,7 @@ void MergeDialog::feedDuplicateModelFromMatches(const QList<Match> &matches)
         QStandardItem *parent = itemMergeContactFromMatch(true, i->first());
         rootItem->appendRow(parent);
 
-        for (const Match &matchChild : qAsConst(*i)) {
+        for (const Match &matchChild : std::as_const(*i)) {
             parent->appendRow(itemMergeContactFromMatch(false, matchChild));
         }
     }

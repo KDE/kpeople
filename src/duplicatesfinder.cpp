@@ -52,7 +52,7 @@ void DuplicatesFinder::doSearch()
 
         // we check if it matches
         int j = 0;
-        for (const AbstractContact::Ptr &valueToCompare : qAsConst(collectedValues)) {
+        for (const AbstractContact::Ptr &valueToCompare : std::as_const(collectedValues)) {
             QList<Match::MatchReason> matchedRoles = Match::matchAt(values, valueToCompare);
 
             if (!matchedRoles.isEmpty()) {

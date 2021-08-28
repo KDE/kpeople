@@ -178,14 +178,14 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     if (metacontacts.count() > 1) {
         // collect all the contacts from other persons
         QStringList personContacts;
-        for (const QString &id : qAsConst(metacontacts)) {
+        for (const QString &id : std::as_const(metacontacts)) {
             if (id != personUriString) {
                 personContacts << contactsForPersonUri(id);
             }
         }
 
         // iterate over all of the contacts and change their personID to the new personUriString
-        for (const QString &id : qAsConst(personContacts)) {
+        for (const QString &id : std::as_const(personContacts)) {
             QSqlQuery updateQuery(m_db);
             updateQuery.prepare(QStringLiteral("UPDATE persons SET personID = ? WHERE contactID = ?"));
             updateQuery.bindValue(0, personUriString.mid(strlen("kpeople://")));
@@ -211,7 +211,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 
     // process passed contacts
     if (!contacts.isEmpty()) {
-        for (const QString &id : qAsConst(contacts)) {
+        for (const QString &id : std::as_const(contacts)) {
             QSqlQuery insertQuery(m_db);
             insertQuery.prepare(QStringLiteral("INSERT INTO persons VALUES (?, ?)"));
             insertQuery.bindValue(0, id);
@@ -235,7 +235,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     // otherwise roll back our database changes and return an empty string
     if (rc) {
 #ifdef QT_DBUS_LIB
-        for (const QDBusMessage &message : qAsConst(pendingMessages)) {
+        for (const QDBusMessage &message : std::as_const(pendingMessages)) {
             QDBusConnection::sessionBus().send(message);
         }
 #endif

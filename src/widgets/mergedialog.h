@@ -43,7 +43,7 @@ public:
     };
 
     explicit MergeDialog(QWidget *parent = nullptr);
-    ~MergeDialog();
+    ~MergeDialog() override;
 
     /**
      * Specifies which PersonsModel will be used to look for duplicates.

@@ -52,7 +52,7 @@ public:
      */
     PersonData(const QString &id, QObject *parent = nullptr);
 
-    virtual ~PersonData();
+    ~PersonData() override;
 
     /**
      * Returns true if this PersonData is mapped to some existing contact

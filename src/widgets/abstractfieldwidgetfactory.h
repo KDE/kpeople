@@ -21,7 +21,7 @@ class KPEOPLEWIDGETS_EXPORT AbstractFieldWidgetFactory : public QObject
     Q_OBJECT
 public:
     explicit AbstractFieldWidgetFactory(QObject *parent = nullptr);
-    virtual ~AbstractFieldWidgetFactory();
+    ~AbstractFieldWidgetFactory() override;
 
     virtual QString label() const = 0;
     virtual int sortWeight() const

@@ -26,7 +26,7 @@ public:
     typedef QExplicitlySharedDataPointer<AbstractEditableContact> Ptr;
     typedef QList<AbstractEditableContact::Ptr> List;
     AbstractEditableContact();
-    virtual ~AbstractEditableContact();
+    ~AbstractEditableContact() override;
 
     /**
      * @p key @see AbstractContact for key identifiers

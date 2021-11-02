@@ -32,7 +32,7 @@ class KPEOPLEBACKEND_EXPORT ContactMonitor : public QObject
     Q_OBJECT
 public:
     ContactMonitor(const QString &contactUri);
-    virtual ~ContactMonitor();
+    ~ContactMonitor() override;
 
     /**
      * The ID of the contact being loaded

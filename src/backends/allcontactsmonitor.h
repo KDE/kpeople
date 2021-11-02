@@ -30,7 +30,7 @@ class KPEOPLEBACKEND_EXPORT AllContactsMonitor : public QObject
     Q_OBJECT
 public:
     explicit AllContactsMonitor(); // TODO make protected? this isn't useful unless subclassed
-    virtual ~AllContactsMonitor();
+    ~AllContactsMonitor() override;
 
     /**
      * Returns all currently loaded contacts

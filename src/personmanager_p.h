@@ -78,7 +78,7 @@ Q_SIGNALS:
 
 protected:
     explicit PersonManager(const QString &databasePath, QObject *parent = nullptr);
-    virtual ~PersonManager();
+    ~PersonManager() override;
 
 private:
     QSqlDatabase m_db;

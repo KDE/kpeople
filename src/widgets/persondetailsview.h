@@ -31,7 +31,7 @@ class KPEOPLEWIDGETS_EXPORT PersonDetailsView : public QWidget
     Q_OBJECT
 public:
     PersonDetailsView(QWidget *parent = nullptr);
-    virtual ~PersonDetailsView();
+    ~PersonDetailsView() override;
 
 public Q_SLOTS:
     /** Specifies the @p person for which the details will be displayed. */

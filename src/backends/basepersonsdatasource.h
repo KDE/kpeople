@@ -26,7 +26,7 @@ class KPEOPLEBACKEND_EXPORT BasePersonsDataSource : public QObject
     Q_OBJECT
 public:
     BasePersonsDataSource(QObject *parent, const QVariantList &args = QVariantList());
-    virtual ~BasePersonsDataSource();
+    ~BasePersonsDataSource() override;
 
     /**
      * Return a ref counted AllContactMonitor which lists and monitors all contacts from a source

@@ -35,7 +35,7 @@ class KPEOPLE_EXPORT PersonPluginManager
 public:
     /**
      * Use this if you explicitly don't want KPeople to autoload all the
-     * available data source plugins via KPluginLoader.
+     * available data source plugins.
      *
      * The default behavior is to autoload them
      */

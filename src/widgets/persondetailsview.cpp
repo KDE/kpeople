@@ -14,7 +14,6 @@
 #include "global.h"
 
 #include <KPluginFactory>
-#include <KPluginLoader>
 #include <KPluginMetaData>
 
 #include <QFormLayout>
@@ -117,17 +116,12 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     d->m_plugins << new EmailFieldsPlugin();
 
     // load every KPeopleWidgets Plugin
-    const QVector<KPluginMetaData> personPluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/widgets"));
+    const QVector<KPluginMetaData> personPluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/widgets"));
 
-    for (const KPluginMetaData &service : personPluginList) {
-        KPluginLoader loader(service.fileName());
-        KPluginFactory *factory = loader.factory();
-        AbstractFieldWidgetFactory *f = factory->create<AbstractFieldWidgetFactory>();
-
-        Q_ASSERT(f);
-        if (f) {
-            d->m_plugins << f;
-        }
+    for (const KPluginMetaData &data : personPluginList) {
+        auto fieldWidgetFactoryResult = KPluginFactory::instantiatePlugin<AbstractFieldWidgetFactory>(data);
+        Q_ASSERT_X(fieldWidgetFactoryResult, Q_FUNC_INFO, qPrintable(fieldWidgetFactoryResult.errorText));
+        d->m_plugins << fieldWidgetFactoryResult.plugin;
     }
 
     // TODO Sort plugins

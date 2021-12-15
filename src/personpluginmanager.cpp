@@ -10,7 +10,6 @@
 #include "kpeople_debug.h"
 
 #include <KPluginFactory>
-#include <KPluginLoader>
 #include <KPluginMetaData>
 
 #include <QMutex>
@@ -44,12 +43,11 @@ PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 
 void PersonPluginManagerPrivate::loadDataSourcePlugins()
 {
-    const QVector<KPluginMetaData> pluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/datasource"));
-    for (const KPluginMetaData &service : pluginList) {
-        KPluginLoader loader(service.fileName());
-        KPluginFactory *factory = loader.factory();
-        BasePersonsDataSource *dataSource = factory->create<BasePersonsDataSource>();
-        if (dataSource) {
+    const QVector<KPluginMetaData> pluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/datasource"));
+    for (const KPluginMetaData &data : pluginList) {
+        auto dataSourceResult = KPluginFactory::instantiatePlugin<BasePersonsDataSource>(data);
+        if (dataSourceResult) {
+            BasePersonsDataSource *dataSource = dataSourceResult.plugin;
             const QString pluginId = dataSource->sourcePluginId();
             if (!dataSourcePlugins.contains(pluginId)) {
                 dataSourcePlugins[pluginId] = dataSource;
@@ -58,7 +56,7 @@ void PersonPluginManagerPrivate::loadDataSourcePlugins()
                 qCDebug(KPEOPLE_LOG) << "Plugin" << pluginId << "was already loaded manually, ignoring...";
             }
         } else {
-            qCWarning(KPEOPLE_LOG) << "Failed to create data source " << service.name() << service.fileName();
+            qCWarning(KPEOPLE_LOG) << "Failed to create data source " << dataSourceResult.errorText << data.fileName();
         }
     }
 

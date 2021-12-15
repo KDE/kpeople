@@ -10,7 +10,6 @@
 #include <KPeople/PersonData>
 
 #include <KPluginFactory>
-#include <KPluginLoader>
 #include <KPluginMetaData>
 
 #include <QAction>
@@ -20,18 +19,15 @@ namespace KPeople
 static QList<AbstractPersonAction *> actionsPlugins()
 {
     QList<AbstractPersonAction *> actionPlugins;
-    const QVector<KPluginMetaData> personPluginList = KPluginLoader::findPlugins(QStringLiteral("kpeople/actions"));
-    for (const KPluginMetaData &service : personPluginList) {
-        KPluginLoader loader(service.fileName());
-        KPluginFactory *factory = loader.factory();
-        if (!factory) {
-            qCWarning(KPEOPLE_WIDGETS_LOG) << "Couldn't create the factory for" << service.name() << "at" << service.fileName();
-            continue;
-        }
-        AbstractPersonAction *plugin = factory->create<AbstractPersonAction>();
-        if (plugin) {
-            //             qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << service->name();
+    const QVector<KPluginMetaData> personPluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/actions"));
+    for (const KPluginMetaData &data : personPluginList) {
+        auto pluginResult = KPluginFactory::instantiatePlugin<AbstractPersonAction>(data);
+        if (pluginResult) {
+            qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << data.fileName();
+            AbstractPersonAction *plugin = pluginResult.plugin;
             actionPlugins << plugin;
+        } else {
+            qCDebug(KPEOPLE_WIDGETS_LOG) << "could not load plugin" << data.fileName() << pluginResult.errorText;
         }
     }
 

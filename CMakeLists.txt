@@ -60,10 +60,7 @@ option(ENABLE_EXAMPLES "Build the examples" "ON")
 
 ki18n_install(po)
 add_definitions(-DQT_DISABLE_DEPRECATED_BEFORE=0x050f02)
-add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055100)
-add_definitions(-DKSERVICE_DISABLE_DEPRECATED_BEFORE_AND_AT=0x04ff00)
-# TODO: PersonDetailsView(QWidget *) constructor still calls KPluginInfo::fromServices() (deprecated at 5.0)
-# investigate if needed
+add_definitions(-DKF_DISABLE_DEPRECATED_BEFORE_AND_AT=0x055900)
 add_subdirectory (src)
 if (ENABLE_EXAMPLES)
   add_subdirectory(examples)

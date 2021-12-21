@@ -10,7 +10,7 @@ target_sources(KF5PeopleDeclarative PRIVATE
 )
 
 target_link_libraries(KF5PeopleDeclarative
-    Qt5::Qml
+    Qt${QT_MAJOR_VERSION}::Qml
     KF5::PeopleWidgets # QAction
 )
 

@@ -40,20 +40,20 @@ target_sources(KF5People PRIVATE
 
 target_link_libraries (KF5People
                     PUBLIC
-                        Qt5::Gui
+                        Qt${QT_MAJOR_VERSION}::Gui
                     PRIVATE
-                        Qt5::Sql
+                        Qt${QT_MAJOR_VERSION}::Sql
                         KF5::I18n
                         KF5::CoreAddons
                         KF5::PeopleBackend
 )
 
-if(Qt5DBus_FOUND)
-    target_link_libraries(KF5People PRIVATE Qt5::DBus)
+if(TARGET Qt${QT_MAJOR_VERSION}::DBus)
+    target_link_libraries(KF5People PRIVATE Qt${QT_MAJOR_VERSION}::DBus)
 endif()
 
 target_include_directories (KF5People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
-                                    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople>"
+                                    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KPeople>"
 )
 
 if (MSVC)
@@ -79,16 +79,16 @@ ecm_generate_headers(KPeople_CamelCase_HEADERS
     PREFIX KPeople
 )
 install (FILES ${KPeople_CamelCase_HEADERS}
-         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/KPeople
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/KPeople
          COMPONENT Devel
 )
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h
   ${KPeople_HEADERS}
-  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/kpeople COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeople COMPONENT Devel
 )
 
-install(FILES personmanager_p.h DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/kpeopleprivate)
+install(FILES personmanager_p.h DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeopleprivate)
 
 generate_export_header(KF5People EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
 
@@ -128,7 +128,7 @@ install (FILES
          kpeople_data_source.desktop
          kpeople_plugin.desktop
          DESTINATION
-         ${KDE_INSTALL_KSERVICETYPES5DIR}
+         ${KDE_INSTALL_KSERVICETYPESDIR}
 )
 
 ecm_qt_install_logging_categories(
@@ -137,7 +137,7 @@ ecm_qt_install_logging_categories(
     DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR}
 )
 
-ecm_generate_pri_file(BASE_NAME KPeople LIB_NAME KF5People DEPS "gui" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople)
+ecm_generate_pri_file(BASE_NAME KPeople LIB_NAME KF5People DEPS "gui" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople)
 install(FILES ${PRI_FILENAME} DESTINATION ${ECM_MKSPECS_INSTALL_DIR})
 
 if (ANDROID)

@@ -33,7 +33,7 @@ ki18n_wrap_ui(KF5PeopleWidgets person-details-presentation.ui)
 target_link_libraries (KF5PeopleWidgets
                     PUBLIC
                         KF5::People
-                        Qt5::Widgets
+                        Qt${QT_MAJOR_VERSION}::Widgets
                     PRIVATE
                         KF5::I18n
                         KF5::ItemViews
@@ -66,23 +66,23 @@ ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
 )
 
 install (FILES ${KPeopleWidgets_CamelCase_HEADERS}
-         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/KPeople/Widgets
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/KPeople/Widgets
          COMPONENT Devel
 )
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h
   ${KPeopleWidgets_HEADERS}
-  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/kpeople/widgets COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeople/widgets COMPONENT Devel
 )
 
 generate_export_header(KF5PeopleWidgets EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h BASE_NAME KPeopleWidgets)
 
 install (FILES persondetailsplugin.desktop
          DESTINATION
-            ${KDE_INSTALL_KSERVICETYPES5DIR}
+            ${KDE_INSTALL_KSERVICETYPESDIR}
 )
 
-ecm_generate_pri_file(BASE_NAME KPeopleWidgets LIB_NAME KF5PeopleWidgets DEPS "widgets KPeople" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople)
+ecm_generate_pri_file(BASE_NAME KPeopleWidgets LIB_NAME KF5PeopleWidgets DEPS "widgets KPeople" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople)
 install(FILES ${PRI_FILENAME} DESTINATION ${ECM_MKSPECS_INSTALL_DIR})
 
 # make available to ecm_add_qch in parent folder

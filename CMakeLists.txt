@@ -12,16 +12,17 @@ feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKA
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 set(REQUIRED_QT_VERSION 5.15.2)
+include(KDEInstallDirs)
 
-find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml)
+find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml)
 
 # On non-Apple UNIX DBus integration is required, on Android it does not exist and on other platforms it is optional
 if(UNIX AND NOT APPLE)
     if(NOT ANDROID)
-        find_package(Qt5 ${REQUIRED_QT_VERSION} CONFIG REQUIRED DBus)
+        find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED DBus)
     endif()
 else()
-    find_package(Qt5 ${REQUIRED_QT_VERSION} OPTIONAL_COMPONENTS DBus)
+    find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} OPTIONAL_COMPONENTS DBus)
 endif()
 
 find_package(KF5CoreAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
@@ -29,7 +30,6 @@ find_package(KF5WidgetsAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5I18n ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5ItemViews ${KF_DEP_VERSION} CONFIG REQUIRED)
 
-include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDEGitCommitHooks)
 include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)

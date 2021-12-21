@@ -19,11 +19,11 @@ target_sources(KF5PeopleBackend PRIVATE
 
 target_link_libraries (KF5PeopleBackend
                     PUBLIC
-                        Qt5::Widgets #needed for QAction, otherwise QtGui
+                        Qt${QT_MAJOR_VERSION}::Widgets #needed for QAction, otherwise QtGui
 )
 
 target_include_directories (KF5PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
-                                    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople>"
+                                    INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KPeople>"
 )
 
 install (TARGETS KF5PeopleBackend
@@ -43,13 +43,13 @@ ecm_generate_headers(KPeopleBackend_CamelCase_HEADERS
     PREFIX KPeopleBackend
 )
 install (FILES ${KPeopleBackend_CamelCase_HEADERS}
-         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/KPeopleBackend
+         DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/KPeopleBackend
          COMPONENT Devel
 )
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/kpeoplebackend/kpeoplebackend_export.h
   ${KPeopleBackend_HEADERS}
-  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF5}/KPeople/kpeoplebackend COMPONENT Devel
+  DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeoplebackend COMPONENT Devel
 )
 
 generate_export_header(KF5PeopleBackend EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeoplebackend/kpeoplebackend_export.h BASE_NAME KPeopleBackend)

@@ -175,6 +175,12 @@ QVariant PersonsModelPrivate::dataForContact(const QString &personUri, const Abs
         return person->customProperty(QStringLiteral("all-groups"));
     case PersonsModel::PhoneNumberRole:
         return person->customProperty(AbstractContact::PhoneNumberProperty);
+    case PersonsModel::FilterRole:
+        QByteArray ba;
+        ba.append(person->customProperty(AbstractContact::NameProperty).toByteArray());
+        ba.append(person->customProperty(AbstractContact::EmailProperty).toByteArray());
+        ba.append(person->customProperty(AbstractContact::AllPhoneNumbersProperty).toStringList().join(QStringLiteral(",")).toUtf8());
+        return ba;
     }
     return QVariant();
 }

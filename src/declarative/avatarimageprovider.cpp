@@ -6,6 +6,7 @@
 
 #include "avatarimageprovider.h"
 
+#include <abstractcontact.h>
 #include <persondata.h>
 
 #include "kpeopledeclarative_debug.h"
@@ -37,11 +38,25 @@ QPixmap AvatarImageProvider::requestPixmap(const QString &id, QSize *size, const
         return {};
     }
 
+    const auto avatar = [&person]() -> QPixmap {
+        QVariant pic = person.contactCustomProperty(KPeople::AbstractContact::PictureProperty);
+        if (pic.canConvert<QImage>()) {
+            return QPixmap::fromImage(pic.value<QImage>());
+        } else if (pic.canConvert<QUrl>()) {
+            return QPixmap(pic.toUrl().toLocalFile());
+        }
+        return {};
+    }();
+
+    if (avatar.isNull()) {
+        return {};
+    }
+
     if (size) {
         *size = requestedSize;
     }
 
-    return person.photo().scaled(requestedSize);
+    return avatar.scaled(requestedSize);
 }
 
 QString QmlAvatarUriHelper::photoProviderUri(const QString &personUri)

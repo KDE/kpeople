@@ -22,6 +22,7 @@ target_link_libraries(KF5PeopleDeclarative
     Qt${QT_MAJOR_VERSION}::Qml
     Qt${QT_MAJOR_VERSION}::Quick
     KF5::PeopleWidgets # QAction
+    KF5PeopleBackend
 )
 
 install(TARGETS KF5PeopleDeclarative DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)

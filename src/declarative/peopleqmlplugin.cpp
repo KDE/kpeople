@@ -7,6 +7,8 @@
 
 #include "peopleqmlplugin.h"
 
+#include <QQmlEngine>
+
 #include <actions.h>
 #include <personactionsmodel_p.h>
 #include <persondata.h>
@@ -14,8 +16,12 @@
 #include <personsmodel.h>
 #include <personssortfilterproxymodel.h>
 
+#include "avatarimageprovider.h"
 #include "declarativepersondata.h"
-#include <qqml.h>
+
+#include <string_view>
+
+using namespace std::literals;
 
 class ActionTypeWrapper : public QObject
 {
@@ -47,6 +53,12 @@ public:
     }
 };
 
+void PeopleQMLPlugin::initializeEngine(QQmlEngine *engine, const char *uri)
+{
+    Q_ASSERT(uri == "org.kde.people"sv);
+    engine->addImageProvider(QStringLiteral("kpeople-avatar"), new AvatarImageProvider());
+}
+
 void PeopleQMLPlugin::registerTypes(const char *uri)
 {
     qmlRegisterType<KPeople::PersonsModel>(uri, 1, 0, "PersonsModel");
@@ -57,6 +69,9 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
     qmlRegisterUncreatableType<ActionTypeWrapper>(uri, 1, 0, "ActionType", QStringLiteral("You cannot create ActionType"));
     qmlRegisterSingletonType<DeclarativePersonPluginManager>(uri, 1, 0, "PersonPluginManager", [](QQmlEngine *, QJSEngine *) -> QObject * {
         return new DeclarativePersonPluginManager;
+    });
+    qmlRegisterSingletonType<QmlAvatarUriHelper>(uri, 1, 0, "AvatarUtils", [](QQmlEngine *, QJSEngine *) {
+        return new QmlAvatarUriHelper();
     });
 
     qmlRegisterUncreatableMetaObject(KPeople::staticMetaObject, uri, 1, 0, "KPeople", QStringLiteral("Access to enums & flags only"));

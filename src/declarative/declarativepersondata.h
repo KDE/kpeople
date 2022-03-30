@@ -15,6 +15,7 @@ class DeclarativePersonData : public QObject
 
     Q_PROPERTY(QString personUri READ personUri WRITE setPersonUri NOTIFY personChanged)
     Q_PROPERTY(KPeople::PersonData *person READ person NOTIFY personChanged)
+    Q_PROPERTY(QString photoProviderUri READ photoProviderUri NOTIFY personChanged)
 
 public:
     explicit DeclarativePersonData(QObject *parent = nullptr);
@@ -23,6 +24,8 @@ public:
     QString personUri() const;
 
     KPeople::PersonData *person() const;
+
+    QString photoProviderUri();
 
 Q_SIGNALS:
     void personChanged();

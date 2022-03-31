@@ -19,10 +19,6 @@
 #include "avatarimageprovider.h"
 #include "declarativepersondata.h"
 
-#include <string_view>
-
-using namespace std::literals;
-
 class ActionTypeWrapper : public QObject
 {
     Q_OBJECT
@@ -55,7 +51,7 @@ public:
 
 void PeopleQMLPlugin::initializeEngine(QQmlEngine *engine, const char *uri)
 {
-    Q_ASSERT(uri == "org.kde.people"sv);
+    Q_ASSERT(uri == QByteArrayLiteral("org.kde.people"));
     engine->addImageProvider(QStringLiteral("kpeople-avatar"), new AvatarImageProvider());
 }
 

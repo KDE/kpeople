@@ -108,6 +108,7 @@ QHash<int, QByteArray> PersonsModel::roleNames() const
     roles.insert(PersonVCardRole, "personVCard");
     roles.insert(ContactsVCardRole, "contactsVCard");
     roles.insert(PhoneNumberRole, "phoneNumber");
+    roles.insert(PhotoImageProviderUri, "photoImageProviderUri");
     return roles;
 }
 
@@ -175,6 +176,8 @@ QVariant PersonsModelPrivate::dataForContact(const QString &personUri, const Abs
         return person->customProperty(QStringLiteral("all-groups"));
     case PersonsModel::PhoneNumberRole:
         return person->customProperty(AbstractContact::PhoneNumberProperty);
+    case PersonsModel::PhotoImageProviderUri:
+        return QString(u"image://kpeople-avatar/" % QString::fromUtf8(personUri.toUtf8().toBase64()));
     }
     return QVariant();
 }

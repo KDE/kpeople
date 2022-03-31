@@ -40,9 +40,9 @@ KPeople::PersonData *DeclarativePersonData::person() const
     return m_person;
 }
 
-QString DeclarativePersonData::photoProviderUri()
+QString DeclarativePersonData::photoImageProviderUri() const
 {
-    return QmlAvatarUriHelper::photoProviderUri(m_id);
+    return u"image://kpeople-avatar/" % QString::fromUtf8(m_id.toUtf8().toBase64());
 }
 
 QString DeclarativePersonData::personUri() const

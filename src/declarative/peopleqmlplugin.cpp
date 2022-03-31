@@ -70,9 +70,6 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
     qmlRegisterSingletonType<DeclarativePersonPluginManager>(uri, 1, 0, "PersonPluginManager", [](QQmlEngine *, QJSEngine *) -> QObject * {
         return new DeclarativePersonPluginManager;
     });
-    qmlRegisterSingletonType<QmlAvatarUriHelper>(uri, 1, 0, "AvatarUtils", [](QQmlEngine *, QJSEngine *) {
-        return new QmlAvatarUriHelper();
-    });
 
     qmlRegisterUncreatableMetaObject(KPeople::staticMetaObject, uri, 1, 0, "KPeople", QStringLiteral("Access to enums & flags only"));
 }

@@ -58,8 +58,3 @@ QPixmap AvatarImageProvider::requestPixmap(const QString &id, QSize *size, const
 
     return avatar.scaled(requestedSize);
 }
-
-QString QmlAvatarUriHelper::photoProviderUri(const QString &personUri)
-{
-    return u"image://kpeople-avatar/" % QString::fromUtf8(personUri.toUtf8().toBase64());
-}

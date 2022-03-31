@@ -13,13 +13,13 @@
  *
  * It is automatically available when importing the KPeople QML module.
  *
- * Image URIs for it can be retrieved from `KPeople.PersonData`'s `photoProviderUri` property,
- * or, if you don't have a `KPeople.PersonData` instance, from `KPeople.AvatarUtils.photoProviderUri(personUri)`.
+ * Image URIs for it can be retrieved from `KPeople.PersonData`'s `photoImageProviderUri` property,
+ * or from `KPeople.PersonsModel`'s `photoImageProviderUri` role.
  *
  * Example:
  * \code
  * Kirigami.Avatar {
- *     source: KPeople.AvatarUtils.photoProviderUri(personUri)
+ *     source: person.photoImageProviderUri
  * }
  * \endcode
  *
@@ -31,12 +31,4 @@ public:
     explicit AvatarImageProvider();
 
     QPixmap requestPixmap(const QString &id, QSize *size, const QSize &requestedSize) override;
-};
-
-class QmlAvatarUriHelper : public QObject
-{
-    Q_OBJECT
-
-public:
-    Q_INVOKABLE static QString photoProviderUri(const QString &personUri);
 };

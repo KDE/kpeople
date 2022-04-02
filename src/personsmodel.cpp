@@ -11,6 +11,7 @@
 
 #include "backends/abstractcontact.h"
 #include "backends/basepersonsdatasource.h"
+#include "imageprovideruri_p.h"
 #include "metacontact_p.h"
 #include "personmanager_p.h"
 #include "personpluginmanager.h"
@@ -177,7 +178,7 @@ QVariant PersonsModelPrivate::dataForContact(const QString &personUri, const Abs
     case PersonsModel::PhoneNumberRole:
         return person->customProperty(AbstractContact::PhoneNumberProperty);
     case PersonsModel::PhotoImageProviderUri:
-        return QString(u"image://kpeople-avatar/" % QString::fromUtf8(personUri.toUtf8().toBase64()));
+        return ::photoImageProviderUri(personUri);
     }
     return QVariant();
 }

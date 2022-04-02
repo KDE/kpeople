@@ -9,6 +9,7 @@
 #include "../persondata.h"
 #include "avatarimageprovider.h"
 #include "kpeople_debug.h"
+#include <imageprovideruri_p.h>
 
 #include <QStringBuilder>
 
@@ -42,7 +43,7 @@ KPeople::PersonData *DeclarativePersonData::person() const
 
 QString DeclarativePersonData::photoImageProviderUri() const
 {
-    return u"image://kpeople-avatar/" % QString::fromUtf8(m_id.toUtf8().toBase64());
+    return ::photoImageProviderUri(m_id);
 }
 
 QString DeclarativePersonData::personUri() const

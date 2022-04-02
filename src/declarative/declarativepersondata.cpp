@@ -17,6 +17,7 @@ DeclarativePersonData::DeclarativePersonData(QObject *parent)
     : QObject(parent)
     , m_person(nullptr)
 {
+    connect(this, &DeclarativePersonData::personChanged, this, &DeclarativePersonData::photoImageProviderUriChanged);
 }
 
 void DeclarativePersonData::setPersonUri(const QString &id)
@@ -31,6 +32,7 @@ void DeclarativePersonData::setPersonUri(const QString &id)
         m_person = nullptr;
     } else {
         m_person = new KPeople::PersonData(id, this);
+        connect(m_person, &KPeople::PersonData::dataChanged, this, &DeclarativePersonData::photoImageProviderUriChanged);
     }
 
     Q_EMIT personChanged();

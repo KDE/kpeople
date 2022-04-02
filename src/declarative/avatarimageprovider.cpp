@@ -18,7 +18,8 @@ AvatarImageProvider::AvatarImageProvider()
 
 QPixmap AvatarImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
 {
-    const auto decoded = QByteArray::fromBase64(id.toUtf8(), QByteArray::AbortOnBase64DecodingErrors);
+    const auto base64encoded = QStringView(id).split(u'#').constFirst();
+    const auto decoded = QByteArray::fromBase64(base64encoded.toUtf8(), QByteArray::AbortOnBase64DecodingErrors);
     if (decoded.isEmpty()) {
         qCDebug(KPEOPLE_DECLARATIVE_LOG) << "AvatarImageProvider:" << id << "could not be decoded as a person uri";
         return {};

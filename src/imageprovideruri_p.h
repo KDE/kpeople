@@ -6,9 +6,10 @@
 
 #pragma once
 
+#include <QRandomGenerator>
 #include <QString>
 
 inline QString photoImageProviderUri(const QStringView personUri)
 {
-    return u"image://kpeople-avatar/" % QString::fromUtf8(personUri.toUtf8().toBase64());
+    return u"image://kpeople-avatar/" % QString::fromUtf8(personUri.toUtf8().toBase64()) % u"#" % QString::number(QRandomGenerator::system()->generate());
 }

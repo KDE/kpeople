@@ -45,6 +45,7 @@ public:
 
         GroupsRole, /// groups QStringList
         PhoneNumberRole,
+        PhotoImageProviderUri, ///< Provide a URL to use with QtQuick's Image.source, similar to the Photo Role. @since 5.93
 
         UserRole = Qt::UserRole + 0x1000, ///< in case it's needed to extend, use this one to start from
     };

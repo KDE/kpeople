@@ -7,12 +7,17 @@
 #include "declarativepersondata.h"
 
 #include "../persondata.h"
+#include "avatarimageprovider.h"
 #include "kpeople_debug.h"
+#include <imageprovideruri_p.h>
+
+#include <QStringBuilder>
 
 DeclarativePersonData::DeclarativePersonData(QObject *parent)
     : QObject(parent)
     , m_person(nullptr)
 {
+    connect(this, &DeclarativePersonData::personChanged, this, &DeclarativePersonData::photoImageProviderUriChanged);
 }
 
 void DeclarativePersonData::setPersonUri(const QString &id)
@@ -27,6 +32,7 @@ void DeclarativePersonData::setPersonUri(const QString &id)
         m_person = nullptr;
     } else {
         m_person = new KPeople::PersonData(id, this);
+        connect(m_person, &KPeople::PersonData::dataChanged, this, &DeclarativePersonData::photoImageProviderUriChanged);
     }
 
     Q_EMIT personChanged();
@@ -35,6 +41,11 @@ void DeclarativePersonData::setPersonUri(const QString &id)
 KPeople::PersonData *DeclarativePersonData::person() const
 {
     return m_person;
+}
+
+QString DeclarativePersonData::photoImageProviderUri() const
+{
+    return ::photoImageProviderUri(m_id);
 }
 
 QString DeclarativePersonData::personUri() const

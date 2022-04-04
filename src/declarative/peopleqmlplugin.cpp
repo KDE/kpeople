@@ -7,6 +7,8 @@
 
 #include "peopleqmlplugin.h"
 
+#include <QQmlEngine>
+
 #include <actions.h>
 #include <personactionsmodel_p.h>
 #include <persondata.h>
@@ -14,8 +16,8 @@
 #include <personsmodel.h>
 #include <personssortfilterproxymodel.h>
 
+#include "avatarimageprovider.h"
 #include "declarativepersondata.h"
-#include <qqml.h>
 
 class ActionTypeWrapper : public QObject
 {
@@ -46,6 +48,12 @@ public:
         return KPeople::PersonPluginManager::deleteContact(uri);
     }
 };
+
+void PeopleQMLPlugin::initializeEngine(QQmlEngine *engine, const char *uri)
+{
+    Q_ASSERT(uri == QByteArrayLiteral("org.kde.people"));
+    engine->addImageProvider(QStringLiteral("kpeople-avatar"), new AvatarImageProvider());
+}
 
 void PeopleQMLPlugin::registerTypes(const char *uri)
 {

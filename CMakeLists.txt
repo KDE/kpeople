@@ -11,9 +11,22 @@ feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKA
 
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
-set(REQUIRED_QT_VERSION 5.15.2)
 include(KDEInstallDirs)
+include(KDECMakeSettings)
+include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
 
+include(KDEGitCommitHooks)
+include(ECMSetupVersion)
+include(ECMGenerateHeaders)
+include(ECMSetupVersion)
+include(ECMAddTests)
+include(ECMAddQch)
+include(CMakePackageConfigHelpers)
+include(ECMGeneratePriFile)
+include(GenerateExportHeader)
+include(ECMQtDeclareLoggingCategory)
+
+set(REQUIRED_QT_VERSION 5.15.2)
 find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml Quick)
 
 # On non-Apple UNIX DBus integration is required, on Android it does not exist and on other platforms it is optional
@@ -29,20 +42,6 @@ find_package(KF5CoreAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5WidgetsAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5I18n ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF5ItemViews ${KF_DEP_VERSION} CONFIG REQUIRED)
-
-include(KDECMakeSettings)
-include(KDEGitCommitHooks)
-include(KDEFrameworkCompilerSettings NO_POLICY_SCOPE)
-
-include(ECMSetupVersion)
-include(ECMGenerateHeaders)
-include(ECMSetupVersion)
-include(ECMAddTests)
-include(ECMAddQch)
-include(CMakePackageConfigHelpers)
-include(ECMGeneratePriFile)
-include(GenerateExportHeader)
-include(ECMQtDeclareLoggingCategory)
 
 option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
 add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")

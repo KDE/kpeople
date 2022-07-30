@@ -124,13 +124,6 @@ if(BUILD_QCH)
     )
 endif()
 
-install (FILES
-         kpeople_data_source.desktop
-         kpeople_plugin.desktop
-         DESTINATION
-         ${KDE_INSTALL_KSERVICETYPESDIR}
-)
-
 ecm_qt_install_logging_categories(
     EXPORT KPEOPLE
     FILE kpeople.categories

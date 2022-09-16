@@ -28,7 +28,7 @@ target_include_directories (KF5PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_C
 
 install (TARGETS KF5PeopleBackend
          EXPORT KPeopleTargets
-         ${KF5_INSTALL_TARGETS_DEFAULT_ARGS}
+         ${KF_INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 ecm_generate_headers(KPeopleBackend_CamelCase_HEADERS

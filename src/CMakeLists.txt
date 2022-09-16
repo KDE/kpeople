@@ -65,7 +65,7 @@ endif (MSVC)
 # Install:
 install (TARGETS KF5People
          EXPORT KPeopleTargets
-         ${KF5_INSTALL_TARGETS_DEFAULT_ARGS}
+         ${KF_INSTALL_TARGETS_DEFAULT_ARGS}
 )
 
 ecm_generate_headers(KPeople_CamelCase_HEADERS

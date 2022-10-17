@@ -59,7 +59,7 @@ msgstr "Gestor de duplicats"
 #: widgets/mergedialog.cpp:63
 #, kde-format
 msgid "Select contacts to be merged"
-msgstr "Seleccioneu els contactes que s'han de fusionar"
+msgstr "Seleccioneu els contactes que es fusionaran"
 
 #. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
 #: widgets/person-details-presentation.ui:43

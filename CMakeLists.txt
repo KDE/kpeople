@@ -27,7 +27,7 @@ include(GenerateExportHeader)
 include(ECMQtDeclareLoggingCategory)
 include(ECMDeprecationSettings)
 
-set(REQUIRED_QT_VERSION 5.15.2)
+set(REQUIRED_QT_VERSION 6.4.0)
 find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml Quick)
 
 # On non-Apple UNIX DBus integration is required, on Android it does not exist and on other platforms it is optional

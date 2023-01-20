@@ -1,13 +1,13 @@
-add_library(KF5PeopleWidgets)
-add_library(KF5::PeopleWidgets ALIAS KF5PeopleWidgets)
+add_library(KF6PeopleWidgets)
+add_library(KF6::PeopleWidgets ALIAS KF6PeopleWidgets)
 
-set_target_properties(KF5PeopleWidgets PROPERTIES
+set_target_properties(KF6PeopleWidgets PROPERTIES
     VERSION     ${KPEOPLE_VERSION}
     SOVERSION   ${KPEOPLE_SOVERSION}
     EXPORT_NAME PeopleWidgets
 )
 
-target_sources(KF5PeopleWidgets PRIVATE
+target_sources(KF6PeopleWidgets PRIVATE
     persondetailsdialog.cpp
     persondetailsview.cpp
     persondetailsdialog.cpp
@@ -19,7 +19,7 @@ target_sources(KF5PeopleWidgets PRIVATE
     mergedelegate.cpp
 )
 
-ecm_qt_declare_logging_category(KF5PeopleWidgets
+ecm_qt_declare_logging_category(KF6PeopleWidgets
     HEADER kpeople_widgets_debug.h
     IDENTIFIER KPEOPLE_WIDGETS_LOG
     CATEGORY_NAME kf.people.widgets
@@ -28,28 +28,28 @@ ecm_qt_declare_logging_category(KF5PeopleWidgets
     EXPORT KPEOPLE
 )
 
-ki18n_wrap_ui(KF5PeopleWidgets person-details-presentation.ui)
+ki18n_wrap_ui(KF6PeopleWidgets person-details-presentation.ui)
 
-target_link_libraries (KF5PeopleWidgets
+target_link_libraries (KF6PeopleWidgets
                     PUBLIC
-                        KF5::People
+                        KF6::People
                         Qt${QT_MAJOR_VERSION}::Widgets
                     PRIVATE
-                        KF5::I18n
-                        KF5::ItemViews
-                        KF5::WidgetsAddons
-                        KF5::PeopleBackend
-                        KF5::CoreAddons
+                        KF6::I18n
+                        KF6::ItemViews
+                        KF6::WidgetsAddons
+                        KF6::PeopleBackend
+                        KF6::CoreAddons
 )
 
 if (MSVC)
-    set_target_properties (KF5PeopleWidgets PROPERTIES
+    set_target_properties (KF6PeopleWidgets PROPERTIES
                            OUTPUT_NAME libKPeopleWidgets
     )
 endif (MSVC)
 
 # Install:
-install (TARGETS KF5PeopleWidgets
+install (TARGETS KF6PeopleWidgets
          EXPORT KPeopleTargets
          ${KDE_INSTALL_TARGETS_DEFAULT_ARGS}
 )
@@ -75,9 +75,9 @@ install(FILES
   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeople/widgets COMPONENT Devel
 )
 
-generate_export_header(KF5PeopleWidgets EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h BASE_NAME KPeopleWidgets)
+generate_export_header(KF6PeopleWidgets EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h BASE_NAME KPeopleWidgets)
 
-ecm_generate_pri_file(BASE_NAME KPeopleWidgets LIB_NAME KF5PeopleWidgets DEPS "widgets KPeople" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople)
+ecm_generate_pri_file(BASE_NAME KPeopleWidgets LIB_NAME KF6PeopleWidgets DEPS "widgets KPeople" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople)
 install(FILES ${PRI_FILENAME} DESTINATION ${ECM_MKSPECS_INSTALL_DIR})
 
 # make available to ecm_add_qch in parent folder

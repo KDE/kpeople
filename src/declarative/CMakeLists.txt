@@ -1,6 +1,6 @@
-add_library(KF5PeopleDeclarative SHARED)
+add_library(KF6PeopleDeclarative SHARED)
 
-target_sources(KF5PeopleDeclarative PRIVATE
+target_sources(KF6PeopleDeclarative PRIVATE
     declarativepersondata.cpp
     personactionsmodel.cpp
     peopleqmlplugin.cpp
@@ -10,7 +10,7 @@ target_sources(KF5PeopleDeclarative PRIVATE
     ../widgets/actions.h
 )
 
-ecm_qt_declare_logging_category(KF5PeopleDeclarative
+ecm_qt_declare_logging_category(KF6PeopleDeclarative
     HEADER kpeopledeclarative_debug.h
     IDENTIFIER KPEOPLE_DECLARATIVE_LOG
     CATEGORY_NAME kf.people.declarative
@@ -18,12 +18,12 @@ ecm_qt_declare_logging_category(KF5PeopleDeclarative
     EXPORT KPEOPLE_DECLARATIVE
 )
 
-target_link_libraries(KF5PeopleDeclarative
+target_link_libraries(KF6PeopleDeclarative
     Qt${QT_MAJOR_VERSION}::Qml
     Qt${QT_MAJOR_VERSION}::Quick
-    KF5::PeopleWidgets # QAction
-    KF5PeopleBackend
+    KF6::PeopleWidgets # QAction
+    KF6PeopleBackend
 )
 
-install(TARGETS KF5PeopleDeclarative DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)
+install(TARGETS KF6PeopleDeclarative DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)
 install(FILES qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)

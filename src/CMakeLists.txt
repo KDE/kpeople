@@ -6,16 +6,16 @@ add_subdirectory(declarative)
 add_subdirectory(widgets)
 add_subdirectory(backends)
 
-add_library(KF5People)
-add_library(KF5::People ALIAS KF5People)
+add_library(KF6People)
+add_library(KF6::People ALIAS KF6People)
 
-set_target_properties (KF5People PROPERTIES
+set_target_properties (KF6People PROPERTIES
     VERSION     ${KPEOPLE_VERSION}
     SOVERSION   ${KPEOPLE_SOVERSION}
     EXPORT_NAME People
 )
 
-ecm_qt_declare_logging_category(KF5People
+ecm_qt_declare_logging_category(KF6People
     HEADER kpeople_debug.h
     IDENTIFIER KPEOPLE_LOG
     CATEGORY_NAME kf.people.core
@@ -24,7 +24,7 @@ ecm_qt_declare_logging_category(KF5People
     EXPORT KPEOPLE
 )
 
-target_sources(KF5People PRIVATE
+target_sources(KF6People PRIVATE
     global.cpp
     metacontact.cpp
     persondata.cpp
@@ -38,32 +38,32 @@ target_sources(KF5People PRIVATE
     resources.qrc
 )
 
-target_link_libraries (KF5People
+target_link_libraries (KF6People
                     PUBLIC
                         Qt${QT_MAJOR_VERSION}::Gui
                     PRIVATE
                         Qt${QT_MAJOR_VERSION}::Sql
-                        KF5::I18n
-                        KF5::CoreAddons
-                        KF5::PeopleBackend
+                        KF6::I18n
+                        KF6::CoreAddons
+                        KF6::PeopleBackend
 )
 
 if(TARGET Qt${QT_MAJOR_VERSION}::DBus)
-    target_link_libraries(KF5People PRIVATE Qt${QT_MAJOR_VERSION}::DBus)
+    target_link_libraries(KF6People PRIVATE Qt${QT_MAJOR_VERSION}::DBus)
 endif()
 
-target_include_directories (KF5People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
+target_include_directories (KF6People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
                                     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KPeople>"
 )
 
 if (MSVC)
-    set_target_properties (KF5People PROPERTIES
+    set_target_properties (KF6People PROPERTIES
                            OUTPUT_NAME libkpeople
     )
 endif (MSVC)
 
 # Install:
-install (TARGETS KF5People
+install (TARGETS KF6People
          EXPORT KPeopleTargets
          ${KF_INSTALL_TARGETS_DEFAULT_ARGS}
 )
@@ -90,14 +90,14 @@ install(FILES
 
 install(FILES personmanager_p.h DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeopleprivate)
 
-generate_export_header(KF5People EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
+generate_export_header(KF6People EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
 
 
 if(BUILD_QCH)
     ecm_add_qch(
-        KF5People_QCH
+        KF6People_QCH
         NAME KPeople
-        BASE_NAME KF5People
+        BASE_NAME KF6People
         VERSION ${KF_VERSION}
         ORG_DOMAIN org.kde
         SOURCES # using only public headers, to cover only public API
@@ -130,9 +130,9 @@ ecm_qt_install_logging_categories(
     DESTINATION ${KDE_INSTALL_LOGGINGCATEGORIESDIR}
 )
 
-ecm_generate_pri_file(BASE_NAME KPeople LIB_NAME KF5People DEPS "gui" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople)
+ecm_generate_pri_file(BASE_NAME KPeople LIB_NAME KF6People DEPS "gui" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople)
 install(FILES ${PRI_FILENAME} DESTINATION ${ECM_MKSPECS_INSTALL_DIR})
 
 if (ANDROID)
-    install(FILES KF5People-android-dependencies.xml DESTINATION ${KDE_INSTALL_LIBDIR})
+    install(FILES KF6People-android-dependencies.xml DESTINATION ${KDE_INSTALL_LIBDIR})
 endif()

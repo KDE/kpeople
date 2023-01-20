@@ -13,8 +13,8 @@ deprecated: false
 release: true
 libraries:
  - qmake: KPeople
-   cmake: "KF5::People"
-cmakename: KF5People
+   cmake: "KF6::People"
+cmakename: KF6People
 
 public_lib: true
 group: Frameworks

@@ -1,13 +1,13 @@
-add_library(KF5PeopleBackend)
-add_library(KF5::PeopleBackend ALIAS KF5PeopleBackend)
+add_library(KF6PeopleBackend)
+add_library(KF6::PeopleBackend ALIAS KF6PeopleBackend)
 
-set_target_properties(KF5PeopleBackend PROPERTIES
+set_target_properties(KF6PeopleBackend PROPERTIES
     VERSION     ${KPEOPLE_VERSION}
     SOVERSION   ${KPEOPLE_SOVERSION}
     EXPORT_NAME PeopleBackend
 )
 
-target_sources(KF5PeopleBackend PRIVATE
+target_sources(KF6PeopleBackend PRIVATE
     contactmonitor.cpp
     abstractcontact.cpp
     basepersonsdatasource.cpp
@@ -17,16 +17,16 @@ target_sources(KF5PeopleBackend PRIVATE
     abstracteditablecontact.cpp
 )
 
-target_link_libraries (KF5PeopleBackend
+target_link_libraries (KF6PeopleBackend
                     PUBLIC
                         Qt${QT_MAJOR_VERSION}::Widgets #needed for QAction, otherwise QtGui
 )
 
-target_include_directories (KF5PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+target_include_directories (KF6PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
                                     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KPeople>"
 )
 
-install (TARGETS KF5PeopleBackend
+install (TARGETS KF6PeopleBackend
          EXPORT KPeopleTargets
          ${KF_INSTALL_TARGETS_DEFAULT_ARGS}
 )
@@ -52,7 +52,7 @@ install(FILES
   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeoplebackend COMPONENT Devel
 )
 
-generate_export_header(KF5PeopleBackend EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeoplebackend/kpeoplebackend_export.h BASE_NAME KPeopleBackend)
+generate_export_header(KF6PeopleBackend EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeoplebackend/kpeoplebackend_export.h BASE_NAME KPeopleBackend)
 
 # make available to ecm_add_qch in parent folder
 set(KPeopleBackend_QCH_SOURCES ${KPeopleBackend_HEADERS} PARENT_SCOPE)

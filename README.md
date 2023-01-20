@@ -19,7 +19,7 @@ The sources are plugin-based, allowing to easily extend the contacts collection.
 To use KPeople, you'll want to look for it using
 
 ```cmake
-find_package(KF5People)
+find_package(KF6People)
 ```
 
 Or its qmake counterpart. Then you'll have available 3 different libraries to

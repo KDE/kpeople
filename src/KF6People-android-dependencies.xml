@@ -1,6 +1,6 @@
 <rules>
     <dependencies>
-        <lib name="KF5People">
+        <lib name="KF6People">
             <depends>
                 <bundled file="plugins/kpeople/datasource" />
                 <bundled file="plugins/kpeople/actions" />

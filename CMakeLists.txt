@@ -39,22 +39,22 @@ else()
     find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} OPTIONAL_COMPONENTS DBus)
 endif()
 
-find_package(KF5CoreAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
-find_package(KF5WidgetsAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
-find_package(KF5I18n ${KF_DEP_VERSION} CONFIG REQUIRED)
-find_package(KF5ItemViews ${KF_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF6CoreAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF6WidgetsAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF6I18n ${KF_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF6ItemViews ${KF_DEP_VERSION} CONFIG REQUIRED)
 
 option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
 add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")
 
 add_definitions(-DTRANSLATION_DOMAIN=\"kpeople5\")
 
-set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KF5People")
+set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KF6People")
 
 ecm_setup_version(PROJECT VARIABLE_PREFIX KPEOPLE
                         VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h"
-                        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
-                        SOVERSION 5)
+                        PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF6PeopleConfigVersion.cmake"
+                        SOVERSION 6)
 
 option(ENABLE_EXAMPLES "Build the examples" "ON")
 
@@ -75,23 +75,23 @@ endif()
 
 if (BUILD_QCH)
     ecm_install_qch_export(
-        TARGETS KF5People_QCH
-        FILE KF5PeopleQchTargets.cmake
+        TARGETS KF6People_QCH
+        FILE KF6PeopleQchTargets.cmake
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         COMPONENT Devel
     )
-    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF5PeopleQchTargets.cmake\")")
+    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF6PeopleQchTargets.cmake\")")
 endif()
 
 configure_package_config_file(
-  "${CMAKE_CURRENT_SOURCE_DIR}/KF5PeopleConfig.cmake.in"
-  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
+  "${CMAKE_CURRENT_SOURCE_DIR}/KF6PeopleConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/KF6PeopleConfig.cmake"
   INSTALL_DESTINATION ${CMAKECONFIG_INSTALL_DIR}
 )
 
-install(EXPORT KPeopleTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KPeopleTargets.cmake NAMESPACE KF5::)
-install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
-               "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
+install(EXPORT KPeopleTargets DESTINATION "${CMAKECONFIG_INSTALL_DIR}" FILE KPeopleTargets.cmake NAMESPACE KF6::)
+install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF6PeopleConfig.cmake"
+               "${CMAKE_CURRENT_BINARY_DIR}/KF6PeopleConfigVersion.cmake"
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         COMPONENT Devel )
 

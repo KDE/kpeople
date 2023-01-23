@@ -61,8 +61,8 @@ option(ENABLE_EXAMPLES "Build the examples" "ON")
 ki18n_install(po)
 
 ecm_set_disabled_deprecation_versions(
-    QT 5.15.2
-    KF 5.95
+    QT 6.4
+    KF 5.102
 )
 
 add_subdirectory (src)

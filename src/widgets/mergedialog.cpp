@@ -205,11 +205,11 @@ QStandardItem *MergeDialog::itemMergeContactFromMatch(bool isParent, const Match
     }
 
     QIcon icon;
-    if (deco.type() == (QVariant::Icon)) {
+    if (deco.userType() == QMetaType::QIcon) {
         icon = deco.value<QIcon>();
-    } else if (deco.type() == (QVariant::Pixmap)) {
+    } else if (deco.userType() == QMetaType::QPixmap) {
         icon = QIcon(deco.value<QPixmap>());
-    } else if (deco.type() == (QVariant::Image)) {
+    } else if (deco.userType() == QMetaType::QImage) {
         icon = QIcon(QPixmap::fromImage(deco.value<QImage>()));
     } else {
         qCWarning(KPEOPLE_WIDGETS_LOG) << "unknown decoration type" << deco.typeName();

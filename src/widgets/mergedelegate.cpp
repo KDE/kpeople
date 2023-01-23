@@ -106,7 +106,7 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
         const QModelIndex child = model->index(i, 0, index);
 
         QVariant decoration = child.data(Qt::DecorationRole);
-        Q_ASSERT(decoration.type() == (QVariant::Icon));
+        Q_ASSERT(decoration.userType() == QMetaType::QIcon);
 
         QIcon pix = decoration.value<QIcon>();
         QPoint pixmapPoint = {option.rect.width() / 2 + i * (s_decorationSize.width() + separation), option.rect.top()};

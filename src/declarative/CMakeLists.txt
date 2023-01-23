@@ -19,8 +19,8 @@ ecm_qt_declare_logging_category(KF6PeopleDeclarative
 )
 
 target_link_libraries(KF6PeopleDeclarative
-    Qt${QT_MAJOR_VERSION}::Qml
-    Qt${QT_MAJOR_VERSION}::Quick
+    Qt6::Qml
+    Qt6::Quick
     KF6::PeopleWidgets # QAction
     KF6PeopleBackend
 )

@@ -40,16 +40,16 @@ target_sources(KF6People PRIVATE
 
 target_link_libraries (KF6People
                     PUBLIC
-                        Qt${QT_MAJOR_VERSION}::Gui
+                        Qt6::Gui
                     PRIVATE
-                        Qt${QT_MAJOR_VERSION}::Sql
+                        Qt6::Sql
                         KF6::I18n
                         KF6::CoreAddons
                         KF6::PeopleBackend
 )
 
-if(TARGET Qt${QT_MAJOR_VERSION}::DBus)
-    target_link_libraries(KF6People PRIVATE Qt${QT_MAJOR_VERSION}::DBus)
+if(TARGET Qt6::DBus)
+    target_link_libraries(KF6People PRIVATE Qt6::DBus)
 endif()
 
 target_include_directories (KF6People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"
@@ -106,8 +106,8 @@ if(BUILD_QCH)
             ${KPeopleBackend_QCH_SOURCES}
         MD_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md"
         LINK_QCHS
-            Qt5Gui_QCH
-            Qt5Widgets_QCH
+            Qt6Gui_QCH
+            Qt6Widgets_QCH
         BLANK_MACROS
             KPEOPLE_EXPORT
             KPEOPLE_DEPRECATED

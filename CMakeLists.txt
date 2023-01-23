@@ -28,15 +28,15 @@ include(ECMQtDeclareLoggingCategory)
 include(ECMDeprecationSettings)
 
 set(REQUIRED_QT_VERSION 6.4.0)
-find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml Quick)
+find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml Quick)
 
 # On non-Apple UNIX DBus integration is required, on Android it does not exist and on other platforms it is optional
 if(UNIX AND NOT APPLE)
     if(NOT ANDROID)
-        find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} CONFIG REQUIRED DBus)
+        find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED DBus)
     endif()
 else()
-    find_package(Qt${QT_MAJOR_VERSION} ${REQUIRED_QT_VERSION} OPTIONAL_COMPONENTS DBus)
+    find_package(Qt6 ${REQUIRED_QT_VERSION} OPTIONAL_COMPONENTS DBus)
 endif()
 
 find_package(KF6CoreAddons ${KF_DEP_VERSION} CONFIG REQUIRED)

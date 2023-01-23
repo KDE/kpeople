@@ -19,7 +19,7 @@ target_sources(KF6PeopleBackend PRIVATE
 
 target_link_libraries (KF6PeopleBackend
                     PUBLIC
-                        Qt${QT_MAJOR_VERSION}::Widgets #needed for QAction, otherwise QtGui
+                        Qt6::Widgets #needed for QAction, otherwise QtGui
 )
 
 target_include_directories (KF6PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"

@@ -33,7 +33,7 @@ ki18n_wrap_ui(KF6PeopleWidgets person-details-presentation.ui)
 target_link_libraries (KF6PeopleWidgets
                     PUBLIC
                         KF6::People
-                        Qt${QT_MAJOR_VERSION}::Widgets
+                        Qt6::Widgets
                     PRIVATE
                         KF6::I18n
                         KF6::ItemViews

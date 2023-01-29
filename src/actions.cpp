@@ -5,8 +5,8 @@
 */
 
 #include "actions.h"
-#include "../backends/abstractpersonaction.h"
-#include "kpeople_widgets_debug.h"
+#include "backends/abstractpersonaction.h"
+#include "kpeople_debug.h"
 #include <KPeople/PersonData>
 
 #include <KPluginFactory>
@@ -23,11 +23,11 @@ static QList<AbstractPersonAction *> actionsPlugins()
     for (const KPluginMetaData &data : personPluginList) {
         auto pluginResult = KPluginFactory::instantiatePlugin<AbstractPersonAction>(data);
         if (pluginResult) {
-            qCDebug(KPEOPLE_WIDGETS_LOG) << "found plugin" << data.fileName();
+            qCDebug(KPEOPLE_LOG) << "found plugin" << data.fileName();
             AbstractPersonAction *plugin = pluginResult.plugin;
             actionPlugins << plugin;
         } else {
-            qCDebug(KPEOPLE_WIDGETS_LOG) << "could not load plugin" << data.fileName() << pluginResult.errorText;
+            qCDebug(KPEOPLE_LOG) << "could not load plugin" << data.fileName() << pluginResult.errorText;
         }
     }
 

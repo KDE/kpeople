@@ -4,10 +4,10 @@
     SPDX-License-Identifier: LGPL-2.1-or-later
 */
 
+#include "actions.h"
 #include "kpeople_debug.h"
 #include "personactionsmodel_p.h"
 #include "persondata.h"
-#include "widgets/actions.h"
 #include <QAction>
 
 namespace KPeople

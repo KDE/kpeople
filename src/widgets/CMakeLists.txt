@@ -13,7 +13,6 @@ target_sources(KF6PeopleWidgets PRIVATE
     persondetailsdialog.cpp
     emaildetailswidget.cpp
     abstractfieldwidgetfactory.cpp
-    actions.cpp
 
     mergedialog.cpp
     mergedelegate.cpp
@@ -60,7 +59,6 @@ ecm_generate_headers(KPeopleWidgets_CamelCase_HEADERS
             PersonDetailsView
             MergeDialog
             PersonDetailsDialog
-            Actions
     REQUIRED_HEADERS KPeopleWidgets_HEADERS
     PREFIX KPeople/Widgets
 )

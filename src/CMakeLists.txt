@@ -25,6 +25,7 @@ ecm_qt_declare_logging_category(KF6People
 )
 
 target_sources(KF6People PRIVATE
+    actions.cpp
     global.cpp
     metacontact.cpp
     persondata.cpp
@@ -70,6 +71,7 @@ install (TARGETS KF6People
 
 ecm_generate_headers(KPeople_CamelCase_HEADERS
     HEADER_NAMES
+        Actions
         PersonData
         PersonPluginManager
         PersonsModel

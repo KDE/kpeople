@@ -7,7 +7,7 @@ target_sources(KF6PeopleDeclarative PRIVATE
     avatarimageprovider.cpp
 
     # automoc the ActionType enum
-    ../widgets/actions.h
+    ../actions.h
 )
 
 ecm_qt_declare_logging_category(KF6PeopleDeclarative
@@ -21,8 +21,8 @@ ecm_qt_declare_logging_category(KF6PeopleDeclarative
 target_link_libraries(KF6PeopleDeclarative
     Qt6::Qml
     Qt6::Quick
-    KF6::PeopleWidgets # QAction
     KF6PeopleBackend
+    KF6::People
 )
 
 install(TARGETS KF6PeopleDeclarative DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)

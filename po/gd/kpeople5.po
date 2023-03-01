@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2021-06-11 00:14+0000\n"
+"POT-Creation-Date: 2023-03-01 21:29+0000\n"
 "PO-Revision-Date: 2015-11-04 15:15+0000\n"
 "Last-Translator: Michael Bauer <fios@akerbeltz.org>\n"
 "Language-Team: Fòram na Gàidhlig\n"
@@ -59,11 +59,8 @@ msgstr "Manaidsear nan dùblachaidhean"
 msgid "Select contacts to be merged"
 msgstr "Tagh an luchd-aithne airson co-aonadh"
 
-#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
-#: widgets/person-details-presentation.ui:43
-#, kde-format
-msgid "Avatar"
-msgstr "Avatar"
+#~ msgid "Avatar"
+#~ msgstr "Avatar"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "Seall molaidhean co-aonaidh..."

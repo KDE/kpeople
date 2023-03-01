@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2021-06-11 00:14+0000\n"
+"POT-Creation-Date: 2023-03-01 21:29+0000\n"
 "PO-Revision-Date: 2015-03-02 05:38+0300\n"
 "Last-Translator: Alexander Potashev <aspotashev@gmail.com>\n"
 "Language-Team: Russian <kde-russian@lists.kde.ru>\n"
@@ -58,11 +58,8 @@ msgstr "Диспетчер дубликатов"
 msgid "Select contacts to be merged"
 msgstr "Выберите учётные записи для объединения"
 
-#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
-#: widgets/person-details-presentation.ui:43
-#, kde-format
-msgid "Avatar"
-msgstr "Аватар"
+#~ msgid "Avatar"
+#~ msgstr "Аватар"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "Показать вероятные дубликаты..."

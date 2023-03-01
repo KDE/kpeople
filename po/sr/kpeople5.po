@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libkpeople\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2019-09-17 02:53+0200\n"
+"POT-Creation-Date: 2023-03-01 21:29+0000\n"
 "PO-Revision-Date: 2015-03-07 13:10+0100\n"
 "Last-Translator: Chusslove Illich <caslav.ilic@gmx.net>\n"
 "Language-Team: Serbian <kde-i18n-sr@kde.org>\n"
@@ -18,65 +18,56 @@ msgstr ""
 "X-Text-Markup: kde4\n"
 "X-Environment: kde\n"
 
-#: match.cpp:52
+#: match.cpp:46
 #, kde-format
 msgctxt "@title:column"
 msgid "Name"
 msgstr "име"
 
-#: match.cpp:55
+#: match.cpp:49
 #, kde-format
 msgctxt "@title:column"
 msgid "E-mail"
 msgstr "е‑пошта"
 
-#: widgets/mergedelegate.cpp:98
+#: widgets/emaildetailswidget.cpp:35
+#, kde-format
+msgctxt "E-mail field label"
+msgid "E-mail"
+msgstr "Е‑пошта"
+
+#: widgets/mergedelegate.cpp:86
 #, kde-format
 msgctxt "reasons join"
 msgid ", "
 msgstr ", "
 
-#: widgets/mergedelegate.cpp:98
+#: widgets/mergedelegate.cpp:86
 #, kde-format
 msgctxt "name: merge reasons"
 msgid "%1: %2"
 msgstr "%1: %2"
 
 # >> @title:window
-#: widgets/mergedialog.cpp:63
+#: widgets/mergedialog.cpp:52
 #, kde-format
 msgid "Duplicates Manager"
 msgstr "Менаџер дупликата"
 
-#: widgets/mergedialog.cpp:72
+#: widgets/mergedialog.cpp:63
 #, kde-format
 msgid "Select contacts to be merged"
 msgstr "Изаберите контакте за стапање"
 
-#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
-#: widgets/person-details-presentation.ui:43
-#, kde-format
-msgid "Avatar"
-msgstr "Аватар"
+#~ msgid "Avatar"
+#~ msgstr "Аватар"
 
-#: widgets/plugins/emaildetailswidget.cpp:51
-#, kde-format
-msgctxt "E-mail field label"
-msgid "E-mail"
-msgstr "Е‑пошта"
+#~ msgid "Show Merge Suggestions..."
+#~ msgstr "Предлози стапања..."
 
-#: widgets/plugins/mergecontactswidget.cpp:48
-#, kde-format
-msgid "Show Merge Suggestions..."
-msgstr "Предлози стапања..."
+#~ msgid "Merge with Selected Contacts"
+#~ msgstr "Стопи са изабраним контактима"
 
-#: widgets/plugins/mergecontactswidget.cpp:86
-#, kde-format
-msgid "Merge with Selected Contacts"
-msgstr "Стопи са изабраним контактима"
-
-#: widgets/plugins/phonedetailswidget.cpp:37
-#, kde-format
-msgctxt "Phone details title"
-msgid "Phone"
-msgstr "Телефон"
+#~ msgctxt "Phone details title"
+#~ msgid "Phone"
+#~ msgstr "Телефон"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kpeople\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2021-06-11 00:14+0000\n"
+"POT-Creation-Date: 2023-03-01 21:29+0000\n"
 "PO-Revision-Date: 2022-12-08 23:13+0100\n"
 "Last-Translator: Mincho Kondarev <mkondarev@yahoo.de>\n"
 "Language-Team: Bulgarian <kde-i18n-doc@kde.org>\n"
@@ -59,8 +59,5 @@ msgstr "Управление на дубликати"
 msgid "Select contacts to be merged"
 msgstr "Избиране на контакти за сливане"
 
-#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
-#: widgets/person-details-presentation.ui:43
-#, kde-format
-msgid "Avatar"
-msgstr "Aватар"
+#~ msgid "Avatar"
+#~ msgstr "Aватар"

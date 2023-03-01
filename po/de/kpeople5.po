@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 21:29+0000\n"
+"POT-Creation-Date: 2023-03-01 22:21+0000\n"
 "PO-Revision-Date: 2015-03-09 21:35+0100\n"
 "Last-Translator: Burkhard Lück <lueck@hube-lueck.de>\n"
 "Language-Team: German <kde-i18n-de@kde.org>\n"
@@ -53,8 +53,11 @@ msgstr "Verwaltung von Duplikaten"
 msgid "Select contacts to be merged"
 msgstr "Kontakte zum Zusammenführen auswählen"
 
-#~ msgid "Avatar"
-#~ msgstr "Avatar"
+#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
+#: widgets/person-details-presentation.ui:43
+#, kde-format
+msgid "Avatar"
+msgstr "Avatar"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "Zusammenführungs-Vorschläge anzeigen ..."

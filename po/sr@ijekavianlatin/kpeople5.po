@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libkpeople\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 21:29+0000\n"
+"POT-Creation-Date: 2023-03-01 22:21+0000\n"
 "PO-Revision-Date: 2015-03-07 13:10+0100\n"
 "Last-Translator: Chusslove Illich <caslav.ilic@gmx.net>\n"
 "Language-Team: Serbian <kde-i18n-sr@kde.org>\n"
@@ -59,8 +59,11 @@ msgstr "Menadžer duplikata"
 msgid "Select contacts to be merged"
 msgstr "Izaberite kontakte za stapanje"
 
-#~ msgid "Avatar"
-#~ msgstr "Avatar"
+#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
+#: widgets/person-details-presentation.ui:43
+#, kde-format
+msgid "Avatar"
+msgstr "Avatar"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "Predlozi stapanja..."

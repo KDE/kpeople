@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: bosnianuniversetranslation\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 21:29+0000\n"
+"POT-Creation-Date: 2023-03-01 22:21+0000\n"
 "PO-Revision-Date: 2015-02-16 11:52+0000\n"
 "Last-Translator: Samir Ribić <Unknown>\n"
 "Language-Team: Bosnian <bs@li.org>\n"
@@ -60,8 +60,11 @@ msgstr "Menadžer duplikata"
 msgid "Select contacts to be merged"
 msgstr "Označava kontakte koji se trebaju povezati"
 
-#~ msgid "Avatar"
-#~ msgstr "Avatar"
+#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
+#: widgets/person-details-presentation.ui:43
+#, kde-format
+msgid "Avatar"
+msgstr "Avatar"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "Prikaži prijedloge povezivanja..."

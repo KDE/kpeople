@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 21:29+0000\n"
+"POT-Creation-Date: 2023-03-01 22:21+0000\n"
 "PO-Revision-Date: 2018-06-09 22:21+0300\n"
 "Last-Translator: Safa Alfulaij <safa1996alfulaij@gmail.com>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
@@ -58,8 +58,11 @@ msgstr "مدير التكرارات"
 msgid "Select contacts to be merged"
 msgstr "حدّد المتراسلين الذي تريد دمجهم"
 
-#~ msgid "Avatar"
-#~ msgstr "الشعار"
+#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
+#: widgets/person-details-presentation.ui:43
+#, kde-format
+msgid "Avatar"
+msgstr "الشعار"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "اعرض اقتراحات الدمج…"

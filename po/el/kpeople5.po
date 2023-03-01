@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 21:29+0000\n"
+"POT-Creation-Date: 2023-03-01 22:21+0000\n"
 "PO-Revision-Date: 2015-03-02 16:14+0200\n"
 "Last-Translator: Dimitris Kardarakos <dimkard@gmail.com>\n"
 "Language-Team: Greek <kde-i18n-el@kde.org>\n"
@@ -58,8 +58,11 @@ msgstr "Διαχειριστής διπλότυπων"
 msgid "Select contacts to be merged"
 msgstr "Επιλέξτε επαφές για συγχώνευση"
 
-#~ msgid "Avatar"
-#~ msgstr "Εικόνα"
+#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
+#: widgets/person-details-presentation.ui:43
+#, kde-format
+msgid "Avatar"
+msgstr "Εικόνα"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "Εμφάνιση προτάσεων για συγχώνευση..."

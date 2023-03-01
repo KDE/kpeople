@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kpeople\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 21:29+0000\n"
+"POT-Creation-Date: 2023-03-01 22:21+0000\n"
 "PO-Revision-Date: 2022-07-06 17:46+0400\n"
 "Last-Translator: Kheyyam <xxmn77@gmail.com>\n"
 "Language-Team: Azerbaijani <kde-i18n-doc@kde.org>\n"
@@ -57,8 +57,11 @@ msgstr "Dublikatlar Meneceri"
 msgid "Select contacts to be merged"
 msgstr "Birləşdirmək üçün əlaqələri seçin"
 
-#~ msgid "Avatar"
-#~ msgstr "Avatar"
+#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
+#: widgets/person-details-presentation.ui:43
+#, kde-format
+msgid "Avatar"
+msgstr "Avatar"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "Ehtimal edilən dublikatları göstər..."

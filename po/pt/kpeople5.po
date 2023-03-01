@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: libkpeople\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 21:29+0000\n"
+"POT-Creation-Date: 2023-03-01 22:21+0000\n"
 "PO-Revision-Date: 2015-02-25 00:29+0000\n"
 "Last-Translator: José Nuno Coelho Pires <zepires@gmail.com>\n"
 "Language-Team: Portuguese <kde-i18n-pt@kde.org>\n"
@@ -54,8 +54,11 @@ msgstr "Gestor de Duplicados"
 msgid "Select contacts to be merged"
 msgstr "Seleccionar os contactos a reunir"
 
-#~ msgid "Avatar"
-#~ msgstr "Avatar"
+#. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
+#: widgets/person-details-presentation.ui:43
+#, kde-format
+msgid "Avatar"
+msgstr "Avatar"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "Mostrar as Sugestões de Reunião..."

@@ -51,8 +51,9 @@ add_definitions(-DTRANSLATION_DOMAIN=\"kpeople5\")
 
 set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KF5People")
 
+set(kpeople_version_header "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h")
 ecm_setup_version(PROJECT VARIABLE_PREFIX KPEOPLE
-                        VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h"
+                        VERSION_HEADER "${kpeople_version_header}"
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
                         SOVERSION 5)
 
@@ -94,6 +95,12 @@ install(FILES  "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfig.cmake"
                "${CMAKE_CURRENT_BINARY_DIR}/KF5PeopleConfigVersion.cmake"
         DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
         COMPONENT Devel )
+
+install(
+    FILES ${kpeople_version_header}
+    DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople
+    COMPONENT Devel
+)
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 

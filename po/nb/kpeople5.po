@@ -1,4 +1,4 @@
-# Translation of kpeople5 to Norwegian Bokmål
+# Translation of kpeople6 to Norwegian Bokmål
 #
 # Bjørn Steensrud <bjornst@skogkatt.homelinux.org>, 2015.
 msgid ""

@@ -30,7 +30,7 @@ class KPEOPLEWIDGETS_EXPORT PersonDetailsView : public QWidget
 {
     Q_OBJECT
 public:
-    PersonDetailsView(QWidget *parent = nullptr);
+    explicit PersonDetailsView(QWidget *parent = nullptr);
     ~PersonDetailsView() override;
 
 public Q_SLOTS:

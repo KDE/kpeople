@@ -56,8 +56,8 @@ private Q_SLOTS:
     void onMergeButtonClicked();
 
 private:
-    QStandardItem *itemMergeContactFromMatch(bool parent, const KPeople::Match &match);
-    void feedDuplicateModelFromMatches(const QList<Match> &matches);
+    KPEOPLEWIDGETS_NO_EXPORT QStandardItem *itemMergeContactFromMatch(bool parent, const KPeople::Match &match);
+    KPEOPLEWIDGETS_NO_EXPORT void feedDuplicateModelFromMatches(const QList<Match> &matches);
 
     MergeDialogPrivate *const d_ptr;
     Q_DECLARE_PRIVATE(MergeDialog)

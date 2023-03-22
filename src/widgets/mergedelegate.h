@@ -32,7 +32,9 @@ public Q_SLOTS:
 
 private:
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-    QWidget *buildMultipleLineLabel(const QModelIndex &idx);
+
+private:
+    KPEOPLEWIDGETS_NO_EXPORT QWidget *buildMultipleLineLabel(const QModelIndex &idx);
 
     static QSize s_arrowSize;
     static QSize s_decorationSize;

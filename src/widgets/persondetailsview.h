@@ -39,7 +39,7 @@ public Q_SLOTS:
     //     void setPersonsModel(PersonsModel *model);
 
 private Q_SLOTS:
-    void reload();
+    KPEOPLEWIDGETS_NO_EXPORT void reload();
 
 private:
     Q_DECLARE_PRIVATE(PersonDetailsView)

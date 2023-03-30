@@ -51,9 +51,9 @@ public:
     void setPersonsModel(PersonsModel *model);
 
 private Q_SLOTS:
-    void searchForDuplicates();
-    void searchForDuplicatesFinished(KJob *);
-    void onMergeButtonClicked();
+    KPEOPLEWIDGETS_NO_EXPORT void searchForDuplicates();
+    KPEOPLEWIDGETS_NO_EXPORT void searchForDuplicatesFinished(KJob *);
+    KPEOPLEWIDGETS_NO_EXPORT void onMergeButtonClicked();
 
 private:
     KPEOPLEWIDGETS_NO_EXPORT QStandardItem *itemMergeContactFromMatch(bool parent, const KPeople::Match &match);

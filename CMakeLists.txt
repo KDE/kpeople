@@ -23,7 +23,7 @@ include(ECMAddTests)
 include(ECMAddQch)
 include(CMakePackageConfigHelpers)
 include(ECMGeneratePriFile)
-include(GenerateExportHeader)
+include(ECMGenerateExportHeader)
 include(ECMQtDeclareLoggingCategory)
 include(ECMDeprecationSettings)
 

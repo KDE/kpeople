@@ -17,6 +17,16 @@ target_sources(KF6PeopleBackend PRIVATE
     abstracteditablecontact.cpp
 )
 
+ecm_generate_export_header(KF6PeopleBackend
+    EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeoplebackend/kpeoplebackend_export.h
+    BASE_NAME KPeopleBackend
+    GROUP_BASE_NAME KF
+    VERSION ${KF_VERSION}
+    USE_VERSION_HEADER
+    VERSION_BASE_NAME KPeople
+    DEPRECATED_BASE_VERSION 0
+)
+
 target_link_libraries (KF6PeopleBackend
                     PUBLIC
                         Qt6::Gui
@@ -51,8 +61,6 @@ install(FILES
   ${KPeopleBackend_HEADERS}
   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeoplebackend COMPONENT Devel
 )
-
-generate_export_header(KF6PeopleBackend EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeoplebackend/kpeoplebackend_export.h BASE_NAME KPeopleBackend)
 
 # make available to ecm_add_qch in parent folder
 set(KPeopleBackend_QCH_SOURCES ${KPeopleBackend_HEADERS} PARENT_SCOPE)

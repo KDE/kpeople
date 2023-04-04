@@ -15,6 +15,15 @@ set_target_properties (KF6People PROPERTIES
     EXPORT_NAME People
 )
 
+ecm_generate_export_header(KF6People
+    EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h
+    BASE_NAME KPeople
+    GROUP_BASE_NAME KF
+    VERSION ${KF_VERSION}
+    USE_VERSION_HEADER
+    DEPRECATED_BASE_VERSION 0
+)
+
 ecm_qt_declare_logging_category(KF6People
     HEADER kpeople_debug.h
     IDENTIFIER KPEOPLE_LOG
@@ -91,9 +100,6 @@ install(FILES
 )
 
 install(FILES personmanager_p.h DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeopleprivate)
-
-generate_export_header(KF6People EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h BASE_NAME KPeople)
-
 
 if(BUILD_QCH)
     ecm_add_qch(

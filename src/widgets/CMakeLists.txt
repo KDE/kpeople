@@ -18,6 +18,16 @@ target_sources(KF6PeopleWidgets PRIVATE
     mergedelegate.cpp
 )
 
+ecm_generate_export_header(KF6PeopleWidgets
+    EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h
+    BASE_NAME KPeopleWidgets
+    GROUP_BASE_NAME KF
+    VERSION ${KF_VERSION}
+    USE_VERSION_HEADER
+    VERSION_BASE_NAME KPeople
+    DEPRECATED_BASE_VERSION 0
+)
+
 ecm_qt_declare_logging_category(KF6PeopleWidgets
     HEADER kpeople_widgets_debug.h
     IDENTIFIER KPEOPLE_WIDGETS_LOG
@@ -72,8 +82,6 @@ install(FILES
   ${KPeopleWidgets_HEADERS}
   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeople/widgets COMPONENT Devel
 )
-
-generate_export_header(KF6PeopleWidgets EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/widgets/kpeoplewidgets_export.h BASE_NAME KPeopleWidgets)
 
 ecm_generate_pri_file(BASE_NAME KPeopleWidgets LIB_NAME KF6PeopleWidgets DEPS "widgets KPeople" FILENAME_VAR PRI_FILENAME INCLUDE_INSTALL_DIR ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople)
 install(FILES ${PRI_FILENAME} DESTINATION ${ECM_MKSPECS_INSTALL_DIR})

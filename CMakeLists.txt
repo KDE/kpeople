@@ -51,7 +51,7 @@ add_definitions(-DTRANSLATION_DOMAIN=\"kpeople6\")
 
 set(CMAKECONFIG_INSTALL_DIR "${KDE_INSTALL_CMAKEPACKAGEDIR}/KF6People")
 
-set(kpeople_version_header "${CMAKE_CURRENT_BINARY_DIR}/kpeople_version.h")
+set(kpeople_version_header "${CMAKE_CURRENT_BINARY_DIR}/src/kpeople_version.h")
 ecm_setup_version(PROJECT VARIABLE_PREFIX KPEOPLE
                         VERSION_HEADER "${kpeople_version_header}"
                         PACKAGE_VERSION_FILE "${CMAKE_CURRENT_BINARY_DIR}/KF6PeopleConfigVersion.cmake"

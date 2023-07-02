@@ -213,3 +213,5 @@ bool KPeople::PersonData::isEditable() const
     Q_D(const PersonData);
     return dynamic_cast<const AbstractEditableContact *>(d->metaContact.personAddressee().constData());
 }
+
+#include "moc_persondata.cpp"

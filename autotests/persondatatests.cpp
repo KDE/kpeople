@@ -121,3 +121,5 @@ void PersonDataTests::removeContact()
 
     QCOMPARE(person.name(), QString());
 }
+
+#include "moc_persondatatests.cpp"

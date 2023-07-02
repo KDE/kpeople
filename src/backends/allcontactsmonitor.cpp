@@ -50,3 +50,5 @@ void AllContactsMonitor::emitInitialFetchComplete(bool success)
     d_ptr->m_initialFetchSucccess = success;
     Q_EMIT initialFetchComplete(success);
 }
+
+#include "moc_allcontactsmonitor.cpp"

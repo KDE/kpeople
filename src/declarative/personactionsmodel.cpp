@@ -136,3 +136,5 @@ QList<QAction *> PersonActionsModel::actions() const
     Q_D(const PersonActions);
     return d->actions;
 }
+
+#include "moc_personactionsmodel_p.cpp"

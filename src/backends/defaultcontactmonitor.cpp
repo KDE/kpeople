@@ -42,3 +42,5 @@ void DefaultContactMonitor::onContactRemoved(const QString &id)
         setContact(AbstractContact::Ptr());
     }
 }
+
+#include "moc_defaultcontactmonitor_p.cpp"

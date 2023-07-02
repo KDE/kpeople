@@ -484,4 +484,5 @@ QVariant PersonsModel::contactCustomProperty(const QModelIndex &index, const QSt
     }
 }
 
+#include "moc_personsmodel.cpp"
 #include "personsmodel.moc"

@@ -62,3 +62,5 @@ void PersonsProxyModelTest::testFiltering()
 
     QCOMPARE(proxy.rowCount(), 3);
 }
+
+#include "moc_personsproxymodeltest.cpp"

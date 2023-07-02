@@ -66,3 +66,5 @@ BasePersonsDataSourceV2::BasePersonsDataSourceV2(QObject *parent, const QVariant
     : BasePersonsDataSource(parent, args)
 {
 }
+
+#include "moc_basepersonsdatasource.cpp"

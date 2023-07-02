@@ -50,3 +50,5 @@ QString ContactMonitor::contactUri() const
 
     return d->m_contactUri;
 }
+
+#include "moc_contactmonitor.cpp"

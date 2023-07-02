@@ -82,3 +82,5 @@ void MatchesSolver::startMatching()
     }
     emitResult();
 }
+
+#include "moc_matchessolver_p.cpp"

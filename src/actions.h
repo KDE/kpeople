@@ -17,7 +17,7 @@ class QObject;
 class QAction;
 namespace KPeople
 {
-Q_NAMESPACE
+Q_NAMESPACE_EXPORT(KPEOPLE_EXPORT)
 class PersonData;
 
 /**

@@ -5,9 +5,6 @@ target_sources(KF6PeopleDeclarative PRIVATE
     personactionsmodel.cpp
     peopleqmlplugin.cpp
     avatarimageprovider.cpp
-
-    # automoc the ActionType enum
-    ../actions.h
 )
 
 ecm_qt_declare_logging_category(KF6PeopleDeclarative

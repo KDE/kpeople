@@ -70,4 +70,5 @@ void PeopleQMLPlugin::registerTypes(const char *uri)
     qmlRegisterUncreatableMetaObject(KPeople::staticMetaObject, uri, 1, 0, "KPeople", QStringLiteral("Access to enums & flags only"));
 }
 
+#include "moc_peopleqmlplugin.cpp"
 #include "peopleqmlplugin.moc"

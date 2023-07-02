@@ -71,3 +71,5 @@ void PersonsSortFilterProxyModel::sort(int column, Qt::SortOrder order)
     QSortFilterProxyModel::sort(column, order);
 }
 }
+
+#include "moc_personssortfilterproxymodel.cpp"

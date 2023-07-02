@@ -16,3 +16,5 @@ AbstractFieldWidgetFactory::AbstractFieldWidgetFactory(QObject *parent)
 AbstractFieldWidgetFactory::~AbstractFieldWidgetFactory()
 {
 }
+
+#include "moc_abstractfieldwidgetfactory.cpp"

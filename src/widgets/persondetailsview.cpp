@@ -188,3 +188,5 @@ void PersonDetailsView::reload()
         }
     }
 }
+
+#include "moc_persondetailsview.cpp"

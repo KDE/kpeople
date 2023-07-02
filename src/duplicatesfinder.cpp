@@ -97,3 +97,5 @@ QList<Match> DuplicatesFinder::results() const
 {
     return m_matches;
 }
+
+#include "moc_duplicatesfinder_p.cpp"

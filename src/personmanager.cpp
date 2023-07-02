@@ -296,3 +296,5 @@ PersonManager *PersonManager::instance(const QString &databasePath)
     }
     return s_instance;
 }
+
+#include "moc_personmanager_p.cpp"

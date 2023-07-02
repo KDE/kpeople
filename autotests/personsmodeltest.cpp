@@ -173,3 +173,5 @@ void PersonsModelTest::unmergeContacts()
     // (and we don't care about the position)
     QCOMPARE(modelRowsRemove.at(2).at(0).toModelIndex(), QModelIndex());
 }
+
+#include "moc_personsmodeltest.cpp"

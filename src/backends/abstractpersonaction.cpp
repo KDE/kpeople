@@ -12,3 +12,5 @@ AbstractPersonAction::AbstractPersonAction(QObject *parent)
     : QObject(parent)
 {
 }
+
+#include "moc_abstractpersonaction.cpp"

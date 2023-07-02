@@ -48,3 +48,5 @@ QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent)
 }
 
 }
+
+#include "moc_actions.cpp"

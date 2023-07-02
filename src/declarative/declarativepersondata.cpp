@@ -52,3 +52,5 @@ QString DeclarativePersonData::personUri() const
 {
     return m_id;
 }
+
+#include "moc_declarativepersondata.cpp"

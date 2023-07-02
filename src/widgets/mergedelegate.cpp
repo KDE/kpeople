@@ -120,3 +120,5 @@ void MergeDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optionO
                       option.rect.left() + midWidth - SIZE_STANDARD_PIXMAP,
                       option.rect.top() + 5);
 }
+
+#include "moc_mergedelegate.cpp"

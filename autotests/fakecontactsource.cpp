@@ -96,3 +96,5 @@ void FakeAllContactsMonitor::changeProperty(const QString &key, const QVariant &
 
     Q_EMIT contactChanged(QStringLiteral("fakesource://contact1"), contact1);
 }
+
+#include "moc_fakecontactsource.cpp"

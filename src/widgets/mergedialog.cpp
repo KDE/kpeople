@@ -217,3 +217,5 @@ QStandardItem *MergeDialog::itemMergeContactFromMatch(bool isParent, const Match
     item->setIcon(icon);
     return item;
 }
+
+#include "moc_mergedialog.cpp"

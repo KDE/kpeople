@@ -60,6 +60,6 @@ private:
 };
 }
 
-Q_DECLARE_TYPEINFO(KPeople::MetaContact, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(KPeople::MetaContact, Q_RELOCATABLE_TYPE);
 
 #endif // METACONTACT_H

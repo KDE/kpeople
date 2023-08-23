@@ -15,6 +15,8 @@ set_target_properties (KF6People PROPERTIES
     EXPORT_NAME People
 )
 
+qt_extract_metatypes(KF6People)
+
 ecm_generate_export_header(KF6People
     EXPORT_FILE_NAME ${CMAKE_CURRENT_BINARY_DIR}/kpeople/kpeople_export.h
     BASE_NAME KPeople

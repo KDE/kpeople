@@ -1,4 +1,4 @@
-add_library(KF6PeopleDeclarative SHARED)
+ecm_add_qml_module(KF6PeopleDeclarative URI org.kde.people VERSION 1.0 DEPENDENCIES QtCore)
 
 target_sources(KF6PeopleDeclarative PRIVATE
     declarativepersondata.cpp
@@ -16,11 +16,11 @@ ecm_qt_declare_logging_category(KF6PeopleDeclarative
 )
 
 target_link_libraries(KF6PeopleDeclarative
+    PRIVATE
     Qt6::Qml
     Qt6::Quick
     KF6PeopleBackend
     KF6::People
 )
 
-install(TARGETS KF6PeopleDeclarative DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)
-install(FILES qmldir DESTINATION ${KDE_INSTALL_QMLDIR}/org/kde/people)
+ecm_finalize_qml_module(KF6PeopleDeclarative DESTINATION ${KDE_INSTALL_QMLDIR})

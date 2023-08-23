@@ -9,9 +9,13 @@
 
 #include "persondata.h"
 
+#include <qqmlregistration.h>
+
 class DeclarativePersonData : public QObject
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_NAMED_ELEMENT(PersonData)
 
     Q_PROPERTY(QString personUri READ personUri WRITE setPersonUri NOTIFY personChanged)
     Q_PROPERTY(KPeople::PersonData *person READ person NOTIFY personChanged)

@@ -9,6 +9,8 @@
 
 #include <QAbstractListModel>
 
+#include <qqmlregistration.h>
+
 class QAction;
 
 namespace KPeople
@@ -18,6 +20,8 @@ class PersonActionsPrivate;
 class PersonActionsModel : public QAbstractListModel
 {
     Q_OBJECT
+    QML_ELEMENT
+    QML_NAMED_ELEMENT(PersonActions)
     Q_PROPERTY(int count READ rowCount NOTIFY personChanged)
     Q_PROPERTY(QString personUri READ personUri WRITE setPersonUri NOTIFY personChanged)
 

@@ -140,7 +140,7 @@ Q_SIGNALS:
     void dataChanged();
 
 private Q_SLOTS:
-    KPEOPLE_NO_EXPORT void onContactChanged();
+    void onContactChanged();
 
 private:
     Q_DISABLE_COPY(PersonData)

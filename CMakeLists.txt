@@ -25,6 +25,7 @@ include(CMakePackageConfigHelpers)
 include(ECMGenerateExportHeader)
 include(ECMQtDeclareLoggingCategory)
 include(ECMDeprecationSettings)
+include(ECMQmlModule)
 
 set(REQUIRED_QT_VERSION 6.5.0)
 find_package(Qt6 ${REQUIRED_QT_VERSION} CONFIG REQUIRED Gui Sql Widgets Qml Quick)

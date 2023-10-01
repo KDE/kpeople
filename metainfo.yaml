@@ -12,8 +12,7 @@ portingAid: false
 deprecated: false
 release: true
 libraries:
- - qmake: KPeople
-   cmake: "KF6::People"
+ - cmake: "KF6::People"
 cmakename: KF6People
 
 public_lib: true

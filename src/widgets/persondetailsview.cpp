@@ -116,7 +116,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     d->m_plugins << new EmailFieldsPlugin();
 
     // load every KPeopleWidgets Plugin
-    const QVector<KPluginMetaData> personPluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/widgets"));
+    const QList<KPluginMetaData> personPluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/widgets"));
 
     for (const KPluginMetaData &data : personPluginList) {
         auto fieldWidgetFactoryResult = KPluginFactory::instantiatePlugin<AbstractFieldWidgetFactory>(data);

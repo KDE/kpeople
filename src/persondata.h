@@ -131,7 +131,7 @@ public:
     //         QString name;
     //         QString number;
     //     };
-    //     QVector<PhoneNumber> phoneNumbers() const { createPhoneNumbers(customProperty("phoneNumbers")); };
+    //     QList<PhoneNumber> phoneNumbers() const { createPhoneNumbers(customProperty("phoneNumbers")); };
 
 Q_SIGNALS:
     /**

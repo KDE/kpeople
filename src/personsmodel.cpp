@@ -41,9 +41,9 @@ public:
     QHash<QString /*Person ID*/, QPersistentModelIndex /*Row*/> personIndex;
 
     // a list so we have an order in the model
-    QVector<MetaContact> metacontacts;
+    QList<MetaContact> metacontacts;
 
-    QVector<AllContactsMonitorPtr> m_sourceMonitors;
+    QList<AllContactsMonitorPtr> m_sourceMonitors;
 
     int initialFetchesDoneCount = 0;
 

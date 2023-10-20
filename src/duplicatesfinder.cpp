@@ -37,7 +37,7 @@ void DuplicatesFinder::doSearch()
     // NOTE: This can probably optimized. I'm just trying to get the semantics right at the moment
     // maybe using nepomuk for the matching would help?
 
-    QVector<AbstractContact::Ptr> collectedValues;
+    QList<AbstractContact::Ptr> collectedValues;
     m_matches.clear();
 
     if (m_model->rowCount() == 0) {

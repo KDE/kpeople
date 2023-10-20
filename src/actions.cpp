@@ -19,7 +19,7 @@ namespace KPeople
 static QList<AbstractPersonAction *> actionsPlugins()
 {
     QList<AbstractPersonAction *> actionPlugins;
-    const QVector<KPluginMetaData> personPluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/actions"));
+    const QList<KPluginMetaData> personPluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/actions"));
     for (const KPluginMetaData &data : personPluginList) {
         auto pluginResult = KPluginFactory::instantiatePlugin<AbstractPersonAction>(data);
         if (pluginResult) {

@@ -43,7 +43,7 @@ PersonPluginManagerPrivate::~PersonPluginManagerPrivate()
 
 void PersonPluginManagerPrivate::loadDataSourcePlugins()
 {
-    const QVector<KPluginMetaData> pluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/datasource"));
+    const QList<KPluginMetaData> pluginList = KPluginMetaData::findPlugins(QStringLiteral("kpeople/datasource"));
     for (const KPluginMetaData &data : pluginList) {
         auto dataSourceResult = KPluginFactory::instantiatePlugin<BasePersonsDataSource>(data);
         if (dataSourceResult) {

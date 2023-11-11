@@ -13,5 +13,5 @@ int main(int argc, char **argv)
 
     QQmlApplicationEngine engine(QUrl(QStringLiteral("qrc:/qml/Main.qml")));
 
-    app.exec();
+    return app.exec();
 }

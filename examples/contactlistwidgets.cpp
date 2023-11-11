@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 
     ContactListApp widget;
     widget.show();
-    app.exec();
+    return app.exec();
 }
 
 #include "contactlistwidgets.moc"

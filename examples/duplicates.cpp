@@ -113,7 +113,7 @@ int main(int argc, char **argv)
     QObject::connect(&model, SIGNAL(rowsInserted(QModelIndex, int, int)), t, SLOT(start()));
     QObject::connect(t, SIGNAL(timeout()), f, SLOT(start()));
 
-    app.exec();
+    return app.exec();
 }
 
 #include "duplicates.moc"

@@ -61,7 +61,7 @@ option(ENABLE_EXAMPLES "Build the examples" "ON")
 ki18n_install(po)
 
 ecm_set_disabled_deprecation_versions(
-    QT 6.4
+    QT 6.5
     KF 5.102
 )
 

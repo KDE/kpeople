@@ -3,44 +3,45 @@
 #
 # elkana bardugo <ttv200@gmail.com>, 2016.
 # Elkana Bardugo <ttv200@gmail.com>, 2017. #zanata
+# SPDX-FileCopyrightText: 2023 Yaron Shahrabani <sh.yaron@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kpeople5\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-11-05 12:25+0000\n"
-"PO-Revision-Date: 2017-05-16 06:50-0400\n"
-"Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
-"Language-Team: Hebrew <kde-i18n-doc@kde.org>\n"
+"PO-Revision-Date: 2023-12-15 22:33+0200\n"
+"Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
+"Language-Team: צוות התרגום של KDE ישראל\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Zanata 3.9.6\n"
+"X-Generator: Lokalize 23.08.3\n"
 
 #: match.cpp:46
 #, kde-format
 msgctxt "@title:column"
 msgid "Name"
-msgstr ""
+msgstr "שם"
 
 #: match.cpp:49
 #, kde-format
 msgctxt "@title:column"
 msgid "E-mail"
-msgstr ""
+msgstr "דוא״ל"
 
 #: widgets/emaildetailswidget.cpp:35
 #, kde-format
 msgctxt "E-mail field label"
 msgid "E-mail"
-msgstr "דואר אלקטרוני"
+msgstr "דוא״ל"
 
 #: widgets/mergedelegate.cpp:86
 #, kde-format
 msgctxt "reasons join"
 msgid ", "
-msgstr ""
+msgstr ", "
 
 #: widgets/mergedelegate.cpp:86
 #, kde-format
@@ -56,13 +57,13 @@ msgstr "מנהל כפולים"
 #: widgets/mergedialog.cpp:63
 #, kde-format
 msgid "Select contacts to be merged"
-msgstr "בחר איש קשר למיזוג"
+msgstr "נא לבחור איש קשר למיזוג"
 
 #. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
 #: widgets/person-details-presentation.ui:43
 #, kde-format
 msgid "Avatar"
-msgstr "תמונה"
+msgstr "תמונה ייצוגית"
 
 #~ msgid "Show Merge Suggestions..."
 #~ msgstr "הראה הצעות למיזוג"

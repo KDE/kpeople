@@ -36,6 +36,8 @@ target_include_directories (KF6PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_C
                                     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KPeople>"
 )
 
+add_subdirectory(vcard)
+
 install (TARGETS KF6PeopleBackend
          EXPORT KPeopleTargets
          ${KF_INSTALL_TARGETS_DEFAULT_ARGS}

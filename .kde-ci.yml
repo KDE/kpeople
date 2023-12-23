@@ -6,6 +6,7 @@ Dependencies:
     'frameworks/kwidgetsaddons' : '@same'
     'frameworks/ki18n' : '@same'
     'frameworks/kitemviews' : '@same'
+    'frameworks/kcontacts' : '@same'
 
 Options:
   test-before-installing: True

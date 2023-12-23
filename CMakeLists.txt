@@ -42,6 +42,7 @@ find_package(KF6CoreAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF6WidgetsAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF6I18n ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF6ItemViews ${KF_DEP_VERSION} CONFIG REQUIRED)
+find_package(KF6Contacts ${KF_DEP_VERSION} CONFIG REQUIRED)
 
 option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
 add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")

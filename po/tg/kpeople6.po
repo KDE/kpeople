@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kpeople\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 22:21+0000\n"
+"POT-Creation-Date: 2023-12-26 01:32+0000\n"
 "PO-Revision-Date: 2019-08-16 19:43+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -16,6 +16,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Lokalize 19.04.3\n"
+
+#: backends/vcard/kpeoplevcard.cpp:69
+#, kde-format
+msgctxt "given-name family-name"
+msgid "%1 %2"
+msgstr ""
 
 #: match.cpp:46
 #, kde-format

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-03-01 22:21+0000\n"
+"POT-Creation-Date: 2023-12-26 01:32+0000\n"
 "PO-Revision-Date: 2015-11-04 15:15+0000\n"
 "Last-Translator: Michael Bauer <fios@akerbeltz.org>\n"
 "Language-Team: Fòram na Gàidhlig\n"
@@ -18,6 +18,12 @@ msgstr ""
 "(n > 2 && n < 20) ? 2 : 3;\n"
 "X-Generator: Poedit 1.8.4\n"
 "X-Project-Style: kde\n"
+
+#: backends/vcard/kpeoplevcard.cpp:69
+#, kde-format
+msgctxt "given-name family-name"
+msgid "%1 %2"
+msgstr ""
 
 #: match.cpp:46
 #, kde-format

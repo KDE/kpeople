@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kpeople\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2023-12-26 01:32+0000\n"
-"PO-Revision-Date: 2023-04-28 23:02+0100\n"
+"PO-Revision-Date: 2023-12-27 09:20+0100\n"
 "Last-Translator: Oliver Kellogg <okellogg@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
 "Language: eo\n"
@@ -21,7 +21,7 @@ msgstr ""
 #, kde-format
 msgctxt "given-name family-name"
 msgid "%1 %2"
-msgstr ""
+msgstr "%1 %2"
 
 #: match.cpp:46
 #, kde-format

@@ -1,5 +1,5 @@
 description: Provides access to all contacts and the people who hold them
-tier: 2
+tier: 3
 type: functional
 platforms:
     - name: Linux
@@ -16,4 +16,4 @@ cmakename: KF6People
 
 public_lib: true
 group: Frameworks
-subgroup: Tier 2
+subgroup: Tier 3

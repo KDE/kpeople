@@ -14,7 +14,7 @@
 #include <QStandardPaths>
 #include <QVariant>
 
-#ifdef QT_DBUS_LIB
+#if HAVE_QTDBUS
 #include <QDBusConnection>
 #include <QDBusMessage>
 #endif
@@ -64,7 +64,7 @@ PersonManager::PersonManager(const QString &databasePath, QObject *parent)
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS contactIdIndex ON persons (contactId)"));
     m_db.exec(QStringLiteral("CREATE INDEX IF NOT EXISTS personIdIndex ON persons (personId)"));
 
-#ifdef QT_DBUS_LIB
+#if HAVE_QTDBUS
     QDBusConnection::sessionBus().connect(QString(),
                                           QStringLiteral("/KPeople"),
                                           QStringLiteral("org.kde.KPeople"),
@@ -140,7 +140,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 
     bool rc = true;
 
-#ifdef QT_DBUS_LIB
+#if HAVE_QTDBUS
     QList<QDBusMessage> pendingMessages;
 #endif
 
@@ -194,7 +194,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                 rc = false;
             }
 
-#ifdef QT_DBUS_LIB
+#if HAVE_QTDBUS
             QDBusMessage message =
                 QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactRemovedFromPerson"));
 
@@ -220,7 +220,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                 rc = false;
             }
 
-#ifdef QT_DBUS_LIB
+#if HAVE_QTDBUS
             // FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message =
                 QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactAddedToPerson"));
@@ -234,7 +234,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     // if success send all messages to other clients
     // otherwise roll back our database changes and return an empty string
     if (rc) {
-#ifdef QT_DBUS_LIB
+#if HAVE_QTDBUS
         for (const QDBusMessage &message : std::as_const(pendingMessages)) {
             QDBusConnection::sessionBus().send(message);
         }
@@ -258,7 +258,7 @@ bool PersonManager::unmergeContact(const QString &id)
         query.bindValue(0, id.mid(strlen("kpeople://")));
         query.exec();
 
-#ifdef QT_DBUS_LIB
+#if HAVE_QTDBUS
         for (const QString &contactUri : contactUris) {
             // FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message =

@@ -60,8 +60,11 @@ target_link_libraries (KF6People
                         KF6::PeopleBackend
 )
 
-if(TARGET Qt6::DBus)
+if(HAVE_QTDBUS)
     target_link_libraries(KF6People PRIVATE Qt6::DBus)
+    target_compile_definitions(KF6People PRIVATE -DHAVE_QTDBUS=1)
+else()
+    target_compile_definitions(KF6People PRIVATE -DHAVE_QTDBUS=0)
 endif()
 
 target_include_directories (KF6People PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/kpeople>"

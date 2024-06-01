@@ -231,8 +231,8 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 #if HAVE_QTDBUS
             QDBusMessage message =
                 QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactAddedToPerson"));
-
             message.setArguments(QVariantList() << it.first << it.second);
+            QDBusConnection::sessionBus().send(message);
 #else
             Q_EMIT contactAddedToPerson(it.first, it.second);
 #endif

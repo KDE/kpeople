@@ -233,7 +233,6 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                 QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactAddedToPerson"));
 
             message.setArguments(QVariantList() << it.first << it.second);
-            pendingMessages << message;
 #else
             Q_EMIT contactAddedToPerson(it.first, it.second);
 #endif

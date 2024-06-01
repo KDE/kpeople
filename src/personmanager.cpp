@@ -140,9 +140,8 @@ QString PersonManager::mergeContacts(const QStringList &ids)
 
     bool rc = true;
 
-#if HAVE_QTDBUS
-    QList<QDBusMessage> pendingMessages;
-#endif
+    QStringList pendingContactRemovedFromPerson;
+    QVector<QPair<QString, QString>> pendingContactAddedToPerson;
 
     // separate the passed ids to metacontacts and simple contacts
     for (const QString &id : ids) {
@@ -194,18 +193,8 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                 rc = false;
             }
 
-#if HAVE_QTDBUS
-            QDBusMessage message =
-                QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactRemovedFromPerson"));
-
-            message.setArguments(QVariantList() << id);
-            pendingMessages << message;
-
-            message = QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactAddedToPerson"));
-
-            message.setArguments(QVariantList() << id << personUriString);
-            pendingMessages << message;
-#endif
+            pendingContactRemovedFromPerson.append(id);
+            pendingContactAddedToPerson.append({id, personUriString});
         }
     }
 
@@ -220,25 +209,35 @@ QString PersonManager::mergeContacts(const QStringList &ids)
                 rc = false;
             }
 
-#if HAVE_QTDBUS
             // FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
-            QDBusMessage message =
-                QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactAddedToPerson"));
-
-            message.setArguments(QVariantList() << id << personUriString);
-            pendingMessages << message;
-#endif
+            pendingContactAddedToPerson.append({id, personUriString});
         }
     }
 
     // if success send all messages to other clients
     // otherwise roll back our database changes and return an empty string
     if (rc) {
+        for (const auto &id : std::as_const(pendingContactRemovedFromPerson)) {
 #if HAVE_QTDBUS
-        for (const QDBusMessage &message : std::as_const(pendingMessages)) {
+            QDBusMessage message =
+                QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactRemovedFromPerson"));
+            message.setArguments(QVariantList() << id);
             QDBusConnection::sessionBus().send(message);
-        }
+#else
+            Q_EMIT contactRemovedFromPerson(id);
 #endif
+        }
+        for (const auto &it : std::as_const(pendingContactAddedToPerson)) {
+#if HAVE_QTDBUS
+            QDBusMessage message =
+                QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactAddedToPerson"));
+
+            message.setArguments(QVariantList() << it.first << it.second);
+            pendingMessages << message;
+#else
+            Q_EMIT contactAddedToPerson(it.first, it.second);
+#endif
+        }
     } else {
         t.cancel();
         personUriString.clear();
@@ -258,16 +257,18 @@ bool PersonManager::unmergeContact(const QString &id)
         query.bindValue(0, id.mid(strlen("kpeople://")));
         query.exec();
 
-#if HAVE_QTDBUS
         for (const QString &contactUri : contactUris) {
+#if HAVE_QTDBUS
             // FUTURE OPTIMIZATION - this would be best as one signal, but arguments become complex
             QDBusMessage message =
                 QDBusMessage::createSignal(QStringLiteral("/KPeople"), QStringLiteral("org.kde.KPeople"), QStringLiteral("ContactRemovedFromPerson"));
 
             message.setArguments(QVariantList() << contactUri);
             QDBusConnection::sessionBus().send(message);
-        }
+#else
+            Q_EMIT contactRemovedFromPerson(contactUri);
 #endif
+        }
     } else {
         QSqlQuery query(m_db);
         query.prepare(QStringLiteral("DELETE FROM persons WHERE contactId = ?"));

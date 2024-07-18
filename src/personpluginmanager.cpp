@@ -70,7 +70,7 @@ void PersonPluginManager::setAutoloadDataSourcePlugins(bool autoloadDataSourcePl
 
 void PersonPluginManager::addDataSource(const QString &sourceId, BasePersonsDataSource *source)
 {
-    QMutexLocker(&s_instance->m_mutex);
+    QMutexLocker locker(&s_instance->m_mutex);
     if (s_instance->dataSourcePlugins.contains(sourceId)) {
         qCWarning(KPEOPLE_LOG) << "Attempting to load data source that is already loaded, overriding!";
         s_instance->dataSourcePlugins[sourceId]->deleteLater();
@@ -80,7 +80,7 @@ void PersonPluginManager::addDataSource(const QString &sourceId, BasePersonsData
 
 void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsDataSource *> &dataSources)
 {
-    QMutexLocker(&s_instance->m_mutex);
+    QMutexLocker locker(&s_instance->m_mutex);
     qDeleteAll(s_instance->dataSourcePlugins);
     s_instance->dataSourcePlugins = dataSources;
     s_instance->m_loadedDataSourcePlugins = true;
@@ -88,7 +88,7 @@ void PersonPluginManager::setDataSourcePlugins(const QHash<QString, BasePersonsD
 
 QList<BasePersonsDataSource *> PersonPluginManager::dataSourcePlugins()
 {
-    QMutexLocker(&s_instance->m_mutex);
+    QMutexLocker locker(&s_instance->m_mutex);
     if (!s_instance->m_loadedDataSourcePlugins && s_instance->m_autoloadDataSourcePlugins) {
         s_instance->loadDataSourcePlugins();
     }
@@ -97,7 +97,7 @@ QList<BasePersonsDataSource *> PersonPluginManager::dataSourcePlugins()
 
 BasePersonsDataSource *PersonPluginManager::dataSource(const QString &sourceId)
 {
-    QMutexLocker(&s_instance->m_mutex);
+    QMutexLocker locker(&s_instance->m_mutex);
     if (!s_instance->m_loadedDataSourcePlugins && s_instance->m_autoloadDataSourcePlugins) {
         s_instance->loadDataSourcePlugins();
     }

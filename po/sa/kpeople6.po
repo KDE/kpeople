@@ -22,7 +22,7 @@ msgstr ""
 #, kde-format
 msgctxt "given-name family-name"
 msgid "%1 %2"
-msgstr ""
+msgstr "%1 %2"
 
 #: match.cpp:46
 #, kde-format

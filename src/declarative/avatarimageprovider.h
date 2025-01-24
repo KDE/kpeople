@@ -8,8 +8,11 @@
 
 #include <QQuickImageProvider>
 
-/**
- * @brief An image provider for displaying a contact's photo
+/*!
+ * \class AvatarImageProvider
+ * \inmodule KPeopleDeclarative
+ *
+ * \brief An image provider for displaying a contact's photo.
  *
  * It is automatically available when importing the KPeople QML module.
  *
@@ -17,13 +20,13 @@
  * or from `KPeople.PersonsModel`'s `photoImageProviderUri` role.
  *
  * Example:
- * \code
+ * \qml
  * Kirigami.Avatar {
  *     source: person.photoImageProviderUri
  * }
- * \endcode
+ * \endqml
  *
- * @since 5.93.0
+ * \since 5.93.0
  */
 class AvatarImageProvider : public QQuickImageProvider
 {

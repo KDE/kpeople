@@ -1,0 +1,17 @@
+include($KDE_DOCS/global/qt-module-defaults.qdocconf)
+
+project = KPeopleWidgets
+description = Provides UX widgets for editing contacts.
+
+documentationinheaders = true
+
+headerdirs += .
+sourcedirs += .
+
+depends += kde \
+           qtwidgets \
+           kcoreaddons \
+           kpeople \
+           kpeoplebackend \
+           kpeoplewidgets \
+           kwidgetsaddons

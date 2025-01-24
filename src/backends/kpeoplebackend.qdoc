@@ -1,0 +1,9 @@
+/*!
+    \module KPeopleBackend
+    \title KPeopleBackend C++ Classes
+    \ingroup modules
+    \cmakepackage KF6
+    \cmakecomponent PeopleBackend
+
+    \brief Backend support for contacts management.
+*/

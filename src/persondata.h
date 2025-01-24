@@ -21,32 +21,79 @@ class PersonDataPrivate;
 
 class PersonData;
 
-/**
- * @brief Allows to query the information about a given person
+/*!
+ * \qmlvaluetype personData
+ * \inqmlmodule org.kde.kpeople
+ * \nativetype KPeople::PersonData
+ *
+ * \brief Allows querying the information about a given person.
+ *
+ * PersonData exposes the information of a given person (in contrast to everyone
+ * available, which is done by PersonsModel).
+ * This class will provide comfortable interfaces so it can be easily adopted
+ * in any application.
+ */
+
+/*!
+ * \class KPeople::PersonData
+ * \inmodule KPeople
+ * \inheaderfile KPeople/PersonData
+ *
+ * \brief Allows querying the information about a given person.
  *
  * PersonData exposes the information of a given person (in contrast to everyone
  * available, which is done by PersonsModel).
  * This class will provide comfortable interfaces so it can be easily adopted
  * in any application.
  *
- * @since 5.8
+ * \since 5.8
  */
 class KPEOPLE_EXPORT PersonData : public QObject
 {
     Q_OBJECT
+
+    /*!
+     * \qmlproperty string personData::name
+     */
+
+    /*!
+     * \property KPeople::PersonData::name
+     */
     Q_PROPERTY(QString name READ name NOTIFY dataChanged)
+
+    /*!
+     * \qmlproperty image personData::photo
+     */
+
+    /*!
+     * \property KPeople::PersonData::photo
+     */
     Q_PROPERTY(QPixmap photo READ photo NOTIFY dataChanged)
+
+    /*!
+     * \qmlproperty string personData::presenceIconName
+     */
+
+    /*!
+     * \property KPeople::PersonData::presenceIconName
+     */
     Q_PROPERTY(QString presenceIconName READ presenceIconName NOTIFY dataChanged)
 
-    /**
-     * @returns whether setContactCustomProperty can be called on this contact
+    /*!
+     * \qmlproperty bool personData::isEditable
+     */
+
+    /*!
+     * \property KPeople::PersonData::isEditable
      *
-     * @since 5.62
+     * Returns whether setContactCustomProperty can be called on this contact
+     *
+     * \since 5.62
      */
     Q_PROPERTY(bool isEditable READ isEditable CONSTANT)
 
 public:
-    /** Creates a Person object from a given ID.
+    /*! Creates a Person object from a given ID.
      * The ID can be either a local application specific ID (such as akonadi://?item=15)
      * or a kpeople ID in the form kpeople://15
      */
@@ -54,76 +101,76 @@ public:
 
     ~PersonData() override;
 
-    /**
+    /*!
      * Returns true if this PersonData is mapped to some existing contact
-     * @since 5.22
+     * \since 5.22
      */
     bool isValid() const;
 
-    /** Returns the person's id */
+    /*! Returns the person's id */
     QString personUri() const;
 
-    /**
+    /*!
      * Returns a list of contact ids that identify the PersonData instance.
      */
     QStringList contactUris() const;
 
-    /**
-     * @returns the name of the person
+    /*!
+     * Returns the name of the person
      */
     QString name() const;
 
-    /**
-     * @returns an icon name that represents the IM status of the person
+    /*!
+     * Returns an icon name that represents the IM status of the person
      */
     QString presenceIconName() const;
 
-    /**
-     * @returns a pixmap with the photo of the person, or a default one if not available
+    /*!
+     * Returns a pixmap with the photo of the person, or a default one if not available
      */
     QPixmap photo() const;
 
-    /**
-     * @returns the property for a said @p key.
+    /*!
+     * Returns the property for a said \a key.
      */
     Q_SCRIPTABLE QVariant contactCustomProperty(const QString &key) const;
 
-    /**
-     * Sends a desired @p value for the contact according to the @p key.
+    /*!
+     * Sends a desired \a value for the contact according to the \a key.
      * It's not necessarily implemented. The back-end gets to decide whether a property
      * can be set or not.
      *
-     * @returns whether the property value was changed
+     * Returns whether the property value was changed
      *
-     * @since 5.62
+     * \since 5.62
      */
     Q_SCRIPTABLE bool setContactCustomProperty(const QString &key, const QVariant &value);
 
-    /**
+    /*!
      * Returns the contact's online presence.
      */
     QString presence() const;
 
-    /**
+    /*!
      * Returns the contact's preferred email address.
      */
     QString email() const;
 
-    /**
+    /*!
      * Returns a the url of the picture that represents the contact.
      */
     QUrl pictureUrl() const;
 
-    /** Returns all groups the person is in. */
+    /*! Returns all groups the person is in. */
     QStringList groups() const;
 
-    /** Returns all e-mail addresses from the person. */
+    /*! Returns all e-mail addresses from the person. */
     QStringList allEmails() const;
 
-    /**
-     * @returns whether the contact can be edited.
+    /*!
+     * Returns whether the contact can be edited.
      *
-     * @since 5.62
+     * \since 5.62
      */
     bool isEditable() const;
 
@@ -134,7 +181,7 @@ public:
     //     QList<PhoneNumber> phoneNumbers() const { createPhoneNumbers(customProperty("phoneNumbers")); };
 
 Q_SIGNALS:
-    /**
+    /*!
      * One of the contact sources has changed
      */
     void dataChanged();

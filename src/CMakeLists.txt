@@ -106,37 +106,6 @@ install(FILES
 
 install(FILES personmanager_p.h DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeopleprivate)
 
-if(BUILD_QCH)
-    ecm_add_qch(
-        KF6People_QCH
-        NAME KPeople
-        BASE_NAME KF6People
-        VERSION ${KF_VERSION}
-        ORG_DOMAIN org.kde
-        SOURCES # using only public headers, to cover only public API
-            ${KPeople_HEADERS}
-            ${KPeopleWidgets_QCH_SOURCES}
-            ${KPeopleBackend_QCH_SOURCES}
-        MD_MAINPAGE "${CMAKE_SOURCE_DIR}/README.md"
-        LINK_QCHS
-            Qt6Gui_QCH
-            Qt6Widgets_QCH
-        BLANK_MACROS
-            KPEOPLE_EXPORT
-            KPEOPLE_DEPRECATED
-            KPEOPLE_DEPRECATED_EXPORT
-            KPEOPLEWIDGETS_EXPORT
-            KPEOPLEWIDGETS_DEPRECATED
-            KPEOPLEWIDGETS_DEPRECATED_EXPORT
-            KPEOPLEBACKEND_EXPORT
-            KPEOPLEBACKEND_DEPRECATED
-            KPEOPLEBACKEND_DEPRECATED_EXPORT
-        TAGFILE_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
-        QCH_INSTALL_DESTINATION ${KDE_INSTALL_QTQCHDIR}
-        COMPONENT Devel
-    )
-endif()
-
 ecm_qt_install_logging_categories(
     EXPORT KPEOPLE
     FILE kpeople.categories
@@ -146,3 +115,5 @@ ecm_qt_install_logging_categories(
 if (ANDROID)
     install(FILES KF6People-android-dependencies.xml DESTINATION ${KDE_INSTALL_LIBDIR})
 endif()
+
+ecm_generate_qdoc(KF6People kpeople.qdocconf)

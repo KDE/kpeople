@@ -83,5 +83,4 @@ install(FILES
   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeople/widgets COMPONENT Devel
 )
 
-# make available to ecm_add_qch in parent folder
-set(KPeopleWidgets_QCH_SOURCES ${KPeopleWidgets_HEADERS} PARENT_SCOPE)
+ecm_generate_qdoc(KF6PeopleWidgets kpeoplewidgets.qdocconf)

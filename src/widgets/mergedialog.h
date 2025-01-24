@@ -21,20 +21,32 @@ namespace KPeople
 class PersonsModel;
 class Match;
 
-/**
- * The merge dialog will be used to provide a GUI to attempt to
+/*!
+ * \class KPeople::MergeDialog
+ * \inmodule KPeopleWidgets
+ * \inheaderfile KPeople/Widgets/MergeDialog
+ *
+ * \brief The merge dialog will be used to provide a GUI to attempt to
  * figure out what contacts should be merged.
  *
- * By properly mergeing contacts, the user will end up with having more
+ * By properly merging contacts, the user will end up with having more
  * information on each person.
  *
- * @since 5.8
+ * \since 5.8
  */
 class KPEOPLEWIDGETS_EXPORT MergeDialog : public QDialog
 {
     Q_OBJECT
 
 public:
+    /*!
+     * \enum KPeople::MergeDialog::Role
+     *
+     * \value NameRole
+     * \value UriRole
+     * \value PixmapRole
+     * \value MergeReasonRole
+     */
     enum Role {
         NameRole = Qt::DisplayRole,
         UriRole = Qt::UserRole + 1,
@@ -42,11 +54,17 @@ public:
         MergeReasonRole,
     };
 
+    /*!
+     *
+     */
     explicit MergeDialog(QWidget *parent = nullptr);
     ~MergeDialog() override;
 
-    /**
+    /*!
      * Specifies which PersonsModel will be used to look for duplicates.
+     *
+     * \a model is the PersonsModel to use
+     *
      */
     void setPersonsModel(PersonsModel *model);
 

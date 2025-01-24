@@ -1,0 +1,27 @@
+include($KDE_DOCS/global/qt-module-defaults.qdocconf)
+
+project = KPeople
+description = Provides access to all contacts and the people who hold them
+
+documentationinheaders = true
+
+headerdirs += .
+sourcedirs += .
+excludedirs += backends declarative widgets
+imagedirs = ../docs/pics
+
+depends += kde \
+           qtgui \
+           qtsql \
+           ki18n \
+           kcoreaddons \
+           kpeoplewidgets \
+           kpeoplebackend
+
+qhp.projects = KPeople
+
+qhp.KPeople.file = kpeople.qhp
+qhp.KPeople.namespace = org.kde.kpeople.$QT_VERSION_TAG
+qhp.KPeople.virtualFolder = kpeople
+qhp.KPeople.indexTitle = KPeople
+qhp.KPeople.indexRoot = 

@@ -13,39 +13,40 @@
 
 #include <kpeople/kpeople_export.h>
 
+/*!
+ * \namespace KPeople
+ * \inmodule KPeople
+ */
 namespace KPeople
 {
 class PersonData;
 
-/**
+/*!
  * Merge all uris into a single person.
+ *
  * Ids can be a mix of person Ids and contact IDs.
  *
- * @param uris a list of all identifiers to be merged
+ * \a uris a list of all identifiers to be merged
  *
- * @return the identifier of the new person or an empty string upon failure
+ * Returns the identifier of the new person or an empty string upon failure
  */
 KPEOPLE_EXPORT QString mergeContacts(const QStringList &uris);
 
-/**
+/*!
  * Unmerge a contact. Either remove a contact from a given person or remove a person
  * identified by @p uri.
  *
- * @return Whether the unmerge was successful
+ * Returns whether the unmerge was successful
  */
 KPEOPLE_EXPORT bool unmergeContact(const QString &uri);
 
-/**
+/*!
  * Return a QPixmap for a TP presence string
- *
- * @return QPixmap with the Tp presence icon
  */
 KPEOPLE_EXPORT QString iconNameForPresenceString(const QString &presenceName);
 
-/**
+/*!
  * Returns a sort priority for the given presenceName
- *
- * @return sort priority of the given presence
  */
 KPEOPLE_EXPORT int presenceSortPriority(const QString &presenceName);
 

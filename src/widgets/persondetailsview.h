@@ -20,11 +20,15 @@ namespace KPeople
 {
 class PersonDetailsViewPrivate;
 
-/**
- * Use PersonDetailsView to integrate a person's information
+/*!
+ * \class KPeople::PersonDetailsView
+ * \inmodule KPeopleWidgets
+ * \inheaderfile KPeople/Widgets/PersonDetailsView
+ *
+ * \brief Use PersonDetailsView to integrate a person's information
  * in the GUI.
  *
- * @since 5.8
+ * \since 5.8
  */
 class KPEOPLEWIDGETS_EXPORT PersonDetailsView : public QWidget
 {
@@ -34,7 +38,7 @@ public:
     ~PersonDetailsView() override;
 
 public Q_SLOTS:
-    /** Specifies the @p person for which the details will be displayed. */
+    /*! Specifies the \a person for which the details will be displayed. */
     void setPerson(PersonData *person);
     //     void setPersonsModel(PersonsModel *model);
 

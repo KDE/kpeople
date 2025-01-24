@@ -15,20 +15,43 @@ namespace KPeople
 {
 class PersonsSortFilterProxyModelPrivate;
 
-/**
- * Helps filtering and sorting PersonsModel
+/*!
+ * \qmltype personsSortFilterProxyModule
+ * \inqmlmodule org.kde.kpeople
+ * \nativetype KPeople::PersonsSortFilterProxyModel
+ *
+ * \brief Helps filtering and sorting PersonsModel.
+ *
+ * Especially useful for creating interfaces around specific properties rather
+ * than the complete set as a whole.
+ */
+
+/*!
+ * \class KPeople::PersonsSortFilterProxyModel
+ * \inmodule KPeople
+ * \inheaderfile KPeople/PersonsSortFilterProxyModel
+ *
+ * \brief Helps filtering and sorting PersonsModel.
  *
  * Especially useful for creating interfaces around specific properties rather
  * than the complete set as a whole.
  *
- * @sa PersonsModel
- * @since 5.12
+ * \sa PersonsModel
+ * \since 5.12
  */
 class KPEOPLE_EXPORT PersonsSortFilterProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
-    /** Specifies the properties that should be provided by the contact for the contact to be shown. */
+
+    /*!
+     * \qmlproperty list<string> personsSortFilterProxyModule::requiredProperties
+     */
+
+    /*!
+     * \property KPeople::PersonsSortFilterProxyModel::requiredProperties
+     */
     Q_PROPERTY(QStringList requiredProperties READ requiredProperties WRITE setRequiredProperties)
+
 public:
     explicit PersonsSortFilterProxyModel(QObject *parent = nullptr);
     ~PersonsSortFilterProxyModel() override;

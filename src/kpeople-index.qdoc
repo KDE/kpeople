@@ -1,0 +1,23 @@
+/*!
+    \page kpeople-index.html
+    \title KPeople
+
+    Provides access to all contacts and aggregates them by person.
+
+    \section1 Using the Module
+
+    \include {module-use.qdocinc} {using the c++ api}
+
+    \section2 Building with CMake
+
+    \include {module-use.qdocinc} {building with cmake} {KF6} {People} {KF6::People}
+
+    \section1 API Reference
+
+    \list
+        \li \l{KPeople C++ Classes}
+        \li \l{KPeopleBackend C++ Classes}
+        \li \l{KPeopleWidgets C++ Classes}
+        \li \l{KPeople QML Types}
+    \endlist
+*/

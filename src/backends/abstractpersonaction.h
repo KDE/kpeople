@@ -17,16 +17,27 @@ namespace KPeople
 {
 class PersonData;
 
+/*!
+ * \class KPeople::AbstractPersonAction
+ * \inmodule KPeopleBackend
+ * \inheaderfile KPeopleBackend/AbstractPersonAction
+ */
 class KPEOPLEBACKEND_EXPORT AbstractPersonAction : public QObject
 {
     Q_OBJECT
 public:
+    /*!
+     *
+     */
     explicit AbstractPersonAction(QObject *parent);
-    /** A list of actions that can be executed for a contact
+
+    /*!
+     * A list of actions that can be executed for a contact
      * Disabled actions should not be added
      *
-     * @param data passes the person we're creating the actions for
-     * @param parent parent object for newly created actions
+     * \a data passes the person we're creating the actions for
+     *
+     * \a parent parent object for newly created actions
      */
     virtual QList<QAction *> actionsForPerson(const PersonData &data, QObject *parent) const = 0;
 };

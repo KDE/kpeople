@@ -1,0 +1,11 @@
+include($KDE_DOCS/global/qt-module-defaults.qdocconf)
+
+project = KPeopleBackend
+description = Backend support for contacts management.
+
+documentationinheaders = true
+
+headerdirs += .
+sourcedirs += .
+
+depends += qtgui

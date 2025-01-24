@@ -20,9 +20,9 @@ include(ECMSetupVersion)
 include(ECMGenerateHeaders)
 include(ECMSetupVersion)
 include(ECMAddTests)
-include(ECMAddQch)
 include(CMakePackageConfigHelpers)
 include(ECMGenerateExportHeader)
+include(ECMGenerateQDoc)
 include(ECMQtDeclareLoggingCategory)
 include(ECMDeprecationSettings)
 include(ECMQmlModule)
@@ -47,9 +47,6 @@ find_package(KF6WidgetsAddons ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF6I18n ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF6ItemViews ${KF_DEP_VERSION} CONFIG REQUIRED)
 find_package(KF6Contacts ${KF_DEP_VERSION} CONFIG REQUIRED)
-
-option(BUILD_QCH "Build API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)" OFF)
-add_feature_info(QCH ${BUILD_QCH} "API documentation in QCH format (for e.g. Qt Assistant, Qt Creator & KDevelop)")
 
 add_definitions(-DTRANSLATION_DOMAIN=\"kpeople6\")
 
@@ -76,16 +73,6 @@ if (ENABLE_EXAMPLES)
 endif()
 if (BUILD_TESTING)
     add_subdirectory(autotests)
-endif()
-
-if (BUILD_QCH)
-    ecm_install_qch_export(
-        TARGETS KF6People_QCH
-        FILE KF6PeopleQchTargets.cmake
-        DESTINATION "${CMAKECONFIG_INSTALL_DIR}"
-        COMPONENT Devel
-    )
-    set(PACKAGE_INCLUDE_QCHTARGETS "include(\"\${CMAKE_CURRENT_LIST_DIR}/KF6PeopleQchTargets.cmake\")")
 endif()
 
 configure_package_config_file(

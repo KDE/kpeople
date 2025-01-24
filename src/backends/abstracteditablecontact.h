@@ -12,14 +12,17 @@
 
 namespace KPeople
 {
-/**
- * @brief Additionally to @class AbstractContact features, it will allow us
+/*!
+ * \class KPeople::AbstractEditableContact
+ * \inmodule KPeopleBackend
+ * \inheaderfile KPeopleBackend/AbstractEditableContact
+ *
+ * \brief Additionally to AbstractContact features, it will allow us
  * to suggest the backend property values for a said key.
  *
- * @since 5.62
- * @internal
+ * \since 5.62
+ * \internal
  */
-
 class KPEOPLEBACKEND_EXPORT AbstractEditableContact : public AbstractContact
 {
 public:
@@ -28,11 +31,12 @@ public:
     AbstractEditableContact();
     ~AbstractEditableContact() override;
 
-    /**
-     * @p key @see AbstractContact for key identifiers
-     * @p value suggested value
+    /*!
+     * \a key See AbstractContact for key identifiers
      *
-     * @returns whether the change was successful
+     * \a value suggested value
+     *
+     * Returns whether the change was successful
      */
     virtual bool setCustomProperty(const QString &key, const QVariant &value) = 0;
 

@@ -20,11 +20,18 @@ namespace KPeople
 Q_NAMESPACE_EXPORT(KPEOPLE_EXPORT)
 class PersonData;
 
-/**
+/*!
  * Each action returned in the list can be one of these
  * types, however the Type is not mandatory with the action
  *
  * The type should be set as QObject property "actionType"
+ *
+ * \value TextChatAction
+ * \value AudioCallAction
+ * \value VideoCallAction
+ * \value SendEmailAction
+ * \value SendFileAction
+ * \value OtherAction
  */
 enum ActionType {
     TextChatAction,
@@ -36,9 +43,9 @@ enum ActionType {
 };
 Q_ENUM_NS(ActionType)
 
-/**
- * Returns a list of actions relevant to the specified @p contactUri where
- * each QAction will have @p parent passed as its parent QObject
+/*!
+ * Returns a list of actions relevant to the specified \a contactUri where
+ * each QAction will have \a parent passed as its parent QObject
  */
 KPEOPLE_EXPORT QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent);
 }

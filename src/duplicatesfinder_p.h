@@ -25,7 +25,7 @@ class KPEOPLE_EXPORT DuplicatesFinder : public KJob
 public:
     explicit DuplicatesFinder(PersonsModel *model, QObject *parent = nullptr);
 
-    /** Specifies a @p personUri id to look contacts for, in contrast to the whole contact list. */
+    /** Specifies a personUri id to look contacts for, in contrast to the whole contact list. */
     void setSpecificPerson(const QString &personUri);
 
     /** Returns the match results. */

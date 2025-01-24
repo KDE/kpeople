@@ -64,5 +64,4 @@ install(FILES
   DESTINATION ${KDE_INSTALL_INCLUDEDIR_KF}/KPeople/kpeoplebackend COMPONENT Devel
 )
 
-# make available to ecm_add_qch in parent folder
-set(KPeopleBackend_QCH_SOURCES ${KPeopleBackend_HEADERS} PARENT_SCOPE)
+ecm_generate_qdoc(KF6PeopleBackend kpeoplebackend.qdocconf)

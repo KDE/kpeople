@@ -10,6 +10,8 @@ sourcedirs += .
 excludedirs += backends declarative widgets
 imagedirs = ../docs/pics
 
+navigation.landingpage = "KPeople"
+
 depends += kde \
            qtgui \
            qtsql \

@@ -17,3 +17,17 @@ depends += kde \
            kpeoplebackend \
            kpeoplewidgets \
            kwidgetsaddons
+
+qhp.projects            = KPeopleWidgets
+
+qhp.KPeopleWidgets.file                = kpeoplewidgets.qhp
+qhp.KPeopleWidgets.namespace           = org.kde.kpeoplewidgets.$QT_VERSION_TAG
+qhp.KPeopleWidgets.virtualFolder       = kpeoplewidgets
+qhp.KPeopleWidgets.indexTitle          = KPeople Widgets
+qhp.KPeopleWidgets.indexRoot           =
+
+qhp.KPeopleWidgets.subprojects         = classes
+qhp.KPeopleWidgets.subprojects.classes.title = C++ Classes
+qhp.KPeopleWidgets.subprojects.classes.indexTitle = KPeople Widgets C++ Classes
+qhp.KPeopleWidgets.subprojects.classes.selectors = class fake:headerfile
+qhp.KPeopleWidgets.subprojects.classes.sortPages = true

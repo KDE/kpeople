@@ -11,3 +11,17 @@ sourcedirs += .
 navigation.landingpage = "KPeople"
 
 depends += qtgui
+
+qhp.projects            = KPeopleBackend
+
+qhp.KPeopleBackend.file                = kpeoplebackend.qhp
+qhp.KPeopleBackend.namespace           = org.kde.kpeoplebackend.$QT_VERSION_TAG
+qhp.KPeopleBackend.virtualFolder       = kpeoplebackend
+qhp.KPeopleBackend.indexTitle          = KPeopleBackend
+qhp.KPeopleBackend.indexRoot           =
+
+qhp.KPeopleBackend.subprojects         = classes
+qhp.KPeopleBackend.subprojects.classes.title = C++ Classes
+qhp.KPeopleBackend.subprojects.classes.indexTitle = KPeople Backend C++ Classes
+qhp.KPeopleBackend.subprojects.classes.selectors = class fake:headerfile
+qhp.KPeopleBackend.subprojects.classes.sortPages = true

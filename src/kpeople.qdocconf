@@ -20,10 +20,16 @@ depends += kde \
            kpeoplewidgets \
            kpeoplebackend
 
-qhp.projects = KPeople
+qhp.projects            = KPeople
 
-qhp.KPeople.file = kpeople.qhp
-qhp.KPeople.namespace = org.kde.kpeople.$QT_VERSION_TAG
-qhp.KPeople.virtualFolder = kpeople
-qhp.KPeople.indexTitle = KPeople
-qhp.KPeople.indexRoot = 
+qhp.KPeople.file                = kpeople.qhp
+qhp.KPeople.namespace           = org.kde.kpeople.$QT_VERSION_TAG
+qhp.KPeople.virtualFolder       = kpeople
+qhp.KPeople.indexTitle          = KPeople
+qhp.KPeople.indexRoot           =
+
+qhp.KPeople.subprojects         = classes
+qhp.KPeople.subprojects.classes.title = C++ Classes
+qhp.KPeople.subprojects.classes.indexTitle = KPeople C++ Classes
+qhp.KPeople.subprojects.classes.selectors = class fake:headerfile
+qhp.KPeople.subprojects.classes.sortPages = true

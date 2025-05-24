@@ -25,3 +25,5 @@ qhp.KPeopleBackend.subprojects.classes.title = C++ Classes
 qhp.KPeopleBackend.subprojects.classes.indexTitle = KPeople Backend C++ Classes
 qhp.KPeopleBackend.subprojects.classes.selectors = class fake:headerfile
 qhp.KPeopleBackend.subprojects.classes.sortPages = true
+
+tagfile = kpeoplebackend.tags

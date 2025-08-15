@@ -32,7 +32,7 @@ target_link_libraries (KF6PeopleBackend
                         Qt6::Gui
 )
 
-target_include_directories (KF6PeopleBackend PUBLIC "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+target_include_directories (KF6PeopleBackend
                                     INTERFACE "$<INSTALL_INTERFACE:${KDE_INSTALL_INCLUDEDIR_KF}/KPeople>"
 )
 

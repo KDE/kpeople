@@ -7,8 +7,6 @@
 
 #include "peopleqmlplugin.h"
 
-#include <QQmlEngine>
-
 #include "avatarimageprovider.h"
 
 void PeopleQMLPlugin::initializeEngine(QQmlEngine *engine, const char *uri)

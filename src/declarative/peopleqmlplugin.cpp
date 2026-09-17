@@ -20,4 +20,3 @@ void PeopleQMLPlugin::registerTypes(const char * /*uri*/)
 }
 
 #include "moc_peopleqmlplugin.cpp"
-#include "peopleqmlplugin.moc"

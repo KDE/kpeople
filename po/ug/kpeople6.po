@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kpeople\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-11-17 11:49+0000\n"
-"PO-Revision-Date: 2026-05-31 19:26-0400\n"
+"PO-Revision-Date: 2026-09-22 18:03+0900\n"
 "Last-Translator: Abduqadir Abliz <sahranbay@gmail.com>\n"
 "Language-Team: Uyghur <kde-i18n-doc@kde.org>\n"
 "Language: ug\n"
@@ -22,7 +22,7 @@ msgstr ""
 #, kde-format
 msgctxt "given-name family-name"
 msgid "%1 %2"
-msgstr "%1 %2"
+msgstr ""
 
 #: match.cpp:46
 #, kde-format
@@ -52,7 +52,7 @@ msgstr "، "
 #, kde-format
 msgctxt "name: merge reasons"
 msgid "%1: %2"
-msgstr "%1: %2"
+msgstr ""
 
 #: widgets/mergedialog.cpp:52
 #, kde-format

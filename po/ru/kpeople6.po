@@ -63,7 +63,7 @@ msgstr "Диспетчер дубликатов"
 #: widgets/mergedialog.cpp:63
 #, kde-format
 msgid "Select contacts to be merged"
-msgstr "Выберите учётные записи для объединения"
+msgstr "Выберите контакты для объединения"
 
 #. i18n: ectx: property (text), widget (QLabel, avatarPixmapLabel)
 #: widgets/person-details-presentation.ui:43

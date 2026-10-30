@@ -13,7 +13,6 @@
 #include <matchessolver_p.h>
 #include <personsmodel.h>
 
-#include <cstdio>
 #include <iostream>
 
 using namespace KPeople;

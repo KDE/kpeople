@@ -15,11 +15,6 @@
 #include "backends/abstractcontact.h"
 #include "kpeople/kpeople_export.h"
 
-namespace KContacts
-{
-class Addressee;
-}
-
 namespace KPeople
 {
 class KPEOPLE_EXPORT Match

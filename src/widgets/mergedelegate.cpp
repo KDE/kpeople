@@ -7,10 +7,8 @@
 
 #include "mergedelegate.h"
 #include "mergedialog.h"
-#include "personsmodel.h"
 #include <match_p.h>
 
-#include "kpeople_widgets_debug.h"
 #include <KLocalizedString>
 #include <QAbstractItemView>
 #include <QCheckBox>

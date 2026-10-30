@@ -9,7 +9,6 @@
 #include "duplicatesfinder_p.h"
 #include "matchessolver_p.h"
 #include "mergedelegate.h"
-#include "persondata.h"
 #include "personsmodel.h"
 
 #include "kpeople_widgets_debug.h"

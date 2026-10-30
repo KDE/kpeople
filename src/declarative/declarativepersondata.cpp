@@ -7,8 +7,6 @@
 #include "declarativepersondata.h"
 
 #include "../persondata.h"
-#include "avatarimageprovider.h"
-#include "kpeople_debug.h"
 #include <imageprovideruri_p.h>
 
 #include <QStringBuilder>

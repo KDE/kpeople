@@ -5,7 +5,6 @@
 */
 
 #include "actions.h"
-#include "kpeople_debug.h"
 #include "personactionsmodel_p.h"
 #include "persondata.h"
 #include <QAction>

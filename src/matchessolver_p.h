@@ -12,9 +12,6 @@
 #include "match_p.h"
 #include <kpeople/kpeople_export.h>
 
-class QUrl;
-class QModelIndex;
-
 namespace KPeople
 {
 class PersonsModel;

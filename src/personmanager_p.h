@@ -54,14 +54,6 @@ public:
      */
     QStringList contactsForPersonUri(const QString &personUri) const;
 
-    /**
-     * Creates a contact with the specified @p properties
-     *
-     * @since 5.62
-     */
-
-    bool addContact(const QVariantMap &properties);
-
 public Q_SLOTS:
     // merge all ids (person IDs and contactUris into a single person)
     // returns the ID that will be created

@@ -19,6 +19,8 @@
 #include <QDBusMessage>
 #endif
 
+#include <utility>
+
 class Transaction
 {
 public:
@@ -141,7 +143,7 @@ QString PersonManager::mergeContacts(const QStringList &ids)
     bool rc = true;
 
     QStringList pendingContactRemovedFromPerson;
-    QVector<QPair<QString, QString>> pendingContactAddedToPerson;
+    QVector<std::pair<QString, QString>> pendingContactAddedToPerson;
 
     // separate the passed ids to metacontacts and simple contacts
     for (const QString &id : ids) {

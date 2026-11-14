@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kpeople6\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2025-11-17 11:49+0000\n"
+"POT-Creation-Date: 2026-11-14 01:00+0000\n"
 "PO-Revision-Date: 2024-03-27 19:38+0100\n"
 "Last-Translator: Johannes Obermayr <johannesobermayr@gmx.de>\n"
 "Language-Team: German <kde-i18n-de@kde.org>\n"
@@ -39,24 +39,24 @@ msgctxt "E-mail field label"
 msgid "E-mail"
 msgstr "E-Mail"
 
-#: widgets/mergedelegate.cpp:86
+#: widgets/mergedelegate.cpp:84
 #, kde-format
 msgctxt "reasons join"
 msgid ", "
 msgstr ", "
 
-#: widgets/mergedelegate.cpp:86
+#: widgets/mergedelegate.cpp:84
 #, kde-format
 msgctxt "name: merge reasons"
 msgid "%1: %2"
 msgstr "%1: %2"
 
-#: widgets/mergedialog.cpp:52
+#: widgets/mergedialog.cpp:51
 #, kde-format
 msgid "Duplicates Manager"
 msgstr "Verwaltung von Duplikaten"
 
-#: widgets/mergedialog.cpp:63
+#: widgets/mergedialog.cpp:62
 #, kde-format
 msgid "Select contacts to be merged"
 msgstr "Kontakte zum Zusammenführen auswählen"

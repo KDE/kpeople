@@ -48,6 +48,7 @@ Q_ENUM_NS(ActionType)
  * each QAction will have \a parent passed as its parent QObject
  */
 KPEOPLE_EXPORT QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent);
+KPEOPLE_EXPORT QList<QAction *> actionsForPerson(const PersonData &person, QObject *parent);
 }
 
 #endif // KPEOPLE_ACTIONS_H

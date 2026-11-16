@@ -34,10 +34,8 @@ static QList<AbstractPersonAction *> actionsPlugins()
     return actionPlugins;
 }
 
-QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent)
+QList<QAction *> actionsForPerson(const PersonData &person, QObject *parent)
 {
-    PersonData person(contactUri);
-
     QList<QAction *> actions;
     const auto lst = actionsPlugins();
     for (KPeople::AbstractPersonAction *plugin : lst) {
@@ -45,6 +43,12 @@ QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent)
     }
 
     return actions;
+}
+
+QList<QAction *> actionsForPerson(const QString &contactUri, QObject *parent)
+{
+    PersonData person(contactUri);
+    return actionsForPerson(person, parent);
 }
 
 }

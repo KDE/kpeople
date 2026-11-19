@@ -21,6 +21,7 @@
 #include <QLabel>
 #include <QList>
 #include <QVBoxLayout>
+#include <memory>
 
 #include "ui_person-details-presentation.h"
 
@@ -30,7 +31,7 @@ class PersonDetailsViewPrivate
 {
 public:
     PersonData *m_person;
-    Ui::PersonDetailsPresentation *m_personDetailsPresentation;
+    std::unique_ptr<Ui::PersonDetailsPresentation> m_personDetailsPresentation;
     QWidget *m_mainWidget;
     QList<AbstractFieldWidgetFactory *> m_plugins;
 };
@@ -98,7 +99,7 @@ PersonDetailsView::PersonDetailsView(QWidget *parent)
     d->m_person = nullptr;
 
     QWidget *details = new QWidget();
-    d->m_personDetailsPresentation = new Ui::PersonDetailsPresentation();
+    d->m_personDetailsPresentation = std::make_unique<Ui::PersonDetailsPresentation>();
     d->m_personDetailsPresentation->setupUi(details);
     layout->addWidget(details);
     layout->addWidget(d->m_mainWidget);

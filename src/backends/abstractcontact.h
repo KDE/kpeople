@@ -7,6 +7,7 @@
 #ifndef KPEOPLE_ABSTRACT_CONTACT_H
 #define KPEOPLE_ABSTRACT_CONTACT_H
 
+#include <QList>
 #include <QSharedData>
 #include <QVariant>
 #include <kpeoplebackend/kpeoplebackend_export.h>
